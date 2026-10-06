@@ -22,13 +22,19 @@ export async function SiteHeader() {
             Séries TCF Canada
           </Link>
           <Link
-            href="/oral-ai"
+            href="/examens/demo-101-eo/intro"
             className="hover:text-brand-crimson dark:hover:text-white transition-colors flex items-center gap-1.5"
           >
             <span>Oral IA (Tâche 2)</span>
-            <span className="rounded-full bg-brand-cyan/15 px-1.5 py-0.5 text-[10px] font-bold text-brand-cyan uppercase tracking-wider">
-              Live
+            <span className="rounded-full bg-cyan-500/15 px-1.5 py-0.5 text-[10px] font-bold text-cyan-600 dark:text-cyan-400 uppercase tracking-wider">
+              Interactif
             </span>
+          </Link>
+          <Link
+            href="/carnet-erreurs"
+            className="hover:text-brand-crimson dark:hover:text-white transition-colors"
+          >
+            Carnet d&apos;Erreurs
           </Link>
           <Link
             href="/nclc-calculator"
