@@ -22,21 +22,20 @@
 
 ## 3. Identité Visuelle & Design Tokens
 
-### Palette de Couleurs
-* **Primary (Confiance & Érable Canadien) :**
-  * `Primary Red / Crimson` : `hsl(354, 84%, 48%)` (Rappel du rouge emblématique du Canada, vif, énergique et audacieux).
-  * `Primary Dark` : `hsl(354, 88%, 36%)`.
-* **Secondary / Accent (Intelligence & Clarté) :**
-  * `Navy / Deep Slate` : `hsl(222, 47%, 11%)` (Base solide, académique et moderne).
-  * `Cyan / Tech Blue` : `hsl(199, 89%, 48%)` (Pour les badges IA, scores et indicateurs de performance).
-* **Feedback & Niveaux NCLC :**
-  * `Success (NCLC 7-10 / C1-C2)` : `hsl(152, 69%, 40%)` (Vert émeraude).
-  * `Warning (NCLC 5-6 / B1-B2)` : `hsl(38, 92%, 50%)` (Ambre soutenu).
-  * `Destructive (NCLC 1-4)` : `hsl(0, 84%, 60%)` (Rouge alerte).
-* **Neutres (Mode Sombre & Clair) :**
-  * Light Background : `hsl(210, 40%, 98%)` (Blanc bleuté très doux).
-  * Dark Background : `hsl(224, 71%, 4%)` (Noir bleuté profond).
-  * Card Surfaces : `hsl(0, 0%, 100%)` (Light) / `hsl(222, 47%, 9%)` (Dark).
+### Palette de Couleurs (Codes HEX Prêts pour Canva)
+
+| Rôle & Usage | Nom de la Couleur | Code HEX (Canva) | RGB | Rendu & Application |
+| :--- | :--- | :--- | :--- | :--- |
+| **Primaire Canada** | **Maple Crimson** | `#E51A31` | `(229, 26, 49)` | Cœur du logo, feuille d'érable, boutons CTA principaux. |
+| **Primaire Foncé (Hover)** | **Dark Crimson** | `#B31224` | `(179, 18, 36)` | Survol des boutons, ombres de la feuille, accents profonds. |
+| **Fond & Autorité** | **Imperial Navy** | `#0B132B` | `(11, 19, 43)` | Arrière-plan sombre d'élite, header, cartes contrastées. |
+| **Technologie & IA** | **Electric Cyan** | `#00B4D8` | `(0, 180, 216)` | Onde sonore IA, badges de correction, accents interactifs. |
+| **Succès (NCLC 7-10)** | **C2 Emerald** | `#10B981` | `(16, 185, 129)` | Validation des scores cibles C1/C2, gain de points CRS (+50). |
+| **Alerte (NCLC 5-6)** | **Amber Warning** | `#F59E0B` | `(245, 158, 11)` | Niveau intermédiaire B1/B2, points à consolider. |
+| **Erreur (NCLC 1-4)** | **Alert Red** | `#EF4444` | `(239, 68, 68)` | Réponses incorrectes, carnet d'erreurs. |
+| **Fond Mode Clair** | **Frost White** | `#F8FAFC` | `(248, 250, 252)` | Arrière-plan de l'application en thème clair. |
+| **Surfaces & Cartes** | **Pure White** | `#FFFFFF` | `(255, 255, 255)` | Cartes de questions, texte sur fond sombre. |
+| **Bordures Sombre** | **Deep Slate** | `#1E293B` | `(30, 41, 59)` | Bordures subtiles de conteneurs en mode sombre. |
 
 ### Typographie Signature
 * **Titres, Hero & Logotype :** **Bricolage Grotesque** *(Poids : Bold 700 / ExtraBold 800)*
