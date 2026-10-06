@@ -11,7 +11,13 @@ graph TD
   ServerActions --> Payment[Stripe & Mobile Money Gateways]
 ```
 
-## 2. Patterns Clés d'Ingénierie
+## 2. Patterns Clés d'Ingénierie & Design Stack
+- **Composants d'Élite & Registres UI :**
+  - `@magicui` configuré dans `components.json` pour les animations complexes et bento grids.
+  - `@react-bits` configuré dans `components.json` pour les arrière-plans animés, textures et visualisations audio.
+  - Serveur MCP `21st` et `magicuidesign-mcp` pour la découverte et l'intégration instantanée de composants design.
+- **Arborescence & Spécification Maître :**
+  - Document de référence : `docs/specs/00-master-product-roadmap.md` (cartographie complète des routes `/examens`, `/dashboard`, `/resultats`, `/oral-ai`, `/tarifs`).
 - **Clean Architecture & Domain Separation :**
   - `lib/modules/exam-engine/` : Logique de simulation CBT (questions, timers, scoring).
   - `lib/modules/ai-evaluator/` : Pipeline de correction FEI pour l'écrit et l'oral.
