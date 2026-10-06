@@ -116,16 +116,31 @@ Une véritable identité de marque ne se résume pas à une seule image. Elle co
 
 ---
 
-## 3. Les 4 Déclinaisons Chromatiques Indispensables
+## 3. Les 2 Déclinaisons Majeures : Mode Clair & Mode Sombre
 
-Chaque variante ci-dessus doit être exportée dans ces **4 modes de couleur** pour couvrir 100% des besoins de l'application :
+Pour un environnement EdTech de révision d'examen, l'adaptabilité au **thème clair** (pour les sessions de travail de jour) et au **thème sombre** (pour limiter la fatigue oculaire le soir) est prioritaire :
 
-| Déclinaison | Arrière-plan | Logomark | Logotype | Usage |
-| :--- | :--- | :--- | :--- | :--- |
-| **1. Full Color Dark (Défaut App)** | Transparent (prévu pour fond `#0B132B`) | Crimson `#E51A31` + Cyan `#00B4D8` | Blanc `#FFFFFF` + C2 Rouge | Navbar sombre, landing page dark mode. |
-| **2. Full Color Light** | Transparent (prévu pour fond blanc `#F8FAFC`) | Crimson `#E51A31` + Cyan `#00B4D8` | Deep Navy `#0B132B` | Mode clair, documents imprimés. |
-| **3. Monochrome Blanc (Reverse)** | Transparent (pour photos ou fonds colorés) | 100% Blanc `#FFFFFF` | 100% Blanc `#FFFFFF` | Superposition sur photographies, vidéos, bannières. |
-| **4. Monochrome Noir (Pure Black)** | Transparent (pour documents administratifs) | 100% Noir `#000000` | 100% Noir `#000000` | Factures, impressions noir & blanc, tampons. |
+| Composant | ☀️ Version Thème Clair (Light Mode) | 🌙 Version Thème Sombre (Dark Mode) |
+| :--- | :--- | :--- |
+| **Arrière-plan d'accueil** | **Frost White** (`#F8FAFC` / `#FFFFFF`) | **Imperial Navy** (`#0B132B` / `#030712`) |
+| **Texte `SUPER` & `4`** | **Imperial Navy `#0B132B`** *(Contraste > 15:1, autorité académique)* | **Pure White `#FFFFFF`** *(Contraste > 16:1, éclat moderne)* |
+| **Accents `C2`** | **Maple Crimson `#E51A31`** *(Contraste 4.8:1, parfait sur fond clair)* | **Maple Crimson `#E51A31`** *(Vibrant sur fond sombre)* |
+| **Onde Sonore IA** | **Cyan Foncé / Cobalt `#0284C7` ou `#00B4D8`** *(Net et lisible sur blanc)* | **Electric Cyan Lumineux `#00B4D8`** *(Néon cyan)* |
+| **Baseline `TCF PREP`** | **Slate Gray `#475569`** *(Lisibilité neutre et académique)* | **Cool Silver `#94A3B8`** *(Gris doux apaisant)* |
+| **Fond PNG exporté** | **Transparent** *(S'adapte automatiquement à l'UI)* | **Transparent** *(S'adapte automatiquement à l'UI)* |
+
+---
+
+## 4. Règle Spécifique : Favicon & App Icon Mobile (Fond Opaque Obligatoire)
+
+Comme tu l'as souligné, **le Favicon et l'App Icon iOS/Android ne doivent PAS avoir de fond transparent**, car les systèmes d'exploitation (Apple iOS, Android, navigateurs) exigent un conteneur solide :
+
+* **Format du fond :** Carré ou Squircle (coins arrondis) **opaque** couleur **Imperial Navy `#0B132B`**.
+* **Contenu centré :** Le Logomark vectoriel (la feuille d'érable rouge `#E51A31` + l'onde sonore cyan `#00B4D8` lumineuse au centre).
+* **Fichiers à exporter avec fond solide :**
+  * `favicon.png` (`64 x 64 px` et `192 x 192 px`).
+  * `app-icon-ios.png` (`1024 x 1024 px` carré plein sans transparence).
+  * `app-icon-android.png` (`512 x 512 px` carré plein sans transparence).
 
 ---
 
