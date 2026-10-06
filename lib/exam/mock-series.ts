@@ -104,10 +104,59 @@ export const MOCK_SERIES_CE_101: ExamSeriesData = {
   ],
 };
 
+export const MOCK_SERIES_CO_101: ExamSeriesData = {
+  id: "demo-101-co",
+  seriesNumber: 101,
+  title: "TCF Canada — Compréhension orale, Série 101 (démo)",
+  discipline: "CO",
+  durationSeconds: 40 * 60,
+  questions: [
+    {
+      id: "co1",
+      questionNumber: 1,
+      nclcTargetLevel: 4,
+      audioTranscript:
+        "Bonjour, je voudrais réserver une table pour quatre personnes, ce samedi soir, vers vingt heures, s'il vous plaît.",
+      prompt: "Que veut faire la personne ?",
+      options: {
+        A: "Annuler une réservation.",
+        B: "Réserver une table au restaurant.",
+        C: "Commander à emporter.",
+        D: "Changer l'heure d'un rendez-vous.",
+      },
+      correctOption: "B",
+      explanation: "« Je voudrais réserver une table pour quatre personnes » : c'est une réservation.",
+      trapAnalysis: "A et D parlent de modifier/annuler, ce qui n'est pas dit. C est une autre demande.",
+    },
+    {
+      id: "co2",
+      questionNumber: 2,
+      nclcTargetLevel: 6,
+      audioTranscript:
+        "Attention, mesdames et messieurs, en raison d'un incident technique, le train à destination de Lyon aura quarante minutes de retard. Nous vous prions de nous excuser pour ce désagrément.",
+      prompt: "Quelle information est donnée ?",
+      options: {
+        A: "Le train pour Lyon est supprimé.",
+        B: "Le train pour Lyon part en avance.",
+        C: "Le train pour Lyon est en retard.",
+        D: "Le quai du train a changé.",
+      },
+      correctOption: "C",
+      explanation: "« Aura quarante minutes de retard » : le train est retardé, pas supprimé.",
+      trapAnalysis: "A exagère (suppression). B est l'inverse. D n'est pas mentionné.",
+    },
+  ],
+};
+
 const SERIES: Record<string, ExamSeriesData> = {
   [MOCK_SERIES_CE_101.id]: MOCK_SERIES_CE_101,
+  [MOCK_SERIES_CO_101.id]: MOCK_SERIES_CO_101,
 };
 
 export function getMockSeries(id: string): ExamSeriesData | undefined {
   return SERIES[id];
+}
+
+export function listMockSeries(): ExamSeriesData[] {
+  return Object.values(SERIES);
 }

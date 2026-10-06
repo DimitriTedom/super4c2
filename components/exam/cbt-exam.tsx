@@ -8,6 +8,7 @@ import type { ExamSeriesData } from "@/lib/exam/types";
 import { ExamHeader } from "./exam-header";
 import { ExamResultSummary } from "./exam-result-summary";
 import { ExamSplitLayout } from "./exam-split-layout";
+import { AudioPlayerCBT } from "./audio-player-cbt";
 import { QuestionNavGrid } from "./question-nav-grid";
 import { QuestionPanel } from "./question-panel";
 
@@ -61,9 +62,21 @@ export function CbtExam({ series }: { series: ExamSeriesData }) {
       ) : (
         <ExamSplitLayout
           left={
-            <article className="mx-auto max-w-prose whitespace-pre-line font-sans text-base leading-relaxed">
-              {s.question.documentText}
-            </article>
+            series.discipline === "CO" ? (
+              <div className="flex h-full items-center">
+                <AudioPlayerCBT
+                  key={s.question.id}
+                  src={s.question.audioUrl}
+                  fallbackText={s.question.audioTranscript}
+                  played={!!s.played[s.question.id]}
+                  onPlayed={() => s.markPlayed(s.question.id)}
+                />
+              </div>
+            ) : (
+              <article className="mx-auto max-w-prose whitespace-pre-line font-sans text-base leading-relaxed">
+                {s.question.documentText}
+              </article>
+            )
           }
           right={
             <div className="space-y-8">

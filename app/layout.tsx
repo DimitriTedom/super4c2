@@ -3,7 +3,7 @@ import { Bricolage_Grotesque, DM_Sans, Space_Mono } from "next/font/google";
 import "./../styles/globals.css";
 
 import { ThemeProvider } from "@/components/theme-provider";
-import { SiteHeader } from "@/components/site-header";
+import { AppShell } from "@/components/app-shell";
 import { Toaster } from "@/components/ui/sonner";
 
 const bricolage = Bricolage_Grotesque({
@@ -48,8 +48,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     >
       <body className="font-body antialiased bg-background text-foreground min-h-screen">
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
-          <SiteHeader />
-          <main className="mx-auto max-w-7xl px-4 py-8">{children}</main>
+          <AppShell>{children}</AppShell>
           <Toaster />
         </ThemeProvider>
       </body>

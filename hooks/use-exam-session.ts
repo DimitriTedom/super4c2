@@ -15,6 +15,7 @@ interface PersistedSession {
   answers: AnswersMap;
   current: number;
   finished: boolean;
+  played?: Record<string, boolean>;
 }
 
 const storageKey = (seriesId: string, discipline: string) =>
@@ -34,6 +35,7 @@ export function useExamSession(series: ExamSeriesData) {
   const [remaining, setRemaining] = useState(series.durationSeconds);
   const [filter, setFilter] = useState<NavFilter>("all");
   const finishedRef = useRef(false);
+  const [played, setPlayed] = useState<Record<string, boolean>>({});
 
   // Hydrate from localStorage (or start a fresh session).
   useEffect(() => {
@@ -50,6 +52,7 @@ export function useExamSession(series: ExamSeriesData) {
       setFinished(state.finished);
       finishedRef.current = state.finished;
       setDeadline(state.deadline);
+      setPlayed(state.played ?? {});
     } else {
       setDeadline(Date.now() + series.durationSeconds * 1000);
     }
@@ -59,13 +62,13 @@ export function useExamSession(series: ExamSeriesData) {
   // Autosave.
   useEffect(() => {
     if (!hydrated) return;
-    const payload: PersistedSession = { deadline, answers, current, finished };
+    const payload: PersistedSession = { deadline, answers, current, finished, played };
     try {
       localStorage.setItem(key, JSON.stringify(payload));
     } catch {
       /* storage full / unavailable: keep going in memory */
     }
-  }, [hydrated, key, deadline, answers, current, finished]);
+  }, [hydrated, key, deadline, answers, current, finished, played]);
 
   const finish = useCallback(() => {
     finishedRef.current = true;
@@ -138,6 +141,7 @@ export function useExamSession(series: ExamSeriesData) {
     setCurrent(0);
     setFinished(false);
     setFilter("all");
+    setPlayed({});
     setDeadline(Date.now() + series.durationSeconds * 1000);
   }, [key, series.durationSeconds]);
 
@@ -159,5 +163,7 @@ export function useExamSession(series: ExamSeriesData) {
     prev: () => goTo(current - 1),
     finish,
     restart,
+    played,
+    markPlayed: (id: string) => setPlayed((p) => ({ ...p, [id]: true })),
   };
 }
