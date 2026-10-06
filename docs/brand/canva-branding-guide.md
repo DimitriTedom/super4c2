@@ -1,106 +1,176 @@
-# 🎨 Guide de Création de Marque & Design Canva : Super4C2
+# 🏛️ Charte d'Identité Visuelle & Système de Logo Complet : Super4C2
 
-Ce guide pas-à-pas te permet d'ouvrir [Canva](https://www.canva.com/) et de concevoir en moins de 30 minutes tous les assets visuels officiels de **Super4C2** (Logos, Favicons, Palettes et Bannières).
-
----
-
-## 1. Direction Artistique & Univers Visuel
-
-* **Nom officiel :** **Super4C2**  
-* **Concept graphique :** L'alliance entre **l'autorité canadienne** (la feuille d'érable, l'immigration d'élite) et **l'intelligence artificielle haute précision** (ondes vocales, vitesse, badges C2).
-* **Atmosphère :** Haut de gamme, rassurante, technologique (Fintech / EdTech moderne style Linear ou Stripe, loin des sites d'examens vieillots).
+Ce document est le guide de référence pour concevoir l'univers graphique complet de **Super4C2** sur Canva. Il remplace toute typographie générique ou passe-partout par des polices de caractère affirmées et détaille **l'intégralité des variantes du système de logo** (Logomark, Logotype, Lockups horizontal et vertical, Monogramme de certification).
 
 ---
 
-## 2. La Palette Officielle (À Enregistrer dans ton "Brand Kit" Canva)
+## 1. La Typographie "Signature" : Sortir du Générique
 
-Copie directement ces codes HEX dans Canva (section **Identité visuelle / Couleurs**) :
+Les polices comme *Inter*, *Montserrat* ou *Roboto* sont omniprésentes et donnent une impression de template préconçu. Pour **Super4C2**, nous recherchons une signature visuelle qui évoque **la haute précision, l'exigence intellectuelle et la puissance technologique**.
 
-| Rôle | Nom de la couleur | Code HEX | Code RGB | Code HSL | Utilisation |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| **Primaire Canada** | **Maple Crimson** | `#E51A31` | `(229, 26, 49)` | `hsl(353, 80%, 50%)` | Boutons d'action principaux, cœur du logo, feuille d'érable. |
-| **Fond & Contraste** | **Imperial Navy** | `#0B132B` | `(11, 19, 43)` | `hsl(225, 59%, 11%)` | Header sombre, texte foncé, contraste premium. |
-| **Technologie & IA** | **Electric Cyan** | `#00B4D8` | `(0, 180, 216)` | `hsl(190, 100%, 42%)` | Badges IA, ondes audio, accents interactifs. |
-| **Succès & C2** | **C2 Emerald** | `#10B981` | `(16, 185, 129)` | `hsl(159, 84%, 39%)` | Score NCLC 7+, validation, points CRS gagnés. |
-| **Fond Clair** | **Frost White** | `#F8FAFC` | `(248, 250, 252)` | `hsl(210, 40%, 98%)` | Arrière-plan de l'application en mode jour. |
-| **Surface Carte** | **Pure White** | `#FFFFFF` | `(255, 255, 255)` | `hsl(0, 0%, 100%)` | Cartes d'exercices et modales. |
+Voici les **3 univers typographiques d'élite** (tous disponibles sur Canva ou Google Fonts) :
+
+### 💎 Univers 1 : L'Avant-Garde Architecturale (Recommandé)
+* **Caractère :** Audacieux, mémorable, sculptural. Évoque un produit d'ingénierie et de design contemporain.
+* **Titre / Display :** **Syne** *(Poids : Bold 700 ou ExtraBold 800)*
+  * *Pourquoi :* Ses courbes géométriques et ses terminaisons asymétriques donnent une identité visuelle immédiate et statutaire qu'aucun concurrent ne possède.
+* **Sous-titres & Corps de texte :** **Manrope** *(Poids : Medium 500 & SemiBold 600)*
+  * *Pourquoi :* Typographie géométrique moderne à fort contraste de graisse, ultra-lisible sur écran pour de longs textes d'examen.
+* **Données chiffrées & Chronomètre :** **JetBrains Mono** *(Poids : Medium 500)*
+
+### 🚀 Univers 2 : La Haute Précision Technologique (Cyber-Executive)
+* **Caractère :** Futuriste, tranché, inspiré de l'aérospatiale et de l'intelligence artificielle avancée.
+* **Titre / Display :** **Space Grotesk** *(Poids : Bold 700)*
+  * *Pourquoi :* Dessinée par Florian Karsten, elle intègre des angles géométriques subtils et une personnalité tech assumée sans tomber dans le gadget.
+* **Sous-titres & Corps de texte :** **DM Sans** *(Poids : Regular 400 & Medium 500)*
+  * *Pourquoi :* Excellente lisibilité tout en conservant une géométrie cohérente avec Space Grotesk.
+* **Données chiffrées & Chronomètre :** **Space Mono** *(Poids : Bold 700)*
+
+### 🏛️ Univers 3 : L'Autorité Académique & Prestige (Ivy League / Institut Fédéral)
+* **Caractère :** Institutionnel, noble, digne d'une haute école ou d'un organisme d'immigration officiel.
+* **Titre / Display :** **Cinzel** ou **Bodoni Moda** *(Poids : SemiBold 600)*
+  * *Pourquoi :* L'élégance intemporelle des capitales romaines, conférant une légitimité gouvernementale et officielle incontestable.
+* **Sous-titres & Corps de texte :** **Plus Jakarta Sans** *(Poids : Medium 500)*
+* **Données chiffrées & Chronomètre :** **Roboto Mono** *(Poids : Medium 500)*
 
 ---
 
-## 3. Typographies (Disponibles Nativement dans Canva)
+## 2. Le Système Complet des Variantes de Logo
 
-1. **Titres & Nom de Marque :** **Plus Jakarta Sans** (variantes *Bold* ou *ExtraBold*)  
-   *(Alternative Canva : **Montserrat** ou **Outfit**)*
-2. **Sous-titres & Descriptions :** **Inter** (variantes *Regular* ou *Medium*)  
-   *(Alternative Canva : **Open Sans**)*
-3. **Badges de Scores & Timers :** **Space Mono** ou **Roboto Mono** (pour les chiffres de chrono et points).
+Une véritable identité de marque ne se résume pas à une seule image. Elle comprend un système modulaire adapté à chaque contexte d'affichage.
+
+```
+                              ┌────────────────────────────────────────┐
+                              │            SYSTÈME DE MARQUE           │
+                              └──────────────────┬─────────────────────┘
+                                                 │
+          ┌──────────────────────┬───────────────┴──────────────┬──────────────────────┐
+          ▼                      ▼                              ▼                      ▼
+    1. LOGOMARK            2. LOGOTYPE             3. LOCKUP HORIZONTAL       4. LOCKUP VERTICAL
+  (Symbole Seul)         (Texte Seul)             (Logo Principal Web)       (Stacked / Carré)
+  [Feuille + Onde]       [SUPER4C2]              [Icône + SUPER4C2]         [Icône au-dessus]
+                                                                            [SUPER4C2 en-dessous]
+          │                                                                            │
+          ▼                                                                            ▼
+    5. SUBMARK / BADGE                                                           6. DÉCLINAISONS
+   (Sceau de certification)                                                      (Dark, Light, Mono)
+```
 
 ---
 
-## 4. Les 4 Assets à Créer dans Canva
+### 📐 Variante 1 : Le Logomark (Isotype / Symbole Seul)
+* **Définition :** L'icône graphique pure, sans aucune lettre ni texte.
+* **Concept visuel :**
+  * La silhouette minimaliste d'une **feuille d'érable canadienne** (rouge Crimson `#E51A31`), dont la moitié droite se décompose ou fusionne en une **onde fréquentielle / sonore lumineuse** (cyan électrique `#00B4D8`).
+* **Usage :**
+  * Favicon du navigateur (32x32 px)
+  * App icon mobile iOS / Android (512x512 px)
+  * Avatar pour réseaux sociaux (Instagram, WhatsApp, X, LinkedIn)
+  * Watermark discret en fond d'écran ou sur les fiches PDF
+* **Dimensions Canva :** `1080 x 1080 px` (Ratio 1:1).
 
-### 📐 Asset 1 : Logo Principal Horizontal (Header Web)
-* **Dimensions Canva :** `1200 x 400 px` (Ratio 3:1).
+---
+
+### 📐 Variante 2 : Le Logotype (Wordmark / Typogramme Seul)
+* **Définition :** Le nom de la marque stylisé typographiquement, sans symbole graphique.
 * **Composition :**
-  * **À gauche :** L'icône / symbole (ex. une feuille d'érable stylisée géométrique fusionnée avec un "4" ou une onde sonore moderne).
-  * **À droite :** Le texte en gros caractères :  
-    `SUPER` (en blanc ou noir navy) `4C2` (en `Maple Crimson #E51A31` avec un dégradé subtil vers le Cyan).
-  * **En dessous en petit (tracking élargi) :** `TCF & TEF CANADA PREP` (en police Inter / majuscules).
-* **Variantes à exporter :**
-  1. `logo-light.png` : Texte foncé sur fond transparent (pour fond blanc).
-  2. `logo-dark.png` : Texte blanc sur fond transparent (pour fond noir/navy).
-
-### 📐 Asset 2 : Favicon & App Icon (Carré 1:1)
-* **Dimensions Canva :** `1080 x 1080 px` (ou `512 x 512 px`).
-* **Composition :**
-  * Fond soit transparent, soit carré à coins arrondis (Squircle) couleur `Imperial Navy #0B132B`.
-  * Symbole centré percutant :
-    * Option A : Le chiffre `4` stylisé dont la barre transversale forme le sommet d'une feuille d'érable rouge, surmonté de `C2` en exposant cyan.
-    * Option B : Un bouclier moderne avec la feuille d'érable canadienne au centre et un halo cyan lumineux.
-* **Fichiers exportés :** `icon-512.png` et `favicon.png`.
-
-### 📐 Asset 3 : Badge "NCLC 7 Garanti" (Pour la Landing Page)
-* **Dimensions Canva :** `600 x 600 px`.
-* **Composition :**
-  * Badge rond ou octogonal couleur dorée/émeraude avec la mention :
-  * `NCLC 7+ GUARANTEE` • `+50 POINTS CRS ENTRÉE EXPRESS`.
-
-### 📐 Asset 4 : Bannière de Partage Social (Open Graph / OG Image)
-* **Dimensions Canva :** `1200 x 630 px` (Format officiel Facebook/LinkedIn/Twitter/WhatsApp).
-* **Composition :**
-  * Fond en dégradé profond `Imperial Navy (#0B132B)` vers `Dark Crimson (#4A0E17)`.
-  * Le logo **Super4C2** en haut à gauche.
-  * Titre accrocheur au centre :  
-    `"Obtenez votre NCLC 7 au TCF Canada."`  
-    `"Simulation CBT réelle & Tuteur IA instantané."`
-  * Mockup visuel à droite : un écran de simulateur d'examen avec chronomètre et score 699.
+  * Le mot `SUPER` en capitales denses (Navy `#0B132B` ou Blanc `#FFFFFF`).
+  * Le chiffre `4` avec une incision vectorielle ou un angle distinctif.
+  * Le sigle `C2` en exposant ou mis en exergue en `Maple Crimson #E51A31` avec un point ou filet cyan.
+* **Usage :**
+  * Pied de page (Footer) épuré
+  * En-têtes de factures, mentions légales, contrats
+  * Signatures d'email officielles
+* **Dimensions Canva :** `1200 x 300 px` (Ratio 4:1).
 
 ---
 
-## 5. Mots-clés de Recherche d'Éléments dans Canva
-
-Dans l'onglet **Éléments** de Canva, utilise ces requêtes pour trouver des graphismes vectoriels modernes :
-* `minimalist maple leaf` ou `geometric maple leaf` (pour des feuilles d'érable modernes et non clichées).
-* `sound wave modern` ou `audio frequency line` (pour représenter l'IA vocale et la compréhension orale).
-* `tech badge shield` (pour les symboles de certification et de garantie).
-* `gradient sphere tech` (pour les arrière-plans lumineux subtils).
+### 📐 Variante 3 : Le Logo Primaire (Combinaison Horizontale)
+* **Définition :** La combinaison standard de la marque.
+* **Composition :**
+  * **Gauche :** Logomark (Feuille d'érable + onde).
+  * **Centre/Droite :** Logotype `SUPER4C2`.
+  * **Sous le logotype :** Tagline statutaire en petites capitales espacées (`tracking: 0.25em`) :  
+    `TCF & TEF CANADA PREP` ou `SIMULATION CBT & EXAMINATEUR IA`.
+* **Usage :**
+  * Header de l'application web (Desktop & Tablette)
+  * Bannières de présentation et en-tête des rapports d'examen
+* **Dimensions Canva :** `1600 x 500 px`.
 
 ---
 
-## 6. Export & Rangement dans le Projet
+### 📐 Variante 4 : Le Logo Secondaire (Combinaison Verticale / Stacked)
+* **Définition :** Disposition centrée verticale, où le symbole surplombe le texte.
+* **Composition :**
+  * Le Logomark centré en grand en haut.
+  * Le Logotype `SUPER4C2` centré juste en dessous.
+  * La mention `L'EXCELLENCE C2 EN CONDITIONS RÉELLES` en bas.
+* **Usage :**
+  * Écran de chargement initial (Splash Screen de l'application)
+  * Couvertures de documents pédagogiques et brochures PDF
+  * Bannières de profil LinkedIn et Facebook
+* **Dimensions Canva :** `1080 x 1080 px` ou `1080 x 1350 px` (Format portrait).
 
-Une fois tes créations prêtes dans Canva :
-1. Clique sur **Partager ➔ Télécharger**.
-2. Choisis **PNG**.
-3. **Coche impérativement :** `Arrière-plan transparent` (si disponible sur ton compte Canva).
-4. Dépose les fichiers dans le dossier suivant de notre projet :
-   ```
-   d:/SnowDev/Documents/super4c2/public/brand/
-   ├── logo-light.png
-   ├── logo-dark.png
-   ├── icon-512.png
-   ├── favicon.png
-   └── og-image.png
-   ```
+---
 
-Prends quelques minutes pour concevoir ces éléments sur Canva. Dès que tu les as ou dès que tu as choisi ton orientation préférée, fais-moi signe et on les intègre directement dans le code !
+### 📐 Variante 5 : Le Monogramme & Sceau de Certification (Submark)
+* **Définition :** Un sceau circulaire ou octogonal compact.
+* **Composition :**
+  * Anneau extérieur : `★ SUPER4C2 CERTIFIED ★ ENTRÉE EXPRESS CANADA`.
+  * Centre : Monogramme `C2` gravé avec une mini feuille d'érable dorée ou émeraude.
+* **Usage :**
+  * Badge "Objectif NCLC 7 Garanti (+50 Points CRS)" sur la landing page
+  * Tampon officiel apposé sur les corrigés d'expression écrite et les attestations de simulation
+* **Dimensions Canva :** `800 x 800 px`.
+
+---
+
+## 3. Les 4 Déclinaisons Chromatiques Indispensables
+
+Chaque variante ci-dessus doit être exportée dans ces **4 modes de couleur** pour couvrir 100% des besoins de l'application :
+
+| Déclinaison | Arrière-plan | Logomark | Logotype | Usage |
+| :--- | :--- | :--- | :--- | :--- |
+| **1. Full Color Dark (Défaut App)** | Transparent (prévu pour fond `#0B132B`) | Crimson `#E51A31` + Cyan `#00B4D8` | Blanc `#FFFFFF` + C2 Rouge | Navbar sombre, landing page dark mode. |
+| **2. Full Color Light** | Transparent (prévu pour fond blanc `#F8FAFC`) | Crimson `#E51A31` + Cyan `#00B4D8` | Deep Navy `#0B132B` | Mode clair, documents imprimés. |
+| **3. Monochrome Blanc (Reverse)** | Transparent (pour photos ou fonds colorés) | 100% Blanc `#FFFFFF` | 100% Blanc `#FFFFFF` | Superposition sur photographies, vidéos, bannières. |
+| **4. Monochrome Noir (Pure Black)** | Transparent (pour documents administratifs) | 100% Noir `#000000` | 100% Noir `#000000` | Factures, impressions noir & blanc, tampons. |
+
+---
+
+## 4. Matrice des Fichiers à Exporter dans Canva
+
+Crée un dossier sur ton ordinateur et range les exports selon cette nomenclature exacte avant de les placer dans `public/brand/` :
+
+```
+public/brand/
+├── logomark/
+│   ├── logomark-color.png        (Symbole couleur 1080x1080)
+│   ├── logomark-white.png        (Symbole blanc 1080x1080)
+│   └── favicon.png               (Symbole 64x64 et 192x192)
+├── logotype/
+│   ├── logotype-dark.png         (Texte blanc pour fond sombre)
+│   └── logotype-light.png        (Texte navy pour fond clair)
+├── primary-horizontal/
+│   ├── logo-horizontal-dark.png  (Complet pour fond sombre)
+│   ├── logo-horizontal-light.png (Complet pour fond clair)
+│   └── logo-horizontal-white.png (Complet 100% blanc)
+├── stacked-vertical/
+│   ├── logo-stacked-dark.png     (Format carré centré sombre)
+│   └── logo-stacked-light.png    (Format carré centré clair)
+├── badges/
+│   ├── badge-nclc7-guarantee.png (Sceau certification NCLC 7)
+│   └── badge-crs50-bonus.png     (Badge +50 points CRS)
+└── social/
+    ├── og-image-1200x630.png     (Aperçu lien WhatsApp/FB/LinkedIn)
+    └── banner-linkedin.png       (Bannière profil)
+```
+
+---
+
+## 5. Règle d'Export Canva
+
+1. Dans Canva, utilise un projet multi-pages (une page par variante).
+2. Lors du téléchargement : format **PNG**, qualité maximale.
+3. **Coche obligatoire :** `Arrière-plan transparent` (*Transparent Background*).
+4. Si tu as Canva Pro, télécharge également la version **SVG** (vectorielle) pour le web : elle garantit un affichage net sur tous les écrans Retina sans perte de qualité.
