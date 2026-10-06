@@ -5,10 +5,12 @@
 - [x] Audit concurrentiel complet d'Objectif Canada TCF (architecture, structure des épreuves, modèle de correction, délais).
 - [x] Initialisation du système Memory Bank (`projectbrief.md`, `productContext.md`, `systemPatterns.md`, `techContext.md`, `activeContext.md`, `progress.md`).
 - [x] Définition des règles et compétences mémoires pérennes.
+- [x] Création du Brand Canvas (`docs/brand/brand-canvas.md`) et du Guide Canva (`docs/brand/canva-branding-guide.md`).
+- [x] Génération du concept visuel de marque (Feuille d'érable rouge + onde sonore IA cyan).
 
 ## En Cours
-- [ ] Création du Brand Canvas et de la charte de marque (`docs/brand/brand-canvas.md`).
-- [ ] Rédaction du PRD / Spécifications détaillées du moteur CBT (`docs/specs/01-cbt-exam-engine.md`).
+- [ ] Conception et export des logos/assets par Dimitri dans Canva.
+- [ ] Rédaction des tests & composants du moteur CBT (`docs/specs/01-cbt-exam-engine.md`).
 
 ## À Venir
 - [ ] Schéma de données Prisma (Exams, Questions, Answers, Submissions, AICorrections).
