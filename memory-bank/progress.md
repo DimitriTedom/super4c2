@@ -13,16 +13,17 @@
 - [x] Installation des dépendances et validation du build de production Next.js 15 (`npm run build` : 100% succès sans erreur).
 
 - [x] Phase 1 — Moteur CBT CE & CO complet (QCM, lecteur audio mono-écoute, pastilles 1-39, scoring TCF & NCLC, navigation).
-- [x] Phase 2 — Atelier d'Expression Écrite (EE) complet :
-  - Spécification technique formelle : `docs/specs/02-written-expression-engine.md`.
-  - Éditeur plein écran 3 tâches officielles FEI avec minuterie 60:00.
-  - Compteur de mots officiel FEI en temps réel avec statut dynamique (`WordCountBadge`).
-  - Correcteur IA instantané selon les 4 critères FEI (Adéquation, Cohérence, Lexique, Morphosyntaxe).
-  - Module **Magic Rewrite C1/C2** (`MagicRewriteViewer`) avec version modèle et tournures remarquables.
-  - Catalogue `/examens` enrichi des épreuves QCM et Écrites.
+- [x] Phase 2 — Atelier d'Expression Écrite (EE) complet (Éditeur 3 tâches, compteur de mots FEI temps réel, grille FEI, Magic Rewrite C1/C2).
+- [x] Phase 3 — Salle d'Expression Orale (EO) & Voice Agent IA complet :
+  - Spécification formelle : `docs/specs/03-oral-expression-engine.md`.
+  - Simulateur oral immersif avec avatar stylisé et waveform dynamique (`OralWaveform`).
+  - Entretien dirigé (Tâche 1), Jeu de rôle interactif en direct avec répondant IA (Tâche 2), Monologue argumenté (Tâche 3).
+  - Synthèse vocale française et boucle conversationnelle temps réel.
+  - Rapport FEI post-entretien avec débit (mots/min), sous-notes sur 4 et tournures C1/C2 recommandées (`OralDebriefCard`).
+  - Catalogue `/examens` unifié couvrant les 4 épreuves officielles TCF Canada.
 
 ## En Cours
-- [ ] Phase 3 — Simulateur d'Expression Orale (EO) & Voice Agent IA (`docs/specs/03-oral-expression-engine.md`).
+- [ ] Phase 4 — Simulateur de Points CRS Entrée Express & Dashboard avec Carnet d'Erreurs SRS (`/nclc-calculator`, `/dashboard`, `/carnet-erreurs`).
 
 ## À Venir
 - [ ] Schéma de données Prisma (Exams, Questions, Answers, Submissions, AICorrections).
