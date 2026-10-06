@@ -9,10 +9,13 @@ import {
   Headphones,
   PenTool,
 } from "lucide-react";
-import InteractiveGridPattern from "@/components/ui/interactive-grid-pattern";
 import NumberTicker from "@/components/ui/number-ticker";
 import { Button } from "@/components/ui/button";
 import { Globe } from "@/components/ui/globe";
+import { ShimmerButton } from "@/components/ui/shimmer-button";
+import { InteractiveHoverButton } from "@/components/ui/interactive-hover-button";
+import { AnimatedShinyText } from "@/components/ui/animated-shiny-text";
+import { BlurFade } from "@/components/ui/blur-fade";
 
 export const metadata = {
   title: "Super4C2 — Réussir le TCF Canada & Décrocher NCLC 7+ (+50 pts CRS)",
@@ -22,86 +25,100 @@ export const metadata = {
 
 export default function HomePage() {
   return (
-    <div className="space-y-24 py-4 overflow-hidden">
-      {/* 🌟 HERO SECTION AVEC LE GLOBE POSITIONNÉ EN BAS AU CENTRE */}
-      <section className="relative overflow-hidden rounded-3xl border bg-card p-8 sm:p-14 lg:p-20 shadow-xl">
-        <InteractiveGridPattern
-          cellSize={40}
-          interactive
-          className="opacity-40"
-        />
+    <div className="overflow-x-clip">
+      {/* 🌟 HERO — pleine largeur, sans bordure ; le globe est coupé en deux par le bas du hero */}
+      <section className="relative isolate flex min-h-[max(46rem,calc(100svh-5.75rem))] flex-col items-center overflow-hidden px-4 pt-16 sm:px-6 sm:pt-24">
+        {/* Halo d'ambiance + trame de points fondue */}
+        <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(60%_55%_at_50%_0%,rgba(229,26,49,0.12),transparent_70%),radial-gradient(40%_40%_at_85%_20%,rgba(0,180,216,0.10),transparent_70%)]" />
+        <div className="pointer-events-none absolute inset-0 -z-10 [background-image:radial-gradient(hsl(var(--foreground)/0.10)_1px,transparent_1px)] [background-size:26px_26px] [mask-image:radial-gradient(ellipse_70%_60%_at_50%_0%,black,transparent_75%)]" />
 
-        <div className="relative z-10 max-w-4xl mx-auto text-center space-y-6">
-          <div className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-xs font-bold text-primary">
-            <Sparkles className="h-4 w-4" />
-            <span>La Révolution de l&apos;Entraînement TCF & TEF Canada</span>
-          </div>
+        {/* 🌍 Globe ancré au bord inférieur : son centre est sur la ligne de fin du hero → moitié visible */}
+        <div className="absolute bottom-0 left-1/2 -z-0 w-[min(800px,150vw)] -translate-x-1/2 translate-y-1/2">
+          <Globe className="max-w-none" />
+        </div>
 
-          <h1 className="font-display text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight leading-[1.08] text-foreground text-balance">
-            Décrochez vos <span className="text-[#E51A31] underline decoration-[#E51A31]/30">4 C2</span> et Débloquez les{" "}
-            <span className="text-cyan-600 dark:text-cyan-400">+50 Points</span> d&apos;Entrée Express.
-          </h1>
-
-          <p className="font-body text-base sm:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed text-balance">
-            Fini le scroll interminable et les corrections humaines qui tardent 24h. Entraînez-vous dans les <strong>conditions réelles de l&apos;examen officiel CBT</strong> avec un examinateur vocal IA interactif en jeu de rôle.
-          </p>
-
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
-            <Button
-              asChild
-              size="lg"
-              className="w-full sm:w-auto bg-[#E51A31] hover:bg-[#B31224] text-white font-bold text-base px-8 h-13 shadow-lg hover:shadow-xl transition-all"
-            >
-              <Link href="/examens" className="flex items-center gap-2">
-                <span>Faire une simulation d&apos;examen</span>
-                <ArrowRight className="h-5 w-5" />
-              </Link>
-            </Button>
-
-            <Button asChild variant="outline" size="lg" className="w-full sm:w-auto font-medium text-base h-13">
-              <Link href="/nclc-calculator">Calculer mes points CRS Canada</Link>
-            </Button>
-          </div>
-
-          {/* 🌍 LE GLOBE POSITIONNÉ EN BAS AU CENTRE */}
-          <div className="relative mx-auto -mt-6 sm:-mt-10 max-w-2xl w-full flex items-center justify-center pointer-events-auto">
-            <div className="absolute bottom-0 inset-x-0 h-32 bg-gradient-to-t from-card via-card/80 to-transparent z-10 pointer-events-none" />
-            <Globe className="w-full max-w-[520px] aspect-square" />
-          </div>
-
-          {/* Statistiques clés */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-6 border-t border-border/60 relative z-20">
-            <div className="text-center">
-              <p className="font-display text-3xl sm:text-4xl font-black text-foreground">
-                <NumberTicker value={50} />
-                <span className="text-primary font-bold">+</span>
-              </p>
-              <p className="text-xs text-muted-foreground mt-0.5">Points CRS Débloqués</p>
+        <div className="relative z-10 mx-auto max-w-4xl space-y-7 pb-60 text-center sm:pb-[21rem]">
+          <BlurFade delay={0.05}>
+            <div className="inline-flex items-center gap-2 rounded-full bg-foreground/[0.05] px-4 py-1.5 text-xs font-bold text-foreground backdrop-blur-md dark:bg-white/[0.07]">
+              <Sparkles className="h-4 w-4 text-brand-crimson" />
+              <AnimatedShinyText className="!text-foreground/80 dark:!text-foreground/80" shimmerWidth={140}>
+                La Révolution de l&apos;Entraînement TCF &amp; TEF Canada
+              </AnimatedShinyText>
             </div>
+          </BlurFade>
 
-            <div className="text-center">
-              <p className="font-display text-3xl sm:text-4xl font-black text-emerald-600 dark:text-emerald-400">
-                <NumberTicker value={100} />%
-              </p>
-              <p className="text-xs text-muted-foreground mt-0.5">Format Conforme CBT FEI</p>
-            </div>
+          <BlurFade delay={0.15}>
+            <h1 className="font-display text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight leading-[1.08] text-foreground text-balance">
+              Décrochez vos{" "}
+              <span className="bg-gradient-to-r from-brand-crimson to-rose-500 bg-clip-text text-transparent">4 C2</span>{" "}
+              et Débloquez les{" "}
+              <span className="text-cyan-600 dark:text-cyan-400">+50 Points</span> d&apos;Entrée Express.
+            </h1>
+          </BlurFade>
 
-            <div className="text-center">
-              <p className="font-display text-3xl sm:text-4xl font-black text-foreground">
-                0<span className="text-xs font-normal"> sec</span>
-              </p>
-              <p className="text-xs text-muted-foreground mt-0.5">Correction IA Instantanée</p>
-            </div>
+          <BlurFade delay={0.25}>
+            <p className="font-body text-base sm:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed text-balance">
+              Fini le scroll interminable et les corrections humaines qui tardent 24h. Entraînez-vous dans les <strong className="text-foreground">conditions réelles de l&apos;examen officiel CBT</strong> avec un examinateur vocal IA interactif en jeu de rôle.
+            </p>
+          </BlurFade>
 
-            <div className="text-center">
-              <p className="font-display text-3xl sm:text-4xl font-black text-cyan-600 dark:text-cyan-400">
-                NCLC 7<span className="text-xs font-normal"> à 10</span>
-              </p>
-              <p className="text-xs text-muted-foreground mt-0.5">Objectif B2 / C1 / C2</p>
+          <BlurFade delay={0.35}>
+            <div className="flex flex-col items-center justify-center gap-4 pt-3 sm:flex-row">
+              <ShimmerButton
+                href="/examens"
+                background="#E51A31"
+                shimmerColor="#ffffff"
+                className="w-full sm:w-auto shadow-[0_10px_40px_-10px_rgba(229,26,49,0.65)]"
+              >
+                <span className="flex items-center gap-2 text-base font-semibold">
+                  Faire une simulation d&apos;examen
+                  <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+                </span>
+              </ShimmerButton>
+
+              <InteractiveHoverButton href="/nclc-calculator" className="w-full sm:w-auto text-base">
+                Calculer mes points CRS Canada
+              </InteractiveHoverButton>
             </div>
-          </div>
+          </BlurFade>
         </div>
       </section>
+
+      {/* Reste de la page dans un conteneur centré */}
+      <div className="space-y-24 px-4 pb-8 pt-20 sm:px-6">
+      {/* 📊 Statistiques clés */}
+      <BlurFade inView>
+        <section className="mx-auto grid max-w-5xl grid-cols-2 gap-y-8 sm:grid-cols-4 sm:divide-x sm:divide-border/50">
+          <div className="text-center">
+            <p className="font-display text-4xl sm:text-5xl font-black text-foreground">
+              <NumberTicker value={50} />
+              <span className="text-brand-crimson font-bold">+</span>
+            </p>
+            <p className="mt-1 text-xs text-muted-foreground">Points CRS Débloqués</p>
+          </div>
+
+          <div className="text-center">
+            <p className="font-display text-4xl sm:text-5xl font-black text-emerald-600 dark:text-emerald-400">
+              <NumberTicker value={100} />%
+            </p>
+            <p className="mt-1 text-xs text-muted-foreground">Format Conforme CBT FEI</p>
+          </div>
+
+          <div className="text-center">
+            <p className="font-display text-4xl sm:text-5xl font-black text-foreground">
+              0<span className="text-sm font-normal"> sec</span>
+            </p>
+            <p className="mt-1 text-xs text-muted-foreground">Correction IA Instantanée</p>
+          </div>
+
+          <div className="text-center">
+            <p className="font-display text-4xl sm:text-5xl font-black text-cyan-600 dark:text-cyan-400">
+              NCLC 7<span className="text-sm font-normal"> à 10</span>
+            </p>
+            <p className="mt-1 text-xs text-muted-foreground">Objectif B2 / C1 / C2</p>
+          </div>
+        </section>
+      </BlurFade>
 
       {/* ⚔️ COMPARATIF CHOC : SUPER4C2 VS OBJECTIF CANADA */}
       <section className="space-y-8 max-w-5xl mx-auto">
@@ -259,7 +276,7 @@ export default function HomePage() {
       </section>
 
       {/* 🎯 CTA FINAL BANNER */}
-      <section className="rounded-3xl border bg-gradient-to-r from-primary via-primary-dark to-slate-900 p-8 sm:p-14 text-white text-center space-y-6 shadow-2xl">
+      <section className="mx-auto max-w-6xl rounded-3xl border bg-gradient-to-r from-primary via-primary-dark to-slate-900 p-8 sm:p-14 text-white text-center space-y-6 shadow-2xl">
         <h2 className="font-display text-3xl sm:text-5xl font-black tracking-tight max-w-2xl mx-auto">
           Prêt à Valider votre Palier NCLC 7 et Réussir votre Immigration ?
         </h2>
@@ -276,6 +293,7 @@ export default function HomePage() {
           </Button>
         </div>
       </section>
+      </div>
     </div>
   );
 }

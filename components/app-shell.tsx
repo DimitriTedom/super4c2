@@ -19,10 +19,13 @@ export function AppShell({ header, children }: AppShellProps) {
     return <>{children}</>;
   }
 
+  // La page d'accueil gère elle-même ses largeurs (hero pleine largeur sans bordure)
+  const isHome = pathname === "/";
+
   return (
     <>
       {header}
-      <main className="mx-auto max-w-7xl px-4 py-8">{children}</main>
+      <main className={isHome ? "w-full" : "mx-auto max-w-7xl px-4 py-8"}>{children}</main>
     </>
   );
 }

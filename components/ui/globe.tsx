@@ -43,6 +43,7 @@ export function Globe({
     baseColor: isDark ? [0.2, 0.25, 0.38] : [0.92, 0.94, 0.98],
     markerColor: [229 / 255, 26 / 255, 49 / 255], // Brand Crimson #E51A31
     glowColor: isDark ? [0.35, 0.45, 0.65] : [0.9, 0.93, 0.98],
+    markerElevation: 0,
     markers: [
       // Canada destination hubs
       { location: [45.5017, -73.5673], size: 0.06 }, // Montréal
@@ -95,6 +96,10 @@ export function Globe({
       globe = createGlobe(canvasRef.current, {
         ...baseConfig,
         ...config,
+        markers: (config.markers ?? baseConfig.markers)?.map((m) => ({
+          ...m,
+          size: m.size * 0.45,
+        })),
         width: (widthRef.current * 2) || 800,
         height: (widthRef.current * 2) || 800,
       });
