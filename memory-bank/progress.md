@@ -15,15 +15,12 @@
 - [x] Phase 1 — Moteur CBT CE & CO complet (QCM, lecteur audio mono-écoute, pastilles 1-39, scoring TCF & NCLC, navigation).
 - [x] Phase 2 — Atelier d'Expression Écrite (EE) complet (Éditeur 3 tâches, compteur de mots FEI temps réel, grille FEI, Magic Rewrite C1/C2).
 - [x] Phase 3 — Salle d'Expression Orale (EO) & Voice Agent IA complet (Entretien dirigé, Jeu de rôle Tâche 2 en direct, Monologue argumenté, notation FEI).
-- [x] Phase 4 — Simulateur CRS, Carnet SRS & Dashboard complet :
-  - Simulateur viral de points CRS Entrée Express avec calcul des bonus linguistiques et francophones (`/nclc-calculator`).
-  - Carnet d'Erreurs intelligent avec algorithme de répétition espacée J+1, J+3, J+7 (`/carnet-erreurs`).
-  - Tableau de bord candidat avec radar des compétences NCLC (`/dashboard`).
-  - Page de tarification transparente avec 3 offres claires (`/tarifs`).
-  - Correction de l'erreur de build SSR (`next/headers` découplé via slot prop dans `AppShell`).
+- [x] Phase 4 — Simulateur CRS, Carnet SRS & Dashboard complet (Calculateur CRS viral, carnet SRS J+1/J+3/J+7, hub candidat, grille tarifaire).
+- [x] Phase 5 — Vitrine d'Acquisition (Landing Page `/`) complète (Hero Bricolage Grotesque, BentoGrid des 4 épreuves, comparatif direct Super4C2 vs Objectif Canada, statistiques clés).
+- [x] Résolution de l'erreur de build SSR (`next/headers` découplé via slot prop dans `AppShell`) — Build de production 16/16 pages 100% validé avec 0 erreur.
 
 ## En Cours
-- [ ] Phase 5 — Vitrine d'Acquisition (Landing Page `/`) : Hero immersif Bricolage Grotesque, BentoGrid des 4 épreuves, comparateur interactif Super4C2 vs Objectif Canada.
+- [ ] Tests utilisateurs de validation & déploiement en production.
 
 ## À Venir
 - [ ] Schéma de données Prisma (Exams, Questions, Answers, Submissions, AICorrections).
