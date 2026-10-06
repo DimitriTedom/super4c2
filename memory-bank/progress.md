@@ -14,16 +14,16 @@
 
 - [x] Phase 1 — Moteur CBT CE & CO complet (QCM, lecteur audio mono-écoute, pastilles 1-39, scoring TCF & NCLC, navigation).
 - [x] Phase 2 — Atelier d'Expression Écrite (EE) complet (Éditeur 3 tâches, compteur de mots FEI temps réel, grille FEI, Magic Rewrite C1/C2).
-- [x] Phase 3 — Salle d'Expression Orale (EO) & Voice Agent IA complet :
-  - Spécification formelle : `docs/specs/03-oral-expression-engine.md`.
-  - Simulateur oral immersif avec avatar stylisé et waveform dynamique (`OralWaveform`).
-  - Entretien dirigé (Tâche 1), Jeu de rôle interactif en direct avec répondant IA (Tâche 2), Monologue argumenté (Tâche 3).
-  - Synthèse vocale française et boucle conversationnelle temps réel.
-  - Rapport FEI post-entretien avec débit (mots/min), sous-notes sur 4 et tournures C1/C2 recommandées (`OralDebriefCard`).
-  - Catalogue `/examens` unifié couvrant les 4 épreuves officielles TCF Canada.
+- [x] Phase 3 — Salle d'Expression Orale (EO) & Voice Agent IA complet (Entretien dirigé, Jeu de rôle Tâche 2 en direct, Monologue argumenté, notation FEI).
+- [x] Phase 4 — Simulateur CRS, Carnet SRS & Dashboard complet :
+  - Simulateur viral de points CRS Entrée Express avec calcul des bonus linguistiques et francophones (`/nclc-calculator`).
+  - Carnet d'Erreurs intelligent avec algorithme de répétition espacée J+1, J+3, J+7 (`/carnet-erreurs`).
+  - Tableau de bord candidat avec radar des compétences NCLC (`/dashboard`).
+  - Page de tarification transparente avec 3 offres claires (`/tarifs`).
+  - Correction de l'erreur de build SSR (`next/headers` découplé via slot prop dans `AppShell`).
 
 ## En Cours
-- [ ] Phase 4 — Simulateur de Points CRS Entrée Express & Dashboard avec Carnet d'Erreurs SRS (`/nclc-calculator`, `/dashboard`, `/carnet-erreurs`).
+- [ ] Phase 5 — Vitrine d'Acquisition (Landing Page `/`) : Hero immersif Bricolage Grotesque, BentoGrid des 4 épreuves, comparateur interactif Super4C2 vs Objectif Canada.
 
 ## À Venir
 - [ ] Schéma de données Prisma (Exams, Questions, Answers, Submissions, AICorrections).
