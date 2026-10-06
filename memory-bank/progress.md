@@ -18,9 +18,11 @@
 - [x] Phase 4 — Simulateur CRS, Carnet SRS & Dashboard complet (Calculateur CRS viral, carnet SRS J+1/J+3/J+7, hub candidat, grille tarifaire).
 - [x] Phase 5 — Vitrine d'Acquisition (Landing Page `/`) complète (Hero Bricolage Grotesque, BentoGrid des 4 épreuves, comparatif direct Super4C2 vs Objectif Canada, statistiques clés).
 - [x] Résolution de l'erreur de build SSR (`next/headers` découplé via slot prop dans `AppShell`) — Build de production 16/16 pages 100% validé avec 0 erreur.
+- [x] Dépannage du serveur de dev local : libération du port 3000, réinitialisation de l'instance Next.js, toutes les 16 routes opérationnelles avec réponse HTTP 200.
+- [x] Correction des redirections d'introduction EE & EO dans `/examens` et configuration de l'autorisation microphone dans `next.config.ts`.
 
 ## En Cours
-- [ ] Tests utilisateurs de validation & déploiement en production.
+- [ ] Validation visuelle et parcours utilisateur complets dans le navigateur.
 
 ## À Venir
 - [ ] Schéma de données Prisma (Exams, Questions, Answers, Submissions, AICorrections).

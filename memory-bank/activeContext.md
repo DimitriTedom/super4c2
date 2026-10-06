@@ -1,20 +1,19 @@
 # Active Context: Super4C2
 
 ## 1. Focus Actuel
-- **Moteur CBT CE & CO (Phase 1) complété & fonctionnel :**
-  - Catalogue des examens disponible sur `/examens`.
-  - Écran de consignes & test audio sur `/examens/[seriesId]/intro`.
-  - Simulateur Compréhension Écrite (CE) sur `/examens/demo-101/ce`.
-  - Simulateur Compréhension Orale (CO) sur `/examens/demo-101-co/co` avec lecteur audio à écoute unique (`AudioPlayerCBT`).
-  - Mode plein écran immersif géré par `AppShell` (masquage automatique du header en examen).
-  - Nouveau Logomark détouré transparent intégré dans `BrandLogo` ; asset optimisé pour Favicon généré dans `public/brand/favicon-source-1024.png`.
+- **Résolution complète de l'erreur de rendu dev & build :**
+  - Conflit d'importation `next/headers` résolu (découplage Server/Client via slot prop dans `AppShell`).
+  - Cache corrompu purgé et processus orphelins sur le port 3000 nettoyés.
+  - Le serveur Next.js tourne proprement sur `http://localhost:3000` et toutes les routes principales (`/`, `/examens`, `/nclc-calculator`, `/carnet-erreurs`, `/tarifs`, `/examens/demo-101/ce`, `/examens/demo-101-ee/ee`, `/examens/demo-101-eo/eo`) renvoient **HTTP 200**.
+  - Liens du catalogue d'examen corrigés vers les écrans d'instructions dédiés (`/ee/intro` et `/eo/intro`).
+  - Autorisation micro `microphone=(self)` activée dans `next.config.ts` pour l'enregistrement oral.
 
 ## 2. Décisions Récentes
-- **Logomark :** Utilisation de `Le Logomark.png` (fond transparent) pour le site ; création de `favicon-source-1024.png` sur fond opaque Imperial Navy (#0B132B) recommandé pour favicon.io.
-- **Audios CO :** Mode démo avec synthèse vocale française navigateur native en fallback quand aucun fichier mp3 distant n'est fourni.
-- **Git Commit :** `dcc8abc` validé sur `main` avec 0 erreur TypeScript.
+- **Architecture SSR / Client :** Aucun composant client n'importe directement `site-header` ou `lib/supabase/server.ts`. Le header est passé comme ReactNode serveur injecté depuis `app/layout.tsx`.
+- **Permissions-Policy :** Activation du microphone pour permettre au Voice Agent d'enregistrer la voix du candidat en Expression Orale.
+- **Git Commit :** `947aaaa` sur `main`.
 
 ## 3. Prochaines Étapes Immédiates
-1. Spécification technique & développement de l'**Atelier d'Expression Écrite (EE)** (`docs/specs/02-written-expression-engine.md`).
-2. Interface de rédaction 3 tâches avec compteur de mots dynamique et jauges FEI.
-3. Intégration du moteur d'évaluation IA (grille 4 critères FEI + Magic Rewrite C1/C2).
+1. Vérification interactive dans le navigateur par l'utilisateur.
+2. Connexion de la base de données PostgreSQL / Supabase dès que le service Docker local est redémarré.
+3. Finalisation des webhooks Stripe pour le checkout sur `/tarifs`.
