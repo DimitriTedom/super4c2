@@ -16,13 +16,12 @@
 - [x] Phase 2 — Atelier d'Expression Écrite (EE) complet (Éditeur 3 tâches, compteur de mots FEI temps réel, grille FEI, Magic Rewrite C1/C2).
 - [x] Phase 3 — Salle d'Expression Orale (EO) & Voice Agent IA complet (Entretien dirigé, Jeu de rôle Tâche 2 en direct, Monologue argumenté, notation FEI).
 - [x] Phase 4 — Simulateur CRS, Carnet SRS & Dashboard complet (Calculateur CRS viral, carnet SRS J+1/J+3/J+7, hub candidat, grille tarifaire).
-- [x] Phase 5 — Vitrine d'Acquisition (Landing Page `/`) complète (Hero Bricolage Grotesque, BentoGrid des 4 épreuves, comparatif direct Super4C2 vs Objectif Canada, statistiques clés).
-- [x] Résolution de l'erreur de build SSR (`next/headers` découplé via slot prop dans `AppShell`) — Build de production 16/16 pages 100% validé avec 0 erreur.
-- [x] Dépannage du serveur de dev local : libération du port 3000, réinitialisation de l'instance Next.js, toutes les 16 routes opérationnelles avec réponse HTTP 200.
-- [x] Correction des redirections d'introduction EE & EO dans `/examens` et configuration de l'autorisation microphone dans `next.config.ts`.
+- [x] Phase 5 — Vitrine d'Acquisition (Landing Page `/`) : intégration du Globe 3D interactif WebGL centré en bas de la Hero section, barre de navigation avec pilule flottante et sélecteur de langue 🇨🇦 FR-CA.
+- [x] Préservation intégrale des argumentaires, des blocs comparatifs et des thèmes Clair / Sombre.
+- [x] Validation du build de production Next.js 15 (16/16 routes générées avec succès, 0 erreur).
 
 ## En Cours
-- [ ] Validation visuelle et parcours utilisateur complets dans le navigateur.
+- [ ] Revue visuelle utilisateur et finalisation de l'intégration base de données.
 
 ## À Venir
 - [ ] Schéma de données Prisma (Exams, Questions, Answers, Submissions, AICorrections).
