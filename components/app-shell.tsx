@@ -1,18 +1,27 @@
 "use client";
 
-import type { ReactNode } from "react";
 import { usePathname } from "next/navigation";
-import { SiteHeader } from "@/components/site-header";
+import type { ReactNode } from "react";
 
-/** Live exam screens (/examens/<id>/ce|co|ee|eo) are full-screen, distraction-free: no site chrome. */
+/** Les écrans d'examen en direct (/examens/<id>/ce|co|ee|eo) sont en plein écran officiel sans barre de navigation */
 const EXAM_ROOM = /^\/examens\/[^/]+\/(ce|co|ee|eo)\/?$/;
 
-export function AppShell({ children }: { children: ReactNode }) {
+interface AppShellProps {
+  header: ReactNode;
+  children: ReactNode;
+}
+
+export function AppShell({ header, children }: AppShellProps) {
   const pathname = usePathname();
-  if (EXAM_ROOM.test(pathname)) return <>{children}</>;
+  const isExamRoom = EXAM_ROOM.test(pathname);
+
+  if (isExamRoom) {
+    return <>{children}</>;
+  }
+
   return (
     <>
-      <SiteHeader />
+      {header}
       <main className="mx-auto max-w-7xl px-4 py-8">{children}</main>
     </>
   );

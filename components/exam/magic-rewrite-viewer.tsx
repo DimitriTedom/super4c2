@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Sparkles, ArrowRight, Check } from "lucide-react";
+import { Sparkles, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface MagicRewriteViewerProps {

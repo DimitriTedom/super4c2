@@ -14,7 +14,6 @@ interface WordCountBadgeProps {
 export function WordCountBadge({ current, min, max, className }: WordCountBadgeProps) {
   const isUnder = current < min;
   const isOver = current > max;
-  const isValid = !isUnder && !isOver;
 
   let badgeColor = "border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400";
   let icon = <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-500" />;

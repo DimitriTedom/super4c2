@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Award, CheckCircle2, AlertCircle, ChevronDown } from "lucide-react";
+
 import type { TaskEvaluation } from "@/lib/exam/written-types";
 import { cn } from "@/lib/utils";
 

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { CheckCircle2, PenTool, Sparkles, AlertCircle } from "lucide-react";
+import { CheckCircle2, PenTool, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { getWrittenSeries } from "@/lib/exam/mock-written-series";
 
