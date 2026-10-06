@@ -38,6 +38,20 @@ module.exports = {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
+        brand: {
+          crimson: "#E51A31",
+          "crimson-dark": "#B31224",
+          navy: "#0B132B",
+          cyan: "#00B4D8",
+          emerald: "#10B981",
+          amber: "#F59E0B",
+          slate: "#1E293B",
+        },
+      },
+      fontFamily: {
+        display: ["var(--font-bricolage)", "sans-serif"],
+        body: ["var(--font-dm-sans)", "sans-serif"],
+        mono: ["var(--font-space-mono)", "monospace"],
       },
       borderRadius: {
         lg: "var(--radius)",

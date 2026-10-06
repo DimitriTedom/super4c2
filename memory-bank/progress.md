@@ -6,11 +6,14 @@
 - [x] Initialisation du système Memory Bank (`projectbrief.md`, `productContext.md`, `systemPatterns.md`, `techContext.md`, `activeContext.md`, `progress.md`).
 - [x] Définition des règles et compétences mémoires pérennes.
 - [x] Création du Brand Canvas (`docs/brand/brand-canvas.md`) et du Guide Canva (`docs/brand/canva-branding-guide.md`).
-- [x] Génération du concept visuel de marque (Feuille d'érable rouge + onde sonore IA cyan).
+- [x] Intégration des assets de marque réels créés par Dimitri (`public/brand/` et `public/favicon_io/`).
+- [x] Création du composant dynamique `<BrandLogo />` adaptatif Thème Clair / Thème Sombre (`components/brand-logo.tsx`).
+- [x] Injection de Bricolage Grotesque, DM Sans et Space Mono via `next/font/google` dans `app/layout.tsx` et `tailwind.config.js`.
+- [x] Intégration du Header officiel avec BrandLogo et ThemeToggle (`components/site-header.tsx`).
 
 ## En Cours
-- [ ] Conception et export des logos/assets par Dimitri dans Canva.
-- [ ] Rédaction des tests & composants du moteur CBT (`docs/specs/01-cbt-exam-engine.md`).
+- [ ] Finalisation de l'installation des dépendances `npm install`.
+- [ ] Conception du premier écran du simulateur CBT Compréhension Écrite (`docs/specs/01-cbt-exam-engine.md`).
 
 ## À Venir
 - [ ] Schéma de données Prisma (Exams, Questions, Answers, Submissions, AICorrections).

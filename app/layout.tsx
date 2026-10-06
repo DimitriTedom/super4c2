@@ -1,28 +1,55 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Bricolage_Grotesque, DM_Sans, Space_Mono } from "next/font/google";
 import "./../styles/globals.css";
 
 import { ThemeProvider } from "@/components/theme-provider";
 import { SiteHeader } from "@/components/site-header";
 import { Toaster } from "@/components/ui/sonner";
 
-const inter = Inter({ subsets: ["latin"], display: "swap" });
+const bricolage = Bricolage_Grotesque({
+  subsets: ["latin"],
+  variable: "--font-bricolage",
+  display: "swap",
+});
+
+const dmSans = DM_Sans({
+  subsets: ["latin"],
+  variable: "--font-dm-sans",
+  display: "swap",
+});
+
+const spaceMono = Space_Mono({
+  weight: ["400", "700"],
+  subsets: ["latin"],
+  variable: "--font-space-mono",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: {
-    default: "Next.js Template",
-    template: "%s | Next.js Template",
+    default: "Super4C2 | Préparation TCF & TEF Canada — Objectif C2 / NCLC 7+",
+    template: "%s | Super4C2",
   },
-  description: "Next.js 15 + Supabase Auth + Prisma starter template.",
+  description:
+    "Plateforme d'entraînement officielle au TCF Canada et TEF Canada. Simulateur d'examen CBT officiel, examinateur oral vocal interactif IA et correction FEI instantanée.",
+  icons: {
+    icon: "/favicon.ico",
+    shortcut: "/favicon-32x32.png",
+    apple: "/apple-touch-icon.png",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={inter.className}>
-        <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
+    <html
+      lang="fr"
+      suppressHydrationWarning
+      className={`${bricolage.variable} ${dmSans.variable} ${spaceMono.variable}`}
+    >
+      <body className="font-body antialiased bg-background text-foreground min-h-screen">
+        <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
           <SiteHeader />
-          <main className="mx-auto max-w-5xl px-4 py-10">{children}</main>
+          <main className="mx-auto max-w-7xl px-4 py-8">{children}</main>
           <Toaster />
         </ThemeProvider>
       </body>
