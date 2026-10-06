@@ -27,19 +27,22 @@ export const metadata = {
 export default function HomePage() {
   return (
     <div className="overflow-x-clip">
-      {/* 🌟 HERO — pleine largeur, sans bordure ; globe rehaussé et agrandi en arrière-plan */}
-      <section className="relative overflow-hidden w-full flex flex-col items-center justify-start pt-6 sm:pt-8 lg:pt-10 pb-20 sm:pb-28 min-h-[720px] sm:min-h-[800px] lg:min-h-[840px]">
+      {/* 🌟 HERO — pleine largeur, sans bordure ; le globe est strictement coupé en deux à sa fin (équateur au bord bas) */}
+      <section className="relative overflow-hidden w-full flex flex-col items-center justify-start pt-6 sm:pt-8 lg:pt-10 pb-20 sm:pb-24 min-h-[680px] sm:min-h-[760px] lg:min-h-[800px] border-b border-border/40">
         {/* Halo d'ambiance + trame de points fondue */}
         <div className="pointer-events-none absolute inset-0 z-0 bg-[radial-gradient(65%_55%_at_50%_15%,rgba(229,26,49,0.12),transparent_70%),radial-gradient(45%_45%_at_85%_25%,rgba(0,180,216,0.10),transparent_70%)]" />
         <div className="pointer-events-none absolute inset-0 z-0 [background-image:radial-gradient(hsl(var(--foreground)/0.08)_1px,transparent_1px)] [background-size:28px_28px] [mask-image:radial-gradient(ellipse_75%_60%_at_50%_25%,black,transparent_75%)]" />
 
-        {/* 🌍 Globe en arrière-plan (z-0) : taille augmentée (1280px) et élévation sur l'axe Y (translate-y-[36%]) */}
-        <div className="pointer-events-none absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-[36%] z-0 w-[min(1280px,175vw)] aspect-square select-none">
+        {/* 🌍 Globe en arrière-plan (z-0) : son centre est calé exactement sur le bord bas du hero (translate-y-1/2) -> seule la moitié haute est visible */}
+        <div className="pointer-events-none absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 z-0 w-[min(1360px,180vw)] aspect-square select-none">
           <Globe className="w-full h-full max-w-none pointer-events-auto" />
         </div>
 
         {/* 📝 Contenu textuel et CTAs au premier plan (z-10) — strictement au-dessus du globe sur l'axe Z */}
         <div className="relative z-10 mx-auto max-w-4xl space-y-6 sm:space-y-7 text-center">
+          {/* Halo doux de contraste & lisibilité textuelle au-dessus du globe */}
+          <div className="pointer-events-none absolute -inset-x-8 -inset-y-6 z-[-1] rounded-3xl bg-background/50 dark:bg-background/40 backdrop-blur-[2px] [mask-image:radial-gradient(ellipse_65%_55%_at_50%_50%,black_30%,transparent_80%)]" />
+
           <BlurFade delay={0.05}>
             <div className="group relative inline-flex items-center gap-2 rounded-full border border-border/70 bg-background/85 px-4 py-1.5 shadow-[inset_0_-8px_10px_rgba(229,26,49,0.06)] transition-all duration-300 hover:border-brand-crimson/50 hover:shadow-[inset_0_-8px_14px_rgba(229,26,49,0.15)] backdrop-blur-md">
               <span
@@ -67,7 +70,7 @@ export default function HomePage() {
           </BlurFade>
 
           <BlurFade delay={0.15}>
-            <h1 className="font-display text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight leading-[1.08] text-foreground text-balance">
+            <h1 className="font-display text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight leading-[1.08] text-foreground text-balance drop-shadow-[0_2px_12px_rgba(0,0,0,0.06)] dark:drop-shadow-[0_2px_16px_rgba(0,0,0,0.4)]">
               Décrochez vos{" "}
               <span className="bg-gradient-to-r from-brand-crimson to-rose-500 bg-clip-text text-transparent">4 C2</span>{" "}
               et Débloquez les{" "}
@@ -76,8 +79,8 @@ export default function HomePage() {
           </BlurFade>
 
           <BlurFade delay={0.25}>
-            <p className="font-body text-base sm:text-xl text-muted-foreground font-medium max-w-2xl mx-auto leading-relaxed text-balance">
-              Fini le scroll interminable et les corrections humaines qui tardent 24h. Entraînez-vous dans les <strong className="text-foreground">conditions réelles de l&apos;examen officiel CBT</strong> avec un examinateur vocal IA interactif en jeu de rôle.
+            <p className="font-body text-base sm:text-xl text-foreground/90 dark:text-slate-200 font-medium max-w-2xl mx-auto leading-relaxed text-balance">
+              Fini le scroll interminable et les corrections humaines qui tardent 24h. Entraînez-vous dans les <strong className="text-foreground font-bold">conditions réelles de l&apos;examen officiel CBT</strong> avec un examinateur vocal IA interactif en jeu de rôle.
             </p>
           </BlurFade>
 
