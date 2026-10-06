@@ -64,10 +64,10 @@ Une véritable identité de marque ne se résume pas à une seule image. Elle co
 
 ### 📐 Variante 2 : Le Logotype (Wordmark / Typogramme Seul)
 * **Définition :** Le nom de la marque stylisé typographiquement, sans symbole graphique.
-* **Composition :**
-  * Le mot `SUPER` en capitales denses (Navy `#0B132B` ou Blanc `#FFFFFF`).
-  * Le chiffre `4` avec une incision vectorielle ou un angle distinctif.
-  * Le sigle `C2` en exposant ou mis en exergue en `Maple Crimson #E51A31` avec un point ou filet cyan.
+* **Polices & Réglages Canva :**
+  * **Pour le mot `SUPER4C2` :** Police **Bricolage Grotesque** *(Poids : **ExtraBold 800** ou **900 Black**, Majuscules)*.
+    * *Réglage Canva :* Espacement des lettres (*Letter-spacing*) réglé à **-20 ou -30** pour resserrer les caractères et maximiser l'impact compact et sculptural des ink-traps.
+    * *Couleurs :* `SUPER` en Blanc `#FFFFFF` (ou Navy `#0B132B`) + `4` blanc + `C2` en Maple Crimson `#E51A31` (ou avec une pastille cyan `#00B4D8`).
 * **Usage :**
   * Pied de page (Footer) épuré
   * En-têtes de factures, mentions légales, contrats
@@ -77,12 +77,12 @@ Une véritable identité de marque ne se résume pas à une seule image. Elle co
 ---
 
 ### 📐 Variante 3 : Le Logo Primaire (Combinaison Horizontale)
-* **Définition :** La combinaison standard de la marque.
-* **Composition :**
-  * **Gauche :** Logomark (Feuille d'érable + onde).
-  * **Centre/Droite :** Logotype `SUPER4C2`.
-  * **Sous le logotype :** Tagline statutaire en petites capitales espacées (`tracking: 0.25em`) :  
-    `TCF & TEF CANADA PREP` ou `SIMULATION CBT & EXAMINATEUR IA`.
+* **Définition :** La combinaison standard officielle de la marque.
+* **Polices & Réglages Canva :**
+  * **À gauche :** Le Logomark (Feuille d'érable rouge + onde sonore cyan).
+  * **Au centre/droite (Ligne 1) :** `SUPER4C2` en police **Bricolage Grotesque** *(ExtraBold 800, majuscules)*.
+  * **En dessous (Ligne 2 - Baseline) :** `TCF & TEF CANADA PREP` en police **DM Sans** *(SemiBold 600, majuscules)*.
+    * *Réglage Canva pour la baseline :* Taille de police 2,5x plus petite que le titre, espacement des lettres (*Letter-spacing*) très élargi à **+180 ou +200** pour une assise statutaire et aérée.
 * **Usage :**
   * Header de l'application web (Desktop & Tablette)
   * Bannières de présentation et en-tête des rapports d'examen
@@ -92,10 +92,10 @@ Une véritable identité de marque ne se résume pas à une seule image. Elle co
 
 ### 📐 Variante 4 : Le Logo Secondaire (Combinaison Verticale / Stacked)
 * **Définition :** Disposition centrée verticale, où le symbole surplombe le texte.
-* **Composition :**
-  * Le Logomark centré en grand en haut.
-  * Le Logotype `SUPER4C2` centré juste en dessous.
-  * La mention `L'EXCELLENCE C2 EN CONDITIONS RÉELLES` en bas.
+* **Polices & Réglages Canva :**
+  * **En haut (centré) :** Le Logomark en grand.
+  * **Au milieu (centré) :** `SUPER4C2` en police **Bricolage Grotesque** *(ExtraBold 800, majuscules, letter-spacing -20)*.
+  * **En bas (centré) :** `L'EXCELLENCE C2 EN CONDITIONS RÉELLES` en police **DM Sans** *(Medium 500, majuscules, letter-spacing +150)*.
 * **Usage :**
   * Écran de chargement initial (Splash Screen de l'application)
   * Couvertures de documents pédagogiques et brochures PDF
