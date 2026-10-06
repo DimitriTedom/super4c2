@@ -15,6 +15,7 @@ model User {
   updatedAt DateTime @updatedAt
 
   profile   Profile?
+  attempts  UserAttempt[]
 
   @@map("users")
 }
@@ -29,4 +30,75 @@ model Profile {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("profiles")
+}
+
+enum ExamType {
+  TCF_CANADA
+  TEF_CANADA
+}
+
+enum Discipline {
+  COMPREHENSION_ECRITE
+  COMPREHENSION_ORALE
+  EXPRESSION_ECRITE
+  EXPRESSION_ORALE
+}
+
+model ExamSeries {
+  id           String        @id @default(cuid())
+  seriesNumber Int
+  title        String
+  examType     ExamType      @default(TCF_CANADA)
+  isFreeDemo   Boolean       @default(false)
+  createdAt    DateTime      @default(now())
+  questions    Question[]
+  attempts     UserAttempt[]
+
+  @@unique([examType, seriesNumber])
+  @@map("exam_series")
+}
+
+model Question {
+  id              String     @id @default(cuid())
+  seriesId        String
+  series          ExamSeries @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+  discipline      Discipline
+  questionNumber  Int
+  nclcTargetLevel Int?
+
+  documentText     String? @db.Text
+  documentImageUrl String?
+  audioUrl         String?
+  audioTranscript  String? @db.Text
+
+  prompt        String @db.Text
+  optionA       String
+  optionB       String
+  optionC       String
+  optionD       String
+  correctOption String
+
+  explanation  String  @db.Text
+  trapAnalysis String? @db.Text
+
+  @@unique([seriesId, discipline, questionNumber])
+  @@map("questions")
+}
+
+model UserAttempt {
+  id             String     @id @default(cuid())
+  userId         String     @db.Uuid
+  user           User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  seriesId       String
+  series         ExamSeries @relation(fields: [seriesId], references: [id])
+  discipline     Discipline
+  startedAt      DateTime   @default(now())
+  completedAt    DateTime?
+  rawScore       Int        @default(0)
+  tcfScaledScore Int        @default(0)
+  nclcLevel      Int        @default(0)
+  answers        Json
+
+  @@index([userId, discipline])
+  @@map("user_attempts")
 }

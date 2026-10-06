@@ -12,9 +12,14 @@
 - [x] Intégration du Header officiel avec BrandLogo et ThemeToggle (`components/site-header.tsx`).
 - [x] Installation des dépendances et validation du build de production Next.js 15 (`npm run build` : 100% succès sans erreur).
 
+- [x] Schéma Prisma CBT (ExamSeries, Question, UserAttempt) — `prisma generate` OK, migration NON appliquée (DB/Docker indisponible).
+- [x] Moteur CBT CE : `lib/exam/*` (types, scoring NCLC/CRS, mock série 101 de 5 questions), `hooks/use-exam-session.ts` (timer par deadline + autosave localStorage), `components/exam/*`, route `/examens/demo-101/ce`.
+
 ## En Cours
-- [ ] Modélisation Prisma du Moteur d'Examen CBT (`prisma/schema.prisma`).
-- [ ] Conception du premier écran du simulateur CBT Compréhension Écrite (`docs/specs/01-cbt-exam-engine.md`).
+- [ ] Vérification visuelle navigateur de `/examens/demo-101/ce` (light/dark).
+- [ ] Compléter la série à 39 questions réelles ; lecteur audio CO (`AudioPlayerCBT`).
+- [ ] Docker/WSL cassé (service WSL RPC) : Dimitri doit redémarrer LxssManager/Windows, puis supprimer conteneurs du portfolio.
+- Note : `npx shadcn add` a échoué (timeout réseau vers ui.shadcn.com) → composants custom sans Radix radio-group.
 
 ## À Venir
 - [ ] Schéma de données Prisma (Exams, Questions, Answers, Submissions, AICorrections).
