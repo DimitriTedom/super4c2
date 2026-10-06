@@ -27,19 +27,20 @@ export default function HomePage() {
   return (
     <div className="overflow-x-clip">
       {/* 🌟 HERO — pleine largeur, sans bordure ; le globe est coupé en deux par le bas du hero */}
-      <section className="relative isolate flex min-h-[max(46rem,calc(100svh-5.75rem))] flex-col items-center overflow-hidden px-4 pt-16 sm:px-6 sm:pt-24">
+      <section className="relative overflow-hidden w-full flex flex-col items-center justify-start pt-20 sm:pt-28 pb-28 sm:pb-36 min-h-[760px] sm:min-h-[840px]">
         {/* Halo d'ambiance + trame de points fondue */}
-        <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(60%_55%_at_50%_0%,rgba(229,26,49,0.12),transparent_70%),radial-gradient(40%_40%_at_85%_20%,rgba(0,180,216,0.10),transparent_70%)]" />
-        <div className="pointer-events-none absolute inset-0 -z-10 [background-image:radial-gradient(hsl(var(--foreground)/0.10)_1px,transparent_1px)] [background-size:26px_26px] [mask-image:radial-gradient(ellipse_70%_60%_at_50%_0%,black,transparent_75%)]" />
+        <div className="pointer-events-none absolute inset-0 z-0 bg-[radial-gradient(65%_55%_at_50%_15%,rgba(229,26,49,0.12),transparent_70%),radial-gradient(45%_45%_at_85%_25%,rgba(0,180,216,0.10),transparent_70%)]" />
+        <div className="pointer-events-none absolute inset-0 z-0 [background-image:radial-gradient(hsl(var(--foreground)/0.08)_1px,transparent_1px)] [background-size:28px_28px] [mask-image:radial-gradient(ellipse_75%_60%_at_50%_25%,black,transparent_75%)]" />
 
-        {/* 🌍 Globe ancré au bord inférieur : son centre est sur la ligne de fin du hero → moitié visible */}
-        <div className="absolute bottom-0 left-1/2 -z-0 w-[min(800px,150vw)] -translate-x-1/2 translate-y-1/2">
-          <Globe className="max-w-none" />
+        {/* 🌍 Globe en arrière-plan (z-0) : son centre est calé sur le bord bas du hero -> la moitié supérieure monte derrière le texte et les CTAs */}
+        <div className="pointer-events-none absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 z-0 w-[min(980px,150vw)] aspect-square select-none">
+          <Globe className="w-full h-full max-w-none pointer-events-auto" />
         </div>
 
-        <div className="relative z-10 mx-auto max-w-4xl space-y-7 pb-60 text-center sm:pb-[21rem]">
+        {/* 📝 Contenu textuel et CTAs au premier plan (z-10) — strictement au-dessus du globe sur l'axe Z */}
+        <div className="relative z-10 mx-auto max-w-4xl space-y-7 text-center">
           <BlurFade delay={0.05}>
-            <div className="inline-flex items-center gap-2 rounded-full bg-foreground/[0.05] px-4 py-1.5 text-xs font-bold text-foreground backdrop-blur-md dark:bg-white/[0.07]">
+            <div className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-background/80 px-4 py-1.5 text-xs font-bold text-foreground backdrop-blur-md shadow-xs">
               <Sparkles className="h-4 w-4 text-brand-crimson" />
               <AnimatedShinyText className="!text-foreground/80 dark:!text-foreground/80" shimmerWidth={140}>
                 La Révolution de l&apos;Entraînement TCF &amp; TEF Canada
@@ -57,7 +58,7 @@ export default function HomePage() {
           </BlurFade>
 
           <BlurFade delay={0.25}>
-            <p className="font-body text-base sm:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed text-balance">
+            <p className="font-body text-base sm:text-xl text-muted-foreground font-medium max-w-2xl mx-auto leading-relaxed text-balance">
               Fini le scroll interminable et les corrections humaines qui tardent 24h. Entraînez-vous dans les <strong className="text-foreground">conditions réelles de l&apos;examen officiel CBT</strong> avec un examinateur vocal IA interactif en jeu de rôle.
             </p>
           </BlurFade>

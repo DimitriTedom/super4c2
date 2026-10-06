@@ -140,7 +140,7 @@ export function Globe({
   return (
     <div
       className={cn(
-        "relative mx-auto aspect-square w-full max-w-[700px]",
+        "relative mx-auto aspect-square w-full",
         className
       )}
     >
