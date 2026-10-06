@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { BookOpenText, Headphones, PenTool, Mic, BookMarked, Sparkles, Trophy, ArrowRight, CheckCircle2 } from "lucide-react";
+import { BookOpenText, Headphones, PenTool, Mic, BookMarked, Sparkles, Trophy, ArrowRight } from "lucide-react";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
 
@@ -17,7 +17,6 @@ export default async function DashboardPage() {
   }
 
   // Profil simulé candidat
-  const targetCrsBonus = 50;
   const currentSkills = [
     { code: "CE", name: "Compréhension Écrite", level: 8, target: 7, ok: true, href: "/examens/demo-101/ce", icon: BookOpenText },
     { code: "CO", name: "Compréhension Orale", level: 7, target: 7, ok: true, href: "/examens/demo-101-co/co", icon: Headphones },

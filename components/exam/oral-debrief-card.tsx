@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Mic, CheckCircle2, AlertTriangle, Sparkles, Volume2, Award } from "lucide-react";
+import { CheckCircle2, AlertTriangle, Sparkles } from "lucide-react";
 import type { OralExamEvaluation } from "@/lib/exam/oral-types";
 import { cn } from "@/lib/utils";
 

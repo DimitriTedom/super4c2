@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { Mic, MicOff, Volume2, Clock, Send, RotateCcw, User, Bot, CheckCircle2, ChevronRight, Play } from "lucide-react";
+import { Mic, MicOff, Clock, Send, RotateCcw, User, Bot, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { OralWaveform } from "@/components/exam/oral-waveform";
 import { OralDebriefCard } from "@/components/exam/oral-debrief-card";
@@ -91,6 +91,17 @@ export function OralExamRoom({ series }: OralExamRoomProps) {
     };
   }, [currentTaskIndex, isExamCompleted, series.tasks, speakExaminerText]);
 
+  // Clôture et évaluation de l'épreuve
+  const handleCompleteExam = useCallback(() => {
+    setIsExamCompleted(true);
+    setIsRecording(false);
+    if (typeof window !== "undefined" && "speechSynthesis" in window) {
+      window.speechSynthesis.cancel();
+    }
+    const evalResult = evaluateOralExam(series, dialogues);
+    setEvaluation(evalResult);
+  }, [dialogues, series]);
+
   // Minuteur de la tâche active
   useEffect(() => {
     if (isExamCompleted) return;
@@ -112,23 +123,12 @@ export function OralExamRoom({ series }: OralExamRoomProps) {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [currentTaskIndex, isExamCompleted, series.tasks]);
+  }, [currentTaskIndex, isExamCompleted, series.tasks, handleCompleteExam]);
 
   // Défilement automatique du chat
   useEffect(() => {
     dialogueEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [dialogues, currentTaskIndex]);
-
-  // Clôture et évaluation de l'épreuve
-  const handleCompleteExam = useCallback(() => {
-    setIsExamCompleted(true);
-    setIsRecording(false);
-    if (typeof window !== "undefined" && "speechSynthesis" in window) {
-      window.speechSynthesis.cancel();
-    }
-    const evalResult = evaluateOralExam(series, dialogues);
-    setEvaluation(evalResult);
-  }, [dialogues, series]);
 
   // Envoi de la réplique du candidat
   const handleSendCandidateSpeech = (customSpeech?: string) => {

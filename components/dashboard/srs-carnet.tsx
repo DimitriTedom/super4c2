@@ -1,8 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import Link from "next/link";
-import { BookMarked, CheckCircle2, RotateCcw, AlertTriangle, ArrowRight, Sparkles, Filter } from "lucide-react";
+import { CheckCircle2, Filter } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 

@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo } from "react";
 import Link from "next/link";
-import { Sparkles, Trophy, ArrowRight, CheckCircle2, ShieldCheck, Flame } from "lucide-react";
+import { ArrowRight, CheckCircle2, Flame } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Check, Sparkles, ArrowRight, ShieldCheck, Zap } from "lucide-react";
+import { Check, ArrowRight, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export const metadata = {

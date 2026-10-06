@@ -17,15 +17,14 @@ export function evaluateOralExam(
     });
   });
 
-  const totalDurationMinutes = 10;
   const wordsPerMinute = candidateWords > 0 ? Math.round(candidateWords / 4.5) : 0;
 
   // Critères FEI sur 4 points chacun (total 20 points)
-  let fluiditeScore = candidateWords >= 180 ? 3.5 : candidateWords >= 80 ? 2.8 : 1.5;
-  let phonologieScore = candidateWords >= 100 ? 3.4 : 2.5;
-  let lexiqueScore = candidateWords >= 180 ? 3.8 : candidateWords >= 80 ? 3.0 : 2.0;
-  let morphoScore = candidateWords >= 150 ? 3.6 : 2.8;
-  let interactionScore = candidateTurns >= 4 ? 3.9 : candidateTurns >= 2 ? 3.0 : 1.8;
+  const fluiditeScore = candidateWords >= 180 ? 3.5 : candidateWords >= 80 ? 2.8 : 1.5;
+  const phonologieScore = candidateWords >= 100 ? 3.4 : 2.5;
+  const lexiqueScore = candidateWords >= 180 ? 3.8 : candidateWords >= 80 ? 3.0 : 2.0;
+  const morphoScore = candidateWords >= 150 ? 3.6 : 2.8;
+  const interactionScore = candidateTurns >= 4 ? 3.9 : candidateTurns >= 2 ? 3.0 : 1.8;
 
   const totalScore = Math.min(20, Math.round((fluiditeScore + phonologieScore + lexiqueScore + morphoScore + interactionScore) * 10) / 10);
   

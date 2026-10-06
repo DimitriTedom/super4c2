@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { CheckCircle2, Mic, Headphones, Sparkles, MessageSquare } from "lucide-react";
+import { CheckCircle2, Mic, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { getOralSeries } from "@/lib/exam/mock-oral-series";
 
