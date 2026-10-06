@@ -10,9 +10,10 @@
 - [x] Création du composant dynamique `<BrandLogo />` adaptatif Thème Clair / Thème Sombre (`components/brand-logo.tsx`).
 - [x] Injection de Bricolage Grotesque, DM Sans et Space Mono via `next/font/google` dans `app/layout.tsx` et `tailwind.config.js`.
 - [x] Intégration du Header officiel avec BrandLogo et ThemeToggle (`components/site-header.tsx`).
+- [x] Installation des dépendances et validation du build de production Next.js 15 (`npm run build` : 100% succès sans erreur).
 
 ## En Cours
-- [ ] Finalisation de l'installation des dépendances `npm install`.
+- [ ] Modélisation Prisma du Moteur d'Examen CBT (`prisma/schema.prisma`).
 - [ ] Conception du premier écran du simulateur CBT Compréhension Écrite (`docs/specs/01-cbt-exam-engine.md`).
 
 ## À Venir
