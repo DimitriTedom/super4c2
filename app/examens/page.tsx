@@ -104,7 +104,7 @@ export default function ExamCataloguePage() {
                 </p>
               </div>
               <Button asChild className="bg-[#E51A31] hover:bg-[#B31224] text-white">
-                <Link href={`/examens/${s.id}/intro`}>Accéder à l&apos;atelier écrit</Link>
+                <Link href={`/examens/${s.id}/ee/intro`}>Accéder à l&apos;atelier écrit</Link>
               </Button>
             </li>
           ))}
@@ -148,7 +148,7 @@ export default function ExamCataloguePage() {
                 </p>
               </div>
               <Button asChild className="bg-cyan-600 hover:bg-cyan-700 text-white">
-                <Link href={`/examens/${s.id}/intro`}>Entrer en salle d&apos;entretien</Link>
+                <Link href={`/examens/${s.id}/eo/intro`}>Entrer en salle d&apos;entretien</Link>
               </Button>
             </li>
           ))}
