@@ -38,10 +38,13 @@
   * Dark Background : `hsl(224, 71%, 4%)` (Noir bleuté profond).
   * Card Surfaces : `hsl(0, 0%, 100%)` (Light) / `hsl(222, 47%, 9%)` (Dark).
 
-### Typographie
-* **Titres & Display :** *Outfit* ou *Plus Jakarta Sans* (moderne, géométrique, confiant, impact fort).
-* **Corps de texte & Questions :** *Inter* (lisibilité optimale pour la lecture prolongée de textes d'examen).
-* **Chiffres & Chronomètre :** *JetBrains Mono* ou polices tabulaires (`tabular-nums`) pour le décompte des secondes et les scores.
+### Typographie Signature
+* **Titres, Hero & Logotype :** **Bricolage Grotesque** *(Poids : Bold 700 / ExtraBold 800)*
+  * *Raison :* Conçue par Mathieu Triay, cette police néo-grotesque intègre des pièges à encre (*ink traps*) prononcés et une personnalité expressive puissante. Elle confère à Super4C2 une âme vivante, ultra-moderne et immédiatement reconnaissable, à des années-lumière des polices génériques d'EdTech.
+* **Corps de texte & Textes d'examen :** **DM Sans** ou **Manrope** *(Poids : Regular 400 / Medium 500)*
+  * *Raison :* Neutralité et lisibilité clinique parfaites pour équilibrer la personnalité forte de Bricolage Grotesque lors de la lecture des textes longs de Compréhension Écrite.
+* **Chiffres & Chronomètre :** **Space Mono** ou **JetBrains Mono** *(Poids : Bold 700, tabular-nums)*
+  * *Raison :* Monospace tranché pour les décomptes de secondes d'examen et les scores NCLC/CRS.
 
 ### Ton de Voix (Tone of Voice)
 * **Empathique mais Rigoureux :** Nous comprenons le stress immense de l'immigration canadienne, nous guidons avec bienveillance mais sans fausse complaisance.

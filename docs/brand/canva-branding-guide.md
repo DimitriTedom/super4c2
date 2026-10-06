@@ -8,30 +8,21 @@ Ce document est le guide de référence pour concevoir l'univers graphique compl
 
 Les polices comme *Inter*, *Montserrat* ou *Roboto* sont omniprésentes et donnent une impression de template préconçu. Pour **Super4C2**, nous recherchons une signature visuelle qui évoque **la haute précision, l'exigence intellectuelle et la puissance technologique**.
 
-Voici les **3 univers typographiques d'élite** (tous disponibles sur Canva ou Google Fonts) :
+Voici la sélection typographique officielle avec **Bricolage Grotesque** au cœur de l'identité :
 
-### 💎 Univers 1 : L'Avant-Garde Architecturale (Recommandé)
-* **Caractère :** Audacieux, mémorable, sculptural. Évoque un produit d'ingénierie et de design contemporain.
-* **Titre / Display :** **Syne** *(Poids : Bold 700 ou ExtraBold 800)*
-  * *Pourquoi :* Ses courbes géométriques et ses terminaisons asymétriques donnent une identité visuelle immédiate et statutaire qu'aucun concurrent ne possède.
-* **Sous-titres & Corps de texte :** **Manrope** *(Poids : Medium 500 & SemiBold 600)*
-  * *Pourquoi :* Typographie géométrique moderne à fort contraste de graisse, ultra-lisible sur écran pour de longs textes d'examen.
-* **Données chiffrées & Chronomètre :** **JetBrains Mono** *(Poids : Medium 500)*
+### 💎 Le Choix Officiel : Bricolage Grotesque + DM Sans (Personnalité & Maîtrise)
+* **Caractère :** Expressif, brut, ultra-contemporain, humaniste et technique à la fois.
+* **Titres, Display & Logotype :** **Bricolage Grotesque** *(Poids : Bold 700 / ExtraBold 800 / 900 Black)*
+  * *Pourquoi c'est un game-changer :* Créée par Mathieu Triay, cette typographie possède des pièges à encre (*ink traps*) sculpturaux et des courbes organiques fascinantes. Elle donne à **SUPER4C2** un impact visuel foudroyant, haut de gamme et impossible à confondre avec les sites d'examen génériques.
+  * *Disponibilité :* Gratuite sur Google Fonts et importable directement dans Canva (ou disponible nativement).
+* **Sous-titres & Corps de texte d'examen :** **DM Sans** *(Poids : Regular 400 & Medium 500)* ou **Manrope**
+  * *Pourquoi :* Une police suisse-grotesque épurée et géométrique qui offre un contrepoint calme et une lisibilité parfaite pour les 39 questions de lecture du TCF.
+* **Données chiffrées & Chronomètre :** **Space Mono** ou **JetBrains Mono** *(Poids : Bold 700)*
+  * *Pourquoi :* L'esthétique des terminaux d'examen et des timers officiels.
 
-### 🚀 Univers 2 : La Haute Précision Technologique (Cyber-Executive)
-* **Caractère :** Futuriste, tranché, inspiré de l'aérospatiale et de l'intelligence artificielle avancée.
-* **Titre / Display :** **Space Grotesk** *(Poids : Bold 700)*
-  * *Pourquoi :* Dessinée par Florian Karsten, elle intègre des angles géométriques subtils et une personnalité tech assumée sans tomber dans le gadget.
-* **Sous-titres & Corps de texte :** **DM Sans** *(Poids : Regular 400 & Medium 500)*
-  * *Pourquoi :* Excellente lisibilité tout en conservant une géométrie cohérente avec Space Grotesk.
-* **Données chiffrées & Chronomètre :** **Space Mono** *(Poids : Bold 700)*
-
-### 🏛️ Univers 3 : L'Autorité Académique & Prestige (Ivy League / Institut Fédéral)
-* **Caractère :** Institutionnel, noble, digne d'une haute école ou d'un organisme d'immigration officiel.
-* **Titre / Display :** **Cinzel** ou **Bodoni Moda** *(Poids : SemiBold 600)*
-  * *Pourquoi :* L'élégance intemporelle des capitales romaines, conférant une légitimité gouvernementale et officielle incontestable.
-* **Sous-titres & Corps de texte :** **Plus Jakarta Sans** *(Poids : Medium 500)*
-* **Données chiffrées & Chronomètre :** **Roboto Mono** *(Poids : Medium 500)*
+### ⚡ Alternatives Secondaires d'Appui
+* **Option Alternative A (Architecturale) :** **Syne** (Titres) + **Manrope** (Corps).
+* **Option Alternative B (Tech Géométrique) :** **Space Grotesk** (Titres) + **DM Sans** (Corps).
 
 ---
 
