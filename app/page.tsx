@@ -15,6 +15,7 @@ import { Globe } from "@/components/ui/globe";
 import { ShimmerButton } from "@/components/ui/shimmer-button";
 import { InteractiveHoverButton } from "@/components/ui/interactive-hover-button";
 import { AnimatedShinyText } from "@/components/ui/animated-shiny-text";
+import { AnimatedGradientText } from "@/components/ui/animated-gradient-text";
 import { BlurFade } from "@/components/ui/blur-fade";
 
 export const metadata = {
@@ -26,25 +27,42 @@ export const metadata = {
 export default function HomePage() {
   return (
     <div className="overflow-x-clip">
-      {/* 🌟 HERO — pleine largeur, sans bordure ; le globe est coupé en deux par le bas du hero */}
-      <section className="relative overflow-hidden w-full flex flex-col items-center justify-start pt-20 sm:pt-28 pb-28 sm:pb-36 min-h-[760px] sm:min-h-[840px]">
+      {/* 🌟 HERO — pleine largeur, sans bordure ; globe rehaussé et agrandi en arrière-plan */}
+      <section className="relative overflow-hidden w-full flex flex-col items-center justify-start pt-6 sm:pt-8 lg:pt-10 pb-20 sm:pb-28 min-h-[720px] sm:min-h-[800px] lg:min-h-[840px]">
         {/* Halo d'ambiance + trame de points fondue */}
         <div className="pointer-events-none absolute inset-0 z-0 bg-[radial-gradient(65%_55%_at_50%_15%,rgba(229,26,49,0.12),transparent_70%),radial-gradient(45%_45%_at_85%_25%,rgba(0,180,216,0.10),transparent_70%)]" />
         <div className="pointer-events-none absolute inset-0 z-0 [background-image:radial-gradient(hsl(var(--foreground)/0.08)_1px,transparent_1px)] [background-size:28px_28px] [mask-image:radial-gradient(ellipse_75%_60%_at_50%_25%,black,transparent_75%)]" />
 
-        {/* 🌍 Globe en arrière-plan (z-0) : son centre est calé sur le bord bas du hero -> la moitié supérieure monte derrière le texte et les CTAs */}
-        <div className="pointer-events-none absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 z-0 w-[min(980px,150vw)] aspect-square select-none">
+        {/* 🌍 Globe en arrière-plan (z-0) : taille augmentée (1280px) et élévation sur l'axe Y (translate-y-[36%]) */}
+        <div className="pointer-events-none absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-[36%] z-0 w-[min(1280px,175vw)] aspect-square select-none">
           <Globe className="w-full h-full max-w-none pointer-events-auto" />
         </div>
 
         {/* 📝 Contenu textuel et CTAs au premier plan (z-10) — strictement au-dessus du globe sur l'axe Z */}
-        <div className="relative z-10 mx-auto max-w-4xl space-y-7 text-center">
+        <div className="relative z-10 mx-auto max-w-4xl space-y-6 sm:space-y-7 text-center">
           <BlurFade delay={0.05}>
-            <div className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-background/80 px-4 py-1.5 text-xs font-bold text-foreground backdrop-blur-md shadow-xs">
-              <Sparkles className="h-4 w-4 text-brand-crimson" />
-              <AnimatedShinyText className="!text-foreground/80 dark:!text-foreground/80" shimmerWidth={140}>
+            <div className="group relative inline-flex items-center gap-2 rounded-full border border-border/70 bg-background/85 px-4 py-1.5 shadow-[inset_0_-8px_10px_rgba(229,26,49,0.06)] transition-all duration-300 hover:border-brand-crimson/50 hover:shadow-[inset_0_-8px_14px_rgba(229,26,49,0.15)] backdrop-blur-md">
+              <span
+                className="animate-gradient absolute inset-0 block h-full w-full rounded-full bg-gradient-to-r from-brand-crimson/40 via-cyan-500/40 to-brand-crimson/40 bg-[length:300%_100%] p-[1px] opacity-70 transition-opacity group-hover:opacity-100"
+                style={{
+                  WebkitMask:
+                    "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                  WebkitMaskComposite: "destination-out",
+                  mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                  maskComposite: "subtract",
+                  WebkitClipPath: "padding-box",
+                }}
+              />
+              <Sparkles className="h-3.5 w-3.5 text-brand-crimson shrink-0" />
+              <span className="h-3 w-px bg-border/80 shrink-0" />
+              <AnimatedGradientText
+                colorFrom="#E51A31"
+                colorTo="#00B4D8"
+                className="text-xs sm:text-sm font-bold tracking-tight"
+              >
                 La Révolution de l&apos;Entraînement TCF &amp; TEF Canada
-              </AnimatedShinyText>
+              </AnimatedGradientText>
+              <ArrowRight className="h-3.5 w-3.5 text-muted-foreground shrink-0 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:text-foreground" />
             </div>
           </BlurFade>
 
@@ -64,7 +82,7 @@ export default function HomePage() {
           </BlurFade>
 
           <BlurFade delay={0.35}>
-            <div className="flex flex-col items-center justify-center gap-4 pt-3 sm:flex-row">
+            <div className="flex flex-col items-center justify-center gap-4 pt-2 sm:flex-row">
               <ShimmerButton
                 href="/examens"
                 background="#E51A31"
