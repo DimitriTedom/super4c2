@@ -12,6 +12,7 @@ import {
 import InteractiveGridPattern from "@/components/ui/interactive-grid-pattern";
 import NumberTicker from "@/components/ui/number-ticker";
 import { Button } from "@/components/ui/button";
+import { Globe } from "@/components/ui/globe";
 
 export const metadata = {
   title: "Super4C2 — Réussir le TCF Canada & Décrocher NCLC 7+ (+50 pts CRS)",
@@ -22,7 +23,7 @@ export const metadata = {
 export default function HomePage() {
   return (
     <div className="space-y-24 py-4 overflow-hidden">
-      {/* 🌟 HERO SECTION */}
+      {/* 🌟 HERO SECTION AVEC LE GLOBE POSITIONNÉ EN BAS AU CENTRE */}
       <section className="relative overflow-hidden rounded-3xl border bg-card p-8 sm:p-14 lg:p-20 shadow-xl">
         <InteractiveGridPattern
           cellSize={40}
@@ -45,7 +46,7 @@ export default function HomePage() {
             Fini le scroll interminable et les corrections humaines qui tardent 24h. Entraînez-vous dans les <strong>conditions réelles de l&apos;examen officiel CBT</strong> avec un examinateur vocal IA interactif en jeu de rôle.
           </p>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
             <Button
               asChild
               size="lg"
@@ -62,8 +63,14 @@ export default function HomePage() {
             </Button>
           </div>
 
+          {/* 🌍 LE GLOBE POSITIONNÉ EN BAS AU CENTRE */}
+          <div className="relative mx-auto -mt-6 sm:-mt-10 max-w-2xl w-full flex items-center justify-center pointer-events-auto">
+            <div className="absolute bottom-0 inset-x-0 h-32 bg-gradient-to-t from-card via-card/80 to-transparent z-10 pointer-events-none" />
+            <Globe className="w-full max-w-[520px] aspect-square" />
+          </div>
+
           {/* Statistiques clés */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-10 border-t border-border/60">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-6 border-t border-border/60 relative z-20">
             <div className="text-center">
               <p className="font-display text-3xl sm:text-4xl font-black text-foreground">
                 <NumberTicker value={50} />
