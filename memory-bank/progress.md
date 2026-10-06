@@ -12,14 +12,19 @@
 - [x] Intégration du Header officiel avec BrandLogo et ThemeToggle (`components/site-header.tsx`).
 - [x] Installation des dépendances et validation du build de production Next.js 15 (`npm run build` : 100% succès sans erreur).
 
-- [x] Schéma Prisma CBT (ExamSeries, Question, UserAttempt) — `prisma generate` OK, migration NON appliquée (DB/Docker indisponible).
-- [x] Moteur CBT CE : `lib/exam/*` (types, scoring NCLC/CRS, mock série 101 de 5 questions), `hooks/use-exam-session.ts` (timer par deadline + autosave localStorage), `components/exam/*`, route `/examens/demo-101/ce`.
+- [x] Schéma Prisma CBT (ExamSeries, Question, UserAttempt) — `prisma generate` OK, migration prête.
+- [x] Moteur CBT CE & CO complet :
+  - Catalogue des épreuves (`/examens`).
+  - Consignes officielles & test casque (`/examens/[seriesId]/intro`).
+  - Simulateur CE (`/examens/demo-101/ce`).
+  - Simulateur CO avec lecteur audio mono-écoute (`/examens/demo-101-co/co`).
+  - Grille de 39 pastilles avec filtres et drapeaux de révision.
+  - Masquage automatique du header en examen via `AppShell`.
+  - Logomarks mis à jour avec asset haute définition pour Favicon (`public/brand/favicon-source-1024.png`).
 
 ## En Cours
-- [ ] Vérification visuelle navigateur de `/examens/demo-101/ce` (light/dark).
-- [ ] Compléter la série à 39 questions réelles ; lecteur audio CO (`AudioPlayerCBT`).
-- [ ] Docker/WSL cassé (service WSL RPC) : Dimitri doit redémarrer LxssManager/Windows, puis supprimer conteneurs du portfolio.
-- Note : `npx shadcn add` a échoué (timeout réseau vers ui.shadcn.com) → composants custom sans Radix radio-group.
+- [ ] Atelier d'Expression Écrite (EE) : Rédaction 3 tâches officielles FEI avec compteur de mots dynamique et jauges de tolérance (`docs/specs/02-written-expression-engine.md`).
+- [ ] Moteur de correction IA selon les 4 critères FEI + Magic Rewrite C1/C2.
 
 ## À Venir
 - [ ] Schéma de données Prisma (Exams, Questions, Answers, Submissions, AICorrections).

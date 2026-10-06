@@ -1,16 +1,20 @@
 # Active Context: Super4C2
 
 ## 1. Focus Actuel
-- Dimitri conçoit les variantes finales de logo dans Canva.
-- Règles de contraste validées : tous les logos en fond transparent (avec version Light Theme `SUPER4` en Imperial Navy #0B132B pour contraste optimal > 15:1), SAUF le Favicon et l'App Icon iOS/Android qui ont un fond opaque solide en Imperial Navy (#0B132B).
-- Transition prête pour l'implémentation du moteur CBT (`docs/specs/01-cbt-exam-engine.md`).
+- **Moteur CBT CE & CO (Phase 1) complété & fonctionnel :**
+  - Catalogue des examens disponible sur `/examens`.
+  - Écran de consignes & test audio sur `/examens/[seriesId]/intro`.
+  - Simulateur Compréhension Écrite (CE) sur `/examens/demo-101/ce`.
+  - Simulateur Compréhension Orale (CO) sur `/examens/demo-101-co/co` avec lecteur audio à écoute unique (`AudioPlayerCBT`).
+  - Mode plein écran immersif géré par `AppShell` (masquage automatique du header en examen).
+  - Nouveau Logomark détouré transparent intégré dans `BrandLogo` ; asset optimisé pour Favicon généré dans `public/brand/favicon-source-1024.png`.
 
-## 2. Décisions Récents
-- **Repo Git :** `git@github.com:DimitriTedom/super4c2.git` synchronisé.
-- **Typographie Validée :** **Bricolage Grotesque** (Mathieu Triay) pour les titres et le logo, combinée à **DM Sans** pour les examens et **Space Mono** pour le chronomètre.
-- **Prompts IA Déployés :** Fichier `docs/brand/nanobanana-prompts.md` créé avec prompts positifs, négatifs et paramètres de ratio d'aspect pour chaque variante.
+## 2. Décisions Récentes
+- **Logomark :** Utilisation de `Le Logomark.png` (fond transparent) pour le site ; création de `favicon-source-1024.png` sur fond opaque Imperial Navy (#0B132B) recommandé pour favicon.io.
+- **Audios CO :** Mode démo avec synthèse vocale française navigateur native en fallback quand aucun fichier mp3 distant n'est fourni.
+- **Git Commit :** `dcc8abc` validé sur `main` avec 0 erreur TypeScript.
 
 ## 3. Prochaines Étapes Immédiates
-1. Définir le Brand Canvas & Guidelines dans `docs/brand/brand-canvas.md` (Nom officiel, palette, typographie, proposition de valeur).
-2. Rédiger le document de spécification fonctionnelle (PRD) dans `docs/specs/01-cbt-exam-engine.md`.
-3. Mettre en place le schéma Prisma pour les épreuves, questions et sessions d'examen.
+1. Spécification technique & développement de l'**Atelier d'Expression Écrite (EE)** (`docs/specs/02-written-expression-engine.md`).
+2. Interface de rédaction 3 tâches avec compteur de mots dynamique et jauges FEI.
+3. Intégration du moteur d'évaluation IA (grille 4 critères FEI + Magic Rewrite C1/C2).
