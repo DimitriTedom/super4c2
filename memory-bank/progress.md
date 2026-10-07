@@ -20,6 +20,12 @@
   - Composant interactif `<NotificationBell />` intégré dans le Header candidat et le Shell Admin.
   - Triggers automatiques : notifications `LEAD` (contact), `SYSTEM` (newsletter) et `EXAM` (évaluation d'épreuve écrite).
   - Moteur d'emails transactionnels Nodemailer (`lib/mail.ts`) aux couleurs de la marque.
+- [x] **Tableau de Bord & Roadmap Interactif de Déblocage des Séries (`/examens?test=tcf`) :**
+  - Faisceaux lumineux animés (**AnimatedBeam** avec Framer Motion) reliant les jalons de séries (Série 101 à 105).
+  - Système de déblocage séquentiel gamifié avec conditions d'accès, points XP et paliers NCLC/CRS (+50 pts).
+  - Prise en charge des tests multiples (`?test=tcf`, `?test=tef`, `?test=ielts`) avec sélecteur de test fluide et synchronisation avec les CTAs du Hero.
+  - Filtres par discipline (Compréhension Écrite, Orale, Expression Écrite, Orale) et toggle de double vue (Roadmap Interactif vs Grille Catalogue).
+  - Validation 100% zéro défaut (0 erreurs TypeScript, 0 warnings ESLint, tests de navigation et capture d'écran réussis).
 
 ### 🏆 Fonctionnalité Primaire Prioritaire : Compréhension Écrite (CE) CBT
 - [x] **Banque de 39 questions authentiques Série 101 (`lib/exam/series-ce-101.ts`) :**

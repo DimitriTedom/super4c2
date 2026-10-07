@@ -1,6 +1,21 @@
 # Active Context: Super4C2
 
-## 1. Moteur IA In-App Next.js & Notifications Automatisées
+## 1. Roadmap Interactif des Séries & Déblocage Séquentiel (`/examens?test=tcf`)
+- **Plateforme de Déblocage Haute Performance Inspirée du Concurrent & 10x Supérieure :**
+  - **Tableau de Bord Interactif (`components/exam/exam-roadmap-board.tsx`) :**
+    - Milestones d'épreuves reliés par des faisceaux lumineux animés (**AnimatedBeam** de Magic UI avec Framer Motion).
+    - Système de déblocage séquentiel par paliers CECRL/NCLC (Série 101 Diagnostic → Série 102 Socio-politique → Série 103 Seuil NCLC 7 / B2 → Série 104 C1 Académique → Série 105 C2 Élite).
+    - Panneau détaillé contextuel dynamique au clic : focus sur les compétences de la série, points bonus CRS (+50 pts) et accès direct aux 4 simulateurs indépendants (CE 39Q, CO 39Q, EE 3 tâches, EO rôle play).
+  - **Sélecteur Multi-Examens Synchronisé :**
+    - Support fluide des paramètres d'URL `?test=tcf`, `?test=tef`, `?test=ielts`.
+    - Piliers de sélection d'examen interactifs dans le header et redirection ciblée depuis les boutons d'action du Hero (`app/page.tsx`).
+  - **Filtres par Discipline & Double Vue :**
+    - Filtrage instantané : *Toutes les épreuves (Pack Complet)*, *Compréhension Écrite*, *Compréhension Orale*, *Expression Écrite*, *Expression Orale*.
+    - Toggle de vue : *Roadmap Interactif (Parcours Gamifié)* ↔ *Vue Grille Catalogue*.
+  - **Validation Visuelle & Zero-Defect :**
+    - 0 erreurs TypeScript, 0 warnings/erreurs ESLint, inspection complète via sous-agent navigateur validée.
+
+## 2. Moteur IA In-App Next.js & Notifications Automatisées
 - **Moteur d'Évaluation Direct Next.js (`lib/ai/service.ts`) :**
   - Pas de dépendance de serveur externe (n8n évité initialement pour privilégier la performance et la simplicité).
   - Évaluation de l'Expression Écrite par OpenAI GPT-4o-mini (`evaluateWrittenTaskWithAi`) sur les 4 critères officiels FEI (Adéquation, Cohérence, Lexique, Morphosyntaxe) avec réécriture "Magic Rewrite C1/C2".

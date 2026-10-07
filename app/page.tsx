@@ -87,7 +87,7 @@ export default function HomePage() {
             <div className="flex flex-col items-center justify-center gap-4 pt-2">
               <div className="flex flex-col sm:flex-row flex-wrap items-center justify-center gap-3 w-full">
                 <ShimmerButton
-                  href="/examens"
+                  href="/examens?test=tcf"
                   background="#E51A31"
                   shimmerColor="#ffffff"
                   className="w-full sm:w-auto shadow-[0_10px_40px_-10px_rgba(229,26,49,0.65)] font-bold px-7"
