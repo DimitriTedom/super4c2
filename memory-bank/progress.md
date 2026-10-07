@@ -120,5 +120,15 @@
   - TypeScript : **0 erreur** (`npx tsc --noEmit` : code 0).
   - ESLint : **0 avertissement, 0 erreur** (`npm run lint` : code 0).
   - Serveur de développement : En écoute sur `http://localhost:3000` (`/api/health` : `{ ok: true }`).
+- [x] **Sélecteur de Langue Multilingue Interactif (`components/language-switcher.tsx`) :**
+  - Remplacement du badge statique par un menu multilingue complet (Français 🇨🇦, English 🇬🇧, Español 🇪🇸, العربية 🇸🇦).
+  - Persistance localStorage et cookie, mise à jour dynamique du document et toasts interactifs.
+- [x] **Système de Notifications Bipartite Candidats & Super Admin (`lib/notifications/`) :**
+  - Modèle Prisma `Notification` (EXAM, SRS, LEAD, SYSTEM, BILLING) avec index de performance.
+  - Composant interactif `<NotificationBell />` avec badge non lu animé, filtres par statut et action "Tout lire" dans `SiteHeader` et `AdminShell`.
+  - Triggers automatiques sur l'arrivée de leads conciergerie et d'abonnés newsletter.
+- [x] **Service d'Emails Transactionnels (`lib/mail.ts`) :**
+  - Générateur d'emails HTML brandés Super4C2 avec support SMTP universel et simulation gracieuse en local.
+
 
 

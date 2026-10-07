@@ -31,6 +31,18 @@ export async function subscribePublicNewsletterAction(email: string, source = "p
         isActive: true,
       },
     });
+
+    // Notify Super Admin
+    await prisma.notification.create({
+      data: {
+        recipient: "ADMIN",
+        title: "📬 Nouvel Abonné Newsletter",
+        message: `${cleanEmail} s'est abonné via la source "${source}".`,
+        type: "SYSTEM",
+        link: "/admin/newsletter",
+        isRead: false,
+      },
+    });
   }
 
   revalidatePath("/admin/newsletter");

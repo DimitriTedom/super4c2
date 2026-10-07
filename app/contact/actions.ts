@@ -34,6 +34,18 @@ export async function submitContactLeadAction(input: SubmitContactInput) {
     },
   });
 
+  // Create real-time notification for Super Admin
+  await prisma.notification.create({
+    data: {
+      recipient: "ADMIN",
+      title: intent === "URGENT" ? "⚡ Urgence Examen (< 7 jours)" : intent === "B2B" ? "🏢 Demande Partenaire B2B" : "🎓 Nouveau Lead Conciergerie",
+      message: `${name} (${email}) : "${message.slice(0, 100)}..."`,
+      type: "LEAD",
+      link: "/admin/leads",
+      isRead: false,
+    },
+  });
+
   revalidatePath("/admin/leads");
   return { ok: true as const };
 }

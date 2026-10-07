@@ -294,3 +294,31 @@ model ContactLead {
   @@map("contact_leads")
   @@index([status, createdAt])
 }
+
+// ============================================
+// 10. NOTIFICATIONS CANDIDATS & SUPER ADMIN
+// ============================================
+
+enum NotificationType {
+  EXAM
+  SRS
+  LEAD
+  SYSTEM
+  BILLING
+}
+
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String?          @db.Uuid
+  recipient String           @default("CANDIDATE") // "CANDIDATE" or "ADMIN"
+  title     String
+  message   String           @db.Text
+  type      NotificationType @default(SYSTEM)
+  link      String?
+  isRead    Boolean          @default(false)
+  createdAt DateTime         @default(now())
+
+  @@map("notifications")
+  @@index([recipient, isRead, createdAt])
+  @@index([userId, isRead, createdAt])
+}

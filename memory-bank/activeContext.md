@@ -165,8 +165,22 @@
   - Barre de navigation mobile moderne ancrée en bas de l'écran avec retour visuel actif sur l'interface publique (`components/mobile-nav.tsx`) et sur le back-office (`components/admin/admin-shell.tsx`).
 - **Serveur de Développement :**
   - Opérationnel sur `http://localhost:3000` avec endpoint santé `/api/health` renvoyant `{ ok: true }`.
-
-
-
-
+## 12. Système de Notifications, Sélecteur de Langue & Service d'Emails
+- **Sélecteur de Langue Interactif (`components/language-switcher.tsx`) :**
+  - Remplacement du badge statique par un menu déroulant multilingue :
+    - 🇨🇦 Français (Canada & International - Langue Officielle TCF/TEF)
+    - 🇬🇧 English (Canada - IRCC Express Entry / CLB)
+    - 🇪🇸 Español (Candidatos TCF Latinoamérica)
+    - 🇸🇦 العربية (مرشحو الهجرة إلى كندا)
+  - Mémorisation du choix utilisateur dans `localStorage` et le cookie `super4c2_lang`, mise à jour de `document.documentElement.lang` et toast informatif.
+- **Système de Notifications Bipartite (`lib/notifications/actions.ts` & `components/notifications/notification-bell.tsx`) :**
+  - Modèle Prisma `Notification` (catégories `EXAM`, `SRS`, `LEAD`, `SYSTEM`, `BILLING`).
+  - Cloche interactive avec pastille de notification dynamique animée et compteur non lu.
+  - Déclencheurs automatiques :
+    - Dès qu'un candidat soumet une demande sur `/contact`, une notification immédiate `LEAD` est créée pour le Super Admin (`/admin/leads`).
+    - Dès qu'un utilisateur s'inscrit à la newsletter, une notification `SYSTEM` est générée pour l'admin (`/admin/newsletter`).
+    - Notifications candidates pour les paliers NCLC 7, séries CE prêtes et rappels de répétition espacée (SRS).
+- **Moteur d'Email Transactionnel (`lib/mail.ts`) :**
+  - Service d'envoi d'emails transactionnels avec templates HTML brandés aux couleurs Maple Crimson & Imperial Navy.
+  - Support SMTP standard (Nodemailer, Resend, Brevo, SendGrid, Amazon SES) avec fallback de simulation en dev sans crash.
 

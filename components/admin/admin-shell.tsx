@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { BrandLogo } from "@/components/brand-logo";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { NotificationBell } from "@/components/notifications/notification-bell";
 import { toast } from "sonner";
 import { removeToastQuery } from "@/lib/toast-navigation";
 
@@ -260,6 +261,7 @@ export function AdminShell({ children }: AdminShellProps) {
           </div>
 
           <div className="flex items-center gap-2 sm:gap-3">
+            <NotificationBell recipient="ADMIN" />
             <ThemeToggle />
 
             {/* Profile Avatar Badge */}

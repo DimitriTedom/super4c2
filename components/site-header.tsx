@@ -5,6 +5,8 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
 import { BrandLogo } from "@/components/brand-logo";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { LanguageSwitcher } from "@/components/language-switcher";
+import { NotificationBell } from "@/components/notifications/notification-bell";
 
 export async function SiteHeader() {
   const supabase = await createSupabaseServerClient();
@@ -103,9 +105,9 @@ export async function SiteHeader() {
               <Link href="/examens">Épreuves</Link>
             </Button>
 
-            <span className="hidden sm:inline-flex items-center gap-1 rounded-full border border-border/70 bg-muted/50 px-2.5 py-1 text-xs font-semibold text-foreground/80">
-              🇨🇦 FR-CA
-            </span>
+            <LanguageSwitcher />
+
+            <NotificationBell recipient="CANDIDATE" />
 
             <ThemeToggle />
 
