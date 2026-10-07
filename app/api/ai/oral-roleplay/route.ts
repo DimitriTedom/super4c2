@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { generateOralExaminerReplyWithAi } from "@/lib/ai/service";
 
 const roleplaySchema = z.object({
   taskIndex: z.number().min(0).max(2),
@@ -26,7 +27,27 @@ export async function POST(req: Request) {
       );
     }
 
-    const { taskIndex, candidateSpeech } = parsed.data;
+    const { taskIndex, candidateSpeech, history } = parsed.data;
+
+    // 1. Priorité au moteur IA direct Next.js (OpenAI / GPT-4o-mini si clé présente)
+    const taskTitles = [
+      "Tâche 1 : Entretien dirigé",
+      "Tâche 2 : Jeu de rôle (échange interactif)",
+      "Tâche 3 : Monologue suivi d'un échange argumenté",
+    ];
+
+    const aiReply = await generateOralExaminerReplyWithAi({
+      taskIndex,
+      taskTitle: taskTitles[taskIndex] || "Expression Orale TCF",
+      candidateSpeech,
+      history,
+    });
+
+    if (aiReply) {
+      return NextResponse.json({ ok: true, reply: aiReply, provider: "ai" });
+    }
+
+    // 2. Moteur de dialogue déterministe certifié FEI en fallback
     const lower = candidateSpeech.toLowerCase();
     let reply = "";
 

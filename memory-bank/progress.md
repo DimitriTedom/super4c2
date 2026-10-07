@@ -11,6 +11,15 @@
 - [x] Injection de Bricolage Grotesque, DM Sans et Space Mono via `next/font/google` dans `app/layout.tsx` et `tailwind.config.js`.
 - [x] Intégration du Header officiel avec BrandLogo et ThemeToggle (`components/site-header.tsx`).
 - [x] Installation des dépendances et validation du build de production Next.js 15 (`npm run build` : 100% succès sans erreur).
+- [x] **Moteur IA Direct Next.js (`lib/ai/service.ts`) :**
+  - Évaluation de l'Expression Écrite TCF/TEF par critères FEI (Adéquation, Cohérence, Lexique, Morphosyntaxe) et Magic Rewrite C1/C2.
+  - Simulateur d'examinateur officiel pour le jeu de rôle et l'entretien dirigé de l'Expression Orale.
+  - Câblage complet dans `/api/ai/evaluate-written` et `/api/ai/oral-roleplay` avec basculement automatique vers le moteur FEI déterministe si aucune clé API n'est fournie.
+- [x] **Système de Notifications In-App & Mails Transactionnels :**
+  - Modèle Prisma `Notification` déployé sur PostgreSQL Docker (Port 5434).
+  - Composant interactif `<NotificationBell />` intégré dans le Header candidat et le Shell Admin.
+  - Triggers automatiques : notifications `LEAD` (contact), `SYSTEM` (newsletter) et `EXAM` (évaluation d'épreuve écrite).
+  - Moteur d'emails transactionnels Nodemailer (`lib/mail.ts`) aux couleurs de la marque.
 
 ### 🏆 Fonctionnalité Primaire Prioritaire : Compréhension Écrite (CE) CBT
 - [x] **Banque de 39 questions authentiques Série 101 (`lib/exam/series-ce-101.ts`) :**

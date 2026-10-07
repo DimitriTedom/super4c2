@@ -1,6 +1,19 @@
 # Active Context: Super4C2
 
-## 1. Focus Principal & Priorité Absolue
+## 1. Moteur IA In-App Next.js & Notifications Automatisées
+- **Moteur d'Évaluation Direct Next.js (`lib/ai/service.ts`) :**
+  - Pas de dépendance de serveur externe (n8n évité initialement pour privilégier la performance et la simplicité).
+  - Évaluation de l'Expression Écrite par OpenAI GPT-4o-mini (`evaluateWrittenTaskWithAi`) sur les 4 critères officiels FEI (Adéquation, Cohérence, Lexique, Morphosyntaxe) avec réécriture "Magic Rewrite C1/C2".
+  - Dialogue interactif d'Expression Orale (`generateOralExaminerReplyWithAi`) simulant l'examinateur officiel pour les tâches 1 et 2.
+  - Fallback déterministe certifié FEI garantissant un fonctionnement 100% robuste même sans clé API.
+  - Intégration dans `app/api/ai/evaluate-written/route.ts` et `app/api/ai/oral-roleplay/route.ts`.
+- **Système de Notifications In-App & Mails Transactionnels :**
+  - Modèle Prisma `Notification` (`EXAM`, `SRS`, `LEAD`, `SYSTEM`, `BILLING`) relié à PostgreSQL Docker.
+  - Composant interactif `<NotificationBell />` pour candidats (`SiteHeader`) et administrateurs (`AdminShell`).
+  - Déclencheurs automatisés : soumission d'épreuve écrite (`EXAM`), formulaire de contact/lead (`LEAD`), inscription newsletter (`SYSTEM`).
+  - Moteur d'emails transactionnels Nodemailer (`lib/mail.ts`) prêt pour SMTP réel ou simulation locale sécurisée.
+
+## 2. Focus Principal & Priorité Absolue
 - **Compréhension Écrite (CE) 100% Production-Ready (Raison d'être première du SaaS) :**
   - **Banque complète 39 questions authentiques Série 101 (`lib/exam/series-ce-101.ts`) :**
     - Q1–Q6 : Niveau A1 (messages courts, affiches, horaires)
