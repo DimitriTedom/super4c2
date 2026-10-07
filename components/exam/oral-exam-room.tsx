@@ -178,6 +178,24 @@ export function OralExamRoom({ series }: OralExamRoomProps) {
     }
     const evalResult = evaluateOralExam(series, dialogues);
     setEvaluation(evalResult);
+
+    // Enregistrement persistant de la tentative dans PostgreSQL
+    void fetch("/api/exam/attempt", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        discipline: "EXPRESSION_ORALE",
+        seriesId: series.id,
+        rawScore: Math.round(evalResult.totalScore),
+        tcfScaledScore: evalResult.tcfScaledScore,
+        nclcLevel: evalResult.nclcLevel,
+        crsPointsUnlocked: evalResult.crsPointsUnlocked,
+        answers: dialogues,
+        feedback: evalResult,
+      }),
+    }).catch(() => {
+      // mode hors ligne gracieux
+    });
   }, [dialogues, series]);
 
   // Minuteur de la tâche active

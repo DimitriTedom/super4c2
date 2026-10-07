@@ -73,7 +73,22 @@ export function useExamSession(series: ExamSeriesData) {
   const finish = useCallback(() => {
     finishedRef.current = true;
     setFinished(true);
-  }, []);
+    const res = computeResult(series.questions, answers, series.discipline);
+    void fetch("/api/exam/attempt", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        discipline: series.discipline === "CO" ? "COMPREHENSION_ORALE" : "COMPREHENSION_ECRITE",
+        seriesId: series.id,
+        rawScore: res.rawScore,
+        tcfScaledScore: res.tcfScaledScore,
+        nclcLevel: res.nclcLevel,
+        crsPointsUnlocked: res.nclcLevel >= 7 ? 50 : 0,
+        answers,
+        feedback: res,
+      }),
+    }).catch(() => {});
+  }, [answers, series]);
 
   // Countdown from absolute deadline; auto-submit at 00:00.
   useEffect(() => {

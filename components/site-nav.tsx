@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   ChevronDown,
   BookOpen,
+  Headphones,
   Sparkles,
   PenTool,
   Mic,
@@ -226,7 +227,27 @@ export function SiteNav() {
               </Link>
 
               <Link
-                href="/examens/demo-101-eo/intro"
+                href="/examens/demo-101-ce/co"
+                className="flex items-start gap-3 rounded-xl p-2.5 hover:bg-muted/70 transition-colors group"
+              >
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-blue-500/10 text-blue-500 group-hover:bg-blue-500 group-hover:text-white transition-colors">
+                  <Headphones className="h-4 w-4" />
+                </div>
+                <div>
+                  <div className="text-xs font-bold text-foreground flex items-center gap-1.5">
+                    <span>Compréhension Orale (CO)</span>
+                    <span className="rounded bg-blue-500/10 px-1 py-0.2 text-[9px] font-bold text-blue-500">
+                      39Q
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-muted-foreground">
+                    Lecteur CBT officiel sans retour arrière & 6 paliers CECRL
+                  </p>
+                </div>
+              </Link>
+
+              <Link
+                href="/examens/demo-101-ce/eo/intro"
                 className="flex items-start gap-3 rounded-xl p-2.5 hover:bg-muted/70 transition-colors group"
               >
                 <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-cyan-500/10 text-cyan-500 group-hover:bg-cyan-500 group-hover:text-white transition-colors">

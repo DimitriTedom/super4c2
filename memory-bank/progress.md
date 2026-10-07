@@ -20,6 +20,11 @@
   - Composant interactif `<NotificationBell />` intégré dans le Header candidat et le Shell Admin.
   - Triggers automatiques : notifications `LEAD` (contact), `SYSTEM` (newsletter) et `EXAM` (évaluation d'épreuve écrite).
   - Moteur d'emails transactionnels Nodemailer (`lib/mail.ts`) aux couleurs de la marque.
+- [x] **Suite des 4 Chantiers Majeurs (EO, EE, CO 39Q, Dashboard/CRS) :**
+  - **Pilier 1 (Expression Orale Live) :** Salle d'examen interactive avec examinateur vocal IA, synthèse vocale en direct, évaluation FEI, enregistrement persistant en base (`UserAttempt`) et export des tournures C1/C2 vers le Carnet SRS (`super4c2:srs_cards`).
+  - **Pilier 2 (Expression Écrite CBT) :** Évaluation des 3 tâches FEI avec Magic Rewrite C1/C2 et sauvegarde de la tentative dans PostgreSQL.
+  - **Pilier 3 (Compréhension Orale 39 Questions) :** Banque intégrale des 39 questions authentiques de CO (`lib/exam/series-co-101.ts`) A1 à C2 avec lecteur CBT officiel et lien direct dans le menu navigation.
+  - **Pilier 4 (Calculateur CRS & Dashboard Candidat) :** Tableau de bord candidat avec historique dynamique des tentatives réelles, calcul du niveau NCLC, et redirection `/calculateur-crs` -> `/nclc-calculator`.
 - [x] **Navigation Groupée, Cloche Sécurisée & Correctif `isActive` :**
   - Correction de l'état `isActive` du Header (dynamique avec `usePathname()`).
   - Menus déroulants groupés élégants (`Séries & Examens`, `Simulateurs & IA`, `Ressources`, `Tarifs`) avec transitions Framer Motion.

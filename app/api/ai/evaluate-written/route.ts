@@ -4,6 +4,7 @@ import { countWordsFei, type TaskEvaluation, type WrittenExamResult } from "@/li
 import { getWrittenSeries } from "@/lib/exam/mock-written-series";
 import { evaluateWrittenTaskWithAi } from "@/lib/ai/service";
 import { createNotificationAction } from "@/lib/notifications/actions";
+import { prisma } from "@/lib/prisma";
 
 const evaluateSchema = z.object({
   seriesId: z.string().default("ee-101"),
@@ -269,6 +270,25 @@ export async function POST(req: Request) {
       crsPointsUnlocked,
       taskEvaluations,
     };
+
+    // Sauvegarde de la tentative dans PostgreSQL
+    try {
+      await prisma.userAttempt.create({
+        data: {
+          discipline: "EXPRESSION_ECRITE",
+          seriesId: null,
+          rawScore: Math.round(result.totalScore),
+          tcfScaledScore: result.tcfScaledScore,
+          nclcLevel: result.nclcLevel,
+          crsPointsUnlocked: result.crsPointsUnlocked,
+          answers: texts,
+          feedback: JSON.parse(JSON.stringify(result)),
+          completedAt: new Date(),
+        },
+      });
+    } catch (e) {
+      console.warn("Échec sauvegarde userAttempt EE :", e);
+    }
 
     // Notification in-app automatique pour le candidat
     try {

@@ -5,19 +5,15 @@
   - Fin du bug `isActive` qui figeait la navigation sur "Accueil" (`/`) : détection dynamique via `usePathname()`.
   - Menus déroulants élégants animés avec Framer Motion :
     - *Séries & Examens* (TCF Canada, TEF Canada, IELTS General, Catalogue des Séries)
-    - *Simulateurs & IA* (Compréhension Écrite 39Q, Oral IA Live, Écrit FEI IA, Carnet SRS, Calculateur CRS)
+    - *Simulateurs & IA* (Compréhension Écrite 39Q, Compréhension Orale 39Q, Oral IA Live, Écrit FEI IA, Carnet SRS, Calculateur CRS)
     - *Ressources* (Blog & Décryptages, Communauté VIP, Conciergerie)
     - *Tarifs* (Lien direct)
   - Cloche de notification conditionnelle : strictement masquée pour les visiteurs non authentifiés (`{user ? <NotificationBell /> : null}`).
-- **Roadmap Horizontal avec Flèches Directionnelles Lumineuses (`components/exam/exam-roadmap-board.tsx`) :**
-  - Remplacement des faisceaux lumineux SVG fixes par un parcours horizontal défilable (`overflow-x-auto`) avec flèches connectrices lumineuses (`S.101 ➔ S.102 ➔ ...`).
-  - Gestion fluide des séries verrouillées : affichage d'une bannière explicative avec prérequis de déblocage, bouton de simulation démo et persistance via `localStorage` (`super4c2:unlocked_series`).
-- **Résolution des Erreurs 404 sur les Sous-Disciplines d'Examens :**
-  - Prise en charge de l'alias `demo-101-ce` dans les maps orales et écrites (`lib/exam/mock-written-series.ts`, `lib/exam/mock-oral-series.ts`, `app/examens/[seriesId]/co/page.tsx`).
-  - Toutes les sous-épreuves (`/examens/demo-101-ce/intro`, `/co`, `/ee/intro`, `/eo/intro`) répondent en HTTP 200 OK.
-- **Section Témoignages Publics Connectée au Back-Office (`components/testimonials-section.tsx` & `app/page.tsx`) :**
-  - Affichage sur la page d'accueil des vrais témoignages vérifiés issus de la base PostgreSQL (`prisma.testimonial`), administrables via le CRUD admin, avec fallback dynamique.
-  - Badges NCLC 7 / NCLC 9, bonus CRS (+50 pts) et notation 5 étoiles.
+- **Exécution des 4 Piliers Majeurs :**
+  1. **Option 1 (Expression Orale Live) :** Salle d'examen CBT avec examinateur IA live vocal (Web Speech API + OpenAI GPT-4o-mini / FEI déterministe), évaluation des 5 critères FEI, persistance en base PostgreSQL (`UserAttempt`) et bouton d'export direct des tournures C1/C2 vers le Carnet SRS (`super4c2:srs_cards`).
+  2. **Option 2 (Expression Écrite CBT) :** Éditeur 3 tâches avec compteur de mots en temps réel, critères FEI et Magic Rewrite C1/C2, avec persistance automatique de la tentative (`UserAttempt`) dans PostgreSQL.
+  3. **Option 3 (Compréhension Orale 39 Questions) :** Création de `lib/exam/series-co-101.ts` avec la banque complète de 39 questions authentiques couvrant les 6 paliers (A1 à C2), intégrée au simulateur CBT et dans la navigation.
+  4. **Option 4 (Calculateur CRS & Dashboard Candidat) :** Refonte de `app/dashboard/page.tsx` connectée aux vraies tentatives PostgreSQL, liens de navigation normalisés et redirection propre `/calculateur-crs` -> `/nclc-calculator`.
 
 ## 2. Moteur IA In-App Next.js & Notifications Automatisées
 - **Moteur d'Évaluation Direct Next.js (`lib/ai/service.ts`) :**

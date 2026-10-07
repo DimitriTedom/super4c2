@@ -163,7 +163,7 @@ model UserAttempt {
   id                String      @id @default(cuid())
   userId            String?     @db.Uuid
   user              User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
-  seriesId          String
+  seriesId          String?
   series            ExamSeries? @relation(fields: [seriesId], references: [id], onDelete: SetNull)
   discipline        Discipline
   startedAt         DateTime    @default(now())

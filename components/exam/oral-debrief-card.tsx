@@ -1,7 +1,8 @@
 "use client";
 
-import React from "react";
-import { CheckCircle2, AlertTriangle, Sparkles } from "lucide-react";
+import React, { useState } from "react";
+import { CheckCircle2, AlertTriangle, Sparkles, BookOpen, Check } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import type { OralExamEvaluation } from "@/lib/exam/oral-types";
 import { cn } from "@/lib/utils";
 
@@ -12,6 +13,37 @@ interface OralDebriefCardProps {
 
 export function OralDebriefCard({ evaluation, className }: OralDebriefCardProps) {
   const { totalScore, tcfScaledScore, nclcLevel, crsPointsUnlocked, wordsPerMinute, criteria, examinerDebrief, recommendedPhrasesC2 } = evaluation;
+  const [savedSrs, setSavedSrs] = useState<Record<number, boolean>>({});
+
+  const handleSaveToSrs = (phrase: string, index: number) => {
+    try {
+      const existing = localStorage.getItem("super4c2:srs_cards");
+      const list = existing ? JSON.parse(existing) : [];
+      const newCard = {
+        id: `srs-eo-${Date.now()}-${index}`,
+        discipline: "EO",
+        questionNumber: index + 1,
+        questionPrompt: "Expression Orale — Tournure avancée C1/C2",
+        candidateMistake: "Formulation informelle ou hésitante",
+        correctAnswer: phrase,
+        ruleExplanation: "Structure d'autorité et formule de politesse raffinée recommandée par les correcteurs FEI.",
+        trapType: "Registre de langue soutenu",
+        nextReviewDays: 1,
+        masteryLevel: 1,
+      };
+      list.push(newCard);
+      localStorage.setItem("super4c2:srs_cards", JSON.stringify(list));
+      setSavedSrs((prev) => ({ ...prev, [index]: true }));
+    } catch {
+      // fallback
+    }
+  };
+
+  const handleSaveAllToSrs = () => {
+    recommendedPhrasesC2.forEach((phrase, i) => {
+      handleSaveToSrs(phrase, i);
+    });
+  };
 
   return (
     <div className={cn("space-y-8 rounded-2xl border bg-card p-6 sm:p-8 shadow-sm", className)}>
@@ -122,17 +154,50 @@ export function OralDebriefCard({ evaluation, className }: OralDebriefCardProps)
       </div>
 
       {/* Recommandations C1/C2 */}
-      <div className="rounded-xl border border-primary/30 bg-primary/5 p-5 space-y-3">
-        <div className="flex items-center gap-2 text-primary font-bold text-sm">
-          <Sparkles className="h-4 w-4" />
-          <span>Tournures Recommandées pour Sublimer votre Oral (Niveau C1/C2) :</span>
+      <div className="rounded-xl border border-primary/30 bg-primary/5 p-5 space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex items-center gap-2 text-primary font-bold text-sm">
+            <Sparkles className="h-4 w-4" />
+            <span>Tournures Recommandées pour Sublimer votre Oral (Niveau C1/C2) :</span>
+          </div>
+
+          <Button
+            size="sm"
+            variant="outline"
+            className="gap-1.5 text-xs self-start sm:self-auto border-primary/40 text-primary hover:bg-primary/10"
+            onClick={handleSaveAllToSrs}
+          >
+            <BookOpen className="h-3.5 w-3.5" />
+            Tout ajouter au Carnet SRS
+          </Button>
         </div>
 
-        <ul className="grid gap-2 sm:grid-cols-2 text-xs text-foreground/90">
+        <ul className="grid gap-3 sm:grid-cols-2 text-xs text-foreground/90">
           {recommendedPhrasesC2.map((phrase, i) => (
-            <li key={i} className="flex items-start gap-2 bg-card p-3 rounded-lg border">
-              <span className="text-primary font-bold">•</span>
-              <span className="font-medium">{phrase}</span>
+            <li
+              key={i}
+              className="flex items-start justify-between gap-2 bg-card p-3 rounded-lg border hover:border-primary/40 transition-colors"
+            >
+              <div className="flex items-start gap-2">
+                <span className="text-primary font-bold">•</span>
+                <span className="font-medium leading-relaxed">{phrase}</span>
+              </div>
+              <Button
+                size="icon"
+                variant={savedSrs[i] ? "secondary" : "ghost"}
+                className={cn(
+                  "h-7 w-7 shrink-0",
+                  savedSrs[i] && "text-emerald-600 bg-emerald-500/10"
+                )}
+                title={savedSrs[i] ? "Ajouté au SRS" : "Ajouter au carnet SRS"}
+                onClick={() => handleSaveToSrs(phrase, i)}
+              >
+                {savedSrs[i] ? (
+                  <Check className="h-3.5 w-3.5" />
+                ) : (
+                  <BookOpen className="h-3.5 w-3.5 text-muted-foreground hover:text-foreground" />
+                )}
+              </Button>
             </li>
           ))}
         </ul>
