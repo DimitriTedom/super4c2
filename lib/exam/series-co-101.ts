@@ -8,6 +8,7 @@ export const QUESTIONS_CO_101: ExamQuestion[] = [
     id: "co-101-q1",
     questionNumber: 1,
     nclcTargetLevel: 3,
+    audioUrl: "/audio/co/co-101-q1.mp3",
     audioTranscript:
       "Bonjour, je voudrais réserver une table pour quatre personnes, ce samedi soir, vers vingt heures, s'il vous plaît.",
     prompt: "Que veut faire la personne ?",
@@ -25,6 +26,7 @@ export const QUESTIONS_CO_101: ExamQuestion[] = [
     id: "co-101-q2",
     questionNumber: 2,
     nclcTargetLevel: 3,
+    audioUrl: "/audio/co/co-101-q2.mp3",
     audioTranscript:
       "Attention, mesdames et messieurs, en raison d'un incident technique, le train à destination de Lyon aura quarante minutes de retard. Nous vous prions de nous excuser pour ce désagrément.",
     prompt: "Quelle information est donnée ?",
@@ -42,6 +44,7 @@ export const QUESTIONS_CO_101: ExamQuestion[] = [
     id: "co-101-q3",
     questionNumber: 3,
     nclcTargetLevel: 3,
+    audioUrl: "/audio/co/co-101-q3.mp3",
     audioTranscript:
       "Salut Julien, c'est Marc. Je t'appelle pour te confirmer qu'on se retrouve demain à midi et quart devant le cinéma pour déjeuner ensemble. Rappelle-moi dès que tu as ce message !",
     prompt: "À quelle heure ont-ils rendez-vous ?",
@@ -59,6 +62,7 @@ export const QUESTIONS_CO_101: ExamQuestion[] = [
     id: "co-101-q4",
     questionNumber: 4,
     nclcTargetLevel: 4,
+    audioUrl: "/audio/co/co-101-q4.mp3",
     audioTranscript:
       "Chers clients, votre supermarché fermera ses portes exceptionnellement aujourd'hui à dix-neuf heures au lieu de vingt heures trente. Merci de vous diriger vers les caisses.",
     prompt: "Que demande l'annonce aux clients ?",
@@ -76,6 +80,7 @@ export const QUESTIONS_CO_101: ExamQuestion[] = [
     id: "co-101-q5",
     questionNumber: 5,
     nclcTargetLevel: 4,
+    audioUrl: "/audio/co/co-101-q5.mp3",
     audioTranscript:
       "Bonjour madame, ce pantalon noir est à trente-cinq euros, mais avec les soldes, vous bénéficiez d'une réduction de dix euros immédiate en caisse.",
     prompt: "Quel est le prix final du pantalon après réduction ?",
@@ -93,6 +98,7 @@ export const QUESTIONS_CO_101: ExamQuestion[] = [
     id: "co-101-q6",
     questionNumber: 6,
     nclcTargetLevel: 4,
+    audioUrl: "/audio/co/co-101-q6.mp3",
     audioTranscript:
       "Météo locale pour votre journée de jeudi : de fortes averses de pluie sont attendues dans la matinée avec des températures ne dépassant pas douze degrés. Le soleil reviendra en fin d'après-midi.",
     prompt: "Quel temps fera-t-il jeudi matin ?",
