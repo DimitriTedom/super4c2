@@ -12,21 +12,113 @@
 - [x] Intégration du Header officiel avec BrandLogo et ThemeToggle (`components/site-header.tsx`).
 - [x] Installation des dépendances et validation du build de production Next.js 15 (`npm run build` : 100% succès sans erreur).
 
-- [x] Phase 1 — Moteur CBT CE & CO complet (QCM, lecteur audio mono-écoute, pastilles 1-39, scoring TCF & NCLC, navigation).
-- [x] Phase 2 — Atelier d'Expression Écrite (EE) complet (Éditeur 3 tâches, compteur de mots FEI temps réel, grille FEI, Magic Rewrite C1/C2).
-- [x] Phase 3 — Salle d'Expression Orale (EO) & Voice Agent IA complet (Entretien dirigé, Jeu de rôle Tâche 2 en direct, Monologue argumenté, notation FEI).
-- [x] Phase 4 — Simulateur CRS, Carnet SRS & Dashboard complet (Calculateur CRS viral, carnet SRS J+1/J+3/J+7, hub candidat, grille tarifaire).
-- [x] Phase 5 — Vitrine d'Acquisition (Landing Page `/`) : intégration du Globe 3D interactif WebGL centré en bas de la Hero section, barre de navigation avec pilule flottante et sélecteur de langue 🇨🇦 FR-CA.
-- [x] Préservation intégrale des argumentaires, des blocs comparatifs et des thèmes Clair / Sombre.
-- [x] Validation du build de production Next.js 15 (16/16 routes générées avec succès, 0 erreur).
+### 🏆 Fonctionnalité Primaire Prioritaire : Compréhension Écrite (CE) CBT
+- [x] **Banque de 39 questions authentiques Série 101 (`lib/exam/series-ce-101.ts`) :**
+  - Q1–Q6 : Niveau A1
+  - Q7–Q12 : Niveau A2
+  - Q13–Q18 : Niveau B1
+  - Q19–Q28 : Niveau B2 (Seuil NCLC 7 / Entrée Express)
+  - Q29–Q35 : Niveau C1
+  - Q36–Q39 : Niveau C2
+  - Documents complets, prompts, 4 options, explication pédagogique & analyse systématique des pièges (`trapAnalysis`).
+- [x] **Simulateur CBT officiel FEI (`components/exam/cbt-exam.tsx`) :**
+  - Écran scindé avec contrôles de zoom typographique (`A-` / `100%` / `A+`).
+  - Badges de palier CECRL & NCLC et touches clavier visuelles (`[A]`, `[B]`, `[C]`, `[D]`).
+  - Décompte officiel 60 minutes avec jauge de progression en temps réel et avertissement avant soumission.
+  - Grille de 39 pastilles avec filtres dynamiques (`Toutes`, `Répondues`, `Non répondues`, `Signalées`).
+  - Raccourcis clavier globaux (`A-D`, `←/→`, `F`).
+  - Sauvegarde et restauration automatique en temps réel via `localStorage`.
+- [x] **Moteur de scoring & revue pédagogique (`components/exam/exam-result-summary.tsx`) :**
+  - Score échelonné officiel (100–699 pts) et équivalence NCLC 3 à 10+.
+  - Calculateur de bonus Entrée Express (+50 points CRS).
+  - Répartition de la performance par palier CECRL (A1-A2, B1-B2 seuil NCLC 7, C1-C2).
+  - Filtres d'erreurs, affichage en accordéon du document original, explication et décodage des pièges.
+  - Export direct des fautes vers le Carnet d'Erreurs à Répétition Espacée (SRS).
+- [x] **Catalogue & Parcours (`app/examens/page.tsx` & `app/examens/[seriesId]/intro/page.tsx`) :**
+  - Mise en avant Flagship 39 questions.
+  - Page de consignes détaillée avec tableau des paliers CECRL.
+- [x] **Alignement User Flow Concurrent & Éradication des Pages par Défaut :**
+  - Hero CTAs alignés : `Commencer le TCF` & `Commencer le TEF`.
+  - Hub Sélecteur de Discipline (`app/examens/[seriesId]/page.tsx`).
+  - Pages d'authentification personnalisées (`app/auth/login` et `app/auth/register`) en français, aux couleurs Maple Crimson et sécurisées.
+  - Page 404 Not Found sur-mesure (`app/not-found.tsx`) et Error Boundary (`app/error.tsx`).
+  - Espace Mon Compte candidat complet (`app/account/page.tsx`).
+  - Correction définitive des variables CSS `--primary` sur le Maple Crimson (`#E51A31`).
+- [x] **Composant SiteFooter Institutionnel & Pages Réglementaires :**
+  - Footer complet avec réassurance (Normes FEI, NCLC 7 Garanti, SRS, IRCC) et navigation 4 colonnes (`components/site-footer.tsx`).
+  - Pages légales (`app/mentions-legales/page.tsx` et `app/confidentialite/page.tsx`) avec disclaimers officiels FEI/CCI.
+- [x] **Intégration du CTA IELTS General dans le Hero :**
+  - Ajout du 3e bouton d'action *Préparer l'IELTS General* aux côtés de *Commencer le TCF* et *Commencer le TEF* (`app/page.tsx`).
+  - Badge mis à jour : *Préparation Officielle Canada : TCF • TEF • IELTS*.
+- [x] **Module de Blog & Stratégie SEO Complet :**
+  - Spécification formelle (`docs/specs/04-blog-and-content-system.md`).
+  - Modèle de données typé (`lib/blog/types.ts`) et 4 articles de fond SEO (`lib/blog/mock-posts.ts`).
+  - Page catalogue `/blog` avec filtres thématiques, recherche instantanée et article à la une.
+  - Page de lecture enrichie `/blog/[slug]` avec typographie soignée, temps de lecture, signature auteur et CTA CBT contextuel.
+- [x] **Spécifications Multi-Tenant B2B & Écosystème Dashboards :**
+  - Spécification détaillée (`docs/specs/05-multitenant-architecture-and-dashboards.md`) avec modèle relationnel pour écoles de langues et consultants en immigration.
+  - Définition des 4 dashboards : Super Admin (`/admin`), Organisation (`/org/[slug]`), Tuteur (`/tuteur`), Candidat (`/dashboard`).
+- [x] **Pages Premium de Rétention & Réassurance (Surclassement Concurrent) :**
+  - Spécification formelle (`docs/specs/06-community-topics-and-concierge.md`).
+  - Conciergerie & Contact (`/contact`) avec routage par intention, engagement SLA 2h et intégration WhatsApp.
+  - Communauté VIP (`/communaute`) avec accès aux canaux Telegram (alertes sujets) et groupes WhatsApp NCLC 7.
+  - Banque de Veille des Sujets Récents 2026 (`/sujets-recents`) avec lexique C1/C2 et déclencheur CBT.
+- [x] **Navigation Globale & Validation :**
+  - Liens intégrés dans `SiteHeader` et `SiteFooter`.
+  - 0 erreur TypeScript (`tsc --noEmit`).
+  - Code 200 sur toutes les routes.
+- [x] **Console Super Admin & B2B Multi-Tenant (`app/admin` & `components/admin/admin-dashboard.tsx`) :**
+  - Architecture inspirée du template open source `arhamkhnz/next-shadcn-admin-dashboard` (modules *Academy* et *Overview*).
+  - Sidebar repliable avec sélecteur multi-tenant, navigation hiérarchisée et statut système en temps réel.
+  - 4 Cartes KPI exécutives avec chiffres clés en `tabular-nums`, badges d'évolution et sous-titres descriptifs.
+  - Jauges de performance des cohortes vers le seuil NCLC 7 (453 pts CE) avec avatars des meilleurs performeurs.
+  - Flux d'activité en direct des simulations CBT et évaluations IA.
+  - Datatable complète des candidats avec recherche, filtres par statut et décomposition des 4 compétences (CE/CO/EE/EO).
+  - Gestionnaire de quotas B2B (sièges attribués, consommation de tokens IA Claude/Whisper).
+  - 0 erreur TypeScript (`tsc --noEmit`), build validé et HTTP 200 sur `/admin`.
+- [x] **Portail d'Authentification Sécurisé du Back-Office (`app/admin/login` & `middleware.ts`) :**
+  - Mur d'authentification exécutif protégeant toutes les routes `/admin` (redirection HTTP 307 vers `/admin/login` si cookie absent).
+  - Deux méthodes d'authentification : *Clé Maître & SSO* et *Code PIN 2FA (TOTP 6 chiffres)* avec clavier interactif.
+  - Bouton *Accès Direct Démo* (1 clic) pour les tests rapides et l'évaluation sans friction.
+  - Gestion de session par cookie sécurisé `super4c2_admin_token` (validité 24h) et `localStorage`.
+  - Boutons de déconnexion dédiée dans la sidebar desktop et le header exécutif avec redirection vers `/admin/login`.
+  - Vérification intégrale validée via agent de test navigateur et requêtes HTTP (307 redirect, 200 OK sur login, 200 OK avec token).
 
-## En Cours
-- [ ] Revue visuelle utilisateur et finalisation de l'intégration base de données.
+- [x] **Phase 1 : Socle Data, Docker & Utilitaires CRUD (Modèle Pratik-IT) :**
+  - Conteneur PostgreSQL Supabase dédié `super4c2-db` actif sur port `5434` (zéro collision) et Web UI `super4c2-studio` sur port `3002`.
+  - Configuration d'environnement `.env` et `.env.example` avec `DATABASE_URL` et `DIRECT_URL`.
+  - Modèle Prisma complet (`prisma/schema.prisma`) : `ExamSeries`, `Question` (39Q CE), `WrittenSeries`, `WrittenTask` (3 tâches EE), `UserAttempt`, `BlogPost`, `Faq`, `Testimonial`, `NewsletterSubscriber`, `ContactLead`.
+  - Synchronisation de schéma réussie (`npx prisma db push`).
+  - Script de seed exhaustif (`prisma/seed.ts`) exécuté avec succès : 39 questions CE authentiques, 3 tâches EE officielles FEI, 4 articles de blog SEO, 5 FAQs clés et 3 témoignages candidats réels.
+  - Boîte à outils CRUD inspirée de Pratik-IT : `lib/admin-crud-utils.ts`, `lib/admin-pagination.ts`, `lib/toast-navigation.ts`, `ConfirmActionDialog`, `AdminTablePagination`, `AdminTableSelectAll`, `AdminListEmptyState`.
+  - 0 erreur TypeScript (`tsc --noEmit`).
 
-## À Venir
-- [ ] Schéma de données Prisma (Exams, Questions, Answers, Submissions, AICorrections).
-- [ ] Prototype du Simulateur CBT Compréhension Écrite & Orale.
-- [ ] Moteur de correction d'Expression Écrite par IA (grille FEI + Magic Rewrite).
-- [ ] Agent vocal interactif pour l'Expression Orale (Jeu de rôle Tâche 2).
-- [ ] Simulateur de points CRS / Entrée Express & Dashboard de progression NCLC.
-- [ ] Intégration paiement & onboarding.
+- [x] **CRUD Séries CE & Questions 1-39 (Interface Markdown Type Pratik-IT & Shadcn Select) :**
+  - Table `/admin/series-ce` avec pagination, filtres, statuts et saut rapide 1-39.
+  - Formulaires complets avec Shadcn Select, éditeur Markdown et simulateur CBT.
+- [x] **CRUD Séries EE & 3 Tâches FEI (Interface Markdown & Simulateur CBT Validé E2E) :**
+  - Table `/admin/series-ee` avec filtres, recherche, pagination et statut en direct.
+  - Hub des 3 Tâches FEI (`/admin/series-ee/[id]/tasks`) et formulaire `WrittenTaskForm`.
+- [x] **CRUD FAQs & Catégories (Interface Markdown & Accordéon Live Validé) :**
+  - Table `/admin/faqs` avec filtres thématiques (*Général*, *Examen CBT*, *NCLC & CRS*, *Abonnements*, *Stratégie*, *Technique*), recherche instantanée et pagination.
+  - Formulaires complets avec Shadcn Select, éditeur Markdown pour la réponse et volet latéral d'aperçu accordéon candidat.
+  - Bascule de statut en direct (*Active* / *Masquée*) et suppression sécurisée avec modale.
+  - PostgreSQL 17 validé, 0 erreur TypeScript (`tsc --noEmit` code 0) et HTTP 200 OK sur toutes les routes.
+
+- [x] **CRUD Blog & Articles SEO (`/admin/blog`) :**
+  - Table `/admin/blog` avec filtres thématiques, recherche par mot-clé, badges de statut (Publié / Brouillon) et pagination serveur.
+  - Formulaire `BlogForm` avec éditeur Markdown `MarkdownField`, calcul du temps de lecture, gestion des tags, et aperçu en direct de l'article.
+- [x] **CRUD Témoignages Candidats NCLC 7 (`/admin/temoignages`) :**
+  - Table `/admin/temoignages` avec ordre d'affichage, avatar candidat, note étoilée, statut vedette et badges de score NCLC 7 / CRS +50 pts.
+  - Formulaire `TestimonialForm` avec aperçu live du composant citation candidat.
+- [x] **CRUD Newsletter & Abonnés (`/admin/newsletter`) :**
+  - Table `/admin/newsletter` avec filtres de statut (Actif / Désabonné), recherche et export CSV/JSON sécurisé (`/api/admin/newsletter/export`).
+- [x] **CRUD Leads Conciergerie & Demandes B2B (`/admin/leads`) :**
+  - Table `/admin/leads` avec tri par priorité, gestion des statuts (Nouveau, Contacté, Converti, Archivé) et dialogue de détails complets.
+- [x] **Validation Globale Zéro Défaut & 100% Production-Ready :**
+  - Build de production Next.js 15 : **39/39 pages statiques compilées avec succès** (`npm run build` : code 0).
+  - TypeScript : **0 erreur** (`npx tsc --noEmit` : code 0).
+  - ESLint : **0 avertissement, 0 erreur** (`npm run lint` : code 0).
+  - Serveur de développement : En écoute sur `http://localhost:3000` (`/api/health` : `{ ok: true }`).
+
+

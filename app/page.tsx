@@ -14,7 +14,6 @@ import { Button } from "@/components/ui/button";
 import { Globe } from "@/components/ui/globe";
 import { ShimmerButton } from "@/components/ui/shimmer-button";
 import { InteractiveHoverButton } from "@/components/ui/interactive-hover-button";
-import { AnimatedShinyText } from "@/components/ui/animated-shiny-text";
 import { AnimatedGradientText } from "@/components/ui/animated-gradient-text";
 import { BlurFade } from "@/components/ui/blur-fade";
 
@@ -63,7 +62,7 @@ export default function HomePage() {
                 colorTo="#00B4D8"
                 className="text-xs sm:text-sm font-bold tracking-tight"
               >
-                La Révolution de l&apos;Entraînement TCF &amp; TEF Canada
+                Préparation Officielle Canada : TCF • TEF • IELTS
               </AnimatedGradientText>
               <ArrowRight className="h-3.5 w-3.5 text-muted-foreground shrink-0 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:text-foreground" />
             </div>
@@ -85,22 +84,43 @@ export default function HomePage() {
           </BlurFade>
 
           <BlurFade delay={0.35}>
-            <div className="flex flex-col items-center justify-center gap-4 pt-2 sm:flex-row">
-              <ShimmerButton
-                href="/examens"
-                background="#E51A31"
-                shimmerColor="#ffffff"
-                className="w-full sm:w-auto shadow-[0_10px_40px_-10px_rgba(229,26,49,0.65)]"
-              >
-                <span className="flex items-center gap-2 text-base font-semibold">
-                  Faire une simulation d&apos;examen
-                  <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
-                </span>
-              </ShimmerButton>
+            <div className="flex flex-col items-center justify-center gap-4 pt-2">
+              <div className="flex flex-col sm:flex-row flex-wrap items-center justify-center gap-3 w-full">
+                <ShimmerButton
+                  href="/examens"
+                  background="#E51A31"
+                  shimmerColor="#ffffff"
+                  className="w-full sm:w-auto shadow-[0_10px_40px_-10px_rgba(229,26,49,0.65)] font-bold px-7"
+                >
+                  <span className="flex items-center gap-2 text-base font-bold">
+                    Commencer le TCF
+                    <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+                  </span>
+                </ShimmerButton>
 
-              <InteractiveHoverButton href="/nclc-calculator" className="w-full sm:w-auto text-base">
-                Calculer mes points CRS Canada
-              </InteractiveHoverButton>
+                <InteractiveHoverButton href="/examens?test=tef" className="w-full sm:w-auto text-base font-semibold px-6">
+                  Commencer le TEF
+                </InteractiveHoverButton>
+
+                <Button
+                  asChild
+                  variant="outline"
+                  size="lg"
+                  className="w-full sm:w-auto rounded-full border-border/80 bg-background/80 hover:bg-muted/80 backdrop-blur-md px-6 text-sm font-semibold shadow-xs transition-all hover:border-cyan-500/50"
+                >
+                  <Link href="/examens?test=ielts" className="gap-2">
+                    <span className="inline-block h-2 w-2 rounded-full bg-cyan-500" />
+                    <span>Préparer l&apos;IELTS General</span>
+                  </Link>
+                </Button>
+              </div>
+
+              <p className="text-xs text-muted-foreground flex items-center gap-1.5 pt-1">
+                <span>Objectif Immigration Canada ?</span>
+                <Link href="/nclc-calculator" className="text-primary hover:underline font-semibold">
+                  Calculer mes points CRS (+50 pts NCLC 7) →
+                </Link>
+              </p>
             </div>
           </BlurFade>
         </div>

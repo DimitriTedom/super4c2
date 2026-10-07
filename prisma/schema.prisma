@@ -1,3 +1,8 @@
+// ============================================
+// SUPER4C2 PRISMA DATABASE SCHEMA
+// Modeled after proven patterns from Pratik-IT
+// ============================================
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -7,6 +12,10 @@ datasource db {
   url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
 }
+
+// ============================================
+// 1. CANDIDATS & UTILISATEURS
+// ============================================
 
 model User {
   id        String   @id @db.Uuid
@@ -21,16 +30,24 @@ model User {
 }
 
 model Profile {
-  id          String   @id @default(cuid())
-  userId      String   @unique @db.Uuid
+  id          String    @id @default(cuid())
+  userId      String    @unique @db.Uuid
   displayName String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  targetNclc  Int       @default(7) // Seuil NCLC 7 visé (+50 pts CRS)
+  examDate    DateTime?
+  phone       String?
+  country     String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("profiles")
 }
+
+// ============================================
+// 2. EXAMEN CBT : COMPRÉHENSION ÉCRITE & ORALE
+// ============================================
 
 enum ExamType {
   TCF_CANADA
@@ -45,16 +62,21 @@ enum Discipline {
 }
 
 model ExamSeries {
-  id           String        @id @default(cuid())
-  seriesNumber Int
-  title        String
-  examType     ExamType      @default(TCF_CANADA)
-  isFreeDemo   Boolean       @default(false)
-  createdAt    DateTime      @default(now())
-  questions    Question[]
-  attempts     UserAttempt[]
+  id              String        @id @default(cuid())
+  seriesNumber    Int
+  title           String
+  examType        ExamType      @default(TCF_CANADA)
+  discipline      Discipline    @default(COMPREHENSION_ECRITE)
+  durationSeconds Int           @default(3600) // 60 min pour CE
+  isPublished     Boolean       @default(true)
+  isFreeDemo      Boolean       @default(false)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
 
-  @@unique([examType, seriesNumber])
+  questions       Question[]
+  attempts        UserAttempt[]
+
+  @@unique([examType, discipline, seriesNumber])
   @@map("exam_series")
 }
 
@@ -62,43 +84,213 @@ model Question {
   id              String     @id @default(cuid())
   seriesId        String
   series          ExamSeries @relation(fields: [seriesId], references: [id], onDelete: Cascade)
-  discipline      Discipline
+  discipline      Discipline @default(COMPREHENSION_ECRITE)
   questionNumber  Int
-  nclcTargetLevel Int?
+  nclcTargetLevel Int?       // NCLC 3 à 10+
+  cefrLevel       String?    // A1, A2, B1, B2, C1, C2
 
-  documentText     String? @db.Text
+  documentTitle    String?
+  documentText     String?   @db.Text
   documentImageUrl String?
   audioUrl         String?
-  audioTranscript  String? @db.Text
+  audioTranscript  String?   @db.Text
 
   prompt        String @db.Text
   optionA       String
   optionB       String
   optionC       String
   optionD       String
-  correctOption String
+  correctOption String // A, B, C, D
 
   explanation  String  @db.Text
   trapAnalysis String? @db.Text
 
-  @@unique([seriesId, discipline, questionNumber])
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@unique([seriesId, questionNumber])
+  @@index([seriesId, questionNumber])
   @@map("questions")
 }
 
+// ============================================
+// 3. EXAMEN CBT : EXPRESSION ÉCRITE (3 TÂCHES FEI)
+// ============================================
+
+model WrittenSeries {
+  id              String        @id @default(cuid())
+  seriesNumber    Int           @unique
+  title           String
+  examType        ExamType      @default(TCF_CANADA)
+  durationSeconds Int           @default(3600) // 60 minutes
+  isPublished     Boolean       @default(true)
+  isFreeDemo      Boolean       @default(false)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  tasks           WrittenTask[]
+
+  @@map("written_series")
+}
+
+model WrittenTask {
+  id                       String        @id @default(cuid())
+  seriesId                 String
+  series                   WrittenSeries @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+  taskNumber               Int           // 1, 2, 3
+  title                    String        // Ex: "Tâche 1 : Message descriptif"
+  minWords                 Int           // Ex: 60
+  maxWords                 Int           // Ex: 120
+  suggestedDurationMinutes Int           @default(15)
+  topic                    String        @db.Text
+  context                  String?       @db.Text
+  criteriaNote             String?       @db.Text
+  sampleModelC2            String?       @db.Text // Modèle Magic Rewrite C2
+
+  createdAt                DateTime      @default(now())
+  updatedAt                DateTime      @updatedAt
+
+  @@unique([seriesId, taskNumber])
+  @@index([seriesId, taskNumber])
+  @@map("written_tasks")
+}
+
+// ============================================
+// 4. TENTATIVES & RÉSULTATS CANDIDATS
+// ============================================
+
 model UserAttempt {
-  id             String     @id @default(cuid())
-  userId         String     @db.Uuid
-  user           User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  seriesId       String
-  series         ExamSeries @relation(fields: [seriesId], references: [id])
-  discipline     Discipline
-  startedAt      DateTime   @default(now())
-  completedAt    DateTime?
-  rawScore       Int        @default(0)
-  tcfScaledScore Int        @default(0)
-  nclcLevel      Int        @default(0)
-  answers        Json
+  id                String      @id @default(cuid())
+  userId            String?     @db.Uuid
+  user              User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
+  seriesId          String
+  series            ExamSeries? @relation(fields: [seriesId], references: [id], onDelete: SetNull)
+  discipline        Discipline
+  startedAt         DateTime    @default(now())
+  completedAt       DateTime?
+  rawScore          Int         @default(0) // Nombre de bonnes réponses (ex: 32/39) ou note /20
+  tcfScaledScore    Int         @default(0) // Score échelonné officiel (100–699)
+  nclcLevel         Int         @default(0) // Niveau NCLC calculé (3 à 10+)
+  crsPointsUnlocked Int         @default(0) // +50 si NCLC >= 7
+  answers           Json        // Réponses détaillées et états des pastilles
+  feedback          Json?       // Grille détaillée FEI ou rapport Magic Rewrite
+
+  createdAt         DateTime    @default(now())
 
   @@index([userId, discipline])
+  @@index([createdAt])
   @@map("user_attempts")
+}
+
+// ============================================
+// 5. BLOG & GUIDES SEO
+// ============================================
+
+model BlogPost {
+  id             String    @id @default(cuid())
+  title          String
+  slug           String    @unique
+  excerpt        String    @db.Text
+  content        String    @db.Text // Markdown enrichi
+  coverImage     String?
+  authorName     String    @default("Équipe Pédagogique Super4C2")
+  authorRole     String    @default("Expert NCLC & Ancien Correcteur FEI")
+  readingMinutes Int       @default(5)
+  category       String    // "Stratégie TCF", "Entrée Express & CRS", "Expression Écrite", etc.
+  tags           String[]  @default([])
+  featured       Boolean   @default(false)
+  isPublished    Boolean   @default(true)
+  viewCount      Int       @default(0)
+  publishedAt    DateTime  @default(now())
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  @@map("blog_posts")
+  @@index([slug])
+  @@index([category, isPublished])
+}
+
+// ============================================
+// 6. FAQS (QUESTIONS FRÉQUENTES CANDIDATS)
+// ============================================
+
+model Faq {
+  id        String   @id @default(cuid())
+  question  String
+  answer    String   @db.Text
+  category  String   @default("Général") // "Examen CBT", "NCLC & CRS", "Abonnements", "Technique"
+  order     Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("faqs")
+  @@index([category, order])
+}
+
+// ============================================
+// 7. TÉMOIGNAGES CANDIDATS & RÉUSSITES NCLC 7+
+// ============================================
+
+model Testimonial {
+  id               String   @id @default(cuid())
+  candidateName    String
+  country          String   @default("Cameroun")
+  targetScore      String   @default("NCLC 7")
+  achievedNclc     String   @default("NCLC 8")
+  crsPointsGained  Int      @default(50)
+  quote            String   @db.Text
+  avatar           String?
+  rating           Int      @default(5) // Étoiles 1-5
+  isFeatured       Boolean  @default(true)
+  isActive         Boolean  @default(true)
+  order            Int      @default(0)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@map("testimonials")
+  @@index([isActive, order])
+}
+
+// ============================================
+// 8. NEWSLETTER & ABONNÉS (EMAIL MARKETING)
+// ============================================
+
+model NewsletterSubscriber {
+  id             String    @id @default(cuid())
+  email          String    @unique
+  source         String    @default("footer") // "footer", "nclc_calculator", "test_gratuit", "blog"
+  isActive       Boolean   @default(true)
+  subscribedAt   DateTime  @default(now())
+  unsubscribedAt DateTime?
+
+  @@map("newsletter_subscribers")
+  @@index([email])
+}
+
+// ============================================
+// 9. CONTACT & CONCIERGERIE CANDIDAT (LEADS)
+// ============================================
+
+enum LeadStatus {
+  NOUVEAU
+  EN_COURS
+  RESOLU
+  ARCHIVE
+}
+
+model ContactLead {
+  id         String     @id @default(cuid())
+  name       String
+  email      String
+  phone      String?
+  intent     String     @default("CANDIDATE") // "CANDIDATE", "URGENT", "B2B", "TECH"
+  message    String     @db.Text
+  status     LeadStatus @default(NOUVEAU)
+  adminNotes String?    @db.Text
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+
+  @@map("contact_leads")
+  @@index([status, createdAt])
 }

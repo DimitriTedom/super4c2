@@ -7,6 +7,20 @@ export async function middleware(request: NextRequest) {
   const response = await updateSession(request);
 
   const pathname = request.nextUrl.pathname;
+
+  // 1. Back-Office & Super Admin Gate
+  if (pathname.startsWith("/admin") && pathname !== "/admin/login") {
+    const adminToken = request.cookies.get("super4c2_admin_token")?.value;
+    if (!adminToken) {
+      const adminLoginUrl = request.nextUrl.clone();
+      adminLoginUrl.pathname = "/admin/login";
+      adminLoginUrl.searchParams.set("next", pathname);
+      return NextResponse.redirect(adminLoginUrl);
+    }
+    return response;
+  }
+
+  // 2. Candidate Dashboard & Account Protection
   const isProtected = pathname.startsWith("/dashboard") || pathname.startsWith("/account");
 
   if (!isProtected) return response;

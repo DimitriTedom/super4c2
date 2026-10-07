@@ -21,14 +21,22 @@ export async function SiteHeader() {
             <span className="text-border">|</span>
             <span>Conforme aux standards officiels France Éducation International (TCF / TEF)</span>
           </div>
-          <div className="flex items-center gap-4 text-[11px]">
-            <span className="font-bold text-brand-crimson">🇨🇦 Objectif NCLC 7+ & Résidence Permanente</span>
+          <div className="flex items-center gap-3.5 text-[11px]">
+            <Link href="/blog" className="text-foreground/80 hover:text-primary transition-colors font-medium">
+              Blog & Stratégies
+            </Link>
+            <span className="text-border">|</span>
+            <Link href="/communaute" className="text-foreground/80 hover:text-primary transition-colors font-medium">
+              Communauté VIP
+            </Link>
+            <span className="text-border">|</span>
+            <span className="font-bold text-brand-crimson">🇨🇦 Objectif NCLC 7+</span>
             <span className="text-border">|</span>
             <Link
               href="/nclc-calculator"
               className="text-foreground/80 hover:text-foreground transition-colors"
             >
-              Calculateur CRS Express
+              Calculateur CRS
             </Link>
           </div>
         </div>
@@ -76,10 +84,10 @@ export async function SiteHeader() {
               Carnet SRS
             </Link>
             <Link
-              href="/nclc-calculator"
+              href="/blog"
               className="rounded-full px-3.5 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-background/80 transition-all"
             >
-              Simulateur CRS
+              Blog
             </Link>
             <Link
               href="/tarifs"

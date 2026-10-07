@@ -7,6 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
+import { ArrowRight, Eye, EyeOff, Lock, Mail, User, CheckCircle2 } from "lucide-react";
 
 import { signUpSchema } from "@/lib/validations";
 import { signUpAction } from "@/app/auth/actions";
@@ -25,6 +26,8 @@ type Values = z.infer<typeof signUpSchema>;
 
 export function RegisterForm() {
   const router = useRouter();
+  const [showPassword, setShowPassword] = React.useState(false);
+
   const form = useForm<Values>({
     resolver: zodResolver(signUpSchema),
     defaultValues: { email: "", password: "", displayName: "" },
@@ -36,10 +39,10 @@ export function RegisterForm() {
     startTransition(async () => {
       const res = await signUpAction(values);
       if (!res.ok) {
-        toast.error(res.error);
+        toast.error(res.error || "Impossible de créer le compte. Veuillez vérifier vos informations.");
         return;
       }
-      toast.success("Account created!");
+      toast.success("Compte créé avec succès ! Bienvenue sur Super4C2.");
       router.push(res.redirectTo);
       router.refresh();
     });
@@ -48,62 +51,121 @@ export function RegisterForm() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        {/* Email */}
         <FormField
           control={form.control}
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email</FormLabel>
+              <FormLabel className="text-xs font-semibold">Adresse e-mail</FormLabel>
               <FormControl>
-                <Input placeholder="you@example.com" type="email" autoComplete="email" {...field} />
+                <div className="relative">
+                  <Mail className="absolute left-3.5 top-3 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="candidat@canada.ca"
+                    type="email"
+                    autoComplete="email"
+                    className="pl-10 h-10 rounded-xl"
+                    {...field}
+                  />
+                </div>
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
+
+        {/* Display Name */}
         <FormField
           control={form.control}
           name="displayName"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Display name (optional)</FormLabel>
+              <FormLabel className="text-xs font-semibold">Prénom ou Nom d&apos;usage</FormLabel>
               <FormControl>
-                <Input placeholder="Jane" autoComplete="nickname" {...field} />
+                <div className="relative">
+                  <User className="absolute left-3.5 top-3 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Alexandre"
+                    autoComplete="name"
+                    className="pl-10 h-10 rounded-xl"
+                    {...field}
+                  />
+                </div>
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
+
+        {/* Password */}
         <FormField
           control={form.control}
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Password</FormLabel>
+              <FormLabel className="text-xs font-semibold">Mot de passe (8 caractères minimum)</FormLabel>
               <FormControl>
-                <Input
-                  placeholder="At least 8 characters"
-                  type="password"
-                  autoComplete="new-password"
-                  {...field}
-                />
+                <div className="relative">
+                  <Lock className="absolute left-3.5 top-3 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Au moins 8 caractères"
+                    type={showPassword ? "text" : "password"}
+                    autoComplete="new-password"
+                    className="pl-10 pr-10 h-10 rounded-xl"
+                    {...field}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3.5 top-3 text-muted-foreground hover:text-foreground"
+                    tabIndex={-1}
+                  >
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
 
-        <Button className="w-full" type="submit" disabled={pending}>
-          {pending ? "Creating account..." : "Create account"}
+        {/* Guarantees */}
+        <div className="space-y-1.5 py-1 text-xs text-muted-foreground">
+          <p className="flex items-center gap-1.5">
+            <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
+            Accès immédiat à la Série 101 et au simulateur CBT
+          </p>
+          <p className="flex items-center gap-1.5">
+            <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
+            Calculateur de points Entrée Express NCLC 7 inclus
+          </p>
+        </div>
+
+        {/* Submit */}
+        <Button className="w-full font-bold h-11 rounded-xl shadow-xs text-base" type="submit" disabled={pending}>
+          {pending ? (
+            <span className="flex items-center gap-2">
+              <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+              Création de votre compte...
+            </span>
+          ) : (
+            <span className="flex items-center gap-2">
+              Créer mon compte candidat
+              <ArrowRight className="h-4 w-4" />
+            </span>
+          )}
         </Button>
 
-        <p className="text-sm text-muted-foreground">
-          Already have an account?{" "}
-          <Link href="/auth/login" className="text-foreground underline underline-offset-4">
-            Log in
-          </Link>
-          .
-        </p>
+        {/* Already have account */}
+        <div className="text-center pt-2">
+          <p className="text-sm text-muted-foreground">
+            Vous avez déjà un compte ?{" "}
+            <Link href="/auth/login" className="font-semibold text-primary hover:underline">
+              Se connecter
+            </Link>
+          </p>
+        </div>
       </form>
     </Form>
   );

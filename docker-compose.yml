@@ -1,10 +1,72 @@
 services:
-  app:
-    build: .
+  # Supabase PostgreSQL Database for Super4C2 (Using locally cached PostgreSQL 17 image)
+  db:
+    image: supabase/postgres:17.6.1.167
+    container_name: super4c2-db
+    restart: unless-stopped
     ports:
-      - "3000:3000"
-    env_file:
-      - ./.env
+      - "5434:5432"
     environment:
-      NODE_ENV: production
-      NEXT_TELEMETRY_DISABLED: "1"
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: super4c2
+    volumes:
+      - super4c2_db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # Supabase Studio (Web UI Database Manager)
+  studio:
+    image: supabase/studio:2026.08.24-sha-8ec45b2
+    container_name: super4c2-studio
+    restart: unless-stopped
+    ports:
+      - "3002:3000"
+    environment:
+      SUPABASE_URL: http://localhost:8000
+      STUDIO_PG_META_URL: http://meta:8080
+      POSTGRES_HOST: db
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: super4c2
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      SNIPPETS_MANAGEMENT_FOLDER: /tmp/snippets
+    volumes:
+      - super4c2_studio_data:/tmp/snippets
+    depends_on:
+      meta:
+        condition: service_healthy
+
+  # PostgreSQL Meta API for Studio
+  meta:
+    image: public.ecr.aws/supabase/postgres-meta:v0.99.0
+    container_name: super4c2-meta
+    restart: unless-stopped
+    environment:
+      PG_META_PORT: 8080
+      PG_META_DB_HOST: db
+      PG_META_DB_PORT: 5432
+      PG_META_DB_NAME: super4c2
+      PG_META_DB_USER: postgres
+      PG_META_DB_PASSWORD: postgres
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:8080/health', (res) => process.exit(res.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1))"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  super4c2_db_data:
+    driver: local
+  super4c2_studio_data:
+    driver: local
+
+networks:
+  default:
+    name: super4c2-network

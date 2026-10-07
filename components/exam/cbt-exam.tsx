@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useEffect, useState } from "react";
+import { ChevronLeft, ChevronRight, FileText, ZoomIn, ZoomOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useExamSession } from "@/hooks/use-exam-session";
 import type { ExamSeriesData } from "@/lib/exam/types";
@@ -11,13 +11,33 @@ import { ExamSplitLayout } from "./exam-split-layout";
 import { AudioPlayerCBT } from "./audio-player-cbt";
 import { QuestionNavGrid } from "./question-nav-grid";
 import { QuestionPanel } from "./question-panel";
+import { cn } from "@/lib/utils";
 
 const DISCIPLINE_LABEL = { CE: "Compréhension écrite", CO: "Compréhension orale" } as const;
 
+type FontSizeLevel = "sm" | "base" | "lg" | "xl";
+
+const FONT_SIZE_CLASSES: Record<FontSizeLevel, string> = {
+  sm: "text-sm leading-relaxed",
+  base: "text-base leading-relaxed sm:text-lg sm:leading-loose",
+  lg: "text-lg leading-relaxed sm:text-xl sm:leading-loose",
+  xl: "text-xl leading-loose sm:text-2xl sm:leading-loose",
+};
+
+function getDocumentNature(questionNumber: number) {
+  if (questionNumber <= 6) return "Annonce publique / Message du quotidien (A1)";
+  if (questionNumber <= 12) return "Consigne officielle / Offre / Dépliant pratique (A2)";
+  if (questionNumber <= 18) return "Note administrative / Article d'information (B1)";
+  if (questionNumber <= 28) return "Article de presse / Enquête socio-économique (B2 • NCLC 7)";
+  if (questionNumber <= 35) return "Chronique d'analyse / Essai critique (C1)";
+  return "Texte philosophique & littéraire / Débat d'idées (C2)";
+}
+
 export function CbtExam({ series }: { series: ExamSeriesData }) {
   const s = useExamSession(series);
+  const [fontSize, setFontSize] = useState<FontSizeLevel>("base");
 
-  // Keyboard: A-D select, arrows navigate, F flags.
+  // Keyboard shortcuts: A-D select, arrows navigate, F flags.
   useEffect(() => {
     if (s.finished) return;
     const onKey = (e: KeyboardEvent) => {
@@ -33,10 +53,32 @@ export function CbtExam({ series }: { series: ExamSeriesData }) {
   });
 
   if (!s.hydrated) {
-    return <div className="flex h-screen items-center justify-center">Chargement…</div>;
+    return (
+      <div className="flex h-screen items-center justify-center space-x-3 bg-background">
+        <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+        <span className="font-medium text-muted-foreground">Chargement de l&apos;épreuve officielle...</span>
+      </div>
+    );
   }
 
   const current = s.answers[s.question.id];
+
+  const goToFirstUnanswered = () => {
+    const idx = series.questions.findIndex((q) => !s.answers[q.id]?.selected);
+    if (idx !== -1) s.goTo(idx);
+  };
+
+  const increaseFontSize = () => {
+    if (fontSize === "sm") setFontSize("base");
+    else if (fontSize === "base") setFontSize("lg");
+    else if (fontSize === "lg") setFontSize("xl");
+  };
+
+  const decreaseFontSize = () => {
+    if (fontSize === "xl") setFontSize("lg");
+    else if (fontSize === "lg") setFontSize("base");
+    else if (fontSize === "base") setFontSize("sm");
+  };
 
   return (
     <div className="flex h-screen flex-col bg-background">
@@ -46,8 +88,10 @@ export function CbtExam({ series }: { series: ExamSeriesData }) {
         remaining={s.remaining}
         unanswered={s.stats.unanswered}
         flagged={s.stats.flagged}
+        total={series.questions.length}
         disabled={s.finished}
         onFinish={s.finish}
+        onGoToFirstUnanswered={goToFirstUnanswered}
       />
 
       {s.finished && s.result ? (
@@ -73,9 +117,59 @@ export function CbtExam({ series }: { series: ExamSeriesData }) {
                 />
               </div>
             ) : (
-              <article className="mx-auto max-w-prose whitespace-pre-line font-sans text-base leading-relaxed">
-                {s.question.documentText}
-              </article>
+              <div className="mx-auto flex h-full max-w-2xl flex-col space-y-4">
+                {/* Document Top Bar with Controls */}
+                <div className="flex items-center justify-between border-b pb-3">
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground font-medium">
+                    <FileText className="h-4 w-4 text-primary" />
+                    <span>{getDocumentNature(s.question.questionNumber)}</span>
+                  </div>
+
+                  <div className="flex items-center gap-1">
+                    <span className="text-[11px] text-muted-foreground mr-1 hidden sm:inline">Taille du texte :</span>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="h-7 w-7"
+                      onClick={decreaseFontSize}
+                      disabled={fontSize === "sm"}
+                      title="Diminuer la police"
+                    >
+                      <ZoomOut className="h-3.5 w-3.5" />
+                    </Button>
+                    <button
+                      type="button"
+                      onClick={() => setFontSize("base")}
+                      className="px-1.5 py-0.5 text-xs font-mono font-medium text-muted-foreground hover:text-foreground"
+                      title="Taille standard (100%)"
+                    >
+                      {fontSize === "sm" ? "85%" : fontSize === "base" ? "100%" : fontSize === "lg" ? "115%" : "130%"}
+                    </button>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="h-7 w-7"
+                      onClick={increaseFontSize}
+                      disabled={fontSize === "xl"}
+                      title="Agrandir la police"
+                    >
+                      <ZoomIn className="h-3.5 w-3.5" />
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Authentic Document Card */}
+                <div className="flex-1 rounded-2xl border bg-card p-6 sm:p-8 shadow-sm">
+                  <article
+                    className={cn(
+                      "select-text whitespace-pre-line font-sans text-foreground transition-all",
+                      FONT_SIZE_CLASSES[fontSize],
+                    )}
+                  >
+                    {s.question.documentText}
+                  </article>
+                </div>
+              </div>
             )
           }
           right={
@@ -89,12 +183,21 @@ export function CbtExam({ series }: { series: ExamSeriesData }) {
                 onSelect={s.select}
                 onToggleFlag={s.toggleFlag}
               />
-              <div className="mx-auto flex max-w-xl justify-between">
-                <Button variant="outline" onClick={s.prev} disabled={s.current === 0}>
-                  <ChevronLeft className="mr-1 h-4 w-4" aria-hidden /> Précédente
+              <div className="mx-auto flex max-w-xl justify-between pt-2">
+                <Button
+                  variant="outline"
+                  onClick={s.prev}
+                  disabled={s.current === 0}
+                  className="font-medium"
+                >
+                  <ChevronLeft className="mr-1 h-4 w-4" aria-hidden /> Question précédente
                 </Button>
-                <Button onClick={s.next} disabled={s.current === s.stats.total - 1}>
-                  Suivante <ChevronRight className="ml-1 h-4 w-4" aria-hidden />
+                <Button
+                  onClick={s.next}
+                  disabled={s.current === s.stats.total - 1}
+                  className="font-semibold"
+                >
+                  Question suivante <ChevronRight className="ml-1 h-4 w-4" aria-hidden />
                 </Button>
               </div>
             </div>

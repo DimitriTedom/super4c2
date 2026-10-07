@@ -36,6 +36,16 @@ Ce document est la **feuille de route fonctionnelle exhaustive** de Super4C2. Il
 │   ├── /correction-ee (Rapport critères FEI + Magic Rewrite C1/C2)
 │   └── /debrief-eo (Analyse audio, fluidité, prononciation & transcription)
 │
+├── /blog/ (Moteur d'Acquisition Organique & Guides SEO)
+│   └── /[slug] (Article enrichi, sommaire, progression de lecture & CTA CBT)
+│
+├── /contact (Conciergerie Candidat & Support Partenaires B2B)
+├── /communaute (Groupes d'Entraide VIP Telegram / WhatsApp & Alertes Sujets)
+├── /sujets-recents (Banque de Veille des Sujets d'Examen Tombés 2026)
+│
+├── /admin (Dashboard Super Admin : MRR, IA Tokens, Taux de réussite NCLC)
+├── /org/[slug] (Dashboard B2B : Écoles de langues & Cabinets d'immigration)
+│
 └── /compte/
     ├── /profil (Informations personnelles & date de passage)
     └── /facturation (Gestion du Pass, crédits IA & factures)

@@ -1,19 +1,13 @@
 "use client";
 
 import React, { useState } from "react";
-import Link from "next/link";
 import {
   CheckCircle2,
-  Clock,
   ArrowRight,
   Sparkles,
-  BookOpenText,
   Headphones,
-  Award,
   RotateCcw,
   Volume2,
-  AlertCircle,
-  HelpCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ShimmerButton } from "@/components/ui/shimmer-button";

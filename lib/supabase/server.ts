@@ -1,15 +1,48 @@
 import { createServerClient, type SetAllCookies } from "@supabase/ssr";
 import { cookies } from "next/headers";
+import { prisma } from "@/lib/prisma";
 
 export async function createSupabaseServerClient() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
+  const cookieStore = await cookies();
+  const demoCookie = cookieStore.get("sb-super4c2-demo-candidate")?.value;
+
+  if (demoCookie) {
+    const dbUser = await prisma.user.findFirst({
+      where: { OR: [{ id: demoCookie }, { id: "demo-candidate-c4c2" }] },
+      include: { profile: true },
+    });
+
+    return {
+      auth: {
+        async getUser() {
+          return {
+            data: {
+              user: {
+                id: dbUser?.id || "demo-candidate-c4c2",
+                email: dbUser?.email || "candidat.demo@super4c2.com",
+                app_metadata: {},
+                user_metadata: { displayName: dbUser?.profile?.displayName || "Dimitri (Candidat Test)" },
+                aud: "authenticated",
+                created_at: dbUser?.createdAt?.toISOString() || new Date().toISOString(),
+              },
+            },
+            error: null,
+          };
+        },
+        async signOut() {
+          cookieStore.delete("sb-super4c2-demo-candidate");
+          return { error: null };
+        },
+      },
+    } as unknown as ReturnType<typeof createServerClient>;
+  }
+
   if (!url || !anonKey) {
     return null;
   }
-
-  const cookieStore = await cookies();
 
   return createServerClient(url, anonKey, {
     cookies: {

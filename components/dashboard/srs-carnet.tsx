@@ -77,21 +77,51 @@ export function SrsCarnet() {
   const [items, setItems] = useState<ErrorItem[]>(INITIAL_ERRORS);
   const [selectedDiscipline, setSelectedDiscipline] = useState<string>("ALL");
 
+  // Synchronisation avec les erreurs réelles exportées lors des simulations CBT
+  React.useEffect(() => {
+    try {
+      const stored = localStorage.getItem("super4c2:srs_cards");
+      if (stored) {
+        const parsed: ErrorItem[] = JSON.parse(stored);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          // Fusionner les erreurs réelles avec les exemples pédagogiques
+          const merged = [...parsed];
+          INITIAL_ERRORS.forEach((init) => {
+            if (!merged.some((m) => m.id === init.id)) {
+              merged.push(init);
+            }
+          });
+          setItems(merged);
+        }
+      }
+    } catch {
+      // Ignorer si localStorage n'est pas disponible
+    }
+  }, []);
+
   const filtered = items.filter((item) =>
     selectedDiscipline === "ALL" ? true : item.discipline === selectedDiscipline
   );
 
   const handleMarkReviewed = (id: string) => {
-    setItems((prev) =>
-      prev.map((it) => {
+    setItems((prev) => {
+      const updated = prev.map((it) => {
         if (it.id === id) {
           const nextLevel = it.masteryLevel === 1 ? 2 : 3;
           const nextDays = nextLevel === 2 ? 3 : 7;
           return { ...it, masteryLevel: nextLevel as 1 | 2 | 3, nextReviewDays: nextDays };
         }
         return it;
-      })
-    );
+      });
+
+      try {
+        localStorage.setItem("super4c2:srs_cards", JSON.stringify(updated));
+      } catch {
+        // storage quota
+      }
+
+      return updated;
+    });
   };
 
   return (

@@ -148,9 +148,15 @@ export const MOCK_SERIES_CO_101: ExamSeriesData = {
   ],
 };
 
+import { FULL_SERIES_CE_101 } from "./series-ce-101";
+
 const SERIES: Record<string, ExamSeriesData> = {
-  [MOCK_SERIES_CE_101.id]: MOCK_SERIES_CE_101,
+  [FULL_SERIES_CE_101.id]: FULL_SERIES_CE_101,
+  "demo-101": FULL_SERIES_CE_101,
+  "101": FULL_SERIES_CE_101,
+  "100": FULL_SERIES_CE_101,
   [MOCK_SERIES_CO_101.id]: MOCK_SERIES_CO_101,
+  "demo-101-co": MOCK_SERIES_CO_101,
 };
 
 export function getMockSeries(id: string): ExamSeriesData | undefined {
@@ -158,5 +164,5 @@ export function getMockSeries(id: string): ExamSeriesData | undefined {
 }
 
 export function listMockSeries(): ExamSeriesData[] {
-  return Object.values(SERIES);
+  return [FULL_SERIES_CE_101, MOCK_SERIES_CO_101];
 }
