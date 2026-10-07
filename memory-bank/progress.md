@@ -20,6 +20,11 @@
   - Composant interactif `<NotificationBell />` intégré dans le Header candidat et le Shell Admin.
   - Triggers automatiques : notifications `LEAD` (contact), `SYSTEM` (newsletter) et `EXAM` (évaluation d'épreuve écrite).
   - Moteur d'emails transactionnels Nodemailer (`lib/mail.ts`) aux couleurs de la marque.
+- [x] **Ergonomie Avancée, DeepSeek IA & Toastify :**
+  - Barre de caractères accentués officielle FEI (`é`, `è`, `ê`, `à`, `ç`, `ô`, `î`, `ù`, `œ`, `«`, `»`) au-dessus de l'éditeur d'Expression Écrite pour les candidats sur claviers QWERTY.
+  - Bouton d'échappatoire sécurisé *"Quitter"* dans le header de l'EE avec boîte de dialogue confirmant la sauvegarde automatique.
+  - Support natif de l'API DeepSeek-V3 (`DEEPSEEK_API_KEY`) dans `lib/ai/service.ts` à un coût ultra-compétitif (~0.15 FCFA / copie).
+  - Intégration de `react-toastify` via `<ToastifyContainer />` avec thémage Maple Crimson.
 - [x] **Suite des 4 Chantiers Majeurs (EO, EE, CO 39Q, Dashboard/CRS) :**
   - **Pilier 1 (Expression Orale Live) :** Salle d'examen interactive avec examinateur vocal IA, synthèse vocale en direct, évaluation FEI, enregistrement persistant en base (`UserAttempt`) et export des tournures C1/C2 vers le Carnet SRS (`super4c2:srs_cards`).
   - **Pilier 2 (Expression Écrite CBT) :** Évaluation des 3 tâches FEI avec Magic Rewrite C1/C2 et sauvegarde de la tentative dans PostgreSQL.

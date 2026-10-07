@@ -1,16 +1,57 @@
 "use client";
 
 import React, { useState, useEffect, useCallback, useRef } from "react";
-import { Clock, Send, RotateCcw, AlertTriangle, CheckCircle2, ChevronRight, BookOpen, Sparkles } from "lucide-react";
+import Link from "next/link";
+import {
+  Clock,
+  Send,
+  RotateCcw,
+  AlertTriangle,
+  CheckCircle2,
+  ChevronRight,
+  BookOpen,
+  Sparkles,
+  LogOut,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { WordCountBadge } from "@/components/exam/word-count-badge";
 import { FeiEvaluationCard } from "@/components/exam/fei-evaluation-card";
 import { MagicRewriteViewer } from "@/components/exam/magic-rewrite-viewer";
-import { countWordsFei, type WrittenExamResult, type WrittenExamSeries } from "@/lib/exam/written-types";
+import {
+  countWordsFei,
+  type WrittenExamResult,
+  type WrittenExamSeries,
+} from "@/lib/exam/written-types";
 import { evaluateWrittenExam } from "@/lib/exam/written-evaluator";
 import { formatClock } from "@/components/exam/exam-header";
 import { cn } from "@/lib/utils";
+
+const SPECIAL_CHARS = [
+  "é",
+  "è",
+  "ê",
+  "ë",
+  "à",
+  "â",
+  "ç",
+  "ô",
+  "î",
+  "ï",
+  "ù",
+  "û",
+  "œ",
+  "«",
+  "»",
+  "€",
+] as const;
 
 interface WrittenExamEditorProps {
   series: WrittenExamSeries;
@@ -25,8 +66,10 @@ export function WrittenExamEditor({ series }: WrittenExamEditorProps) {
   const [isFinished, setIsFinished] = useState<boolean>(false);
   const [result, setResult] = useState<WrittenExamResult | null>(null);
   const [isSubmitOpen, setIsSubmitOpen] = useState<boolean>(false);
+  const [isExitOpen, setIsExitOpen] = useState<boolean>(false);
   const [hydrated, setHydrated] = useState<boolean>(false);
   const finishedRef = useRef<boolean>(false);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   // Hydratation localStorage
   useEffect(() => {
@@ -119,6 +162,24 @@ export function WrittenExamEditor({ series }: WrittenExamEditorProps) {
     });
   };
 
+  const insertSpecialCharacter = (char: string) => {
+    if (isFinished) return;
+    const textarea = textareaRef.current;
+    const current = texts[activeTaskIndex];
+    if (!textarea) {
+      handleTextChange(current + char);
+      return;
+    }
+    const start = textarea.selectionStart ?? current.length;
+    const end = textarea.selectionEnd ?? current.length;
+    const updated = current.slice(0, start) + char + current.slice(end);
+    handleTextChange(updated);
+    setTimeout(() => {
+      textarea.focus();
+      textarea.setSelectionRange(start + char.length, start + char.length);
+    }, 0);
+  };
+
   const handleRestart = () => {
     localStorage.removeItem(storageKey);
     finishedRef.current = false;
@@ -168,7 +229,18 @@ export function WrittenExamEditor({ series }: WrittenExamEditorProps) {
           {formatClock(remaining)}
         </div>
 
-        <div>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setIsExitOpen(true)}
+            className="text-xs text-muted-foreground hover:text-foreground gap-1.5"
+            title="Quitter la salle d'examen"
+          >
+            <LogOut className="h-4 w-4" />
+            <span className="hidden sm:inline">Quitter</span>
+          </Button>
+
           {!isFinished ? (
             <Button onClick={() => setIsSubmitOpen(true)} className="gap-2">
               <Send className="h-4 w-4" />
@@ -353,8 +425,27 @@ export function WrittenExamEditor({ series }: WrittenExamEditorProps) {
                 />
               </div>
 
+              {/* Barre de caractères accentués officielle FEI (Assistance claviers QWERTY) */}
+              <div className="flex flex-wrap items-center gap-1 p-2 rounded-xl border bg-muted/30">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mr-1 hidden sm:inline">
+                  Accents & Caractères :
+                </span>
+                {SPECIAL_CHARS.map((char) => (
+                  <button
+                    key={char}
+                    type="button"
+                    onClick={() => insertSpecialCharacter(char)}
+                    className="h-7 w-7 rounded-lg border bg-card text-xs font-semibold text-foreground hover:bg-primary hover:text-white hover:border-primary active:scale-95 transition-all shadow-2xs select-none"
+                    title={`Insérer « ${char} »`}
+                  >
+                    {char}
+                  </button>
+                ))}
+              </div>
+
               {/* Textarea sécurisé sans correcteur automatique */}
               <textarea
+                ref={textareaRef}
                 value={currentText}
                 onChange={(e) => handleTextChange(e.target.value)}
                 placeholder="Rédigez votre texte ici..."
@@ -428,6 +519,36 @@ export function WrittenExamEditor({ series }: WrittenExamEditorProps) {
               }}
             >
               Confirmer et évaluer
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialogue de confirmation de sortie */}
+      <Dialog open={isExitOpen} onOpenChange={setIsExitOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-foreground font-display text-lg">
+              <LogOut className="h-5 w-5 text-primary" />
+              Quitter l&apos;épreuve d&apos;Expression Écrite ?
+            </DialogTitle>
+            <DialogDescription className="space-y-2 pt-2 text-sm leading-relaxed text-muted-foreground">
+              <p>
+                Vos brouillons actuels et le temps restant sont <strong>sauvegardés automatiquement</strong> sur cet appareil.
+              </p>
+              <p>
+                Vous pourrez reprendre cette simulation à tout moment depuis le catalogue des séries.
+              </p>
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="gap-2 sm:gap-0 pt-4">
+            <Button variant="outline" onClick={() => setIsExitOpen(false)}>
+              Poursuivre l&apos;épreuve
+            </Button>
+            <Button asChild variant="destructive">
+              <Link href="/examens/demo-101-ce">
+                Quitter la session
+              </Link>
             </Button>
           </DialogFooter>
         </DialogContent>

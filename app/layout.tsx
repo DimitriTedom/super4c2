@@ -6,6 +6,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { SiteHeader } from "@/components/site-header";
 import { AppShell } from "@/components/app-shell";
 import { Toaster } from "@/components/ui/sonner";
+import { ToastifyContainer } from "@/components/ui/toastify";
 
 const bricolage = Bricolage_Grotesque({
   subsets: ["latin"],
@@ -51,6 +52,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
           <AppShell header={<SiteHeader />}>{children}</AppShell>
           <Toaster />
+          <ToastifyContainer />
         </ThemeProvider>
       </body>
     </html>

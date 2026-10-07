@@ -28,11 +28,17 @@ export async function evaluateWrittenTaskWithAi(params: {
   minWords: number;
   maxWords: number;
 }): Promise<AiEvaluationFeedback | null> {
-  const apiKey = process.env.OPENAI_API_KEY;
+  const apiKey = process.env.DEEPSEEK_API_KEY || process.env.OPENAI_API_KEY;
   if (!apiKey) {
-    // No OpenAI API key configured, return null to use built-in FEI heuristic
+    // Aucune clé configurée, bascule automatique sur le moteur déterministe certifié FEI
     return null;
   }
+
+  const isDeepSeek = !!process.env.DEEPSEEK_API_KEY;
+  const endpoint = isDeepSeek
+    ? "https://api.deepseek.com/chat/completions"
+    : "https://api.openai.com/v1/chat/completions";
+  const model = isDeepSeek ? "deepseek-chat" : "gpt-4o-mini";
 
   const systemPrompt = `Tu es un examinateur officiel certifié France Éducation International (FEI) pour le TCF Canada (Test de Connaissance du Français pour l'immigration canadienne).
 Tu évalues la Tâche ${params.taskNumber} d'Expression Écrite selon la grille officielle FEI sur 4 critères notés chacun sur 5 points (Total sur 20) :
@@ -71,14 +77,14 @@ ${params.candidateText}
 Évalue rigoureusement ce texte et retourne le JSON demandé.`;
 
   try {
-    const res = await fetch("https://api.openai.com/v1/chat/completions", {
+    const res = await fetch(endpoint, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: "gpt-4o-mini",
+        model,
         messages: [
           { role: "system", content: systemPrompt },
           { role: "user", content: userPrompt },
@@ -124,8 +130,14 @@ export async function generateOralExaminerReplyWithAi(params: {
   candidateSpeech: string;
   history?: Array<{ sender: "candidate" | "examiner"; text: string }>;
 }): Promise<string | null> {
-  const apiKey = process.env.OPENAI_API_KEY;
+  const apiKey = process.env.DEEPSEEK_API_KEY || process.env.OPENAI_API_KEY;
   if (!apiKey) return null;
+
+  const isDeepSeek = !!process.env.DEEPSEEK_API_KEY;
+  const endpoint = isDeepSeek
+    ? "https://api.deepseek.com/chat/completions"
+    : "https://api.openai.com/v1/chat/completions";
+  const model = isDeepSeek ? "deepseek-chat" : "gpt-4o-mini";
 
   const systemPrompt = `Tu es l'examinateur officiel du TCF Canada (Expression Orale).
 Ton rôle est de converser avec le candidat avec bienveillance, clarté et concision (1 à 3 phrases maximum par intervention pour favoriser la prise de parole du candidat).
@@ -152,14 +164,14 @@ Ne fais JAMAIS de monologues. Reste poli et naturel en français standard.`;
   });
 
   try {
-    const res = await fetch("https://api.openai.com/v1/chat/completions", {
+    const res = await fetch(endpoint, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: "gpt-4o-mini",
+        model,
         messages,
         temperature: 0.6,
         max_tokens: 150,
