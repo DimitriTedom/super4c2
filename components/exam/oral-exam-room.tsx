@@ -30,6 +30,77 @@ export function OralExamRoom({ series }: OralExamRoomProps) {
 
   const currentTask = series.tasks[currentTaskIndex];
   const dialogueEndRef = useRef<HTMLDivElement | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const recognitionRef = useRef<any>(null);
+
+  // Initialisation de la reconnaissance vocale Web Speech API
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+      if (SpeechRecognition) {
+        const recognition = new SpeechRecognition();
+        recognition.continuous = true;
+        recognition.interimResults = true;
+        recognition.lang = "fr-FR";
+
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        recognition.onresult = (event: any) => {
+          let transcript = "";
+          for (let i = event.resultIndex; i < event.results.length; i++) {
+            transcript += event.results[i][0].transcript;
+          }
+          if (transcript.trim()) {
+            setCurrentCandidateInput(transcript);
+          }
+        };
+
+        recognition.onerror = () => {
+          setIsRecording(false);
+        };
+
+        recognition.onend = () => {
+          setIsRecording(false);
+        };
+
+        recognitionRef.current = recognition;
+      }
+    }
+
+    return () => {
+      if (recognitionRef.current) {
+        try {
+          recognitionRef.current.stop();
+        } catch {
+          // ignore
+        }
+      }
+    };
+  }, []);
+
+  const toggleRecording = () => {
+    if (isRecording) {
+      if (recognitionRef.current) {
+        try {
+          recognitionRef.current.stop();
+        } catch {
+          // ignore
+        }
+      }
+      setIsRecording(false);
+    } else {
+      if (recognitionRef.current) {
+        try {
+          recognitionRef.current.start();
+          setIsRecording(true);
+        } catch {
+          setIsRecording(true);
+        }
+      } else {
+        setIsRecording(true);
+      }
+    }
+  };
 
   // Synthèse vocale de l'examinateur IA
   const speakExaminerText = useCallback((text: string, onEnd?: () => void) => {
@@ -95,6 +166,13 @@ export function OralExamRoom({ series }: OralExamRoomProps) {
   const handleCompleteExam = useCallback(() => {
     setIsExamCompleted(true);
     setIsRecording(false);
+    if (recognitionRef.current) {
+      try {
+        recognitionRef.current.stop();
+      } catch {
+        // ignore
+      }
+    }
     if (typeof window !== "undefined" && "speechSynthesis" in window) {
       window.speechSynthesis.cancel();
     }
@@ -131,9 +209,17 @@ export function OralExamRoom({ series }: OralExamRoomProps) {
   }, [dialogues, currentTaskIndex]);
 
   // Envoi de la réplique du candidat
-  const handleSendCandidateSpeech = (customSpeech?: string) => {
+  const handleSendCandidateSpeech = async (customSpeech?: string) => {
     const textToSend = customSpeech || currentCandidateInput;
     if (!textToSend.trim() || isExaminerSpeaking) return;
+
+    if (recognitionRef.current && isRecording) {
+      try {
+        recognitionRef.current.stop();
+      } catch {
+        // ignore
+      }
+    }
 
     const candidateMsg: OralDialogueMessage = {
       id: `cand-${Date.now()}`,
@@ -150,23 +236,57 @@ export function OralExamRoom({ series }: OralExamRoomProps) {
     setCurrentCandidateInput("");
     setIsRecording(false);
 
-    // Réponse interactive de l'examinateur IA
+    // Appel à l'examinateur IA via route API
+    try {
+      const response = await fetch("/api/ai/oral-roleplay", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          taskIndex: currentTaskIndex,
+          candidateSpeech: textToSend.trim(),
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.ok && data.reply) {
+          const examinerMsg: OralDialogueMessage = {
+            id: `ex-${Date.now()}`,
+            sender: "examiner",
+            text: data.reply,
+            timestamp: Date.now(),
+          };
+
+          setDialogues((prev) => ({
+            ...prev,
+            [currentTaskIndex]: [...prev[currentTaskIndex], examinerMsg],
+          }));
+
+          speakExaminerText(data.reply);
+          return;
+        }
+      }
+    } catch (err) {
+      console.warn("Bascule vers le moteur oral local :", err);
+    }
+
+    // Fallback local
     setTimeout(() => {
       generateExaminerResponse(textToSend.trim());
     }, 600);
   };
 
-  // Logique du répondant IA (surtout pour le jeu de rôle en Tâche 2)
+  // Logique du répondant IA locale de secours
   const generateExaminerResponse = (candidateText: string) => {
     let reply = "";
     const lower = candidateText.toLowerCase();
 
     if (currentTaskIndex === 1) {
-      // Tâche 2 : Jeu de rôle (cours de cuisine)
+      // Tâche 2 : Jeu de rôle
       if (lower.includes("horaire") || lower.includes("heure") || lower.includes("quand")) {
-        reply = "Les ateliers ont lieu tous les mardis et jeudis soir, de 19h00 à 21h30. Est-ce que ces créneaux correspondent à vos disponibilités ?";
+        reply = "Les ateliers ont lieu tous les mardis et jeudis soir, de dix-neuf heures à vingt-et-une heures trente. Est-ce que ces créneaux correspondent à vos disponibilités ?";
       } else if (lower.includes("prix") || lower.includes("tarif") || lower.includes("coûte") || lower.includes("combien")) {
-        reply = "Le tarif est de 45 euros par séance, mais nous proposons un forfait mensuel de 150 euros pour quatre cours avec le carnet de recettes offert.";
+        reply = "Le tarif est de quarante-cinq euros par séance, mais nous proposons un forfait mensuel de cent cinquante euros pour quatre cours avec le carnet de recettes offert.";
       } else if (lower.includes("matériel") || lower.includes("ingrédient") || lower.includes("fourni") || lower.includes("apporter")) {
         reply = "Tout est entièrement fourni sur place ! Les tabliers, les ustensiles et l'ensemble des produits bio et de saison. Vous n'avez qu'à apporter votre bonne humeur.";
       } else if (lower.includes("débutant") || lower.includes("niveau") || lower.includes("expérience")) {
@@ -175,10 +295,8 @@ export function OralExamRoom({ series }: OralExamRoomProps) {
         reply = "C'est une très bonne question. Nous limitons nos groupes à huit participants pour garantir une ambiance conviviale et un suivi personnalisé. Avez-vous d'autres questions sur l'organisation ?";
       }
     } else if (currentTaskIndex === 0) {
-      // Tâche 1 : Présentation
       reply = "Je vous remercie pour cette présentation très claire. Pouvez-vous me dire ce qui vous attire particulièrement dans la culture canadienne ?";
     } else {
-      // Tâche 3 : Argumentation
       reply = "Votre point de vue est très intéressant. Cependant, ne craignez-vous pas que cette mesure pénalise lourdement les commerçants du centre-ville et les personnes à mobilité réduite ?";
     }
 
@@ -402,7 +520,7 @@ export function OralExamRoom({ series }: OralExamRoomProps) {
                   variant={isRecording ? "destructive" : "outline"}
                   size="icon"
                   className={cn("h-11 w-11 shrink-0 rounded-full", isRecording && "animate-pulse")}
-                  onClick={() => setIsRecording(!isRecording)}
+                  onClick={toggleRecording}
                   title={isRecording ? "Arrêter d'enregistrer" : "Activer le micro"}
                 >
                   {isRecording ? <MicOff className="h-5 w-5" /> : <Mic className="h-5 w-5" />}

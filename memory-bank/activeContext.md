@@ -1,19 +1,17 @@
 # Active Context: Super4C2
 
 ## 1. Focus Actuel
-- **Hero Landing Premium & Alignement Globe 3D :**
-  - **Positionnement & Coupe du Globe :** Le conteneur du Globe 980px est ancré à `bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2` dans une section hero en `overflow-hidden`. Son équateur est parfaitement calé sur le bord inférieur du Hero, coupant la moitié basse et faisant monter la coupole supérieure en arrière-plan.
-  - **Axe Z & Hiérarchie :** Le globe réside en arrière-plan strict (`z-0 pointer-events-none`), tandis que le badge, le grand titre H1, le paragraphe de sous-titre et les boutons CTA résident au premier plan (`z-10`). Le texte et les boutons s'affichent par-dessus la coupole du globe avec une netteté totale et zéro blocage d'interaction.
-  - **Composants Magic UI :** `ShimmerButton` (Brand Crimson #E51A31), `InteractiveHoverButton`, `AnimatedShinyText`, `BlurFade`.
-  - **Vérification Browser :** Tests de hit-testing DOM (`document.elementFromPoint`) validés à 100% (les clics atteignent directement les CTA sans interférence de canvas).
-  - **TypeScript & Lint :** 0 erreur.
+- **Moteur IA & Acquisition (100% Fonctionnel sans Docker) :**
+  - **Évaluation Expression Écrite IA (`/api/ai/evaluate-written`) :** Analyse instantanée des 3 tâches selon la grille officielle FEI (Adéquation, Cohérence, Lexique, Morphosyntaxe) et génération du modèle Magic Rewrite C1/C2 adapté au sujet. Écran d'analyse IA animé dans [`written-exam-editor.tsx`](file:///d:/SnowDev/Documents/super4c2/components/exam/written-exam-editor.tsx).
+  - **Expression Orale & SpeechRecognition (`/api/ai/oral-roleplay`) :** Reconnaissance vocale Web Speech API (`SpeechRecognition` / `webkitSpeechRecognition`) branchée sur le micro dans [`oral-exam-room.tsx`](file:///d:/SnowDev/Documents/super4c2/components/exam/oral-exam-room.tsx). L'examinateur IA répond de manière contextuelle avec relances naturelles et synthèse vocale TTS `speechSynthesis`.
+  - **Test Diagnostique Express 5 min (`/test-gratuit`) :** Parcours d'évaluation rapide (CE, CO audio simulé, grammaire C1) avec calcul NCLC immédiat, projection des +50 points CRS, et débrief personnalisé. CTA "Essai Gratuit" du header redirige directement vers ce tunnel.
+  - **Validation & TypeScript :** 0 erreur (`tsc --noEmit`), dev server opérationnel sur `http://localhost:3000`.
 
 ## 2. Décisions Récentes
-- **Globe WebGL :** Implémentation basée sur `cobe` v2 avec boucle `requestAnimationFrame` fluide, marqueurs discrets et élégants (taille réduite à 0.25x), rotation inertielle douce.
-- **Z-Index :** Globe à `z-0`, contenu à `z-10` pour garantir que le globe ne bloque jamais la lisibilité ni les interactions.
+- **Architecture sans Docker :** Priorité aux fonctionnalités à forte valeur ajoutée directement exécutables sur Next.js (Web Speech API, routes API IA, tunnel diagnostique, WebGL Globe).
 
 ## 3. Prochaines Étapes Immédiates
-1. Phase suivante du produit : Simulateur officiel CBT (/examens) et test diagnostique (/test-gratuit).
-2. Schéma de données Prisma et amorçage des séries officielles TCF/TEF.
-3. Intégration du paiement Stripe pour les abonnements sur `/tarifs`.
+1. Tunnel de paiement Stripe pour les abonnements sur `/tarifs` (sessions checkout sans dépendance Docker).
+2. Seed Prisma étendu et persistance des résultats de diagnostic et d'épreuves.
+
 

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback, useRef } from "react";
-import { Clock, Send, RotateCcw, AlertTriangle, CheckCircle2, ChevronRight, BookOpen } from "lucide-react";
+import { Clock, Send, RotateCcw, AlertTriangle, CheckCircle2, ChevronRight, BookOpen, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { WordCountBadge } from "@/components/exam/word-count-badge";
@@ -64,11 +64,35 @@ export function WrittenExamEditor({ series }: WrittenExamEditorProps) {
     }
   }, [hydrated, storageKey, texts, activeTaskIndex, deadline, isFinished, result]);
 
-  const handleSubmit = useCallback(() => {
+  const [isEvaluating, setIsEvaluating] = useState<boolean>(false);
+
+  const handleSubmit = useCallback(async () => {
     finishedRef.current = true;
     setIsFinished(true);
+    setIsEvaluating(true);
+
+    try {
+      const response = await fetch("/api/ai/evaluate-written", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ seriesId: series.id, texts }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.ok && data.result) {
+          setResult(data.result);
+          setIsEvaluating(false);
+          return;
+        }
+      }
+    } catch (err) {
+      console.warn("Échec de l'évaluation via API, bascule sur le moteur local :", err);
+    }
+
     const evalResult = evaluateWrittenExam(series, texts);
     setResult(evalResult);
+    setIsEvaluating(false);
   }, [series, texts]);
 
   // Décompte temps officiel
@@ -159,8 +183,36 @@ export function WrittenExamEditor({ series }: WrittenExamEditorProps) {
         </div>
       </header>
 
-      {/* Vue Résultats ou Vue Rédaction */}
-      {isFinished && result ? (
+      {/* Vue Résultats ou Vue Rédaction ou Évaluation en cours */}
+      {isEvaluating ? (
+        <div className="flex-1 flex flex-col items-center justify-center p-6 sm:p-12 text-center space-y-6">
+          <div className="relative flex items-center justify-center">
+            <div className="absolute h-24 w-24 rounded-full bg-brand-crimson/15 animate-ping" />
+            <div className="relative flex h-20 w-20 items-center justify-center rounded-2xl bg-brand-crimson text-white shadow-xl shadow-brand-crimson/25">
+              <Sparkles className="h-10 w-10 animate-pulse" />
+            </div>
+          </div>
+          <div className="space-y-2 max-w-md">
+            <h2 className="font-display text-2xl font-black text-foreground">
+              Correction IA Officielle FEI en cours...
+            </h2>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              Notre moteur analyse vos 3 tâches selon la grille officielle de France Éducation International et génère vos modèles Magic Rewrite C1/C2.
+            </p>
+          </div>
+          <div className="w-full max-w-sm rounded-xl border bg-card p-4 text-xs text-left space-y-2.5 text-muted-foreground shadow-xs">
+            <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-medium">
+              <CheckCircle2 className="h-4 w-4" /> Comptage officiel des mots (norme FEI)
+            </div>
+            <div className="flex items-center gap-2 text-primary font-medium">
+              <div className="h-2 w-2 rounded-full bg-primary animate-ping ml-1 mr-1" /> Évaluation syntaxique &amp; connecteurs logiques
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="h-1.5 w-1.5 rounded-full bg-muted-foreground ml-1.5 mr-1.5" /> Génération du Magic Rewrite C1/C2
+            </div>
+          </div>
+        </div>
+      ) : isFinished && result ? (
         <div className="flex-1 overflow-y-auto p-6 sm:p-8 space-y-8 max-w-5xl mx-auto w-full">
           {/* Bannière de synthèse */}
           <div className="rounded-2xl border bg-card p-6 shadow-sm">

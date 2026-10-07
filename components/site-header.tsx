@@ -122,7 +122,7 @@ export async function SiteHeader() {
                   size="sm"
                   className="rounded-full bg-brand-crimson hover:bg-brand-crimson-dark text-white font-semibold shadow-sm transition-all hover:shadow-md gap-1 px-4"
                 >
-                  <Link href="/auth/register">
+                  <Link href="/test-gratuit">
                     <span>Essai Gratuit</span>
                     <ArrowRight className="h-3.5 w-3.5" />
                   </Link>
