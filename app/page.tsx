@@ -16,6 +16,7 @@ import { ShimmerButton } from "@/components/ui/shimmer-button";
 import { InteractiveHoverButton } from "@/components/ui/interactive-hover-button";
 import { AnimatedGradientText } from "@/components/ui/animated-gradient-text";
 import { BlurFade } from "@/components/ui/blur-fade";
+import { TestimonialsSection } from "@/components/testimonials-section";
 
 export const metadata = {
   title: "Super4C2 — Réussir le TCF Canada & Décrocher NCLC 7+ (+50 pts CRS)",
@@ -316,6 +317,9 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* 🌟 TÉMOIGNAGES OFFICIELS CANDIDATS (Connectés à la base Prisma & CRUD Admin) */}
+      <TestimonialsSection />
 
       {/* 🎯 CTA FINAL BANNER */}
       <section className="mx-auto max-w-6xl rounded-3xl border bg-gradient-to-r from-primary via-primary-dark to-slate-900 p-8 sm:p-14 text-white text-center space-y-6 shadow-2xl">

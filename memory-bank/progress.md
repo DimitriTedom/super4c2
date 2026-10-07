@@ -20,8 +20,19 @@
   - Composant interactif `<NotificationBell />` intégré dans le Header candidat et le Shell Admin.
   - Triggers automatiques : notifications `LEAD` (contact), `SYSTEM` (newsletter) et `EXAM` (évaluation d'épreuve écrite).
   - Moteur d'emails transactionnels Nodemailer (`lib/mail.ts`) aux couleurs de la marque.
+- [x] **Navigation Groupée, Cloche Sécurisée & Correctif `isActive` :**
+  - Correction de l'état `isActive` du Header (dynamique avec `usePathname()`).
+  - Menus déroulants groupés élégants (`Séries & Examens`, `Simulateurs & IA`, `Ressources`, `Tarifs`) avec transitions Framer Motion.
+  - Cloche de notification réservée exclusivement aux utilisateurs connectés.
+- [x] **Roadmap Horizontal Défilable & Flèches Directionnelles Lumineuses (`/examens?test=tcf`) :**
+  - Remplacement des faisceaux lumineux SVG fixes par des connecteurs fléchés directionnels animés (`S.101 ➔ S.102 ➔ ...`) sur piste scrollable horizontale.
+  - Bannière explicative de déblocage pour les séries verrouillées et persistance d'avancement par `localStorage`.
+- [x] **Résolution Intégrale des Erreurs 404 sur les Sous-Disciplines :**
+  - Alias normalisé `demo-101-ce` pour Compréhension Orale (`/co`), Expression Écrite (`/ee/intro`) et Expression Orale (`/eo/intro`).
+- [x] **Section Témoignages Publics & Connexion Back-Office :**
+  - Affichage des avis réels vérifiés depuis PostgreSQL (`prisma.testimonial`) sur la page d'accueil avec badges CRS et NCLC.
 - [x] **Tableau de Bord & Roadmap Interactif de Déblocage des Séries (`/examens?test=tcf`) :**
-  - Faisceaux lumineux animés (**AnimatedBeam** avec Framer Motion) reliant les jalons de séries (Série 101 à 105).
+  - Faisceaux et jalons de séries (Série 101 à 105).
   - Système de déblocage séquentiel gamifié avec conditions d'accès, points XP et paliers NCLC/CRS (+50 pts).
   - Prise en charge des tests multiples (`?test=tcf`, `?test=tef`, `?test=ielts`) avec sélecteur de test fluide et synchronisation avec les CTAs du Hero.
   - Filtres par discipline (Compréhension Écrite, Orale, Expression Écrite, Orale) et toggle de double vue (Roadmap Interactif vs Grille Catalogue).

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, Sparkles } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
@@ -7,6 +7,7 @@ import { BrandLogo } from "@/components/brand-logo";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { NotificationBell } from "@/components/notifications/notification-bell";
+import { SiteNav } from "@/components/site-nav";
 
 export async function SiteHeader() {
   const supabase = await createSupabaseServerClient();
@@ -49,55 +50,8 @@ export async function SiteHeader() {
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
           <BrandLogo size="md" variant="horizontal" />
 
-          {/* Navigation centrale style pilule flottante */}
-          <nav className="hidden lg:flex items-center gap-1 rounded-full border border-border/70 bg-muted/40 dark:bg-white/[0.04] p-1.5 shadow-inner backdrop-blur-md">
-            <Link
-              href="/"
-              className="rounded-full px-3.5 py-1.5 text-xs font-semibold text-foreground bg-background shadow-xs transition-all"
-            >
-              Accueil
-            </Link>
-            <Link
-              href="/examens"
-              className="rounded-full px-3.5 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-background/80 transition-all"
-            >
-              Séries TCF
-            </Link>
-            <Link
-              href="/examens/demo-101-eo/intro"
-              className="rounded-full px-3.5 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-background/80 transition-all flex items-center gap-1.5"
-            >
-              <span>Oral IA</span>
-              <span className="rounded-full bg-cyan-500/15 px-1.5 py-0.2 text-[9px] font-bold text-cyan-600 dark:text-cyan-400 uppercase tracking-wider">
-                Direct
-              </span>
-            </Link>
-            <Link
-              href="/examens/demo-101-ee/intro"
-              className="rounded-full px-3.5 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-background/80 transition-all flex items-center gap-1"
-            >
-              <span>Écrit FEI</span>
-              <Sparkles className="h-2.5 w-2.5 text-brand-crimson" />
-            </Link>
-            <Link
-              href="/carnet-erreurs"
-              className="rounded-full px-3.5 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-background/80 transition-all"
-            >
-              Carnet SRS
-            </Link>
-            <Link
-              href="/blog"
-              className="rounded-full px-3.5 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-background/80 transition-all"
-            >
-              Blog
-            </Link>
-            <Link
-              href="/tarifs"
-              className="rounded-full px-3.5 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-background/80 transition-all"
-            >
-              Tarifs
-            </Link>
-          </nav>
+          {/* Navigation centrale avec menus groupés et état actif dynamique */}
+          <SiteNav />
 
           {/* Actions & CTA */}
           <div className="flex items-center gap-2 sm:gap-3">
@@ -107,12 +61,12 @@ export async function SiteHeader() {
 
             <LanguageSwitcher />
 
-            <NotificationBell recipient="CANDIDATE" />
-
             <ThemeToggle />
 
             {user ? (
               <>
+                <NotificationBell recipient="CANDIDATE" />
+
                 <Button asChild variant="ghost" size="sm" className="hidden sm:inline-flex rounded-full">
                   <Link href="/dashboard">Mon Espace</Link>
                 </Button>

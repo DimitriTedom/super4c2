@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useTransition } from "react";
+import { useState, useEffect, useTransition } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
@@ -20,10 +20,11 @@ import {
   LayoutGrid,
   Route,
   Zap,
+  CheckCircle2,
+  Unlock,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { AnimatedBeam } from "@/components/ui/animated-beam";
 import {
   TEST_CATALOG,
   getSeriesForTest,
@@ -36,6 +37,8 @@ interface ExamRoadmapBoardProps {
   initialDiscipline?: DisciplineType;
   initialView?: "roadmap" | "grid";
 }
+
+const STORAGE_UNLOCKED_KEY = "super4c2:unlocked_series";
 
 export function ExamRoadmapBoard({
   initialTest = "tcf",
@@ -55,15 +58,45 @@ export function ExamRoadmapBoard({
   const [activeDiscipline, setActiveDiscipline] = useState<DisciplineType>(initialDiscipline);
   const [viewMode, setViewMode] = useState<"roadmap" | "grid">(initialView);
 
-  const seriesList = getSeriesForTest(activeTest);
-  const [selectedSeriesId, setSelectedSeriesId] = useState<string>(seriesList[0]?.id || "");
+  // Dynamic unlocking state saved in localStorage
+  const [unlockedSeriesIds, setUnlockedSeriesIds] = useState<string[]>([
+    "demo-101-ce",
+    "serie-102",
+    "tef-201",
+    "ielts-301",
+  ]);
 
-  // Refs for animated beams between the first 3 nodes
-  const containerRef = useRef<HTMLDivElement>(null);
-  const nodeRef1 = useRef<HTMLDivElement>(null);
-  const nodeRef2 = useRef<HTMLDivElement>(null);
-  const nodeRef3 = useRef<HTMLDivElement>(null);
-  const nodeRef4 = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem(STORAGE_UNLOCKED_KEY);
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setUnlockedSeriesIds(parsed);
+        }
+      }
+    } catch {
+      // Ignorer
+    }
+  }, []);
+
+  const handleUnlockSeries = (seriesId: string) => {
+    const updated = Array.from(new Set([...unlockedSeriesIds, seriesId]));
+    setUnlockedSeriesIds(updated);
+    try {
+      localStorage.setItem(STORAGE_UNLOCKED_KEY, JSON.stringify(updated));
+    } catch {
+      // Ignorer
+    }
+  };
+
+  const rawSeriesList = getSeriesForTest(activeTest);
+  const seriesList = rawSeriesList.map((s) => ({
+    ...s,
+    status: unlockedSeriesIds.includes(s.id) || s.status === "COMPLETED" ? "UNLOCKED" : "LOCKED",
+  }));
+
+  const [selectedSeriesId, setSelectedSeriesId] = useState<string>(seriesList[0]?.id || "");
 
   const selectedSeries =
     seriesList.find((s) => s.id === selectedSeriesId) || seriesList[0];
@@ -80,6 +113,7 @@ export function ExamRoadmapBoard({
   };
 
   const testMeta = TEST_CATALOG[activeTest];
+  const isSelectedUnlocked = selectedSeries && selectedSeries.status !== "LOCKED";
 
   return (
     <div className="space-y-10">
@@ -235,7 +269,7 @@ export function ExamRoadmapBoard({
               }`}
             >
               <Route className="h-3.5 w-3.5 text-primary" />
-              <span>Roadmap Interactif</span>
+              <span>Roadmap Déblocage</span>
             </button>
             <button
               type="button"
@@ -253,13 +287,13 @@ export function ExamRoadmapBoard({
         </div>
       </div>
 
-      {/* 🚀 MODE 1 : ROADMAP INTERACTIF AVEC FAISCEAUX LUMINEUX (BEAMS) */}
+      {/* 🚀 MODE 1 : ROADMAP INTERACTIF HORIZONTAL AVEC FLÈCHES DIRECTIONNELLES */}
       {viewMode === "roadmap" && (
         <div className="space-y-8">
           {/* Progression Summary Tracker */}
-          <div className="flex items-center justify-between rounded-2xl border bg-card/60 p-4 sm:p-5 text-sm backdrop-blur-md">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-2xl border bg-card/60 p-4 sm:p-5 text-sm backdrop-blur-md">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary shrink-0">
                 <Flame className="h-5 w-5 fill-primary/20 text-primary" />
               </div>
               <div>
@@ -267,188 +301,168 @@ export function ExamRoadmapBoard({
                   Parcours de déblocage progressif {testMeta.name}
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  Progressez de série en série pour gravir les échelons NCLC et débloquer les 50 points CRS.
+                  Glissez horizontalement pour explorer la séquence complète de votre apprentissage.
                 </p>
               </div>
             </div>
-            <div className="hidden sm:flex items-center gap-4 text-xs font-mono text-muted-foreground">
-              <span>Séries débloquées : <strong className="text-foreground">2 / {seriesList.length}</strong></span>
+            <div className="flex items-center gap-4 text-xs font-mono text-muted-foreground">
+              <span>
+                Séries débloquées :{" "}
+                <strong className="text-foreground">
+                  {seriesList.filter((s) => s.status !== "LOCKED").length} / {seriesList.length}
+                </strong>
+              </span>
               <span className="h-3 w-px bg-border" />
               <span className="text-emerald-500 font-bold flex items-center gap-1">
-                <ShieldCheck className="h-3.5 w-3.5" /> Simulation CBT Réelle
+                <ShieldCheck className="h-3.5 w-3.5" /> Format FEI Validé
               </span>
             </div>
           </div>
 
-          {/* Interactive Board with Beams */}
-          <div
-            ref={containerRef}
-            className="relative overflow-hidden rounded-3xl border border-border/80 bg-card/40 p-6 sm:p-10 shadow-inner backdrop-blur-xl"
-          >
-            {/* Luminous Animated Beams between sequential nodes */}
-            {seriesList.length >= 2 && (
-              <AnimatedBeam
-                containerRef={containerRef}
-                fromRef={nodeRef1}
-                toRef={nodeRef2}
-                curvature={-15}
-                duration={3.5}
-                gradientStartColor="#E51A31"
-                gradientStopColor="#00B4D8"
-              />
-            )}
-            {seriesList.length >= 3 && (
-              <AnimatedBeam
-                containerRef={containerRef}
-                fromRef={nodeRef2}
-                toRef={nodeRef3}
-                curvature={15}
-                duration={4.2}
-                delay={0.5}
-                gradientStartColor="#00B4D8"
-                gradientStopColor="#E51A31"
-              />
-            )}
-            {seriesList.length >= 4 && (
-              <AnimatedBeam
-                containerRef={containerRef}
-                fromRef={nodeRef3}
-                toRef={nodeRef4}
-                curvature={-15}
-                duration={5}
-                delay={1}
-                gradientStartColor="#E51A31"
-                gradientStopColor="#10B981"
-              />
-            )}
+          {/* 🛣️ Horizontal Scrollable Quest Board with Directional Connector Arrows */}
+          <div className="relative rounded-3xl border border-border/80 bg-card/40 p-4 sm:p-6 shadow-inner backdrop-blur-xl">
+            <div className="overflow-x-auto pb-4 scrollbar-thin scroll-smooth snap-x">
+              <div className="flex items-stretch gap-4 min-w-max px-2 py-2">
+                {seriesList.map((series, idx) => {
+                  const isSelected = selectedSeriesId === series.id;
+                  const isUnlocked = series.status !== "LOCKED";
+                  const isCurrent = isUnlocked && idx === 0;
+                  const isLast = idx === seriesList.length - 1;
+                  const nextSeries = seriesList[idx + 1];
+                  const nextIsUnlocked = nextSeries && nextSeries.status !== "LOCKED";
 
-            {/* Road Nodes Grid */}
-            <div className="relative z-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-5 items-stretch">
-              {seriesList.map((series, idx) => {
-                const isSelected = selectedSeriesId === series.id;
-                const isUnlocked = series.status !== "LOCKED";
-                const isCurrent = series.status === "UNLOCKED" && idx === 0;
-
-                // Assign refs to the first 4 nodes for beam calculations
-                const nodeRef =
-                  idx === 0
-                    ? nodeRef1
-                    : idx === 1
-                    ? nodeRef2
-                    : idx === 2
-                    ? nodeRef3
-                    : idx === 3
-                    ? nodeRef4
-                    : undefined;
-
-                return (
-                  <motion.div
-                    key={series.id}
-                    ref={nodeRef}
-                    whileHover={{ y: -4, transition: { duration: 0.2 } }}
-                    onClick={() => setSelectedSeriesId(series.id)}
-                    className={`relative cursor-pointer rounded-3xl border p-5 transition-all flex flex-col justify-between ${
-                      isSelected
-                        ? "border-primary bg-card shadow-xl ring-2 ring-primary/40"
-                        : isUnlocked
-                        ? "border-border/80 bg-card/80 hover:border-primary/50 hover:bg-card"
-                        : "border-border/40 bg-muted/20 opacity-75 hover:opacity-90"
-                    }`}
-                  >
-                    {/* Top status indicator */}
-                    <div className="flex items-center justify-between gap-2 pb-3">
-                      <span className="font-mono text-xs font-bold text-muted-foreground">
-                        Étape {idx + 1}
-                      </span>
-                      {series.recommended ? (
-                        <Badge className="bg-primary text-primary-foreground text-[10px] font-bold uppercase tracking-wider px-2 py-0">
-                          Recommandée
-                        </Badge>
-                      ) : isUnlocked ? (
-                        <Badge variant="outline" className="border-emerald-500/40 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[10px] font-bold">
-                          Débloquée
-                        </Badge>
-                      ) : (
-                        <Badge variant="secondary" className="text-[10px] text-muted-foreground gap-1">
-                          <Lock className="h-2.5 w-2.5" /> Verrouillée
-                        </Badge>
-                      )}
-                    </div>
-
-                    {/* Milestone Node Body */}
-                    <div className="space-y-2 py-2">
-                      <div className="flex items-center gap-3">
-                        <div
-                          className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl shadow-xs transition-transform ${
-                            isSelected
-                              ? "bg-primary text-primary-foreground scale-105"
-                              : isUnlocked
-                              ? "bg-primary/10 text-primary"
-                              : "bg-muted text-muted-foreground"
-                          }`}
-                        >
-                          {idx === 0 ? (
-                            <BookOpen className="h-5 w-5" />
-                          ) : idx === 1 ? (
-                            <Sparkles className="h-5 w-5" />
-                          ) : idx === 2 ? (
-                            <Flame className="h-5 w-5" />
-                          ) : idx === 3 ? (
-                            <Trophy className="h-5 w-5" />
+                  return (
+                    <div key={series.id} className="flex items-center shrink-0">
+                      {/* Milestone Card */}
+                      <motion.div
+                        whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                        onClick={() => setSelectedSeriesId(series.id)}
+                        className={`w-72 sm:w-80 cursor-pointer rounded-3xl border p-5 transition-all flex flex-col justify-between select-none snap-center ${
+                          isSelected
+                            ? "border-primary bg-card shadow-2xl ring-2 ring-primary/40"
+                            : isUnlocked
+                            ? "border-border/80 bg-card/85 hover:border-primary/50 hover:bg-card"
+                            : "border-border/40 bg-muted/25 opacity-75 hover:opacity-90"
+                        }`}
+                      >
+                        {/* Top status indicator */}
+                        <div className="flex items-center justify-between gap-2 pb-3">
+                          <span className="font-mono text-xs font-bold text-muted-foreground">
+                            Étape {idx + 1}
+                          </span>
+                          {series.recommended ? (
+                            <Badge className="bg-primary text-primary-foreground text-[10px] font-bold uppercase tracking-wider px-2 py-0">
+                              Recommandée
+                            </Badge>
+                          ) : isUnlocked ? (
+                            <Badge variant="outline" className="border-emerald-500/40 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[10px] font-bold gap-1">
+                              <CheckCircle2 className="h-2.5 w-2.5" /> Débloquée
+                            </Badge>
                           ) : (
-                            <ShieldCheck className="h-5 w-5" />
+                            <Badge variant="secondary" className="text-[10px] text-muted-foreground gap-1">
+                              <Lock className="h-2.5 w-2.5" /> Verrouillée
+                            </Badge>
                           )}
                         </div>
 
-                        <div>
-                          <h3 className="font-display text-base font-bold text-foreground leading-tight">
-                            Série {series.seriesNumber}
-                          </h3>
-                          <span className="text-[11px] font-medium text-muted-foreground block">
-                            {series.levelBadge}
+                        {/* Milestone Node Body */}
+                        <div className="space-y-2.5 py-2">
+                          <div className="flex items-center gap-3">
+                            <div
+                              className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl shadow-xs transition-transform ${
+                                isSelected
+                                  ? "bg-primary text-primary-foreground scale-105 shadow-md"
+                                  : isUnlocked
+                                  ? "bg-primary/10 text-primary"
+                                  : "bg-muted text-muted-foreground"
+                              }`}
+                            >
+                              {idx === 0 ? (
+                                <BookOpen className="h-5 w-5" />
+                              ) : idx === 1 ? (
+                                <Sparkles className="h-5 w-5" />
+                              ) : idx === 2 ? (
+                                <Flame className="h-5 w-5" />
+                              ) : idx === 3 ? (
+                                <Trophy className="h-5 w-5" />
+                              ) : (
+                                <ShieldCheck className="h-5 w-5" />
+                              )}
+                            </div>
+
+                            <div>
+                              <h3 className="font-display text-base font-bold text-foreground leading-tight">
+                                Série {series.seriesNumber}
+                              </h3>
+                              <span className="text-[11px] font-medium text-muted-foreground block">
+                                {series.levelBadge}
+                              </span>
+                            </div>
+                          </div>
+
+                          <div className="pt-1 flex items-center justify-between">
+                            <span className="inline-flex items-center gap-1 text-xs font-bold text-primary">
+                              🎯 {series.targetNclc}
+                            </span>
+                            <span className="text-[10px] font-mono text-muted-foreground">
+                              +{series.xpReward} XP
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Progress bar or lock message */}
+                        <div className="pt-3 border-t border-border/60">
+                          {isUnlocked ? (
+                            <div className="space-y-1">
+                              <div className="flex justify-between text-[11px] font-medium text-muted-foreground">
+                                <span>Progression</span>
+                                <span>{series.progressPercent}%</span>
+                              </div>
+                              <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
+                                <div
+                                  className="h-full bg-primary rounded-full transition-all"
+                                  style={{ width: `${Math.max(5, series.progressPercent)}%` }}
+                                />
+                              </div>
+                            </div>
+                          ) : (
+                            <p className="text-[11px] text-muted-foreground line-clamp-1 italic">
+                              {series.unlockCondition || "À débloquer"}
+                            </p>
+                          )}
+                        </div>
+
+                        {/* Active Halo Indicator */}
+                        {isCurrent && (
+                          <span className="absolute -top-1 -right-1 flex h-3 w-3">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
+                            <span className="relative inline-flex rounded-full h-3 w-3 bg-primary" />
+                          </span>
+                        )}
+                      </motion.div>
+
+                      {/* ➔ Directional Glowing Connector Arrow to Next Milestone */}
+                      {!isLast && (
+                        <div className="flex flex-col items-center justify-center shrink-0 px-3 select-none">
+                          <div
+                            className={`flex items-center gap-1 rounded-full px-3 py-1 text-xs font-bold transition-all ${
+                              isUnlocked && nextIsUnlocked
+                                ? "bg-gradient-to-r from-primary/20 via-cyan-500/20 to-primary/20 text-primary border border-primary/30 shadow-xs"
+                                : "bg-muted/40 text-muted-foreground/60 border border-border/40"
+                            }`}
+                          >
+                            <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
+                            <ArrowRight className="h-4 w-4 text-foreground/80" />
+                          </div>
+                          <span className="text-[10px] font-mono text-muted-foreground mt-1">
+                            S.{series.seriesNumber} ➔ S.{nextSeries.seriesNumber}
                           </span>
                         </div>
-                      </div>
-
-                      <div className="pt-2">
-                        <span className="inline-flex items-center gap-1 text-xs font-bold text-primary">
-                          🎯 {series.targetNclc}
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Progress bar or lock message */}
-                    <div className="pt-3 border-t border-border/60">
-                      {isUnlocked ? (
-                        <div className="space-y-1">
-                          <div className="flex justify-between text-[11px] font-medium text-muted-foreground">
-                            <span>Progression</span>
-                            <span>{series.progressPercent}%</span>
-                          </div>
-                          <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
-                            <div
-                              className="h-full bg-primary rounded-full transition-all"
-                              style={{ width: `${Math.max(5, series.progressPercent)}%` }}
-                            />
-                          </div>
-                        </div>
-                      ) : (
-                        <p className="text-[11px] text-muted-foreground line-clamp-1 italic">
-                          {series.unlockCondition || "À débloquer"}
-                        </p>
                       )}
                     </div>
-
-                    {/* Active Halo Indicator */}
-                    {isCurrent && (
-                      <span className="absolute -top-1 -right-1 flex h-3 w-3">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
-                        <span className="relative inline-flex rounded-full h-3 w-3 bg-primary" />
-                      </span>
-                    )}
-                  </motion.div>
-                );
-              })}
+                  );
+                })}
+              </div>
             </div>
           </div>
 
@@ -490,20 +504,58 @@ export function ExamRoadmapBoard({
                     </p>
                   </div>
 
-                  {/* Primary CTA */}
+                  {/* Primary CTA (Respecting Unlocked Status!) */}
                   <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shrink-0">
-                    <Button
-                      asChild
-                      size="lg"
-                      className="font-bold text-base shadow-md px-6 bg-primary hover:bg-primary/90"
-                    >
-                      <Link href={selectedSeries.disciplines[0]?.url || "/examens/demo-101-ce"}>
-                        <span>Lancer la Série Complète (CBT)</span>
-                        <ArrowRight className="h-5 w-5 ml-2" />
-                      </Link>
-                    </Button>
+                    {isSelectedUnlocked ? (
+                      <Button
+                        asChild
+                        size="lg"
+                        className="font-bold text-base shadow-md px-6 bg-primary hover:bg-primary/90"
+                      >
+                        <Link href={selectedSeries.disciplines[0]?.url || "/examens/demo-101-ce"}>
+                          <span>Lancer la Série Complète (CBT)</span>
+                          <ArrowRight className="h-5 w-5 ml-2" />
+                        </Link>
+                      </Button>
+                    ) : (
+                      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                        <Button
+                          disabled
+                          size="lg"
+                          variant="outline"
+                          className="opacity-70 gap-2 border-border/80 cursor-not-allowed"
+                        >
+                          <Lock className="h-4 w-4" />
+                          <span>Série Verrouillée</span>
+                        </Button>
+                        <Button
+                          size="lg"
+                          onClick={() => handleUnlockSeries(selectedSeries.id)}
+                          className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold gap-2 shadow-md"
+                        >
+                          <Unlock className="h-4 w-4" />
+                          <span>Simuler le déblocage (Mode Démo)</span>
+                        </Button>
+                      </div>
+                    )}
                   </div>
                 </div>
+
+                {/* Lock Requirement Banner if Locked */}
+                {!isSelectedUnlocked && (
+                  <div className="rounded-2xl border border-amber-500/30 bg-amber-500/10 p-4 flex items-start gap-3 text-amber-900 dark:text-amber-200">
+                    <Lock className="h-5 w-5 text-amber-500 shrink-0 mt-0.5" />
+                    <div className="space-y-1">
+                      <p className="text-xs font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400">
+                        Condition de déblocage requise
+                      </p>
+                      <p className="text-xs leading-relaxed">
+                        {selectedSeries.unlockCondition ||
+                          "Validez votre épreuve sur la série précédente ou souscrivez à l'accès Pro pour déverrouiller ce palier."}
+                      </p>
+                    </div>
+                  </div>
+                )}
 
                 {/* Focus Topics Pills */}
                 <div className="space-y-2">
@@ -593,16 +645,28 @@ export function ExamRoadmapBoard({
                               </p>
                             </div>
 
-                            <Button
-                              asChild
-                              size="sm"
-                              variant={isFlagship ? "default" : "outline"}
-                              className="w-full mt-4 font-bold"
-                            >
-                              <Link href={d.url}>
-                                <span>Commencer ({d.duration})</span>
-                              </Link>
-                            </Button>
+                            {isSelectedUnlocked ? (
+                              <Button
+                                asChild
+                                size="sm"
+                                variant={isFlagship ? "default" : "outline"}
+                                className="w-full mt-4 font-bold"
+                              >
+                                <Link href={d.url}>
+                                  <span>Commencer ({d.duration})</span>
+                                </Link>
+                              </Button>
+                            ) : (
+                              <Button
+                                disabled
+                                size="sm"
+                                variant="outline"
+                                className="w-full mt-4 font-semibold opacity-70 gap-1.5"
+                              >
+                                <Lock className="h-3.5 w-3.5" />
+                                <span>Verrouillé</span>
+                              </Button>
+                            )}
                           </div>
                         );
                       })}
@@ -680,9 +744,13 @@ export function ExamRoadmapBoard({
                         </Link>
                       </Button>
                     ) : (
-                      <Button disabled variant="outline" className="w-full gap-2 text-muted-foreground">
-                        <Lock className="h-4 w-4" />
-                        <span>{series.unlockCondition || "Verrouillée"}</span>
+                      <Button
+                        onClick={() => handleUnlockSeries(series.id)}
+                        variant="outline"
+                        className="w-full gap-2 text-primary border-primary/30 hover:bg-primary/10"
+                      >
+                        <Unlock className="h-4 w-4" />
+                        <span>Débloquer la Série {series.seriesNumber}</span>
                       </Button>
                     )}
                   </div>

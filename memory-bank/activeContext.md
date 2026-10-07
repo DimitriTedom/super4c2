@@ -1,19 +1,23 @@
 # Active Context: Super4C2
 
-## 1. Roadmap Interactif des Séries & Déblocage Séquentiel (`/examens?test=tcf`)
-- **Plateforme de Déblocage Haute Performance Inspirée du Concurrent & 10x Supérieure :**
-  - **Tableau de Bord Interactif (`components/exam/exam-roadmap-board.tsx`) :**
-    - Milestones d'épreuves reliés par des faisceaux lumineux animés (**AnimatedBeam** de Magic UI avec Framer Motion).
-    - Système de déblocage séquentiel par paliers CECRL/NCLC (Série 101 Diagnostic → Série 102 Socio-politique → Série 103 Seuil NCLC 7 / B2 → Série 104 C1 Académique → Série 105 C2 Élite).
-    - Panneau détaillé contextuel dynamique au clic : focus sur les compétences de la série, points bonus CRS (+50 pts) et accès direct aux 4 simulateurs indépendants (CE 39Q, CO 39Q, EE 3 tâches, EO rôle play).
-  - **Sélecteur Multi-Examens Synchronisé :**
-    - Support fluide des paramètres d'URL `?test=tcf`, `?test=tef`, `?test=ielts`.
-    - Piliers de sélection d'examen interactifs dans le header et redirection ciblée depuis les boutons d'action du Hero (`app/page.tsx`).
-  - **Filtres par Discipline & Double Vue :**
-    - Filtrage instantané : *Toutes les épreuves (Pack Complet)*, *Compréhension Écrite*, *Compréhension Orale*, *Expression Écrite*, *Expression Orale*.
-    - Toggle de vue : *Roadmap Interactif (Parcours Gamifié)* ↔ *Vue Grille Catalogue*.
-  - **Validation Visuelle & Zero-Defect :**
-    - 0 erreurs TypeScript, 0 warnings/erreurs ESLint, inspection complète via sous-agent navigateur validée.
+## 1. Navigation Groupée, Roadmap Fléché Horizontal & Témoignages Publics
+- **Navigation Supérieure Réorganisée & Menus Groupés (`components/site-nav.tsx` & `components/site-header.tsx`) :**
+  - Fin du bug `isActive` qui figeait la navigation sur "Accueil" (`/`) : détection dynamique via `usePathname()`.
+  - Menus déroulants élégants animés avec Framer Motion :
+    - *Séries & Examens* (TCF Canada, TEF Canada, IELTS General, Catalogue des Séries)
+    - *Simulateurs & IA* (Compréhension Écrite 39Q, Oral IA Live, Écrit FEI IA, Carnet SRS, Calculateur CRS)
+    - *Ressources* (Blog & Décryptages, Communauté VIP, Conciergerie)
+    - *Tarifs* (Lien direct)
+  - Cloche de notification conditionnelle : strictement masquée pour les visiteurs non authentifiés (`{user ? <NotificationBell /> : null}`).
+- **Roadmap Horizontal avec Flèches Directionnelles Lumineuses (`components/exam/exam-roadmap-board.tsx`) :**
+  - Remplacement des faisceaux lumineux SVG fixes par un parcours horizontal défilable (`overflow-x-auto`) avec flèches connectrices lumineuses (`S.101 ➔ S.102 ➔ ...`).
+  - Gestion fluide des séries verrouillées : affichage d'une bannière explicative avec prérequis de déblocage, bouton de simulation démo et persistance via `localStorage` (`super4c2:unlocked_series`).
+- **Résolution des Erreurs 404 sur les Sous-Disciplines d'Examens :**
+  - Prise en charge de l'alias `demo-101-ce` dans les maps orales et écrites (`lib/exam/mock-written-series.ts`, `lib/exam/mock-oral-series.ts`, `app/examens/[seriesId]/co/page.tsx`).
+  - Toutes les sous-épreuves (`/examens/demo-101-ce/intro`, `/co`, `/ee/intro`, `/eo/intro`) répondent en HTTP 200 OK.
+- **Section Témoignages Publics Connectée au Back-Office (`components/testimonials-section.tsx` & `app/page.tsx`) :**
+  - Affichage sur la page d'accueil des vrais témoignages vérifiés issus de la base PostgreSQL (`prisma.testimonial`), administrables via le CRUD admin, avec fallback dynamique.
+  - Badges NCLC 7 / NCLC 9, bonus CRS (+50 pts) et notation 5 étoiles.
 
 ## 2. Moteur IA In-App Next.js & Notifications Automatisées
 - **Moteur d'Évaluation Direct Next.js (`lib/ai/service.ts`) :**

@@ -45,6 +45,7 @@ export const MOCK_WRITTEN_SERIES_101: WrittenExamSeries = {
 const WRITTEN_SERIES_MAP: Record<string, WrittenExamSeries> = {
   [MOCK_WRITTEN_SERIES_101.id]: MOCK_WRITTEN_SERIES_101,
   "demo-101": MOCK_WRITTEN_SERIES_101,
+  "demo-101-ce": MOCK_WRITTEN_SERIES_101,
   "101": MOCK_WRITTEN_SERIES_101,
 };
 

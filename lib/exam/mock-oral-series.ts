@@ -46,6 +46,7 @@ export const MOCK_ORAL_SERIES_101: OralSeries = {
 const ORAL_SERIES_MAP: Record<string, OralSeries> = {
   [MOCK_ORAL_SERIES_101.id]: MOCK_ORAL_SERIES_101,
   "demo-101": MOCK_ORAL_SERIES_101,
+  "demo-101-ce": MOCK_ORAL_SERIES_101,
   "101": MOCK_ORAL_SERIES_101,
 };
 
