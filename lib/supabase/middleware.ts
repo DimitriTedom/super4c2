@@ -16,21 +16,36 @@ export async function updateSession(request: NextRequest) {
     return response;
   }
 
-  const supabase = createServerClient(url, anonKey, {
-    cookies: {
-      getAll() {
-        return request.cookies.getAll();
-      },
-      setAll(cookiesToSet: Parameters<SetAllCookies>[0]) {
-        cookiesToSet.forEach(({ name, value, options }) => {
-          response.cookies.set(name, value, options);
-        });
-      },
-    },
-  });
+  // Optimisation performance majeure : ne JAMAIS faire d'appel réseau distant si aucun cookie Supabase n'est présent
+  const hasSbCookie = request.cookies.getAll().some((c) => c.name.startsWith("sb-"));
+  if (!hasSbCookie) {
+    return response;
+  }
 
-  // Refresh session if needed
-  await supabase.auth.getUser();
+  try {
+    const supabase = createServerClient(url, anonKey, {
+      cookies: {
+        getAll() {
+          return request.cookies.getAll();
+        },
+        setAll(cookiesToSet: Parameters<SetAllCookies>[0]) {
+          cookiesToSet.forEach(({ name, value, options }) => {
+            response.cookies.set(name, value, options);
+          });
+        },
+      },
+    });
+
+    // Timeout strict de 800ms pour ne JAMAIS geler le rendu Next.js si le serveur Supabase local est éteint
+    await Promise.race([
+      supabase.auth.getUser(),
+      new Promise((_, reject) =>
+        setTimeout(() => reject(new Error("Supabase auth timeout")), 800)
+      ),
+    ]);
+  } catch {
+    // Échec gracieux sans impacter la navigation de l'utilisateur
+  }
 
   return response;
 }
