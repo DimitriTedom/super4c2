@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { AdminShell } from "@/components/admin/admin-shell";
 import { ConfirmActionDialog } from "@/components/admin/ConfirmActionDialog";
+import { AiSeriesGeneratorDialog } from "@/components/admin/ai-series-generator-dialog";
 import { Button } from "@/components/ui/button";
 import { prisma } from "@/lib/prisma";
 import { deleteQuestionAction } from "./actions";
@@ -119,6 +120,25 @@ export default async function QuestionsManagerPage({ params }: QuestionsManagerP
                 <span>Tester en Mode CBT</span>
               </Link>
             </Button>
+
+            <AiSeriesGeneratorDialog
+              initialSeriesId={series.id}
+              initialSeriesNumber={series.seriesNumber}
+              triggerButton={
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="gap-2 font-bold text-xs border-primary/30 text-primary hover:bg-primary/10"
+                >
+                  <Sparkles className="h-3.5 w-3.5 text-amber-500" />
+                  <span>
+                    {questions.length === 39
+                      ? "Régénérer avec IA"
+                      : `Compléter avec IA (${39 - questions.length}Q)`}
+                  </span>
+                </Button>
+              }
+            />
 
             <Button asChild size="sm" className="gap-2 font-bold shadow-xs">
               <Link href={`/admin/series-ce/${series.id}/questions/ajouter`}>

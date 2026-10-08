@@ -57,13 +57,14 @@
   - **Watermarking Automatisé Super4C2 :** Pipeline `sharp` intégrant l'emblème iconique feuille d'érable géométrique Super4C2 (`Le Logomark.png`) avec transparence discrète en bas à droite des illustrations.
   - **Intégration CBT Player (`cbt-exam.tsx`) :** Support visuel officiel pour la Compréhension Orale avec encart 16:9 stylisé et lecteur audio `<AudioPlayerCBT />` directement arrimé en-dessous.
   - **Compréhension Écrite (CE) Sublimée :** Rendu document haute visibilité sur carte blanche pure contrastée (`bg-white` sur fond station `bg-slate-100`), barre de question officielle bleu institutionnel FEI (`from-blue-700 to-indigo-900`), texte copiable/sélectionnable avec zoom de police, et grille de navigation vert émeraude FEI.
-- [x] **Back-Office CRUD Compréhension Écrite Zéro Friction (`/admin/series-ce`) :**
+- [x] **Back-Office CRUD Compréhension Écrite Zéro Friction & Générateur IA de Série 39Q (`/admin/series-ce`) :**
   - **Générateur Visuel IA 1-Clic (`POST /api/admin/generate-asset`) :** Bouton magique « 🎨 Générer Visuel IA (16:9) » créant l'illustration en fonction de l'intitulé sans quitter le formulaire.
   - **Watermark Automatique avec Sharp (`lib/ai/image-watermark.ts`) :** Apposition instantanée de la feuille d'érable Super4C2 en bas à droite.
   - **Driver de Stockage Supabase (`lib/storage/exam-storage.ts`) :** Upload direct dans le bucket public Supabase Storage `exam-assets` avec repli fluide en CDN local (`public/images/exam-assets/`) en environnement hors-ligne/dev.
   - **Smart Document Templates Natifs :** Bibliothèque de modèles prêts à l'emploi (Affiche & Flyer A1, Horaires & Tarifs A2, Avis d'immeuble, Courriel d'entreprise, Article d'actualité) permettant à l'admin de concevoir des documents officiels sans la moindre image.
+  - **Générateur IA de Série Complète CE 39 Questions (`AiSeriesGeneratorDialog` & `POST /api/admin/generate-bulk-series`) :** Assistant interactif avec stepper en 3 tranches calibrées FEI (Q1-12 A1/A2, Q13-28 B1/B2, Q29-39 C1/C2). Génération et insertion en base de la Série 102 complète (39/39 questions vérifiées dans PostgreSQL).
   - **Aperçu Simulateur CBT Live :** Prévisualisation simultanée du document (image et/ou texte) et des 4 options de réponse en conditions réelles d'examen.
-  - **Validation Visuelle E2E en Navigateur :** Éradication d'un processus Node zombi à 5,1 Go de RAM, optimisation du rendu Next.js Image (`unoptimized`) et capture réussie des épreuves CO (Q1 & Q2) et du formulaire Admin CE.
+  - **Validation Visuelle E2E en Navigateur :** Éradication d'un processus Node zombi à 5,1 Go de RAM, optimisation du rendu Next.js Image (`unoptimized`) et capture réussie des épreuves CO (Q1 & Q2), du formulaire Admin CE et de la modale de génération IA.
 - [x] **Tableau de Bord & Roadmap Interactif de Déblocage des Séries (`/examens?test=tcf`) :**
   - Faisceaux et jalons de séries (Série 101 à 105).
   - Système de déblocage séquentiel gamifié avec conditions d'accès, points XP et paliers NCLC/CRS (+50 pts).

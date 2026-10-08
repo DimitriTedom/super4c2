@@ -13,6 +13,7 @@ import {
 import { AdminShell } from "@/components/admin/admin-shell";
 import { AdminListEmptyState } from "@/components/admin/AdminListEmptyState";
 import { ConfirmActionDialog } from "@/components/admin/ConfirmActionDialog";
+import { AiSeriesGeneratorDialog } from "@/components/admin/ai-series-generator-dialog";
 import { Button } from "@/components/ui/button";
 import { prisma } from "@/lib/prisma";
 import { deleteSeriesCeAction, toggleSeriesCePublishAction } from "./actions";
@@ -53,6 +54,11 @@ export default async function SeriesCeListPage({ searchParams }: SeriesCeListPag
     orderBy: { seriesNumber: "asc" },
   });
 
+  const nextSeriesNumber =
+    seriesList.length > 0
+      ? Math.max(...seriesList.map((s) => s.seriesNumber)) + 1
+      : 102;
+
   return (
     <AdminShell>
       <div className="space-y-6">
@@ -72,6 +78,7 @@ export default async function SeriesCeListPage({ searchParams }: SeriesCeListPag
           </div>
 
           <div className="flex items-center gap-3">
+            <AiSeriesGeneratorDialog initialSeriesNumber={nextSeriesNumber} />
             <Button asChild className="gap-2 font-bold shadow-xs">
               <Link href="/admin/series-ce/ajouter">
                 <Plus className="h-4 w-4" />
