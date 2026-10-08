@@ -32,17 +32,12 @@
     - Synthèse Vocale (Audio TTS) : bouton « Écouter » sur chaque réponse pour entendre la prononciation en français standard naturel.
     - Barre d'action SaaS complète : Copie dans le presse-papier avec toast, retour de satisfaction (pouce levé / baissé), bouton d'agrandissement et réinitialisation.
     - Détection de la page active via `usePathname()` pour adapter les réponses au contexte de navigation du candidat.
-  - **Expression Orale (EO) — Double Mode : Tour par Tour & Appel Téléphonique Live (ElevenLabs Conversational AI WebRTC) :**
-    - **Mode Tour par Tour (DeepSeek-V3 + ElevenLabs Studio Charlie) :** Le candidat parle ou tape, l'examinateur IA génère la réplique FEI et l'audio MP3 à la volée (`/api/ai/oral-roleplay`), forme d'onde dynamique et évaluation FEI à la fin.
-    - **Mode Appel Téléphonique Live (Option A - WebRTC / WebSocket ElevenLabs) :**
-      - Agent officiel configuré via API (`agent_9401m4d8cafdercsd2atwgnkm0zp`) : *Examinateur TCF Canada — Super4C2*, voix Charlie (`IKne3meq5aSn9XLyUdCD`), modèle ultra-rapide `eleven_turbo_v2_5`, prompt certifié FEI avec règles strictes de diction.
-      - Variables dynamiques : `candidate_name`, `task_number`, `scenario_topic`, `target_level`.
-      - Route backend sécurisée [app/api/ai/oral-signed-url/route.ts](file:///d:/SnowDev/Documents/super4c2/app/api/ai/oral-signed-url/route.ts) générant les URLs signées de session.
-      - Intégration dans [components/exam/oral-exam-room.tsx](file:///d:/SnowDev/Documents/super4c2/components/exam/oral-exam-room.tsx) via `@elevenlabs/client` :
-        - Bouton d'action proactif *"Démarrer l'Appel Vocal en Direct"* avec état de connexion et gestion des permissions micro.
-        - Conversation fluide continue sans aucun clic sur "Envoyer", détection de silence (VAD) et interruption spontanée (*barge-in*).
-        - Transcription instantanée des deux interlocuteurs dans le fil de discussion et badge *"EN DIRECT"* dans le header.
-        - Raccrochage propre avec libération des ressources audio et évaluation finale.
+  - **Expression Orale (EO) — Double Mode & Refonte Visuelle Haute Fidélité (Inspiration 21st.dev MCP) :**
+    - **Visualiseur de Spectre Audio 21st.dev (`components/exam/oral-waveform.tsx`) :** Inspiré du composant `Audio Frequency Visualizer Card` [id: 28201], barre de 24 bandes de fréquences réactives avec dégradés dynamiques (`cyan-500` quand l'examinateur parle, `emerald-500` pour le candidat, ondulation ambiante en attente).
+    - **Pod Téléphonique Holographique de l'Examinateur M. Laurent :** Avatar circulaire avec anneaux de propagation sonore 3D, badges officiels FEI, télémétrie de session en direct (latence WebRTC chiffrée, qualité PCM 16kHz, chronomètre d'appel).
+    - **Console Sténographique & Réécoute Vocale :** Bulles de dialogue sténographiques avec boutons « Réécouter » sur chaque réplique d'examinateur pour entendre la diction authentique de Charlie (ElevenLabs), suggestions de relance interactives en Tâche 2.
+    - **Navigation Post-Examen Complète :** Barre d'action sur l'écran des résultats permettant de revenir au catalogue des examens (`/examens`), au menu de la série ou de relancer immédiatement la simulation.
+    - **Auto-hébergement des Worklets Audio :** Fichiers statiques `@elevenlabs/client` (`rawAudioProcessor.js`, `audioConcatProcessor.js`) dans `public/worklets/` pour éliminer tout conflit de politique CSP du navigateur.
   - **Migration Système de Toasts Toastify :** Intégration de `react-toastify` via `<ToastifyContainer />` ([components/ui/toastify.tsx](file:///d:/SnowDev/Documents/super4c2/components/ui/toastify.tsx)) dans [app/layout.tsx](file:///d:/SnowDev/Documents/super4c2/app/layout.tsx) avec barre de progression Maple Crimson.
 
 ## 2. Moteur IA In-App Next.js & Notifications Automatisées

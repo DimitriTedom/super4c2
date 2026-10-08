@@ -27,8 +27,9 @@
   - Intégration de `react-toastify` via `<ToastifyContainer />` avec thémage Maple Crimson.
 - [x] **Suite des 4 Chantiers Majeurs (EO, EE, CO 39Q, Dashboard/CRS) :**
   - **Pilier 1 (Expression Orale Live & Appel Continu ElevenLabs) :** 
-    - Mode Tour par Tour (DeepSeek-V3 + ElevenLabs Studio Charlie).
+    - Mode Tour par Tour (DeepSeek-V3 + ElevenLabs Studio Charlie) avec réécoute vocale sur chaque bulle.
     - Mode Appel Téléphonique Live (WebRTC / WebSocket ElevenLabs `@elevenlabs/client`) avec Agent certifié `agent_9401m4d8cafdercsd2atwgnkm0zp`, transcription bidirectionnelle temps réel sans latence, détection de parole (VAD), interruption instantanée (*barge-in*), évaluation FEI et persistance PostgreSQL (`UserAttempt`).
+    - Design System Luxe Inspiré de 21st.dev MCP : Visualiseur de spectre audio 24 bandes (`Audio Frequency Visualizer Card`), avatar 3D avec propagation d'ondes concentriques, carte HUD d'appel direct, et barre d'actions post-examen pour navigation fluide.
   - **Pilier 2 (Expression Écrite CBT) :** Évaluation des 3 tâches FEI avec Magic Rewrite C1/C2 et sauvegarde de la tentative dans PostgreSQL.
   - **Pilier 3 (Compréhension Orale 39 Questions) :** Banque intégrale des 39 questions authentiques de CO (`lib/exam/series-co-101.ts`) A1 à C2 avec lecteur CBT officiel et lien direct dans le menu navigation.
   - **Pilier 4 (Calculateur CRS & Dashboard Candidat) :** Tableau de bord candidat avec historique dynamique des tentatives réelles, calcul du niveau NCLC, et redirection `/calculateur-crs` -> `/nclc-calculator`.
