@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
+import Link from "next/link";
 import {
   Mic,
   MicOff,
@@ -15,6 +16,8 @@ import {
   Radio,
   Sparkles,
   AlertCircle,
+  ArrowLeft,
+  BookOpen,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { OralWaveform } from "@/components/exam/oral-waveform";
@@ -56,7 +59,7 @@ export function OralExamRoom({ series }: OralExamRoomProps) {
   const recognitionRef = useRef<any>(null);
   const currentAudioRef = useRef<HTMLAudioElement | null>(null);
 
-  // Arrêt de tous les audios
+  // Arrêt de tous les flux audio
   const stopAllAudio = useCallback(() => {
     if (typeof window !== "undefined") {
       if (window.speechSynthesis) window.speechSynthesis.cancel();
@@ -67,6 +70,111 @@ export function OralExamRoom({ series }: OralExamRoomProps) {
     }
     setIsExaminerSpeaking(false);
   }, []);
+
+  // Synthèse vocale de secours (Web Speech API locale en cas de panne réseau)
+  const speakExaminerFallback = useCallback(
+    (text: string, onEnd?: () => void) => {
+      stopAllAudio();
+      if (typeof window !== "undefined" && "speechSynthesis" in window) {
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = "fr-FR";
+        utterance.rate = 1.0;
+        utterance.pitch = 1.0;
+
+        utterance.onstart = () => setIsExaminerSpeaking(true);
+        utterance.onend = () => {
+          setIsExaminerSpeaking(false);
+          if (onEnd) onEnd();
+        };
+        utterance.onerror = () => {
+          setIsExaminerSpeaking(false);
+          if (onEnd) onEnd();
+        };
+
+        window.speechSynthesis.speak(utterance);
+      } else {
+        setIsExaminerSpeaking(false);
+        if (onEnd) onEnd();
+      }
+    },
+    [stopAllAudio]
+  );
+
+  // Lecture d'audio MP3 ElevenLabs (ou fetch à la volée de la voix Charlie)
+  const playOrFetchExaminerSpeech = useCallback(
+    async (text: string, existingBase64?: string | null, onEnd?: () => void) => {
+      if (typeof window === "undefined") return;
+      stopAllAudio();
+
+      // 1. Si nous avons déjà le MP3 en base64
+      if (existingBase64) {
+        try {
+          const audio = new Audio(`data:audio/mp3;base64,${existingBase64}`);
+          currentAudioRef.current = audio;
+
+          audio.onplay = () => setIsExaminerSpeaking(true);
+          audio.onended = () => {
+            setIsExaminerSpeaking(false);
+            currentAudioRef.current = null;
+            if (onEnd) onEnd();
+          };
+          audio.onerror = () => {
+            currentAudioRef.current = null;
+            speakExaminerFallback(text, onEnd);
+          };
+
+          void audio.play().catch(() => {
+            currentAudioRef.current = null;
+            speakExaminerFallback(text, onEnd);
+          });
+          return;
+        } catch {
+          speakExaminerFallback(text, onEnd);
+          return;
+        }
+      }
+
+      // 2. Sinon, générer l'audio ElevenLabs (voix Charlie) via notre API
+      try {
+        const res = await fetch("/api/ai/oral-tts", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text }),
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          if (data.ok && data.audioBase64) {
+            const audio = new Audio(`data:audio/mp3;base64,${data.audioBase64}`);
+            currentAudioRef.current = audio;
+
+            audio.onplay = () => setIsExaminerSpeaking(true);
+            audio.onended = () => {
+              setIsExaminerSpeaking(false);
+              currentAudioRef.current = null;
+              if (onEnd) onEnd();
+            };
+            audio.onerror = () => {
+              currentAudioRef.current = null;
+              speakExaminerFallback(text, onEnd);
+            };
+
+            void audio.play().catch(() => {
+              currentAudioRef.current = null;
+              speakExaminerFallback(text, onEnd);
+            });
+            return;
+          }
+        }
+      } catch (err) {
+        console.warn("[TTS ElevenLabs] Repli local :", err);
+      }
+
+      // Repli si le serveur ou la clé est inaccessible
+      speakExaminerFallback(text, onEnd);
+    },
+    [speakExaminerFallback, stopAllAudio]
+  );
 
   // Fermeture propre de la session d'appel live
   const endLiveCall = useCallback(async () => {
@@ -83,28 +191,32 @@ export function OralExamRoom({ series }: OralExamRoomProps) {
     setIsExaminerSpeaking(false);
   }, []);
 
-  // Lancement de l'Appel Vocal Continu avec l'Examinateur ElevenLabs
+  // Lancement de l'Appel Vocal Continu avec l'Examinateur ElevenLabs (WebRTC)
   const startLiveCall = async () => {
     try {
       setCallError(null);
       setIsCallConnecting(true);
       stopAllAudio();
 
-      // 1. Vérification / demande d'autorisation du microphone
+      // 1. Autorisation du microphone
       if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
         await navigator.mediaDevices.getUserMedia({ audio: true });
       }
 
-      // 2. Récupération de l'URL signée WebSocket sécurisée
+      // 2. URL signée sécurisée
       const res = await fetch("/api/ai/oral-signed-url");
       const data = await res.json();
       if (!data.ok || !data.signedUrl) {
         throw new Error(data.error || "Impossible d'obtenir le jeton d'appel.");
       }
 
-      // 3. Initialisation de la conversation en temps réel avec ElevenLabs
+      // 3. Démarrage de la conversation avec Worklets auto-hébergés pour contourner les restrictions CSP
       const conversation = await Conversation.startSession({
         signedUrl: data.signedUrl,
+        workletPaths: {
+          rawAudioProcessor: "/worklets/rawAudioProcessor.js",
+          audioConcatProcessor: "/worklets/audioConcatProcessor.js",
+        },
         dynamicVariables: {
           candidate_name: "Candidat",
           task_number: `Tâche ${currentTaskIndex + 1}`,
@@ -233,74 +345,12 @@ export function OralExamRoom({ series }: OralExamRoomProps) {
     }
   };
 
-  const playExaminerAudio = useCallback(
-    (base64: string, fallbackText: string, onEnd?: () => void) => {
-      if (typeof window === "undefined") return;
-      stopAllAudio();
-
-      try {
-        const audio = new Audio(`data:audio/mp3;base64,${base64}`);
-        currentAudioRef.current = audio;
-
-        audio.onplay = () => setIsExaminerSpeaking(true);
-        audio.onended = () => {
-          setIsExaminerSpeaking(false);
-          currentAudioRef.current = null;
-          if (onEnd) onEnd();
-        };
-        audio.onerror = () => {
-          currentAudioRef.current = null;
-          speakExaminerText(fallbackText, onEnd);
-        };
-
-        void audio.play().catch(() => {
-          currentAudioRef.current = null;
-          speakExaminerText(fallbackText, onEnd);
-        });
-      } catch {
-        speakExaminerText(fallbackText, onEnd);
-      }
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [stopAllAudio]
-  );
-
-  // Synthèse vocale de secours (Web Speech API locale)
-  const speakExaminerText = useCallback(
-    (text: string, onEnd?: () => void) => {
-      stopAllAudio();
-      if (typeof window !== "undefined" && "speechSynthesis" in window) {
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = "fr-FR";
-        utterance.rate = 1.0;
-        utterance.pitch = 1.0;
-
-        utterance.onstart = () => setIsExaminerSpeaking(true);
-        utterance.onend = () => {
-          setIsExaminerSpeaking(false);
-          if (onEnd) onEnd();
-        };
-        utterance.onerror = () => {
-          setIsExaminerSpeaking(false);
-          if (onEnd) onEnd();
-        };
-
-        window.speechSynthesis.speak(utterance);
-      } else {
-        setIsExaminerSpeaking(false);
-        if (onEnd) onEnd();
-      }
-    },
-    [stopAllAudio]
-  );
-
-  // Amorce de chaque tâche par l'examinateur en mode tour par tour
+  // Amorce de chaque tâche par l'examinateur avec la voix ElevenLabs Charlie
   useEffect(() => {
     if (isExamCompleted) return;
 
     setRemaining(series.tasks[currentTaskIndex].durationSeconds);
 
-    // Message d'amorce par défaut si la tâche n'a pas encore de messages
     const initialPrompt = series.tasks[currentTaskIndex].examinerPrompt;
     setDialogues((prev) => {
       if (prev[currentTaskIndex].length === 0) {
@@ -319,15 +369,15 @@ export function OralExamRoom({ series }: OralExamRoomProps) {
       return prev;
     });
 
-    // Ne pas lire l'audio synthétique local si un appel live est déjà en cours
+    // Ne pas lire l'audio tour par tour si un appel live est en cours
     if (!isLiveCallActive) {
-      speakExaminerText(initialPrompt);
+      void playOrFetchExaminerSpeech(initialPrompt);
     }
 
     return () => {
       stopAllAudio();
     };
-  }, [currentTaskIndex, isExamCompleted, isLiveCallActive, series.tasks, speakExaminerText, stopAllAudio]);
+  }, [currentTaskIndex, isExamCompleted, isLiveCallActive, series.tasks, playOrFetchExaminerSpeech, stopAllAudio]);
 
   // Clôture et évaluation de l'épreuve
   const handleCompleteExam = useCallback(() => {
@@ -447,11 +497,7 @@ export function OralExamRoom({ series }: OralExamRoomProps) {
             [currentTaskIndex]: [...prev[currentTaskIndex], examinerMsg],
           }));
 
-          if (data.audioBase64) {
-            playExaminerAudio(data.audioBase64, data.reply);
-          } else {
-            speakExaminerText(data.reply);
-          }
+          void playOrFetchExaminerSpeech(data.reply, data.audioBase64);
           return;
         }
       }
@@ -465,7 +511,7 @@ export function OralExamRoom({ series }: OralExamRoomProps) {
     }, 600);
   };
 
-  // Logique du répondant IA locale de secours
+  // Logique de réponse locale de secours
   const generateExaminerResponse = (candidateText: string) => {
     let reply = "";
     const lower = candidateText.toLowerCase();
@@ -507,14 +553,12 @@ export function OralExamRoom({ series }: OralExamRoomProps) {
       [currentTaskIndex]: [...prev[currentTaskIndex], examinerMsg],
     }));
 
-    speakExaminerText(reply);
+    void playOrFetchExaminerSpeech(reply);
   };
 
   const handleRestart = () => {
     void endLiveCall();
-    if (typeof window !== "undefined" && "speechSynthesis" in window) {
-      window.speechSynthesis.cancel();
-    }
+    stopAllAudio();
     setCurrentTaskIndex(0);
     setIsRecording(false);
     setIsExaminerSpeaking(false);
@@ -537,7 +581,14 @@ export function OralExamRoom({ series }: OralExamRoomProps) {
       {/* Header officiel */}
       <header className="flex h-16 shrink-0 items-center justify-between gap-4 border-b bg-card px-4 sm:px-6">
         <div className="flex items-center gap-3">
-          <div>
+          <Button asChild variant="ghost" size="sm" className="gap-1.5 text-muted-foreground hover:text-foreground">
+            <Link href={`/examens/${series.id}`}>
+              <ArrowLeft className="h-4 w-4" />
+              <span className="hidden sm:inline">Menu Série</span>
+            </Link>
+          </Button>
+
+          <div className="border-l pl-3">
             <p className="text-[11px] font-semibold uppercase tracking-widest text-primary">
               TCF Canada — Expression Orale
             </p>
@@ -555,13 +606,15 @@ export function OralExamRoom({ series }: OralExamRoomProps) {
         </div>
 
         {/* Minuteur */}
-        <div
-          role="timer"
-          className="flex items-center gap-2 rounded-full border px-4 py-1.5 font-mono text-xl font-bold tabular-nums"
-        >
-          <Clock className="h-4 w-4" />
-          {formatClock(remaining)}
-        </div>
+        {!isExamCompleted && (
+          <div
+            role="timer"
+            className="flex items-center gap-2 rounded-full border px-4 py-1.5 font-mono text-xl font-bold tabular-nums"
+          >
+            <Clock className="h-4 w-4" />
+            {formatClock(remaining)}
+          </div>
+        )}
 
         <div className="flex items-center gap-2">
           {!isExamCompleted ? (
@@ -574,17 +627,55 @@ export function OralExamRoom({ series }: OralExamRoomProps) {
               Terminer l&apos;épreuve
             </Button>
           ) : (
-            <Button variant="outline" size="sm" onClick={handleRestart} className="gap-2">
-              <RotateCcw className="h-4 w-4" /> Recommencer
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button asChild variant="outline" size="sm" className="gap-2">
+                <Link href="/examens">
+                  <BookOpen className="h-4 w-4" />
+                  Catalogue Examens
+                </Link>
+              </Button>
+              <Button variant="default" size="sm" onClick={handleRestart} className="gap-2">
+                <RotateCcw className="h-4 w-4" /> Recommencer
+              </Button>
+            </div>
           )}
         </div>
       </header>
 
       {/* Vue Résultats ou Salle Virtuelle */}
       {isExamCompleted && evaluation ? (
-        <div className="flex-1 overflow-y-auto p-6 sm:p-8 max-w-4xl mx-auto w-full">
+        <div className="flex-1 overflow-y-auto p-6 sm:p-8 max-w-4xl mx-auto w-full space-y-6">
           <OralDebriefCard evaluation={evaluation} />
+
+          {/* Barre d'action de retour au menu proéminente */}
+          <div className="rounded-2xl border bg-card p-6 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="space-y-1 text-center sm:text-left">
+              <h3 className="font-display text-base font-bold text-foreground">
+                Session terminée et sauvegardée dans votre profil
+              </h3>
+              <p className="text-xs text-muted-foreground">
+                Votre score et vos tournures d&apos;excellence ont été synchronisés avec votre carnet de révision.
+              </p>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
+              <Button asChild variant="outline" size="lg" className="flex-1 sm:flex-initial gap-2 font-bold">
+                <Link href="/examens">
+                  <ArrowLeft className="h-4 w-4" />
+                  Retour au catalogue
+                </Link>
+              </Button>
+              <Button asChild variant="ghost" size="lg" className="flex-1 sm:flex-initial gap-2">
+                <Link href={`/examens/${series.id}`}>
+                  Menu de la Série {series.seriesNumber || 101}
+                </Link>
+              </Button>
+              <Button onClick={handleRestart} variant="default" size="lg" className="flex-1 sm:flex-initial gap-2 font-bold">
+                <RotateCcw className="h-4 w-4" />
+                Refaire l&apos;épreuve
+              </Button>
+            </div>
+          </div>
         </div>
       ) : (
         <div className="flex min-h-0 flex-1 flex-col lg:flex-row divide-y lg:divide-y-0 lg:divide-x">
@@ -592,7 +683,7 @@ export function OralExamRoom({ series }: OralExamRoomProps) {
           <div className="flex flex-col items-center justify-between p-6 sm:p-8 bg-muted/20 lg:w-96 shrink-0 overflow-y-auto">
             <div className="text-center space-y-2">
               <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                Examinateur Officiel IA
+                Examinateur Officiel IA (Voix ElevenLabs)
               </span>
               <h2 className="font-display text-lg font-bold">M. Laurent (France Éducation Int.)</h2>
             </div>
@@ -649,7 +740,7 @@ export function OralExamRoom({ series }: OralExamRoomProps) {
                     </span>
                   )
                 ) : isExaminerSpeaking ? (
-                  "L'examinateur parle..."
+                  "L'examinateur parle (Voix Charlie ElevenLabs)..."
                 ) : isRecording ? (
                   "Micro ouvert : Parlez maintenant..."
                 ) : (
