@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { generateOralExaminerReplyWithAi } from "@/lib/ai/service";
+import { generateSpeechBufferWithElevenLabs, DEFAULT_FRENCH_VOICES } from "@/lib/audio/elevenlabs";
 
 const roleplaySchema = z.object({
   taskIndex: z.number().min(0).max(2),
@@ -29,7 +30,7 @@ export async function POST(req: Request) {
 
     const { taskIndex, candidateSpeech, history } = parsed.data;
 
-    // 1. Priorité au moteur IA direct Next.js (OpenAI / GPT-4o-mini si clé présente)
+    // 1. Priorité au moteur IA direct Next.js (DeepSeek-V3 / OpenAI)
     const taskTitles = [
       "Tâche 1 : Entretien dirigé",
       "Tâche 2 : Jeu de rôle (échange interactif)",
@@ -44,7 +45,18 @@ export async function POST(req: Request) {
     });
 
     if (aiReply) {
-      return NextResponse.json({ ok: true, reply: aiReply, provider: "ai" });
+      // Synthèse audio studio ElevenLabs de la réplique
+      const audioBuffer = await generateSpeechBufferWithElevenLabs({
+        text: aiReply,
+        voiceId: DEFAULT_FRENCH_VOICES.charlie,
+      });
+
+      return NextResponse.json({
+        ok: true,
+        reply: aiReply,
+        audioBase64: audioBuffer ? audioBuffer.toString("base64") : null,
+        provider: "ai",
+      });
     }
 
     // 2. Moteur de dialogue déterministe certifié FEI en fallback
@@ -88,7 +100,17 @@ export async function POST(req: Request) {
       }
     }
 
-    return NextResponse.json({ ok: true, reply });
+    const fallbackBuffer = await generateSpeechBufferWithElevenLabs({
+      text: reply,
+      voiceId: DEFAULT_FRENCH_VOICES.charlie,
+    });
+
+    return NextResponse.json({
+      ok: true,
+      reply,
+      audioBase64: fallbackBuffer ? fallbackBuffer.toString("base64") : null,
+      provider: "heuristic",
+    });
   } catch (error) {
     console.error("Erreur roleplay oral :", error);
     return NextResponse.json(

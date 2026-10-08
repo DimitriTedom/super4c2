@@ -102,31 +102,80 @@ export function OralExamRoom({ series }: OralExamRoomProps) {
     }
   };
 
-  // Synthèse vocale de l'examinateur IA
-  const speakExaminerText = useCallback((text: string, onEnd?: () => void) => {
-    if (typeof window !== "undefined" && "speechSynthesis" in window) {
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = "fr-FR";
-      utterance.rate = 1.0;
-      utterance.pitch = 1.0;
+  const currentAudioRef = useRef<HTMLAudioElement | null>(null);
 
-      utterance.onstart = () => setIsExaminerSpeaking(true);
-      utterance.onend = () => {
-        setIsExaminerSpeaking(false);
-        if (onEnd) onEnd();
-      };
-      utterance.onerror = () => {
-        setIsExaminerSpeaking(false);
-        if (onEnd) onEnd();
-      };
-
-      window.speechSynthesis.speak(utterance);
-    } else {
-      setIsExaminerSpeaking(false);
-      if (onEnd) onEnd();
+  const stopAllAudio = useCallback(() => {
+    if (typeof window !== "undefined") {
+      if (window.speechSynthesis) window.speechSynthesis.cancel();
+      if (currentAudioRef.current) {
+        currentAudioRef.current.pause();
+        currentAudioRef.current = null;
+      }
     }
+    setIsExaminerSpeaking(false);
   }, []);
+
+  const playExaminerAudio = useCallback(
+    (base64: string, fallbackText: string, onEnd?: () => void) => {
+      if (typeof window === "undefined") return;
+      stopAllAudio();
+
+      try {
+        const audio = new Audio(`data:audio/mp3;base64,${base64}`);
+        currentAudioRef.current = audio;
+
+        audio.onplay = () => setIsExaminerSpeaking(true);
+        audio.onended = () => {
+          setIsExaminerSpeaking(false);
+          currentAudioRef.current = null;
+          if (onEnd) onEnd();
+        };
+        audio.onerror = () => {
+          // Si échec du format audio, repli sur la synthèse vocale locale
+          currentAudioRef.current = null;
+          speakExaminerText(fallbackText, onEnd);
+        };
+
+        void audio.play().catch(() => {
+          currentAudioRef.current = null;
+          speakExaminerText(fallbackText, onEnd);
+        });
+      } catch {
+        speakExaminerText(fallbackText, onEnd);
+      }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [stopAllAudio]
+  );
+
+  // Synthèse vocale de secours (Web Speech API locale)
+  const speakExaminerText = useCallback(
+    (text: string, onEnd?: () => void) => {
+      stopAllAudio();
+      if (typeof window !== "undefined" && "speechSynthesis" in window) {
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = "fr-FR";
+        utterance.rate = 1.0;
+        utterance.pitch = 1.0;
+
+        utterance.onstart = () => setIsExaminerSpeaking(true);
+        utterance.onend = () => {
+          setIsExaminerSpeaking(false);
+          if (onEnd) onEnd();
+        };
+        utterance.onerror = () => {
+          setIsExaminerSpeaking(false);
+          if (onEnd) onEnd();
+        };
+
+        window.speechSynthesis.speak(utterance);
+      } else {
+        setIsExaminerSpeaking(false);
+        if (onEnd) onEnd();
+      }
+    },
+    [stopAllAudio]
+  );
 
   // Amorce de chaque tâche par l'examinateur
   useEffect(() => {
@@ -156,25 +205,21 @@ export function OralExamRoom({ series }: OralExamRoomProps) {
     speakExaminerText(initialPrompt);
 
     return () => {
-      if (typeof window !== "undefined" && "speechSynthesis" in window) {
-        window.speechSynthesis.cancel();
-      }
+      stopAllAudio();
     };
-  }, [currentTaskIndex, isExamCompleted, series.tasks, speakExaminerText]);
+  }, [currentTaskIndex, isExamCompleted, series.tasks, speakExaminerText, stopAllAudio]);
 
   // Clôture et évaluation de l'épreuve
   const handleCompleteExam = useCallback(() => {
     setIsExamCompleted(true);
     setIsRecording(false);
+    stopAllAudio();
     if (recognitionRef.current) {
       try {
         recognitionRef.current.stop();
       } catch {
         // ignore
       }
-    }
-    if (typeof window !== "undefined" && "speechSynthesis" in window) {
-      window.speechSynthesis.cancel();
     }
     const evalResult = evaluateOralExam(series, dialogues);
     setEvaluation(evalResult);
@@ -196,7 +241,7 @@ export function OralExamRoom({ series }: OralExamRoomProps) {
     }).catch(() => {
       // mode hors ligne gracieux
     });
-  }, [dialogues, series]);
+  }, [dialogues, series, stopAllAudio]);
 
   // Minuteur de la tâche active
   useEffect(() => {
@@ -280,7 +325,11 @@ export function OralExamRoom({ series }: OralExamRoomProps) {
             [currentTaskIndex]: [...prev[currentTaskIndex], examinerMsg],
           }));
 
-          speakExaminerText(data.reply);
+          if (data.audioBase64) {
+            playExaminerAudio(data.audioBase64, data.reply);
+          } else {
+            speakExaminerText(data.reply);
+          }
           return;
         }
       }

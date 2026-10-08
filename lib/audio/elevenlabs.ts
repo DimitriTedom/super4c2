@@ -68,3 +68,55 @@ export async function generateSpeechWithElevenLabs({
     return false;
   }
 }
+
+/**
+ * Génère le flux audio ElevenLabs en mémoire (Buffer) pour transmission instantanée à l'examinateur IA.
+ */
+export async function generateSpeechBufferWithElevenLabs({
+  text,
+  voiceId = DEFAULT_FRENCH_VOICES.charlie,
+  modelId = "eleven_multilingual_v2",
+}: {
+  text: string;
+  voiceId?: string;
+  modelId?: string;
+}): Promise<Buffer | null> {
+  const apiKey = process.env.ELEVENLABS_API_KEY;
+  if (!apiKey) {
+    console.warn("⚠️ ELEVENLABS_API_KEY absente dans les variables d'environnement.");
+    return null;
+  }
+
+  try {
+    const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "xi-api-key": apiKey,
+      },
+      body: JSON.stringify({
+        text,
+        model_id: modelId,
+        voice_settings: {
+          stability: 0.6,
+          similarity_boost: 0.8,
+          style: 0.15,
+          use_speaker_boost: true,
+        },
+      }),
+    });
+
+    if (!response.ok) {
+      const errText = await response.text();
+      console.warn(`ElevenLabs Speech Buffer Error [${response.status}]:`, errText);
+      return null;
+    }
+
+    const arrayBuffer = await response.arrayBuffer();
+    return Buffer.from(arrayBuffer);
+  } catch (err) {
+    console.warn("Erreur buffer ElevenLabs :", err);
+    return null;
+  }
+}
+

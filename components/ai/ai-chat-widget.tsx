@@ -38,11 +38,19 @@ const DEFAULT_SUGGESTIONS = [
   "Aide-moi à concevoir un sujet d'examen pour la Tâche 2 (Admin).",
 ];
 
+const INITIAL_GREETING: ChatMessage = {
+  id: "greeting-aura-c2",
+  role: "assistant",
+  content:
+    "Bonjour ! Je suis **Aura C2™**, votre tuteur pédagogique officiel pour le TCF & TEF Canada.\n\nJe suis spécialement entraîné sur les grilles de France Éducation International (FEI) et d'IRCC pour vous aider à atteindre le **seuil NCLC 7 / NCLC 10+** et débloquer jusqu'à 50 points de bonus CRS.\n\nPosez-moi vos questions de grammaire, demandez des reformulations C1/C2, ou choisissez l'une des suggestions ci-dessous !",
+  timestamp: "Maintenant",
+};
+
 export function AiChatWidget() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [messages, setMessages] = useState<ChatMessage[]>([INITIAL_GREETING]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
@@ -193,7 +201,7 @@ export function AiChatWidget() {
       window.speechSynthesis.cancel();
     }
     setSpeakingId(null);
-    setMessages([]);
+    setMessages([INITIAL_GREETING]);
     setInput("");
   };
 
@@ -252,7 +260,7 @@ export function AiChatWidget() {
             </div>
 
             <div className="flex items-center gap-1">
-              {messages.length > 0 && (
+              {messages.length > 1 && (
                 <Button
                   variant="ghost"
                   size="icon"
@@ -293,195 +301,181 @@ export function AiChatWidget() {
             ref={scrollRef}
             className="flex-1 overflow-y-auto p-4 space-y-4 text-sm"
           >
-            {messages.length === 0 ? (
-              <div className="flex h-full flex-col justify-center space-y-4 py-6 text-center">
-                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-tr from-primary/10 via-rose-500/10 to-amber-500/10 text-primary">
-                  <Sparkles className="h-7 w-7 text-primary" />
-                </div>
-                <div className="space-y-1">
-                  <h4 className="font-display font-bold text-foreground">
-                    Bienvenue sur Aura C2™
-                  </h4>
-                  <p className="text-xs text-muted-foreground max-w-xs mx-auto">
-                    Votre intelligence pédagogique dédiée au TCF & TEF Canada. Posez vos questions méthodologiques, demandez des explications de pièges ou des reformulations C1/C2.
-                  </p>
-                </div>
+            {messages.map((m) => {
+              const isUser = m.role === "user";
+              const isSpeaking = speakingId === m.id;
 
-                {/* Suggestions Chips */}
-                <div className="space-y-2 pt-2 text-left">
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground px-1">
-                    Suggestions rapides :
-                  </span>
-                  <div className="flex flex-col gap-1.5">
-                    {DEFAULT_SUGGESTIONS.map((sug, idx) => (
-                      <button
-                        key={idx}
-                        onClick={() => void handleSend(sug)}
-                        className="rounded-xl border border-border/80 bg-card/60 p-2.5 text-xs text-foreground/90 transition-all hover:border-primary/40 hover:bg-primary/5 hover:text-primary active:scale-[0.99] text-left"
-                      >
-                        ⚡ {sug}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            ) : (
-              messages.map((m) => {
-                const isUser = m.role === "user";
-                const isSpeaking = speakingId === m.id;
-
-                return (
+              return (
+                <div
+                  key={m.id}
+                  className={cn(
+                    "flex flex-col space-y-1.5",
+                    isUser ? "items-end" : "items-start"
+                  )}
+                >
                   <div
-                    key={m.id}
                     className={cn(
-                      "flex flex-col space-y-1.5",
-                      isUser ? "items-end" : "items-start"
+                      "group relative max-w-[90%] rounded-2xl p-3.5 text-sm leading-relaxed shadow-2xs break-words",
+                      isUser
+                        ? "bg-primary text-primary-foreground rounded-br-xs font-medium"
+                        : "bg-card text-foreground border border-border/70 rounded-bl-xs"
                     )}
                   >
-                    <div
-                      className={cn(
-                        "group relative max-w-[90%] rounded-2xl p-3.5 text-sm leading-relaxed shadow-2xs break-words",
-                        isUser
-                          ? "bg-primary text-primary-foreground rounded-br-xs font-medium"
-                          : "bg-card text-foreground border border-border/70 rounded-bl-xs"
-                      )}
-                    >
-                      {isUser ? (
-                        <p className="whitespace-pre-wrap">{m.content}</p>
-                      ) : (
-                        <div className="prose prose-sm dark:prose-invert max-w-none text-foreground text-[13.5px] leading-relaxed">
-                          <ReactMarkdown
-                            remarkPlugins={[remarkGfm, remarkBreaks]}
-                            components={{
-                              table: ({ ...props }) => (
-                                <div className="my-3 overflow-x-auto rounded-xl border border-border/80 shadow-2xs">
-                                  <table className="w-full text-left text-xs border-collapse" {...props} />
-                                </div>
-                              ),
-                              thead: ({ ...props }) => (
-                                <thead className="bg-muted/80 text-foreground font-semibold border-b border-border/80" {...props} />
-                              ),
-                              th: ({ ...props }) => (
-                                <th className="p-2.5 font-bold text-foreground border-r last:border-r-0 border-border/60" {...props} />
-                              ),
-                              td: ({ ...props }) => (
-                                <td className="p-2.5 text-muted-foreground border-b border-border/50 border-r last:border-r-0" {...props} />
-                              ),
-                              h2: ({ ...props }) => (
-                                <h2 className="text-base font-bold font-display text-foreground mt-3 mb-1.5" {...props} />
-                              ),
-                              h3: ({ ...props }) => (
-                                <h3 className="text-sm font-bold font-display text-foreground mt-2.5 mb-1 text-primary" {...props} />
-                              ),
-                              h4: ({ ...props }) => (
-                                <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mt-2 mb-1" {...props} />
-                              ),
-                              ul: ({ ...props }) => (
-                                <ul className="my-2 space-y-1 list-disc pl-4 text-foreground/90" {...props} />
-                              ),
-                              ol: ({ ...props }) => (
-                                <ol className="my-2 space-y-1 list-decimal pl-4 text-foreground/90" {...props} />
-                              ),
-                              li: ({ ...props }) => (
-                                <li className="text-[13px] text-foreground/90" {...props} />
-                              ),
-                              strong: ({ ...props }) => (
-                                <strong className="font-bold text-foreground" {...props} />
-                              ),
-                              blockquote: ({ ...props }) => (
-                                <blockquote className="border-l-2 border-primary pl-3 my-2 text-muted-foreground italic text-xs" {...props} />
-                              ),
-                              code: ({ ...props }) => (
-                                <code className="rounded bg-muted px-1 py-0.5 font-mono text-xs text-primary font-semibold" {...props} />
-                              ),
-                              p: ({ ...props }) => (
-                                <p className="mb-2 last:mb-0" {...props} />
-                              ),
-                            }}
+                    {isUser ? (
+                      <p className="whitespace-pre-wrap">{m.content}</p>
+                    ) : (
+                      <div className="prose prose-sm dark:prose-invert max-w-none text-foreground text-[13.5px] leading-relaxed">
+                        <ReactMarkdown
+                          remarkPlugins={[remarkGfm, remarkBreaks]}
+                          components={{
+                            table: ({ ...props }) => (
+                              <div className="my-3 overflow-x-auto rounded-xl border border-border/80 shadow-2xs">
+                                <table className="w-full text-left text-xs border-collapse" {...props} />
+                              </div>
+                            ),
+                            thead: ({ ...props }) => (
+                              <thead className="bg-muted/80 text-foreground font-semibold border-b border-border/80" {...props} />
+                            ),
+                            th: ({ ...props }) => (
+                              <th className="p-2.5 font-bold text-foreground border-r last:border-r-0 border-border/60" {...props} />
+                            ),
+                            td: ({ ...props }) => (
+                              <td className="p-2.5 text-muted-foreground border-b border-border/50 border-r last:border-r-0" {...props} />
+                            ),
+                            h2: ({ ...props }) => (
+                              <h2 className="text-base font-bold font-display text-foreground mt-3 mb-1.5" {...props} />
+                            ),
+                            h3: ({ ...props }) => (
+                              <h3 className="text-sm font-bold font-display text-foreground mt-2.5 mb-1 text-primary" {...props} />
+                            ),
+                            h4: ({ ...props }) => (
+                              <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mt-2 mb-1" {...props} />
+                            ),
+                            ul: ({ ...props }) => (
+                              <ul className="my-2 space-y-1 list-disc pl-4 text-foreground/90" {...props} />
+                            ),
+                            ol: ({ ...props }) => (
+                              <ol className="my-2 space-y-1 list-decimal pl-4 text-foreground/90" {...props} />
+                            ),
+                            li: ({ ...props }) => (
+                              <li className="text-[13px] text-foreground/90" {...props} />
+                            ),
+                            strong: ({ ...props }) => (
+                              <strong className="font-bold text-foreground" {...props} />
+                            ),
+                            blockquote: ({ ...props }) => (
+                              <blockquote className="border-l-2 border-primary pl-3 my-2 text-muted-foreground italic text-xs" {...props} />
+                            ),
+                            code: ({ ...props }) => (
+                              <code className="rounded bg-muted px-1 py-0.5 font-mono text-xs text-primary font-semibold" {...props} />
+                            ),
+                            p: ({ ...props }) => (
+                              <p className="mb-2 last:mb-0" {...props} />
+                            ),
+                          }}
+                        >
+                          {m.content}
+                        </ReactMarkdown>
+                      </div>
+                    )}
+
+                    {/* Action Bar for Assistant Message */}
+                    {!isUser && (
+                      <div className="mt-3 flex items-center justify-between border-t border-border/50 pt-2 text-muted-foreground text-xs">
+                        <div className="flex items-center gap-1">
+                          {/* Voice Speak Button */}
+                          <button
+                            onClick={() => handleSpeak(m.id, m.content)}
+                            className={cn(
+                              "flex items-center gap-1 rounded-lg px-2 py-1 text-[11px] font-medium transition-colors hover:bg-muted hover:text-foreground",
+                              isSpeaking && "bg-primary/10 text-primary font-semibold animate-pulse"
+                            )}
+                            title={isSpeaking ? "Arrêter la lecture" : "Écouter l'explication (Voix FR)"}
                           >
-                            {m.content}
-                          </ReactMarkdown>
+                            {isSpeaking ? (
+                              <>
+                                <VolumeX className="h-3.5 w-3.5 text-primary" />
+                                <span>Stop</span>
+                              </>
+                            ) : (
+                              <>
+                                <Volume2 className="h-3.5 w-3.5" />
+                                <span>Écouter</span>
+                              </>
+                            )}
+                          </button>
+
+                          {/* Copy Button */}
+                          <button
+                            onClick={() => handleCopy(m.id, m.content)}
+                            className="flex items-center gap-1 rounded-lg px-2 py-1 text-[11px] font-medium transition-colors hover:bg-muted hover:text-foreground"
+                            title="Copier la réponse"
+                          >
+                            {copiedId === m.id ? (
+                              <>
+                                <Check className="h-3.5 w-3.5 text-emerald-500" />
+                                <span className="text-emerald-500">Copié</span>
+                              </>
+                            ) : (
+                              <>
+                                <Copy className="h-3.5 w-3.5" />
+                                <span>Copier</span>
+                              </>
+                            )}
+                          </button>
                         </div>
-                      )}
 
-                      {/* Action Bar for Assistant Message */}
-                      {!isUser && (
-                        <div className="mt-3 flex items-center justify-between border-t border-border/50 pt-2 text-muted-foreground text-xs">
-                          <div className="flex items-center gap-1">
-                            {/* Voice Speak Button */}
-                            <button
-                              onClick={() => handleSpeak(m.id, m.content)}
-                              className={cn(
-                                "flex items-center gap-1 rounded-lg px-2 py-1 text-[11px] font-medium transition-colors hover:bg-muted hover:text-foreground",
-                                isSpeaking && "bg-primary/10 text-primary font-semibold animate-pulse"
-                              )}
-                              title={isSpeaking ? "Arrêter la lecture" : "Écouter l'explication (Voix FR)"}
-                            >
-                              {isSpeaking ? (
-                                <>
-                                  <VolumeX className="h-3.5 w-3.5 text-primary" />
-                                  <span>Stop</span>
-                                </>
-                              ) : (
-                                <>
-                                  <Volume2 className="h-3.5 w-3.5" />
-                                  <span>Écouter</span>
-                                </>
-                              )}
-                            </button>
-
-                            {/* Copy Button */}
-                            <button
-                              onClick={() => handleCopy(m.id, m.content)}
-                              className="flex items-center gap-1 rounded-lg px-2 py-1 text-[11px] font-medium transition-colors hover:bg-muted hover:text-foreground"
-                              title="Copier la réponse"
-                            >
-                              {copiedId === m.id ? (
-                                <>
-                                  <Check className="h-3.5 w-3.5 text-emerald-500" />
-                                  <span className="text-emerald-500">Copié</span>
-                                </>
-                              ) : (
-                                <>
-                                  <Copy className="h-3.5 w-3.5" />
-                                  <span>Copier</span>
-                                </>
-                              )}
-                            </button>
-                          </div>
-
-                          {/* Feedback Thumbs */}
-                          <div className="flex items-center gap-1">
-                            <button
-                              onClick={() => handleFeedback(m.id, true)}
-                              className={cn(
-                                "rounded-lg p-1 transition-colors hover:bg-muted",
-                                m.liked === true ? "text-emerald-500 font-bold" : "hover:text-foreground"
-                              )}
-                              title="Cette réponse est utile"
-                            >
-                              <ThumbsUp className="h-3.5 w-3.5" />
-                            </button>
-                            <button
-                              onClick={() => handleFeedback(m.id, false)}
-                              className={cn(
-                                "rounded-lg p-1 transition-colors hover:bg-muted",
-                                m.liked === false ? "text-red-500 font-bold" : "hover:text-foreground"
-                              )}
-                              title="Cette réponse n'est pas utile"
-                            >
-                              <ThumbsDown className="h-3.5 w-3.5" />
-                            </button>
-                          </div>
+                        {/* Feedback Thumbs */}
+                        <div className="flex items-center gap-1">
+                          <button
+                            onClick={() => handleFeedback(m.id, true)}
+                            className={cn(
+                              "rounded-lg p-1 transition-colors hover:bg-muted",
+                              m.liked === true ? "text-emerald-500 font-bold" : "hover:text-foreground"
+                            )}
+                            title="Cette réponse est utile"
+                          >
+                            <ThumbsUp className="h-3.5 w-3.5" />
+                          </button>
+                          <button
+                            onClick={() => handleFeedback(m.id, false)}
+                            className={cn(
+                              "rounded-lg p-1 transition-colors hover:bg-muted",
+                              m.liked === false ? "text-red-500 font-bold" : "hover:text-foreground"
+                            )}
+                            title="Cette réponse n'est pas utile"
+                          >
+                            <ThumbsDown className="h-3.5 w-3.5" />
+                          </button>
                         </div>
-                      )}
-                    </div>
-                    <span className="text-[10px] text-muted-foreground px-1">
-                      {m.timestamp}
-                    </span>
+                      </div>
+                    )}
                   </div>
-                );
-              })
+                  <span className="text-[10px] text-muted-foreground px-1">
+                    {m.timestamp}
+                  </span>
+                </div>
+              );
+            })}
+
+            {/* Suggestions Chips when conversation has just started */}
+            {messages.length <= 1 && (
+              <div className="space-y-2 pt-2 text-left">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground px-1">
+                  Suggestions de questions :
+                </span>
+                <div className="flex flex-col gap-1.5">
+                  {DEFAULT_SUGGESTIONS.map((sug, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => void handleSend(sug)}
+                      className="rounded-xl border border-border/80 bg-card/60 p-2.5 text-xs text-foreground/90 transition-all hover:border-primary/40 hover:bg-primary/5 hover:text-primary active:scale-[0.99] text-left"
+                    >
+                      ⚡ {sug}
+                    </button>
+                  ))}
+                </div>
+              </div>
             )}
 
             {/* Typing Indicator */}
