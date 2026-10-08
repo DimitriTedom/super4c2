@@ -80,8 +80,34 @@ export function CbtExam({ series }: { series: ExamSeriesData }) {
     else if (fontSize === "base") setFontSize("sm");
   };
 
+  if (s.finished && s.result) {
+    return (
+      <div className="flex min-h-screen flex-col bg-background">
+        <ExamHeader
+          title={series.title}
+          discipline={DISCIPLINE_LABEL[series.discipline]}
+          remaining={s.remaining}
+          unanswered={s.stats.unanswered}
+          flagged={s.stats.flagged}
+          total={series.questions.length}
+          disabled={s.finished}
+          onFinish={s.finish}
+          onGoToFirstUnanswered={goToFirstUnanswered}
+        />
+        <main className="flex-1 pb-16">
+          <ExamResultSummary
+            result={s.result}
+            questions={series.questions}
+            answers={s.answers}
+            onRestart={s.restart}
+          />
+        </main>
+      </div>
+    );
+  }
+
   return (
-    <div className="flex h-screen flex-col bg-background">
+    <div className="flex h-screen flex-col overflow-hidden bg-background">
       <ExamHeader
         title={series.title}
         discipline={DISCIPLINE_LABEL[series.discipline]}
@@ -94,20 +120,10 @@ export function CbtExam({ series }: { series: ExamSeriesData }) {
         onGoToFirstUnanswered={goToFirstUnanswered}
       />
 
-      {s.finished && s.result ? (
-        <div className="flex-1 overflow-y-auto">
-          <ExamResultSummary
-            result={s.result}
-            questions={series.questions}
-            answers={s.answers}
-            onRestart={s.restart}
-          />
-        </div>
-      ) : (
-        <ExamSplitLayout
-          left={
-            series.discipline === "CO" ? (
-              <div className="flex h-full items-center">
+      <ExamSplitLayout
+        left={
+          series.discipline === "CO" ? (
+            <div className="flex h-full items-center">
                 <AudioPlayerCBT
                   key={s.question.id}
                   src={s.question.audioUrl}
@@ -213,7 +229,6 @@ export function CbtExam({ series }: { series: ExamSeriesData }) {
             />
           }
         />
-      )}
     </div>
   );
 }

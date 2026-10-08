@@ -126,7 +126,7 @@ export function ExamResultSummary({
   };
 
   return (
-    <div className="mx-auto w-full max-w-4xl space-y-8 overflow-y-auto p-4 sm:p-8">
+    <div className="mx-auto w-full max-w-4xl space-y-8 p-4 sm:p-8">
       {/* Official Score Banner */}
       <div className="rounded-3xl border bg-gradient-to-br from-card via-card to-primary/5 p-6 sm:p-8 shadow-sm">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 border-b pb-6">
