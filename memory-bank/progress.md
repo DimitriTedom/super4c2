@@ -1,6 +1,11 @@
 # Progress Tracking: Super4C2
 
 ## Ce qui est Réalisé
+- [x] **Responsiveness Mobile & Tablette Exemplaire :** Optimisation complète de `/examens?test=tef` et de tous les parcours candidats (grille 3 colonnes adaptative, filtres défilables horizontalement, cartes de quêtes `snap-start`, boutons CTA pleine largeur).
+- [x] **Visibilité & Contraste du Globe 3D Hero :** Calibration des couleurs COBE (`baseColor`, `glowColor`, `mapBrightness`, `diffuse`) pour un contraste immédiat en mode clair comme en mode sombre, positionné harmonieusement sous les titres.
+- [x] **Foire Aux Questions Officielle (FAQ) :** Composant `<FaqSection />` avec recherche temps réel, filtres thématiques, accordéons Framer Motion, affiché sur `app/page.tsx`, dans le footer et sur la route `/faq`.
+- [x] **Coach Aura C2™ — Avatar Animé IA (Inspiré 21st.dev) :** Création de `<AnimatedAiAvatar />` avec pupilles cyan clignotantes de façon organique, anneau d'élocution et rotation de réflexion, sans risque de propriété intellectuelle.
+- [x] **Média Enrichis (YouTube, Vidéo Veo3, Images) dans le Blog :** Boutons d'insertion rapide dans `MarkdownField` et affichage responsive 16:9 avec iframes YouTube et balises vidéo dans `/blog/[slug]`.
 - [x] Clonage et configuration du repo `git@github.com:DimitriTedom/super4c2.git`.
 - [x] Audit concurrentiel complet d'Objectif Canada TCF (architecture, structure des épreuves, modèle de correction, délais).
 - [x] Initialisation du système Memory Bank (`projectbrief.md`, `productContext.md`, `systemPatterns.md`, `techContext.md`, `activeContext.md`, `progress.md`).

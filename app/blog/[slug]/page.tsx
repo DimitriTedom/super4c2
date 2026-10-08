@@ -12,6 +12,7 @@ import {
 import { getBlogPost, BLOG_POSTS } from "@/lib/blog/mock-posts";
 import { Button } from "@/components/ui/button";
 import { ShimmerButton } from "@/components/ui/shimmer-button";
+import { cn } from "@/lib/utils";
 
 export async function generateMetadata({
   params,
@@ -136,13 +137,81 @@ export default async function BlogPostPage({
             );
           }
 
+          // 🎥 Support Vidéo YouTube (URL directe ou embed)
+          const ytMatch = trimmed.match(/https?:\/\/(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([\w-]{11})/);
+          if (ytMatch && ytMatch[1]) {
+            return (
+              <div key={idx} className="my-8 overflow-hidden rounded-2xl border border-border/80 bg-black/90 shadow-2xl">
+                <div className="relative aspect-video w-full">
+                  <iframe
+                    src={`https://www.youtube.com/embed/${ytMatch[1]}`}
+                    title="Vidéo explicative officielle"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    className="absolute inset-0 h-full w-full border-0"
+                  />
+                </div>
+              </div>
+            );
+          }
+
+          // 🎬 Support Vidéo MP4 / Veo3 directe
+          if (trimmed.match(/^https?:\/\/.*\.(mp4|webm)(\?.*)?$/i) || trimmed.startsWith("<video")) {
+            const videoUrl = trimmed.replace(/<video[^>]*src="([^"]+)"[^>]*>/, "$1");
+            return (
+              <div key={idx} className="my-8 overflow-hidden rounded-2xl border border-border/80 bg-black/90 shadow-2xl">
+                <video
+                  src={videoUrl}
+                  controls
+                  playsInline
+                  className="aspect-video w-full rounded-2xl"
+                />
+              </div>
+            );
+          }
+
+          // 🖼️ Support Image Markdown ![Alt](URL)
+          const imgMatch = trimmed.match(/^!\[(.*?)\]\((.*?)\)$/);
+          if (imgMatch) {
+            const alt = imgMatch[1];
+            const src = imgMatch[2];
+            return (
+              <figure key={idx} className="my-8 space-y-2 text-center">
+                <div className="overflow-hidden rounded-2xl border border-border/80 shadow-lg">
+                  <img src={src} alt={alt} className="w-full h-auto object-cover max-h-[500px]" />
+                </div>
+                {alt && (
+                  <figcaption className="text-xs text-muted-foreground italic">
+                    {alt}
+                  </figcaption>
+                )}
+              </figure>
+            );
+          }
+
           if (trimmed.startsWith("> ")) {
+            const isTip = trimmed.includes("[!TIP]") || trimmed.includes("Conseil");
+            const isWarning = trimmed.includes("[!WARNING]") || trimmed.includes("Piège");
+            const cleanText = trimmed
+              .replace(/>\s*\[!(TIP|WARNING|NOTE)\]\s*/g, "")
+              .replace(/^>\s*/gm, "");
+
             return (
               <blockquote
                 key={idx}
-                className="rounded-2xl border-l-4 border-primary bg-primary/5 p-4 italic text-sm text-foreground/90 my-4"
+                className={cn(
+                  "rounded-2xl border-l-4 p-5 italic text-sm text-foreground/90 my-6 shadow-xs",
+                  isTip
+                    ? "border-emerald-500 bg-emerald-500/10 text-emerald-950 dark:text-emerald-100"
+                    : isWarning
+                    ? "border-amber-500 bg-amber-500/10 text-amber-950 dark:text-amber-100"
+                    : "border-primary bg-primary/5"
+                )}
               >
-                {trimmed.replace("> ", "")}
+                <div className="font-sans not-italic font-semibold text-xs uppercase tracking-wider mb-1 text-primary">
+                  {isTip ? "💡 Conseil Pédagogique FEI" : isWarning ? "⚠️ Piège Classique à Éviter" : "Note Importante"}
+                </div>
+                <p className="whitespace-pre-line leading-relaxed">{cleanText}</p>
               </blockquote>
             );
           }

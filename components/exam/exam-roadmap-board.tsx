@@ -143,46 +143,51 @@ export function ExamRoadmapBoard({
           </div>
 
           {/* Test Pill Switcher */}
-          <div className="flex flex-col sm:flex-row lg:flex-col items-start lg:items-end gap-3 shrink-0">
+          <div className="flex flex-col w-full sm:w-auto items-start lg:items-end gap-2.5 shrink-0">
             <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               Choisir votre examen officiel :
             </span>
-            <div className="inline-flex rounded-2xl border bg-muted/40 p-1.5 shadow-xs backdrop-blur-md">
+            <div className="grid grid-cols-3 sm:inline-flex w-full sm:w-auto rounded-2xl border bg-muted/40 p-1 shadow-xs backdrop-blur-md">
               <button
                 type="button"
                 onClick={() => handleTestChange("tcf")}
-                className={`flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs sm:text-sm font-bold transition-all ${
+                className={`flex items-center justify-center gap-1.5 rounded-xl px-2 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm font-bold transition-all text-center ${
                   activeTest === "tcf"
                     ? "bg-primary text-primary-foreground shadow-md"
                     : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
                 }`}
               >
-                <span>🇨🇦 TCF Canada</span>
-                {activeTest === "tcf" && <Sparkles className="h-3.5 w-3.5" />}
+                <span>🇨🇦 TCF</span>
+                <span className="hidden md:inline">Canada</span>
+                {activeTest === "tcf" && <Sparkles className="h-3 w-3 shrink-0" />}
               </button>
 
               <button
                 type="button"
                 onClick={() => handleTestChange("tef")}
-                className={`flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs sm:text-sm font-bold transition-all ${
+                className={`flex items-center justify-center gap-1.5 rounded-xl px-2 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm font-bold transition-all text-center ${
                   activeTest === "tef"
                     ? "bg-primary text-primary-foreground shadow-md"
                     : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
                 }`}
               >
-                <span>🇨🇦 TEF Canada</span>
+                <span>🇨🇦 TEF</span>
+                <span className="hidden md:inline">Canada</span>
+                {activeTest === "tef" && <Sparkles className="h-3 w-3 shrink-0" />}
               </button>
 
               <button
                 type="button"
                 onClick={() => handleTestChange("ielts")}
-                className={`flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs sm:text-sm font-bold transition-all ${
+                className={`flex items-center justify-center gap-1.5 rounded-xl px-2 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm font-bold transition-all text-center ${
                   activeTest === "ielts"
                     ? "bg-primary text-primary-foreground shadow-md"
                     : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
                 }`}
               >
-                <span>🇬🇧 IELTS General</span>
+                <span>🇬🇧 IELTS</span>
+                <span className="hidden md:inline">General</span>
+                {activeTest === "ielts" && <Sparkles className="h-3 w-3 shrink-0" />}
               </button>
             </div>
 
@@ -196,64 +201,68 @@ export function ExamRoadmapBoard({
         {/* 🎛️ Filter Bar: Disciplines & View Mode */}
         <div className="mt-8 pt-6 border-t border-border/70 flex flex-col md:flex-row md:items-center justify-between gap-4">
           {/* Discipline Filters */}
-          <div className="flex flex-wrap items-center gap-1.5">
-            <span className="text-xs font-bold text-muted-foreground mr-1.5 hidden sm:inline">
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-2 scrollbar-none w-full md:flex-wrap md:overflow-visible md:pb-0">
+            <span className="text-xs font-bold text-muted-foreground mr-1.5 hidden md:inline shrink-0">
               Épreuve :
             </span>
             <Button
               size="sm"
               variant={activeDiscipline === "all" ? "default" : "outline"}
               onClick={() => setActiveDiscipline("all")}
-              className={`rounded-full text-xs font-semibold h-8 px-3.5 ${
+              className={`rounded-full text-xs font-semibold h-8 px-3.5 shrink-0 ${
                 activeDiscipline === "all" ? "shadow-xs" : "border-border/80"
               }`}
             >
               <Layers className="h-3.5 w-3.5 mr-1.5" />
-              Toutes les épreuves (Pack Complet)
+              <span>Pack Complet</span>
             </Button>
             <Button
               size="sm"
               variant={activeDiscipline === "ce" ? "default" : "outline"}
               onClick={() => setActiveDiscipline("ce")}
-              className={`rounded-full text-xs font-semibold h-8 px-3.5 ${
+              className={`rounded-full text-xs font-semibold h-8 px-3 shrink-0 ${
                 activeDiscipline === "ce" ? "shadow-xs" : "border-border/80"
               }`}
             >
               <BookOpen className="h-3.5 w-3.5 mr-1.5 text-rose-500" />
-              Compréhension Écrite (CE)
+              <span className="sm:hidden">CE</span>
+              <span className="hidden sm:inline">Compréhension Écrite (CE)</span>
             </Button>
             <Button
               size="sm"
               variant={activeDiscipline === "co" ? "default" : "outline"}
               onClick={() => setActiveDiscipline("co")}
-              className={`rounded-full text-xs font-semibold h-8 px-3.5 ${
+              className={`rounded-full text-xs font-semibold h-8 px-3 shrink-0 ${
                 activeDiscipline === "co" ? "shadow-xs" : "border-border/80"
               }`}
             >
               <Headphones className="h-3.5 w-3.5 mr-1.5 text-cyan-500" />
-              Compréhension Orale (CO)
+              <span className="sm:hidden">CO</span>
+              <span className="hidden sm:inline">Compréhension Orale (CO)</span>
             </Button>
             <Button
               size="sm"
               variant={activeDiscipline === "ee" ? "default" : "outline"}
               onClick={() => setActiveDiscipline("ee")}
-              className={`rounded-full text-xs font-semibold h-8 px-3.5 ${
+              className={`rounded-full text-xs font-semibold h-8 px-3 shrink-0 ${
                 activeDiscipline === "ee" ? "shadow-xs" : "border-border/80"
               }`}
             >
               <PenTool className="h-3.5 w-3.5 mr-1.5 text-amber-500" />
-              Expression Écrite (EE)
+              <span className="sm:hidden">EE</span>
+              <span className="hidden sm:inline">Expression Écrite (EE)</span>
             </Button>
             <Button
               size="sm"
               variant={activeDiscipline === "eo" ? "default" : "outline"}
               onClick={() => setActiveDiscipline("eo")}
-              className={`rounded-full text-xs font-semibold h-8 px-3.5 ${
+              className={`rounded-full text-xs font-semibold h-8 px-3 shrink-0 ${
                 activeDiscipline === "eo" ? "shadow-xs" : "border-border/80"
               }`}
             >
               <Mic className="h-3.5 w-3.5 mr-1.5 text-emerald-500" />
-              Expression Orale (EO)
+              <span className="sm:hidden">EO</span>
+              <span className="hidden sm:inline">Expression Orale (EO)</span>
             </Button>
           </div>
 
@@ -320,9 +329,11 @@ export function ExamRoadmapBoard({
           </div>
 
           {/* 🛣️ Horizontal Scrollable Quest Board with Directional Connector Arrows */}
-          <div className="relative rounded-3xl border border-border/80 bg-card/40 p-4 sm:p-6 shadow-inner backdrop-blur-xl">
-            <div className="overflow-x-auto pb-4 scrollbar-thin scroll-smooth snap-x">
-              <div className="flex items-stretch gap-4 min-w-max px-2 py-2">
+          <div className="relative rounded-3xl border border-border/80 bg-card/40 p-3 sm:p-6 shadow-inner backdrop-blur-xl">
+            {/* Visual swipe cue on mobile */}
+            <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-card/80 to-transparent z-10 rounded-r-3xl md:hidden" />
+            <div className="overflow-x-auto pb-4 scrollbar-thin scroll-smooth snap-x snap-mandatory">
+              <div className="flex items-stretch gap-3 sm:gap-4 min-w-max px-1 sm:px-2 py-2">
                 {seriesList.map((series, idx) => {
                   const isSelected = selectedSeriesId === series.id;
                   const isUnlocked = series.status !== "LOCKED";
@@ -337,7 +348,7 @@ export function ExamRoadmapBoard({
                       <motion.div
                         whileHover={{ y: -4, transition: { duration: 0.2 } }}
                         onClick={() => setSelectedSeriesId(series.id)}
-                        className={`w-72 sm:w-80 cursor-pointer rounded-3xl border p-5 transition-all flex flex-col justify-between select-none snap-center ${
+                        className={`w-[260px] sm:w-80 cursor-pointer rounded-3xl border p-4 sm:p-5 transition-all flex flex-col justify-between select-none snap-start ${
                           isSelected
                             ? "border-primary bg-card shadow-2xl ring-2 ring-primary/40"
                             : isUnlocked
@@ -475,7 +486,7 @@ export function ExamRoadmapBoard({
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.25 }}
-                className="rounded-3xl border-2 border-primary/40 bg-gradient-to-br from-card via-card to-primary/[0.03] p-6 sm:p-8 shadow-xl space-y-6"
+                className="rounded-3xl border-2 border-primary/40 bg-gradient-to-br from-card via-card to-primary/[0.03] p-4 sm:p-8 shadow-xl space-y-6"
               >
                 <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 border-b border-border/80 pb-6">
                   <div className="space-y-2">
@@ -505,12 +516,12 @@ export function ExamRoadmapBoard({
                   </div>
 
                   {/* Primary CTA (Respecting Unlocked Status!) */}
-                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shrink-0">
+                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shrink-0 w-full sm:w-auto">
                     {isSelectedUnlocked ? (
                       <Button
                         asChild
                         size="lg"
-                        className="font-bold text-base shadow-md px-6 bg-primary hover:bg-primary/90"
+                        className="font-bold text-sm sm:text-base shadow-md px-6 bg-primary hover:bg-primary/90 w-full sm:w-auto"
                       >
                         <Link href={selectedSeries.disciplines[0]?.url || "/examens/demo-101-ce"}>
                           <span>Lancer la Série Complète (CBT)</span>
@@ -518,12 +529,12 @@ export function ExamRoadmapBoard({
                         </Link>
                       </Button>
                     ) : (
-                      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
                         <Button
                           disabled
                           size="lg"
                           variant="outline"
-                          className="opacity-70 gap-2 border-border/80 cursor-not-allowed"
+                          className="opacity-70 gap-2 border-border/80 cursor-not-allowed w-full sm:w-auto"
                         >
                           <Lock className="h-4 w-4" />
                           <span>Série Verrouillée</span>
@@ -531,7 +542,7 @@ export function ExamRoadmapBoard({
                         <Button
                           size="lg"
                           onClick={() => handleUnlockSeries(selectedSeries.id)}
-                          className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold gap-2 shadow-md"
+                          className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold gap-2 shadow-md w-full sm:w-auto"
                         >
                           <Unlock className="h-4 w-4" />
                           <span>Simuler le déblocage (Mode Démo)</span>

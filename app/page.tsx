@@ -17,6 +17,8 @@ import { InteractiveHoverButton } from "@/components/ui/interactive-hover-button
 import { AnimatedGradientText } from "@/components/ui/animated-gradient-text";
 import { BlurFade } from "@/components/ui/blur-fade";
 import { TestimonialsSection } from "@/components/testimonials-section";
+import { FaqSection } from "@/components/faq-section";
+import { prisma } from "@/lib/prisma";
 
 export const metadata = {
   title: "Super4C2 — Réussir le TCF Canada & Décrocher NCLC 7+ (+50 pts CRS)",
@@ -24,7 +26,17 @@ export const metadata = {
     "La première plateforme d'entraînement au TCF Canada avec simulateur officiel CBT, correcteur IA instantané FEI et examinateur vocal interactif en jeu de rôle.",
 };
 
-export default function HomePage() {
+export default async function HomePage() {
+  let faqs: { id: string; question: string; answer: string; category: string }[] = [];
+  try {
+    faqs = await prisma.faq.findMany({
+      where: { isActive: true },
+      orderBy: [{ order: "asc" }, { createdAt: "desc" }],
+      select: { id: true, question: true, answer: true, category: true },
+    });
+  } catch (err) {
+    console.error("Failed to fetch FAQs:", err);
+  }
   return (
     <div className="overflow-x-clip">
       {/* 🌟 HERO — pleine largeur, sans bordure ; le globe est strictement coupé en deux à sa fin (équateur au bord bas) */}
@@ -33,8 +45,8 @@ export default function HomePage() {
         <div className="pointer-events-none absolute inset-0 z-0 bg-[radial-gradient(65%_55%_at_50%_15%,rgba(229,26,49,0.12),transparent_70%),radial-gradient(45%_45%_at_85%_25%,rgba(0,180,216,0.10),transparent_70%)]" />
         <div className="pointer-events-none absolute inset-0 z-0 [background-image:radial-gradient(hsl(var(--foreground)/0.08)_1px,transparent_1px)] [background-size:28px_28px] [mask-image:radial-gradient(ellipse_75%_60%_at_50%_25%,black,transparent_75%)]" />
 
-        {/* 🌍 Globe en arrière-plan (z-0) : son centre est calé exactement sur le bord bas du hero (translate-y-1/2) -> seule la moitié haute est visible */}
-        <div className="pointer-events-none absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 z-0 w-[min(1360px,180vw)] aspect-square select-none">
+        {/* 🌍 Globe en arrière-plan (z-0) */}
+        <div className="pointer-events-none absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-[38%] z-0 w-[min(1280px,160vw)] aspect-square select-none">
           <Globe className="w-full h-full max-w-none pointer-events-auto" />
         </div>
 
@@ -320,6 +332,9 @@ export default function HomePage() {
 
       {/* 🌟 TÉMOIGNAGES OFFICIELS CANDIDATS (Connectés à la base Prisma & CRUD Admin) */}
       <TestimonialsSection />
+
+      {/* ❓ FOIRE AUX QUESTIONS OFFICIELLES (FAQ) */}
+      <FaqSection initialFaqs={faqs} />
 
       {/* 🎯 CTA FINAL BANNER */}
       <section className="mx-auto max-w-6xl rounded-3xl border bg-gradient-to-r from-primary via-primary-dark to-slate-900 p-8 sm:p-14 text-white text-center space-y-6 shadow-2xl">

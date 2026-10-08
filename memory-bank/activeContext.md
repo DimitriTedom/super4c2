@@ -1,6 +1,24 @@
 # Active Context: Super4C2
 
-## 1. Navigation Groupée, Roadmap Fléché Horizontal & Témoignages Publics
+## 1. Responsiveness Intégrale, Globe Hero & FAQ Officielle, Coach Aura 21st.dev, Média Enrichis
+- **Icône & Avatar Animé Coach Aura C2™ (Inspiré 21st.dev) :**
+  - Élimination de tout risque de copyright : création du composant `<AnimatedAiAvatar />` ([components/ui/animated-ai-avatar.tsx](file:///d:/SnowDev/Documents/super4c2/components/ui/animated-ai-avatar.tsx)) avec corps orbe crimson/navy, pupilles cyan numériques néon clignotantes de manière organique (intervalles 3-5s), anneau d'aura pulsant en élocution (`isSpeaking`) et rotation douce en réflexion (`isThinking`).
+  - Intégré avec élégance dans le déclencheur flottant, l'en-tête du chat et l'indicateur de réponse IA de [components/ai/ai-chat-widget.tsx](file:///d:/SnowDev/Documents/super4c2/components/ai/ai-chat-widget.tsx).
+- **Contraste & Positionnement du Globe 3D Hero :**
+  - Correction de l'invisibilité en mode clair dans [components/ui/globe.tsx](file:///d:/SnowDev/Documents/super4c2/components/ui/globe.tsx) : `baseColor` rehaussé à `[0.62, 0.70, 0.82]`, `glowColor` à `[0.82, 0.88, 0.96]`, et `mapBrightness` à `2.4` (clair) / `3.8` (sombre).
+  - Ajustement dans [app/page.tsx](file:///d:/SnowDev/Documents/super4c2/app/page.tsx) avec `translate-y-[38%]` permettant à l'hémisphère supérieur et aux marqueurs rotatifs de briller directement derrière les titres et boutons d'action.
+- **Section FAQ Officielle & Route `/faq` Dédiée :**
+  - Création du composant interactif `<FaqSection />` ([components/faq-section.tsx](file:///d:/SnowDev/Documents/super4c2/components/faq-section.tsx)) avec recherche temps réel, filtres par thématiques (*Toutes, NCLC & CRS, Examen CBT, Stratégie, Général, Technique*), accordéons animés avec Framer Motion, et encart direct vers la conciergerie.
+  - Connecté aux questions réelles de la base Prisma (`prisma.faq`) sur la page d'accueil [app/page.tsx](file:///d:/SnowDev/Documents/super4c2/app/page.tsx), lien ajouté au footer [components/site-footer.tsx](file:///d:/SnowDev/Documents/super4c2/components/site-footer.tsx) et nouvelle route dédiée [app/faq/page.tsx](file:///d:/SnowDev/Documents/super4c2/app/faq/page.tsx).
+- **Responsiveness Mobile & Tablette Exemplaire sur `/examens?test=tef` :**
+  - Dans [components/exam/exam-roadmap-board.tsx](file:///d:/SnowDev/Documents/super4c2/components/exam/exam-roadmap-board.tsx) :
+    - Sélecteur d'examen officiel adapté en grille 3 colonnes sur mobile (`grid grid-cols-3 sm:inline-flex`) pour éviter tout débordement.
+    - Filtres des épreuves défilables horizontalement sans heurt (`overflow-x-auto scrollbar-none`).
+    - Piste de quêtes de séries ajustée (`w-[260px] sm:w-80` avec accroche `snap-start`) avec fondu latéral sur mobile.
+    - Fiche détail et boutons CTA pleine largeur sur mobile (`w-full sm:w-auto`).
+- **Moteur Média Enrichi dans le Blog & Back-Office (`/blog/[slug]` & MarkdownField) :**
+  - Ajout des boutons rapides dans la barre d'outils admin [components/admin/markdown-field.tsx](file:///d:/SnowDev/Documents/super4c2/components/admin/markdown-field.tsx) : insertion d'images (`![alt](url)`), de vidéos YouTube/Veo3 et d'encadrés conseils pro (`> [!TIP]`).
+  - Rendu responsive 16:9 automatique des vidéos YouTube (`<iframe />`), des fichiers vidéo directs (`<video controls />`), des images et des callouts stylisés dans [app/blog/[slug]/page.tsx](file:///d:/SnowDev/Documents/super4c2/app/blog/[slug]/page.tsx).
 - **Navigation Supérieure Réorganisée & Menus Groupés (`components/site-nav.tsx` & `components/site-header.tsx`) :**
   - Fin du bug `isActive` qui figeait la navigation sur "Accueil" (`/`) : détection dynamique via `usePathname()`.
   - Menus déroulants élégants animés avec Framer Motion :

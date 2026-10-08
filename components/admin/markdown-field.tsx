@@ -17,6 +17,9 @@ import {
   Columns,
   Sparkles,
   FileText,
+  Image as ImageIcon,
+  Video,
+  AlertCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -252,6 +255,36 @@ export function MarkdownField({
               title="Lien hypertexte"
             >
               <Link2 className="h-3.5 w-3.5" />
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => insertSnippet("![Description de l'image](https://images.unsplash.com/...)")}
+              className="h-7 px-2 text-xs"
+              title="Insérer une image (![Alt](URL))"
+            >
+              <ImageIcon className="h-3.5 w-3.5 text-cyan-500" />
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => insertSnippet("\nhttps://www.youtube.com/watch?v=...\n")}
+              className="h-7 px-2 text-xs"
+              title="Insérer une vidéo YouTube"
+            >
+              <Video className="h-3.5 w-3.5 text-rose-500" />
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => insertSnippet("\n> [!TIP]\n> **Conseil d'examinateur FEI :** Insérez ici votre recommandation clé.\n")}
+              className="h-7 px-2 text-xs"
+              title="Insérer un encadré conseil pro"
+            >
+              <AlertCircle className="h-3.5 w-3.5 text-amber-500" />
             </Button>
           </div>
 

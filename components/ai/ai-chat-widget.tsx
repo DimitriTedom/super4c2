@@ -22,6 +22,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { toast } from "react-toastify";
+import { AnimatedAiAvatar } from "@/components/ui/animated-ai-avatar";
 
 interface ChatMessage {
   id: string;
@@ -211,16 +212,14 @@ export function AiChatWidget() {
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="group relative flex items-center gap-2.5 rounded-full bg-gradient-to-r from-red-600 via-rose-600 to-slate-900 px-4 py-3 text-white shadow-xl transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-red-500/25 active:scale-95"
+          className="group relative flex items-center gap-2.5 rounded-full bg-gradient-to-r from-red-600 via-rose-600 to-slate-900 px-3.5 py-2.5 text-white shadow-xl transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-red-500/25 active:scale-95 border border-white/10"
           aria-label="Ouvrir le Coach Aura C2™"
         >
           <span className="relative flex h-2.5 w-2.5">
             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
             <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-400" />
           </span>
-          <div className="flex h-6 w-6 items-center justify-center rounded-full bg-white/15">
-            <Sparkles className="h-3.5 w-3.5 text-amber-200" />
-          </div>
+          <AnimatedAiAvatar size="sm" />
           <span className="text-sm font-bold tracking-wide">Coach Aura C2™</span>
           <span className="rounded-full bg-white/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-white">
             En ligne
@@ -241,9 +240,11 @@ export function AiChatWidget() {
           {/* Header */}
           <div className="flex items-center justify-between border-b bg-card/70 px-4 py-3.5">
             <div className="flex items-center gap-3">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-red-600 to-rose-700 text-white shadow-sm">
-                <Sparkles className="h-4 w-4 text-amber-200" />
-              </div>
+              <AnimatedAiAvatar
+                size="md"
+                isSpeaking={speakingId !== null}
+                isThinking={loading}
+              />
               <div>
                 <div className="flex items-center gap-1.5">
                   <h3 className="font-display text-sm font-bold leading-none text-foreground">
@@ -481,9 +482,7 @@ export function AiChatWidget() {
             {/* Typing Indicator */}
             {loading && (
               <div className="flex items-center gap-2.5 text-xs text-muted-foreground py-1">
-                <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                  <Sparkles className="h-3.5 w-3.5 animate-pulse" />
-                </div>
+                <AnimatedAiAvatar size="sm" isThinking={true} />
                 <span className="flex items-center gap-1.5 font-medium">
                   Aura C2™ formule votre réponse pédagogique
                   <span className="flex gap-0.5">

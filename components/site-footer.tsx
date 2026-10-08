@@ -163,6 +163,11 @@ export function SiteFooter() {
                 </Link>
               </li>
               <li>
+                <Link href="/faq" className="transition-colors hover:text-primary font-semibold text-primary">
+                  Foire Aux Questions (FAQ)
+                </Link>
+              </li>
+              <li>
                 <Link href="/contact" className="transition-colors hover:text-primary">
                   Conciergerie & Contact
                 </Link>

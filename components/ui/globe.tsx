@@ -37,12 +37,12 @@ export function Globe({
     phi: 0,
     theta: 0.3,
     dark: isDark ? 1 : 0,
-    diffuse: isDark ? 1.2 : 0.8,
+    diffuse: isDark ? 1.3 : 1.1,
     mapSamples: 16000,
-    mapBrightness: isDark ? 3.5 : 0.85,
-    baseColor: isDark ? [0.15, 0.2, 0.32] : [0.94, 0.96, 0.99],
+    mapBrightness: isDark ? 3.8 : 2.4,
+    baseColor: isDark ? [0.25, 0.35, 0.55] : [0.62, 0.70, 0.82],
     markerColor: [229 / 255, 26 / 255, 49 / 255], // Brand Crimson #E51A31
-    glowColor: isDark ? [0.35, 0.45, 0.65] : [0.88, 0.92, 0.98],
+    glowColor: isDark ? [0.35, 0.45, 0.70] : [0.82, 0.88, 0.96],
     markerElevation: 0,
     markers: [
       // Canada destination hubs
