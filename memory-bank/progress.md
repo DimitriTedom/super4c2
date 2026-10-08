@@ -52,6 +52,11 @@
   - Alias normalisé `demo-101-ce` pour Compréhension Orale (`/co`), Expression Écrite (`/ee/intro`) et Expression Orale (`/eo/intro`).
 - [x] **Section Témoignages Publics & Connexion Back-Office :**
   - Affichage des avis réels vérifiés depuis PostgreSQL (`prisma.testimonial`) sur la page d'accueil avec badges CRS et NCLC.
+- [x] **Compréhension Orale & Écrite — Standards Visuels Haut de Gamme & Illustrations 16:9 :**
+  - **Illustrations Situationnelles 16:9 Widescreen (CO Q1-Q6) :** Génération vectorielle line-art bleu nuit sur fond blanc pur, composition 16:9 widescreen adaptée aux écrans de test officiel CBT.
+  - **Watermarking Automatisé Super4C2 :** Pipeline `sharp` intégrant l'emblème iconique feuille d'érable géométrique Super4C2 (`Le Logomark.png`) avec transparence discrète en bas à droite des illustrations.
+  - **Intégration CBT Player (`cbt-exam.tsx`) :** Support visuel officiel pour la Compréhension Orale avec encart 16:9 stylisé et lecteur audio `<AudioPlayerCBT />` directement arrimé en-dessous.
+  - **Compréhension Écrite (CE) Sublimée :** Rendu document haute visibilité sur carte blanche pure contrastée (`bg-white` sur fond station `bg-slate-100`), barre de question officielle bleu institutionnel FEI (`from-blue-700 to-indigo-900`), texte copiable/sélectionnable avec zoom de police, et grille de navigation vert émeraude FEI.
 - [x] **Tableau de Bord & Roadmap Interactif de Déblocage des Séries (`/examens?test=tcf`) :**
   - Faisceaux et jalons de séries (Série 101 à 105).
   - Système de déblocage séquentiel gamifié avec conditions d'accès, points XP et paliers NCLC/CRS (+50 pts).

@@ -56,7 +56,10 @@
   - Déclencheurs automatisés : soumission d'épreuve écrite (`EXAM`), formulaire de contact/lead (`LEAD`), inscription newsletter (`SYSTEM`).
   - Moteur d'emails transactionnels Nodemailer (`lib/mail.ts`) prêt pour SMTP réel ou simulation locale sécurisée.
 
-## 2. Focus Principal & Priorité Absolue
+- **Compréhension Orale (CO) — Illustrations Situationnelles 16:9 Widescreen & Watermark Automatique :**
+  - **Pipeline d'illustrations situationnelles 16:9 :** Génération vectorielle line-art bleu nuit haute fidélité (`16:9`) sur fond blanc pur représentant avec précision les contextes de test (Restaurant pour Q1, Gare TGV pour Q2, Cinéma pour Q3, Supermarché pour Q4, Boutique de mode pour Q5, Météo pluvieuse pour Q6).
+  - **Watermarking Automatique avec Sharp (`public/images/co/`) :** Marquage discret et net de l'emblème iconique feuille d'érable géométrique Super4C2 (`Le Logomark.png`) en bas à droite de chaque image.
+  - **Intégration Player CBT (`cbt-exam.tsx`) :** Affichage de la carte d'illustration 16:9 dans le panneau gauche officiel avec le lecteur audio `<AudioPlayerCBT />` arrimé directement en-dessous.
 - **Compréhension Écrite (CE) 100% Production-Ready (Raison d'être première du SaaS) :**
   - **Banque complète 39 questions authentiques Série 101 (`lib/exam/series-ce-101.ts`) :**
     - Q1–Q6 : Niveau A1 (messages courts, affiches, horaires)
