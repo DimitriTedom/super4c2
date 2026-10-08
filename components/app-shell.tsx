@@ -8,6 +8,7 @@ const EXAM_ROOM = /^\/examens\/[^/]+\/(ce|co|ee|eo)\/?$/;
 
 import { SiteFooter } from "@/components/site-footer";
 import { MobileNavBar } from "@/components/mobile-nav";
+import { AiChatWidget } from "@/components/ai/ai-chat-widget";
 
 interface AppShellProps {
   header: ReactNode;
@@ -19,8 +20,17 @@ export function AppShell({ header, children }: AppShellProps) {
   const isExamRoom = EXAM_ROOM.test(pathname);
   const isAdmin = pathname.startsWith("/admin");
 
-  if (isExamRoom || isAdmin) {
+  if (isExamRoom) {
     return <>{children}</>;
+  }
+
+  if (isAdmin) {
+    return (
+      <>
+        {children}
+        <AiChatWidget />
+      </>
+    );
   }
 
   // La page d'accueil gère elle-même sa pleine largeur
@@ -32,8 +42,9 @@ export function AppShell({ header, children }: AppShellProps) {
         {header}
         <main className={isFullWidth ? "w-full" : "mx-auto max-w-7xl px-4 py-8"}>{children}</main>
       </div>
-      {!pathname.startsWith("/admin") && <SiteFooter />}
+      <SiteFooter />
       <MobileNavBar />
+      <AiChatWidget />
     </div>
   );
 }
