@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight, FileText, ZoomIn, ZoomOut } from "lucide-react";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { useExamSession } from "@/hooks/use-exam-session";
 import type { ExamSeriesData } from "@/lib/exam/types";
@@ -123,16 +124,51 @@ export function CbtExam({ series }: { series: ExamSeriesData }) {
       <ExamSplitLayout
         left={
           series.discipline === "CO" ? (
-            <div className="flex h-full items-center">
-                <AudioPlayerCBT
-                  key={s.question.id}
-                  src={s.question.audioUrl}
-                  fallbackText={s.question.audioTranscript}
-                  played={!!s.played[s.question.id]}
-                  onPlayed={() => s.markPlayed(s.question.id)}
-                />
-              </div>
-            ) : (
+            <div className="mx-auto flex h-full max-w-2xl flex-col justify-center space-y-4">
+              {s.question.documentImageUrl ? (
+                <div className="rounded-3xl border-2 border-slate-200/90 dark:border-border bg-white dark:bg-card p-5 sm:p-6 shadow-md flex flex-col space-y-4">
+                  <div className="flex items-center justify-between border-b pb-3">
+                    <span className="inline-flex items-center gap-1.5 text-[11px] font-extrabold uppercase tracking-wider text-blue-700 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/50 px-3 py-1 rounded-full border border-blue-200 dark:border-blue-900/50">
+                      Mise en situation · Question {s.question.questionNumber}
+                    </span>
+                    <span className="text-[11px] font-mono text-muted-foreground font-semibold">
+                      Support visuel officiel (16:9)
+                    </span>
+                  </div>
+
+                  <div className="relative aspect-video w-full overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-inner">
+                    <Image
+                      src={s.question.documentImageUrl}
+                      alt={`Mise en situation Question ${s.question.questionNumber}`}
+                      fill
+                      className="object-contain"
+                      priority
+                    />
+                  </div>
+
+                  <div className="pt-1">
+                    <AudioPlayerCBT
+                      key={s.question.id}
+                      src={s.question.audioUrl}
+                      fallbackText={s.question.audioTranscript}
+                      played={!!s.played[s.question.id]}
+                      onPlayed={() => s.markPlayed(s.question.id)}
+                    />
+                  </div>
+                </div>
+              ) : (
+                <div className="flex h-full items-center justify-center">
+                  <AudioPlayerCBT
+                    key={s.question.id}
+                    src={s.question.audioUrl}
+                    fallbackText={s.question.audioTranscript}
+                    played={!!s.played[s.question.id]}
+                    onPlayed={() => s.markPlayed(s.question.id)}
+                  />
+                </div>
+              )}
+            </div>
+          ) : (
               <div className="mx-auto flex h-full max-w-2xl flex-col space-y-4">
                 {/* Document Top Bar with Controls */}
                 <div className="flex items-center justify-between border-b pb-3">
