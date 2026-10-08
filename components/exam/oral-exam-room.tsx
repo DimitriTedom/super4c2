@@ -18,6 +18,11 @@ import {
   AlertCircle,
   ArrowLeft,
   BookOpen,
+  Volume2,
+  ShieldCheck,
+  CheckCircle2,
+  Headphones,
+  Signal,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { OralWaveform } from "@/components/exam/oral-waveform";
@@ -50,6 +55,7 @@ export function OralExamRoom({ series }: OralExamRoomProps) {
   const [isLiveCallActive, setIsLiveCallActive] = useState<boolean>(false);
   const [isCallConnecting, setIsCallConnecting] = useState<boolean>(false);
   const [callError, setCallError] = useState<string | null>(null);
+  const [callSeconds, setCallSeconds] = useState<number>(0);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const conversationRef = useRef<any>(null);
 
@@ -58,6 +64,19 @@ export function OralExamRoom({ series }: OralExamRoomProps) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const recognitionRef = useRef<any>(null);
   const currentAudioRef = useRef<HTMLAudioElement | null>(null);
+
+  // Minuteur de durée d'appel live
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (isLiveCallActive) {
+      timer = setInterval(() => {
+        setCallSeconds((s) => s + 1);
+      }, 1000);
+    } else {
+      setCallSeconds(0);
+    }
+    return () => clearInterval(timer);
+  }, [isLiveCallActive]);
 
   // Arrêt de tous les flux audio
   const stopAllAudio = useCallback(() => {
@@ -71,7 +90,7 @@ export function OralExamRoom({ series }: OralExamRoomProps) {
     setIsExaminerSpeaking(false);
   }, []);
 
-  // Synthèse vocale de secours (Web Speech API locale en cas de panne réseau)
+  // Synthèse vocale de secours (Web Speech API locale si panne)
   const speakExaminerFallback = useCallback(
     (text: string, onEnd?: () => void) => {
       stopAllAudio();
@@ -577,11 +596,16 @@ export function OralExamRoom({ series }: OralExamRoomProps) {
   }, [endLiveCall, stopAllAudio]);
 
   return (
-    <div className="flex h-screen flex-col bg-background">
-      {/* Header officiel */}
-      <header className="flex h-16 shrink-0 items-center justify-between gap-4 border-b bg-card px-4 sm:px-6">
+    <div className="flex h-screen flex-col bg-background selection:bg-primary/20">
+      {/* HEADER DE LUXE — CERTIFICATION OFFICIELLE & TÉLÉMÉTRIE */}
+      <header className="flex h-16 shrink-0 items-center justify-between gap-4 border-b bg-card/80 backdrop-blur-md px-4 sm:px-6 z-10">
         <div className="flex items-center gap-3">
-          <Button asChild variant="ghost" size="sm" className="gap-1.5 text-muted-foreground hover:text-foreground">
+          <Button
+            asChild
+            variant="ghost"
+            size="sm"
+            className="gap-1.5 text-muted-foreground hover:text-foreground font-semibold rounded-full"
+          >
             <Link href={`/examens/${series.id}`}>
               <ArrowLeft className="h-4 w-4" />
               <span className="hidden sm:inline">Menu Série</span>
@@ -589,52 +613,70 @@ export function OralExamRoom({ series }: OralExamRoomProps) {
           </Button>
 
           <div className="border-l pl-3">
-            <p className="text-[11px] font-semibold uppercase tracking-widest text-primary">
-              TCF Canada — Expression Orale
-            </p>
-            <h1 className="font-display text-base font-bold sm:text-lg truncate">
+            <div className="flex items-center gap-2">
+              <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-primary bg-primary/10 px-2 py-0.5 rounded-full border border-primary/20">
+                <ShieldCheck className="h-3 w-3" /> FEI · TCF Canada
+              </span>
+              <span className="hidden md:inline-flex items-center gap-1 text-[10px] font-medium text-muted-foreground">
+                <Headphones className="h-3 w-3 text-cyan-500" /> Voix Studio ElevenLabs Charlie
+              </span>
+            </div>
+            <h1 className="font-display text-base font-extrabold sm:text-lg truncate tracking-tight text-foreground">
               {currentTask.title}
             </h1>
           </div>
-
-          {isLiveCallActive && (
-            <div className="hidden sm:inline-flex items-center gap-1.5 rounded-full border border-emerald-500/40 bg-emerald-500/10 px-3 py-1 text-xs font-bold text-emerald-600 dark:text-emerald-400">
-              <Radio className="h-3.5 w-3.5 animate-pulse" />
-              <span>Appel Live Actif</span>
-            </div>
-          )}
         </div>
 
-        {/* Minuteur */}
-        {!isExamCompleted && (
-          <div
-            role="timer"
-            className="flex items-center gap-2 rounded-full border px-4 py-1.5 font-mono text-xl font-bold tabular-nums"
-          >
-            <Clock className="h-4 w-4" />
-            {formatClock(remaining)}
-          </div>
-        )}
+        {/* Télémétrie en direct */}
+        <div className="flex items-center gap-3">
+          {isLiveCallActive && (
+            <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/40 bg-emerald-500/10 px-3 py-1 text-xs font-bold text-emerald-600 dark:text-emerald-400 animate-in fade-in">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+              </span>
+              <span className="hidden sm:inline">WebRTC Live</span>
+              <span className="font-mono text-[11px] font-medium opacity-80">
+                {Math.floor(callSeconds / 60)}:{(callSeconds % 60).toString().padStart(2, "0")}
+              </span>
+            </div>
+          )}
 
-        <div className="flex items-center gap-2">
+          {/* Minuteur Officiel avec Changement de Couleur */}
+          {!isExamCompleted && (
+            <div
+              role="timer"
+              className={cn(
+                "flex items-center gap-2 rounded-full border px-4 py-1.5 font-mono text-sm sm:text-base font-bold tabular-nums shadow-xs transition-colors",
+                remaining < 30
+                  ? "border-destructive bg-destructive/10 text-destructive animate-pulse"
+                  : "border-border bg-muted/30 text-foreground"
+              )}
+            >
+              <Clock className="h-4 w-4 text-muted-foreground" />
+              {formatClock(remaining)}
+            </div>
+          )}
+
+          {/* Actions de clôture */}
           {!isExamCompleted ? (
             <Button
               variant="outline"
               size="sm"
               onClick={handleCompleteExam}
-              className="gap-2"
+              className="gap-2 font-bold rounded-full border-border/80 hover:border-primary/50"
             >
               Terminer l&apos;épreuve
             </Button>
           ) : (
             <div className="flex items-center gap-2">
-              <Button asChild variant="outline" size="sm" className="gap-2">
+              <Button asChild variant="outline" size="sm" className="gap-2 rounded-full font-bold">
                 <Link href="/examens">
                   <BookOpen className="h-4 w-4" />
                   Catalogue Examens
                 </Link>
               </Button>
-              <Button variant="default" size="sm" onClick={handleRestart} className="gap-2">
+              <Button variant="default" size="sm" onClick={handleRestart} className="gap-2 rounded-full font-bold shadow-md">
                 <RotateCcw className="h-4 w-4" /> Recommencer
               </Button>
             </div>
@@ -642,129 +684,172 @@ export function OralExamRoom({ series }: OralExamRoomProps) {
         </div>
       </header>
 
-      {/* Vue Résultats ou Salle Virtuelle */}
+      {/* VUE RÉSULTATS OU SALLE VIRTUELLE */}
       {isExamCompleted && evaluation ? (
         <div className="flex-1 overflow-y-auto p-6 sm:p-8 max-w-4xl mx-auto w-full space-y-6">
           <OralDebriefCard evaluation={evaluation} />
 
-          {/* Barre d'action de retour au menu proéminente */}
-          <div className="rounded-2xl border bg-card p-6 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
+          {/* Action Bar Post-Examen */}
+          <div className="rounded-3xl border-2 border-border/70 bg-gradient-to-r from-card via-card to-primary/[0.03] p-6 shadow-md flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="space-y-1 text-center sm:text-left">
-              <h3 className="font-display text-base font-bold text-foreground">
-                Session terminée et sauvegardée dans votre profil
+              <span className="text-xs font-bold uppercase tracking-wider text-primary">
+                Session Enregistrée
+              </span>
+              <h3 className="font-display text-lg font-bold text-foreground">
+                Votre évaluation FEI a été sauvegardée avec succès
               </h3>
               <p className="text-xs text-muted-foreground">
-                Votre score et vos tournures d&apos;excellence ont été synchronisés avec votre carnet de révision.
+                Vos points CRS et expressions C1/C2 ont été ajoutés à votre espace candidat.
               </p>
             </div>
 
             <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
-              <Button asChild variant="outline" size="lg" className="flex-1 sm:flex-initial gap-2 font-bold">
+              <Button asChild variant="outline" size="lg" className="flex-1 sm:flex-initial gap-2 font-bold rounded-2xl">
                 <Link href="/examens">
                   <ArrowLeft className="h-4 w-4" />
-                  Retour au catalogue
+                  Catalogue des Examens
                 </Link>
               </Button>
-              <Button asChild variant="ghost" size="lg" className="flex-1 sm:flex-initial gap-2">
+              <Button asChild variant="ghost" size="lg" className="flex-1 sm:flex-initial gap-2 rounded-2xl">
                 <Link href={`/examens/${series.id}`}>
-                  Menu de la Série {series.seriesNumber || 101}
+                  Menu Série {series.seriesNumber || 101}
                 </Link>
               </Button>
-              <Button onClick={handleRestart} variant="default" size="lg" className="flex-1 sm:flex-initial gap-2 font-bold">
+              <Button onClick={handleRestart} variant="default" size="lg" className="flex-1 sm:flex-initial gap-2 font-bold rounded-2xl shadow-md">
                 <RotateCcw className="h-4 w-4" />
-                Refaire l&apos;épreuve
+                Refaire l&apos;Épreuve Orale
               </Button>
             </div>
           </div>
         </div>
       ) : (
         <div className="flex min-h-0 flex-1 flex-col lg:flex-row divide-y lg:divide-y-0 lg:divide-x">
-          {/* Volet Gauche : Avatar Examinateur & Contrôle de l'Appel Live */}
-          <div className="flex flex-col items-center justify-between p-6 sm:p-8 bg-muted/20 lg:w-96 shrink-0 overflow-y-auto">
-            <div className="text-center space-y-2">
-              <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                Examinateur Officiel IA (Voix ElevenLabs)
-              </span>
-              <h2 className="font-display text-lg font-bold">M. Laurent (France Éducation Int.)</h2>
+          {/* VOLET GAUCHE — STUDIO VIRTUEL DE L'EXAMINATEUR */}
+          <div className="flex flex-col items-center justify-between p-6 sm:p-8 bg-gradient-to-b from-card via-card/90 to-primary/[0.02] lg:w-[420px] shrink-0 overflow-y-auto">
+            {/* Header Profil Examinateur */}
+            <div className="text-center space-y-1.5 w-full">
+              <div className="inline-flex items-center gap-1.5 rounded-full border border-cyan-500/30 bg-cyan-500/10 px-3 py-0.5 text-[11px] font-bold uppercase tracking-wider text-cyan-600 dark:text-cyan-400">
+                <Signal className="h-3 w-3" /> Examinateur Officiel FEI
+              </div>
+              <h2 className="font-display text-xl font-black text-foreground">
+                M. Laurent (France Éducation Int.)
+              </h2>
+              <p className="text-xs text-muted-foreground">
+                Évaluateur agréé TCF / TEF Canada · Standard C1/C2
+              </p>
             </div>
 
-            {/* Avatar immersif avec Halo */}
-            <div className="relative my-4 flex items-center justify-center">
+            {/* AVATAR INTERACTIF 3D AVEC ANNEAUX CONCENTRIQUES */}
+            <div className="relative my-6 flex items-center justify-center">
+              {/* Anneaux de propagation sonores */}
               <div
                 className={cn(
-                  "absolute h-36 w-36 rounded-full transition-all duration-300",
-                  isLiveCallActive
-                    ? isExaminerSpeaking
-                      ? "bg-cyan-500/25 scale-125 animate-pulse"
-                      : "bg-emerald-500/25 scale-110 animate-pulse"
-                    : isExaminerSpeaking
-                    ? "bg-cyan-500/20 scale-125 animate-pulse"
+                  "absolute h-44 w-44 rounded-full transition-all duration-700",
+                  isExaminerSpeaking
+                    ? "bg-cyan-500/20 scale-125 animate-ping opacity-75"
+                    : isLiveCallActive
+                    ? "bg-emerald-500/15 scale-110 animate-pulse"
                     : isRecording
-                    ? "bg-[#E51A31]/20 scale-110 animate-pulse"
-                    : "bg-muted"
+                    ? "bg-destructive/20 scale-110 animate-ping opacity-75"
+                    : "bg-muted/40"
                 )}
               />
               <div
                 className={cn(
-                  "relative flex h-28 w-28 items-center justify-center rounded-full border-4 shadow-xl transition-all duration-300",
-                  isLiveCallActive
-                    ? isExaminerSpeaking
-                      ? "border-cyan-500 bg-cyan-500/10 text-cyan-600"
-                      : "border-emerald-500 bg-emerald-500/10 text-emerald-600"
-                    : isExaminerSpeaking
-                    ? "border-cyan-500 bg-cyan-500/10 text-cyan-600"
+                  "absolute h-36 w-36 rounded-full transition-all duration-500",
+                  isExaminerSpeaking
+                    ? "bg-cyan-500/30 scale-110 animate-pulse"
+                    : isLiveCallActive
+                    ? "bg-emerald-500/20 scale-105 animate-pulse"
                     : isRecording
-                    ? "border-[#E51A31] bg-[#E51A31]/10 text-[#E51A31]"
-                    : "border-border bg-card text-muted-foreground"
+                    ? "bg-destructive/30 scale-105 animate-pulse"
+                    : "bg-muted/20"
+                )}
+              />
+
+              {/* Sphère centrale de l'avatar */}
+              <div
+                className={cn(
+                  "relative flex h-28 w-28 items-center justify-center rounded-full border-4 shadow-2xl transition-all duration-500 backdrop-blur-md",
+                  isExaminerSpeaking
+                    ? "border-cyan-400 bg-gradient-to-br from-cyan-500/20 to-blue-600/30 text-cyan-500 shadow-cyan-500/30 scale-105"
+                    : isLiveCallActive
+                    ? "border-emerald-500 bg-gradient-to-br from-emerald-500/20 to-teal-600/30 text-emerald-500 shadow-emerald-500/30"
+                    : isRecording
+                    ? "border-destructive bg-destructive/10 text-destructive shadow-destructive/30 scale-105"
+                    : "border-border/80 bg-card text-muted-foreground"
                 )}
               >
-                <Bot className="h-12 w-12" />
+                <Bot className="h-12 w-12 drop-shadow-md" />
+
+                {/* Badge d'état de parole en surimpression */}
+                <div
+                  className={cn(
+                    "absolute -bottom-1 -right-1 flex h-7 w-7 items-center justify-center rounded-full border-2 border-card text-[11px] font-black shadow-md",
+                    isExaminerSpeaking
+                      ? "bg-cyan-500 text-white animate-bounce"
+                      : isLiveCallActive
+                      ? "bg-emerald-500 text-white"
+                      : "bg-muted text-muted-foreground"
+                  )}
+                >
+                  {isExaminerSpeaking ? "🗣️" : isLiveCallActive ? "🎙️" : "⏸️"}
+                </div>
               </div>
             </div>
 
-            {/* Waveform dynamique */}
-            <div className="w-full text-center space-y-2">
+            {/* VISUALISEUR DE SPECTRE 21ST.DEV & ÉTAT AUDIO */}
+            <div className="w-full text-center space-y-2.5">
               <OralWaveform
-                isRecording={isRecording || (isLiveCallActive && !isExaminerSpeaking)}
+                isRecording={isRecording}
                 isExaminerSpeaking={isExaminerSpeaking}
+                isLiveCallActive={isLiveCallActive}
               />
-              <p className="text-xs font-medium text-muted-foreground">
+              <p className="text-xs font-semibold">
                 {isLiveCallActive ? (
                   isExaminerSpeaking ? (
-                    <span className="text-cyan-600 dark:text-cyan-400 font-bold">
-                      M. Laurent vous parle... (vous pouvez l&apos;interrompre)
+                    <span className="text-cyan-600 dark:text-cyan-400 inline-flex items-center gap-1.5 font-bold animate-pulse">
+                      <Volume2 className="h-3.5 w-3.5" />
+                      M. Laurent s&apos;exprime (vous pouvez l&apos;interrompre)...
                     </span>
                   ) : (
-                    <span className="text-emerald-600 dark:text-emerald-400 font-bold">
+                    <span className="text-emerald-600 dark:text-emerald-400 inline-flex items-center gap-1.5 font-bold">
+                      <Radio className="h-3.5 w-3.5 animate-pulse" />
                       Micro ouvert : Parlez librement, M. Laurent vous écoute
                     </span>
                   )
                 ) : isExaminerSpeaking ? (
-                  "L'examinateur parle (Voix Charlie ElevenLabs)..."
+                  <span className="text-cyan-600 dark:text-cyan-400 font-bold inline-flex items-center gap-1">
+                    <Volume2 className="h-3.5 w-3.5" /> M. Laurent parle (Voix Studio Charlie)...
+                  </span>
                 ) : isRecording ? (
-                  "Micro ouvert : Parlez maintenant..."
+                  <span className="text-destructive font-bold inline-flex items-center gap-1">
+                    <Mic className="h-3.5 w-3.5" /> Micro actif : Parlez maintenant...
+                  </span>
                 ) : (
-                  "En attente de votre réponse"
+                  <span className="text-muted-foreground">
+                    En attente de votre réponse
+                  </span>
                 )}
               </p>
             </div>
 
-            {/* CARTE DE CONTRÔLE D'APPEL VOCAL TEMPS RÉEL (ELEVENLABS) */}
+            {/* CARTE DE CONTRÔLE D'APPEL VOCAL TEMPS RÉEL (21ST.DEV LUXURY CARD) */}
             <div className="w-full my-4">
               {!isLiveCallActive ? (
-                <div className="rounded-2xl border-2 border-emerald-500/30 bg-gradient-to-b from-emerald-500/10 to-transparent p-4 text-center space-y-2.5 shadow-sm">
-                  <div className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/20 px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-300">
-                    <Sparkles className="h-3 w-3" /> Nouveau · Sans latence
+                <div className="rounded-3xl border-2 border-emerald-500/30 bg-gradient-to-b from-emerald-500/10 via-emerald-500/5 to-transparent p-5 text-center space-y-3 shadow-md hover:border-emerald-500/50 transition-all">
+                  <div className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/20 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-300">
+                    <Sparkles className="h-3 w-3" /> Mode Entretien Sans Latence
                   </div>
-                  <h3 className="font-display text-sm font-bold text-foreground">
-                    Mode Appel Téléphonique Live
+                  <h3 className="font-display text-base font-extrabold text-foreground">
+                    Appel Vocal Téléphonique en Direct
                   </h3>
-                  <p className="text-[11px] text-muted-foreground leading-relaxed">
-                    Discutez en continu comme au téléphone avec M. Laurent, sans cliquer sur Envoyer.
+                  <p className="text-xs text-muted-foreground leading-relaxed">
+                    Discutez en continu comme à l&apos;examen officiel, sans toucher à votre clavier ni appuyer sur Envoyer.
                   </p>
 
                   {callError && (
-                    <div className="flex items-center gap-1.5 rounded-lg bg-destructive/10 p-2 text-[11px] text-destructive text-left">
+                    <div className="flex items-center gap-2 rounded-xl bg-destructive/10 p-2.5 text-xs text-destructive text-left border border-destructive/20 animate-in fade-in">
                       <AlertCircle className="h-4 w-4 shrink-0" />
                       <span>{callError}</span>
                     </div>
@@ -774,77 +859,92 @@ export function OralExamRoom({ series }: OralExamRoomProps) {
                     type="button"
                     onClick={startLiveCall}
                     disabled={isCallConnecting}
-                    className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold gap-2 shadow-md shadow-emerald-600/20"
+                    size="lg"
+                    className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold gap-2.5 shadow-lg shadow-emerald-500/25 rounded-2xl transition-all hover:scale-[1.02] cursor-pointer"
                   >
                     {isCallConnecting ? (
                       <>
                         <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                        Connexion à M. Laurent...
+                        Connexion sécurisée WebRTC...
                       </>
                     ) : (
                       <>
-                        <PhoneCall className="h-4 w-4" />
+                        <PhoneCall className="h-5 w-5" />
                         Démarrer l&apos;Appel Vocal en Direct
                       </>
                     )}
                   </Button>
                 </div>
               ) : (
-                <div className="rounded-2xl border-2 border-emerald-500 bg-emerald-500/10 p-4 text-center space-y-3 shadow-lg animate-in fade-in zoom-in-95">
-                  <div className="inline-flex items-center gap-2 rounded-full bg-emerald-500/20 px-3 py-1 text-xs font-bold text-emerald-700 dark:text-emerald-300">
-                    <span className="h-2 w-2 rounded-full bg-emerald-500 animate-ping" />
-                    En communication avec M. Laurent
+                <div className="rounded-3xl border-2 border-emerald-500 bg-gradient-to-b from-emerald-500/15 via-emerald-500/5 to-transparent p-5 text-center space-y-3.5 shadow-xl animate-in fade-in zoom-in-95">
+                  <div className="flex items-center justify-between border-b border-emerald-500/20 pb-2.5">
+                    <span className="inline-flex items-center gap-2 text-xs font-bold text-emerald-700 dark:text-emerald-300">
+                      <span className="h-2.5 w-2.5 rounded-full bg-emerald-500 animate-ping" />
+                      Communication Directe Active
+                    </span>
+                    <span className="font-mono text-xs font-bold text-emerald-600 dark:text-emerald-400">
+                      {Math.floor(callSeconds / 60)}:{(callSeconds % 60).toString().padStart(2, "0")}
+                    </span>
                   </div>
+
                   <p className="text-xs text-muted-foreground">
-                    L&apos;entretien se déroule en direct. Parlez naturellement, le système gère les tours de parole.
+                    Le système gère automatiquement les silences et les tours de parole. Vous pouvez interrompre M. Laurent à tout moment.
                   </p>
+
                   <Button
                     type="button"
                     variant="destructive"
+                    size="lg"
                     onClick={endLiveCall}
-                    className="w-full font-bold gap-2 shadow-md"
+                    className="w-full font-bold gap-2 shadow-lg shadow-destructive/20 rounded-2xl transition-all hover:scale-[1.01] cursor-pointer"
                   >
-                    <PhoneOff className="h-4 w-4" />
+                    <PhoneOff className="h-5 w-5" />
                     Raccrocher l&apos;Appel Live
                   </Button>
                 </div>
               )}
             </div>
 
-            {/* Sujet de la tâche */}
+            {/* CHECKLIST DE LA MISSION DE LA TÂCHE */}
             {currentTask.roleplayScenario && (
-              <div className="w-full rounded-xl border bg-card p-4 text-xs space-y-1.5 shadow-sm">
-                <p className="font-bold text-primary uppercase text-[10px] tracking-wider">
-                  Votre Mission (Jeu de rôle) :
-                </p>
-                <p className="font-medium text-foreground">
+              <div className="w-full rounded-2xl border bg-card/60 backdrop-blur-xs p-4 text-xs space-y-2 shadow-xs">
+                <div className="flex items-center justify-between">
+                  <p className="font-bold text-primary uppercase text-[10px] tracking-wider">
+                    Objectifs Officiels (Jeu de Rôle) :
+                  </p>
+                  <span className="text-[10px] text-muted-foreground font-mono">FEI Grille B2/C1</span>
+                </div>
+                <p className="font-medium text-foreground leading-snug">
                   {currentTask.roleplayScenario.situation}
                 </p>
-                <ul className="list-disc pl-4 text-muted-foreground text-[11px] space-y-0.5 pt-1">
+                <div className="space-y-1 pt-1 border-t">
                   {currentTask.roleplayScenario.objectives.map((obj, i) => (
-                    <li key={i}>{obj}</li>
+                    <div key={i} className="flex items-start gap-1.5 text-muted-foreground text-[11px]">
+                      <CheckCircle2 className="h-3.5 w-3.5 text-primary shrink-0 mt-0.5" />
+                      <span>{obj}</span>
+                    </div>
                   ))}
-                </ul>
+                </div>
               </div>
             )}
           </div>
 
-          {/* Volet Droit : Console de Dialogue Interactive */}
+          {/* VOLET DROIT — CONSOLE STÉNOGRAPHIQUE & DIALOGUE */}
           <div className="flex min-h-0 flex-1 flex-col bg-background">
-            {/* Bannière explicative si appel en cours */}
+            {/* Bannière Mode Appel en Direct */}
             {isLiveCallActive && (
-              <div className="flex items-center justify-between border-b bg-emerald-500/10 px-6 py-2 text-xs font-semibold text-emerald-800 dark:text-emerald-300">
+              <div className="flex items-center justify-between border-b bg-emerald-500/10 px-6 py-2.5 text-xs font-semibold text-emerald-800 dark:text-emerald-300">
                 <span className="flex items-center gap-2">
                   <Radio className="h-3.5 w-3.5 animate-pulse text-emerald-600" />
-                  Mode Appel Direct actif : vos échanges vocaux sont transcrits en temps réel ci-dessous.
+                  Mode Appel Direct actif : vos échanges sont transcrits au fil de l&apos;eau ci-dessous.
                 </span>
-                <span className="text-[11px] text-muted-foreground">
-                  Alimenté par l&apos;Agent Élite Super4C2
+                <span className="text-[11px] opacity-80 hidden sm:inline">
+                  Audio PCM 16kHz · Latence &lt; 500ms
                 </span>
               </div>
             )}
 
-            {/* Fil de discussion */}
+            {/* Fil de discussion interactif */}
             <div className="flex-1 overflow-y-auto p-6 space-y-4">
               {dialogues[currentTaskIndex]?.map((msg) => {
                 const isEx = msg.sender === "examiner";
@@ -852,29 +952,43 @@ export function OralExamRoom({ series }: OralExamRoomProps) {
                   <div
                     key={msg.id}
                     className={cn(
-                      "flex items-start gap-3 max-w-xl",
+                      "flex items-start gap-3 max-w-xl group",
                       isEx ? "mr-auto" : "ml-auto flex-row-reverse"
                     )}
                   >
                     <div
                       className={cn(
-                        "flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold",
+                        "flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl text-xs font-bold shadow-sm transition-transform group-hover:scale-105",
                         isEx
-                          ? "bg-cyan-500 text-white"
-                          : "bg-[#E51A31] text-white"
+                          ? "bg-gradient-to-br from-cyan-500 to-blue-600 text-white"
+                          : "bg-gradient-to-br from-[#E51A31] to-rose-700 text-white"
                       )}
                     >
-                      {isEx ? <Bot className="h-4 w-4" /> : <User className="h-4 w-4" />}
+                      {isEx ? <Bot className="h-5 w-5" /> : <User className="h-5 w-5" />}
                     </div>
 
                     <div
                       className={cn(
-                        "rounded-2xl p-4 text-sm leading-relaxed shadow-sm",
+                        "rounded-3xl p-4 text-sm leading-relaxed shadow-xs transition-all relative",
                         isEx
-                          ? "bg-card border text-foreground"
-                          : "bg-primary text-primary-foreground"
+                          ? "bg-card border border-border/80 text-foreground rounded-tl-xs"
+                          : "bg-primary text-primary-foreground rounded-tr-xs shadow-md shadow-primary/10"
                       )}
                     >
+                      <div className="flex items-center justify-between gap-3 mb-1 opacity-70 text-[11px] font-bold">
+                        <span>{isEx ? "M. Laurent (Examinateur)" : "Vous (Candidat)"}</span>
+                        {isEx && (
+                          <button
+                            type="button"
+                            onClick={() => playOrFetchExaminerSpeech(msg.text)}
+                            title="Réécouter la voix de M. Laurent"
+                            className="inline-flex items-center gap-1 hover:text-cyan-500 transition-colors cursor-pointer"
+                          >
+                            <Volume2 className="h-3 w-3" />
+                            <span>Réécouter</span>
+                          </button>
+                        )}
+                      </div>
                       <p>{msg.text}</p>
                     </div>
                   </div>
@@ -883,42 +997,46 @@ export function OralExamRoom({ series }: OralExamRoomProps) {
               <div ref={dialogueEndRef} />
             </div>
 
-            {/* Zone d'action de réponse (Micro / Texte / Suggestions de relance) */}
-            <div className="border-t bg-card p-4 sm:p-6 space-y-3">
-              {/* Suggestions rapides en Tâche 2 pour aider le candidat */}
+            {/* ZONE DE RÉPONSE ET COMMANDES (21ST.DEV GLASS CONSOLE) */}
+            <div className="border-t bg-card/80 backdrop-blur-md p-4 sm:p-6 space-y-3.5">
+              {/* Suggestions rapides en Tâche 2 pour relancer l'examinateur */}
               {currentTaskIndex === 1 && !isLiveCallActive && (
-                <div className="flex flex-wrap gap-2 text-xs">
-                  <span className="text-muted-foreground pt-1 text-[11px]">Questions types :</span>
+                <div className="flex flex-wrap items-center gap-2 text-xs">
+                  <span className="text-muted-foreground text-[11px] font-bold">Suggestions de relance :</span>
                   <button
                     type="button"
                     onClick={() => handleSendCandidateSpeech("Quels sont les jours et les horaires de ces ateliers culinaires ?")}
-                    className="rounded-full border bg-muted/60 px-3 py-1 hover:bg-muted text-foreground transition-colors"
+                    className="rounded-full border bg-muted/60 hover:bg-muted px-3 py-1 text-foreground transition-all hover:border-primary/40 text-[11px] cursor-pointer"
                   >
                     « Quels sont les horaires ? »
                   </button>
                   <button
                     type="button"
                     onClick={() => handleSendCandidateSpeech("Combien coûte l'inscription et proposez-vous un tarif dégressif ?")}
-                    className="rounded-full border bg-muted/60 px-3 py-1 hover:bg-muted text-foreground transition-colors"
+                    className="rounded-full border bg-muted/60 hover:bg-muted px-3 py-1 text-foreground transition-all hover:border-primary/40 text-[11px] cursor-pointer"
                   >
                     « Quels sont les tarifs ? »
                   </button>
                   <button
                     type="button"
                     onClick={() => handleSendCandidateSpeech("Est-ce que les ingrédients et le matériel de cuisine sont fournis ?")}
-                    className="rounded-full border bg-muted/60 px-3 py-1 hover:bg-muted text-foreground transition-colors"
+                    className="rounded-full border bg-muted/60 hover:bg-muted px-3 py-1 text-foreground transition-all hover:border-primary/40 text-[11px] cursor-pointer"
                   >
                     « Le matériel est-il fourni ? »
                   </button>
                 </div>
               )}
 
+              {/* Console d'envoi interactive */}
               <div className="flex items-center gap-3">
                 <Button
                   type="button"
                   variant={isRecording ? "destructive" : "outline"}
                   size="icon"
-                  className={cn("h-11 w-11 shrink-0 rounded-full", isRecording && "animate-pulse")}
+                  className={cn(
+                    "h-12 w-12 shrink-0 rounded-2xl shadow-sm transition-all cursor-pointer",
+                    isRecording && "animate-pulse scale-105 shadow-destructive/30"
+                  )}
                   onClick={toggleRecording}
                   disabled={isLiveCallActive}
                   title={isRecording ? "Arrêter d'enregistrer" : "Activer le micro"}
@@ -926,46 +1044,54 @@ export function OralExamRoom({ series }: OralExamRoomProps) {
                   {isRecording ? <MicOff className="h-5 w-5" /> : <Mic className="h-5 w-5" />}
                 </Button>
 
-                <input
-                  type="text"
-                  value={currentCandidateInput}
-                  onChange={(e) => setCurrentCandidateInput(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      e.preventDefault();
-                      handleSendCandidateSpeech();
+                <div className="relative flex-1">
+                  <input
+                    type="text"
+                    value={currentCandidateInput}
+                    onChange={(e) => setCurrentCandidateInput(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        handleSendCandidateSpeech();
+                      }
+                    }}
+                    disabled={isLiveCallActive}
+                    placeholder={
+                      isLiveCallActive
+                        ? "Mode Appel Direct actif : parlez librement dans votre micro..."
+                        : isRecording
+                        ? "Parlez dans votre micro ou écrivez..."
+                        : "Tapez votre réponse ou utilisez le micro..."
                     }
-                  }}
-                  disabled={isLiveCallActive}
-                  placeholder={
-                    isLiveCallActive
-                      ? "Appel en direct actif : parlez librement dans votre micro..."
-                      : isRecording
-                      ? "Parlez dans votre micro ou écrivez..."
-                      : "Tapez votre réponse ou utilisez le micro..."
-                  }
-                  className="flex-1 rounded-xl border bg-background px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-60"
-                />
+                    className="w-full rounded-2xl border border-border/80 bg-background/80 px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 shadow-xs disabled:opacity-60"
+                  />
+                </div>
 
                 <Button
                   type="button"
                   onClick={() => handleSendCandidateSpeech()}
                   disabled={!currentCandidateInput.trim() || isExaminerSpeaking || isLiveCallActive}
-                  className="shrink-0 gap-1.5"
+                  size="lg"
+                  className="shrink-0 gap-2 rounded-2xl font-bold shadow-md shadow-primary/20 px-5 cursor-pointer"
                 >
                   <span>Envoyer</span>
                   <Send className="h-4 w-4" />
                 </Button>
               </div>
 
-              <div className="flex justify-between items-center text-xs text-muted-foreground pt-1">
-                <span>Réglementation : 12 minutes d&apos;entretien global (FEI)</span>
+              {/* Barre de navigation entre les tâches de l'examen */}
+              <div className="flex justify-between items-center text-xs text-muted-foreground pt-1 border-t border-border/40">
+                <span className="flex items-center gap-1.5 font-medium">
+                  <ShieldCheck className="h-3.5 w-3.5 text-primary" />
+                  Barème FEI : 3 Tâches · 12 minutes d&apos;évaluation
+                </span>
+
                 {currentTaskIndex < 2 ? (
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={() => setCurrentTaskIndex((t) => (t + 1) as 1 | 2)}
-                    className="gap-1 text-primary hover:text-primary"
+                    className="gap-1.5 text-primary hover:text-primary font-bold hover:bg-primary/10 rounded-full"
                   >
                     Passer à la Tâche {currentTaskIndex + 2}
                     <ChevronRight className="h-4 w-4" />
@@ -975,7 +1101,7 @@ export function OralExamRoom({ series }: OralExamRoomProps) {
                     variant="ghost"
                     size="sm"
                     onClick={handleCompleteExam}
-                    className="gap-1 text-primary font-bold"
+                    className="gap-1.5 text-primary font-bold hover:bg-primary/10 rounded-full"
                   >
                     Terminer et obtenir mon bilan FEI
                   </Button>
