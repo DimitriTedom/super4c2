@@ -58,9 +58,7 @@ export function SiteFooter() {
         <div className="grid grid-cols-1 gap-10 md:grid-cols-5">
           {/* Colonne 1 : Brand & Mission */}
           <div className="space-y-4 md:col-span-2">
-            <Link href="/" className="inline-block">
-              <BrandLogo size="md" />
-            </Link>
+            <BrandLogo size="md" />
             <p className="text-sm text-muted-foreground leading-relaxed max-w-sm">
               La plateforme d&apos;entraînement de référence au TCF Canada et TEF Canada.
               Simulateur CBT officiel, analyse des pièges FEI et répétition espacée pour sécuriser votre palier NCLC 7 et débloquer les +50 points bonus CRS.

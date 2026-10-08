@@ -65,6 +65,12 @@
   - **Générateur IA de Série Complète CE 39 Questions (`AiSeriesGeneratorDialog` & `POST /api/admin/generate-bulk-series`) :** Assistant interactif avec stepper en 3 tranches calibrées FEI (Q1-12 A1/A2, Q13-28 B1/B2, Q29-39 C1/C2). Génération et insertion en base de la Série 102 complète (39/39 questions vérifiées dans PostgreSQL).
   - **Aperçu Simulateur CBT Live :** Prévisualisation simultanée du document (image et/ou texte) et des 4 options de réponse en conditions réelles d'examen.
   - **Validation Visuelle E2E en Navigateur :** Éradication d'un processus Node zombi à 5,1 Go de RAM, optimisation du rendu Next.js Image (`unoptimized`) et capture réussie des épreuves CO (Q1 & Q2), du formulaire Admin CE et de la modale de génération IA.
+- [x] **Moteur Scientifique de Répétition Espacée SRS SM-2 & Flashcards 3D (`/carnet-erreurs`) :**
+  - **Algorithme SuperMemo-2 (`lib/srs/sm2-algorithm.ts`) :** Facteur de facilité $EF \ge 1.3$, calcul d'intervalle nominal et dynamique ($I_1 = 1$, $I_2 = 6$, $I_n = I_{n-1} \times EF$), mise à jour selon les 4 notes de mémorisation (*À revoir* [1], *Difficile* [2], *Bon* [3], *Facile* [4]).
+  - **Lecteur de Flashcards Immersif (`SrsFlashcardPlayer`) :** Révélation Recto/Verso avec micro-animations Framer Motion, raccourcis clavier natifs (`Espace` pour révéler, `1`-`4` pour noter), barre de progression et écran de félicitations.
+  - **Tableau de Bord & Gestionnaire des Pièges (`SrsCarnet`) :** 4 métriques temps réel (*Dues aujourd'hui*, *En consolidation*, *Maîtrisées NCLC 7+*, *Total Pièges*), CTA dynamique, filtres d'épreuves (CE, CO, EE, EO) et recherche textuelle.
+  - **Ajout Manuel & Passerelles CBT :** Dialogue d'ajout de flashcards personnalisées et export avec synchronisation SM-2 depuis l'écran de score CBT et l'épreuve orale.
+  - **Validation E2E :** 0 erreur TypeScript (`tsc --noEmit`), captures d'écran validées en Playwright (`srs-dashboard.png`, `srs-player-active.png`, `srs-player-revealed.png`).
 - [x] **Tableau de Bord & Roadmap Interactif de Déblocage des Séries (`/examens?test=tcf`) :**
   - Faisceaux et jalons de séries (Série 101 à 105).
   - Système de déblocage séquentiel gamifié avec conditions d'accès, points XP et paliers NCLC/CRS (+50 pts).

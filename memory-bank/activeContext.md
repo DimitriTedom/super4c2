@@ -70,6 +70,11 @@
     - Génération haute fidélité via DeepSeek-V3 avec énoncé, documents authentiques, 4 options, explication pédagogique et décodage systématique des pièges (`trapAnalysis`).
     - Série 102 générée avec succès (39/39 questions insérées dans PostgreSQL et validées en base).
   - **Aperçu Simulateur CBT Live :** Prévisualisation simultanée du document (image et/ou texte) et des 4 options de réponse en conditions réelles d'examen.
+- **Carnet d'Erreurs & Flashcards SRS SM-2 (`/carnet-erreurs` & `lib/srs/sm2-algorithm.ts`) :**
+  - **Algorithme Scientifique SuperMemo-2 (SM-2) :** Calcul mathématique de l'Easiness Factor ($EF \ge 1.3$), des répétitions consécutives et des intervalles optimaux ($I_1 = 1$j, $I_2 = 6$j, $I_n = I_{n-1} \times EF$).
+  - **Mode Entraînement Flashcards Immersif (`SrsFlashcardPlayer`) :** Session interactive avec carte Recto (énoncé, contexte, erreur commise), révélation Verso (bonne réponse, astuce anti-piège), raccourcis clavier (`Espace` pour révéler, `1`, `2`, `3`, `4` pour noter) et 4 niveaux d'assimilation (*À revoir*, *Difficile*, *Bon*, *Facile*).
+  - **Tableau de Bord & Cockpit d'Erreurs (`SrsCarnet`) :** 4 métriques en temps réel (*Dues Aujourd'hui*, *En Consolidation*, *Maîtrisées NCLC 7+*, *Total Pièges*), filtre par épreuve (CE/CO/EE/EO), filtre par statut et recherche instantanée.
+  - **Ajout Manuel & Export d'Examen Automatique :** Modale d'ajout personnalisé et passerelle de synchronisation directe depuis l'écran de score CBT (`exam-result-summary.tsx`) et le debrief oral (`oral-debrief-card.tsx`).
 - **Compréhension Écrite (CE) 100% Production-Ready (Raison d'être première du SaaS) :**
   - **Banque complète 39 questions authentiques Série 101 (`lib/exam/series-ce-101.ts`) :**
     - Q1–Q6 : Niveau A1 (messages courts, affiches, horaires)

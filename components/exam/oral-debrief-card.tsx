@@ -47,6 +47,11 @@ export function OralDebriefCard({ evaluation, sessionAudioUrl, dialogues, classN
         trapType: "Registre de langue soutenu",
         nextReviewDays: 1,
         masteryLevel: 1,
+        repetitions: 0,
+        intervalDays: 1,
+        easinessFactor: 2.5,
+        nextReviewDate: new Date().toISOString(),
+        createdAt: new Date().toISOString(),
       };
       list.push(newCard);
       localStorage.setItem("super4c2:srs_cards", JSON.stringify(list));

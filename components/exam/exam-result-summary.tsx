@@ -38,12 +38,18 @@ interface SrsStorageItem {
   discipline: "CE" | "CO" | "EE" | "EO";
   questionNumber: number;
   questionPrompt: string;
+  documentSnippet?: string;
   candidateMistake: string;
   correctAnswer: string;
   ruleExplanation: string;
   trapType: string;
   nextReviewDays: number;
   masteryLevel: 1 | 2 | 3;
+  repetitions?: number;
+  intervalDays?: number;
+  easinessFactor?: number;
+  nextReviewDate?: string;
+  createdAt?: string;
 }
 
 export function ExamResultSummary({
@@ -104,12 +110,18 @@ export function ExamResultSummary({
       discipline: "CE",
       questionNumber: q.questionNumber,
       questionPrompt: q.prompt,
+      documentSnippet: q.documentText ? q.documentText.slice(0, 180) : undefined,
       candidateMistake: picked ? `${picked}. ${q.options[picked]}` : "Aucune réponse sélectionnée",
       correctAnswer: `${q.correctOption}. ${q.options[q.correctOption]}`,
       ruleExplanation: q.explanation,
       trapType: q.trapAnalysis || "Distracteur d'ambiguïté lexicale",
       nextReviewDays: 1,
       masteryLevel: 1,
+      repetitions: 0,
+      intervalDays: 1,
+      easinessFactor: 2.5,
+      nextReviewDate: new Date().toISOString(),
+      createdAt: new Date().toISOString(),
     };
 
     try {
