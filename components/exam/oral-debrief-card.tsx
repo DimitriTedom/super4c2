@@ -1,19 +1,36 @@
 "use client";
 
 import React, { useState } from "react";
-import { CheckCircle2, AlertTriangle, Sparkles, BookOpen, Check } from "lucide-react";
+import {
+  CheckCircle2,
+  AlertTriangle,
+  Sparkles,
+  BookOpen,
+  Check,
+  Download,
+  Volume2,
+  FileText,
+  User,
+  Bot,
+  ShieldCheck,
+  ChevronDown,
+  ChevronUp,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
-import type { OralExamEvaluation } from "@/lib/exam/oral-types";
+import type { OralDialogueMessage, OralExamEvaluation } from "@/lib/exam/oral-types";
 import { cn } from "@/lib/utils";
 
 interface OralDebriefCardProps {
   evaluation: OralExamEvaluation;
+  sessionAudioUrl?: string | null;
+  dialogues?: Record<number, OralDialogueMessage[]>;
   className?: string;
 }
 
-export function OralDebriefCard({ evaluation, className }: OralDebriefCardProps) {
+export function OralDebriefCard({ evaluation, sessionAudioUrl, dialogues, className }: OralDebriefCardProps) {
   const { totalScore, tcfScaledScore, nclcLevel, crsPointsUnlocked, wordsPerMinute, criteria, examinerDebrief, recommendedPhrasesC2 } = evaluation;
   const [savedSrs, setSavedSrs] = useState<Record<number, boolean>>({});
+  const [showTranscript, setShowTranscript] = useState<boolean>(false);
 
   const handleSaveToSrs = (phrase: string, index: number) => {
     try {
@@ -108,6 +125,104 @@ export function OralDebriefCard({ evaluation, className }: OralDebriefCardProps)
             </p>
           )}
         </div>
+      </div>
+
+      {/* ENREGISTREMENT AUDIO COMPLET DE LA SESSION & REPLAY */}
+      <div className="rounded-2xl border-2 border-primary/20 bg-gradient-to-br from-card via-card to-primary/[0.04] p-5 sm:p-6 shadow-sm space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="space-y-1">
+            <div className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wider text-primary">
+              <ShieldCheck className="h-3 w-3" /> Archive Audio Officielle FEI
+            </div>
+            <h3 className="font-display text-base sm:text-lg font-black text-foreground flex items-center gap-2">
+              <Volume2 className="h-5 w-5 text-primary" />
+              Réécoute Intégrale de votre Entretien Oral
+            </h3>
+            <p className="text-xs text-muted-foreground">
+              Écoutez votre prestation exactement telle qu&apos;entendue par l&apos;examinateur M. Laurent pour identifier vos pauses et votre débit.
+            </p>
+          </div>
+
+          {sessionAudioUrl && (
+            <Button
+              asChild
+              variant="outline"
+              size="sm"
+              className="gap-2 font-bold rounded-xl border-primary/30 text-primary hover:bg-primary/10 self-start sm:self-auto cursor-pointer"
+            >
+              <a href={sessionAudioUrl} download={`super4c2-tcf-expression-orale-${new Date().toISOString().slice(0, 10)}.webm`}>
+                <Download className="h-4 w-4" />
+                Télécharger l&apos;Audio (.webm)
+              </a>
+            </Button>
+          )}
+        </div>
+
+        {sessionAudioUrl ? (
+          <div className="rounded-xl border bg-background/90 p-3.5 shadow-inner">
+            <audio controls className="w-full h-11 rounded-lg" src={sessionAudioUrl}>
+              Votre navigateur ne prend pas en charge la lecture audio.
+            </audio>
+            <div className="flex items-center justify-between text-[11px] text-muted-foreground pt-2 px-1">
+              <span>Format audio : WebM / Opus Haute Définition</span>
+              <span className="text-emerald-600 dark:text-emerald-400 font-semibold">✓ Enregistrement vérifié conforme</span>
+            </div>
+          </div>
+        ) : (
+          <div className="rounded-xl border border-dashed bg-muted/20 p-4 text-center text-xs text-muted-foreground">
+            L&apos;enregistrement audio n&apos;a pas pu être capturé pour cette session (microphone désactivé ou session textuelle).
+          </div>
+        )}
+
+        {/* TIROIR DU VERBATIM DES ÉCHANGES */}
+        {dialogues && Object.values(dialogues).some((arr) => arr.length > 0) && (
+          <div className="border-t pt-3">
+            <button
+              type="button"
+              onClick={() => setShowTranscript((prev) => !prev)}
+              className="flex items-center justify-between w-full text-xs font-bold text-foreground hover:text-primary transition-colors py-1 cursor-pointer"
+            >
+              <span className="inline-flex items-center gap-2">
+                <FileText className="h-4 w-4 text-primary" />
+                Afficher le Verbatim Sténographique des 3 Tâches
+              </span>
+              {showTranscript ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+            </button>
+
+            {showTranscript && (
+              <div className="mt-3 space-y-4 max-h-96 overflow-y-auto rounded-xl border bg-background/70 p-4 text-xs divide-y divide-border/60">
+                {[0, 1, 2].map((taskIdx) => {
+                  const msgs = dialogues[taskIdx] || [];
+                  if (msgs.length === 0) return null;
+                  return (
+                    <div key={taskIdx} className="pt-3 first:pt-0 space-y-2">
+                      <span className="font-bold uppercase tracking-wider text-primary text-[10px] block">
+                        Tâche {taskIdx + 1} — {taskIdx === 0 ? "Entretien dirigé" : taskIdx === 1 ? "Jeu de rôle" : "Point de vue"}
+                      </span>
+                      <div className="space-y-2 pl-2">
+                        {msgs.map((m) => (
+                          <div key={m.id} className="flex items-start gap-2">
+                            {m.sender === "examiner" ? (
+                              <Bot className="h-3.5 w-3.5 text-cyan-500 shrink-0 mt-0.5" />
+                            ) : (
+                              <User className="h-3.5 w-3.5 text-primary shrink-0 mt-0.5" />
+                            )}
+                            <div>
+                              <span className="font-semibold text-foreground/80 mr-1.5">
+                                {m.sender === "examiner" ? "M. Laurent :" : "Vous :"}
+                              </span>
+                              <span className="text-muted-foreground leading-relaxed">{m.text}</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Avis de l'examinateur */}

@@ -32,12 +32,15 @@
     - Synthèse Vocale (Audio TTS) : bouton « Écouter » sur chaque réponse pour entendre la prononciation en français standard naturel.
     - Barre d'action SaaS complète : Copie dans le presse-papier avec toast, retour de satisfaction (pouce levé / baissé), bouton d'agrandissement et réinitialisation.
     - Détection de la page active via `usePathname()` pour adapter les réponses au contexte de navigation du candidat.
-  - **Expression Orale (EO) — Double Mode & Refonte Visuelle Haute Fidélité (Inspiration 21st.dev MCP) :**
-    - **Visualiseur de Spectre Audio 21st.dev (`components/exam/oral-waveform.tsx`) :** Inspiré du composant `Audio Frequency Visualizer Card` [id: 28201], barre de 24 bandes de fréquences réactives avec dégradés dynamiques (`cyan-500` quand l'examinateur parle, `emerald-500` pour le candidat, ondulation ambiante en attente).
-    - **Pod Téléphonique Holographique de l'Examinateur M. Laurent :** Avatar circulaire avec anneaux de propagation sonore 3D, badges officiels FEI, télémétrie de session en direct (latence WebRTC chiffrée, qualité PCM 16kHz, chronomètre d'appel).
-    - **Console Sténographique & Réécoute Vocale :** Bulles de dialogue sténographiques avec boutons « Réécouter » sur chaque réplique d'examinateur pour entendre la diction authentique de Charlie (ElevenLabs), suggestions de relance interactives en Tâche 2.
-    - **Navigation Post-Examen Complète :** Barre d'action sur l'écran des résultats permettant de revenir au catalogue des examens (`/examens`), au menu de la série ou de relancer immédiatement la simulation.
-    - **Auto-hébergement des Worklets Audio :** Fichiers statiques `@elevenlabs/client` (`rawAudioProcessor.js`, `audioConcatProcessor.js`) dans `public/worklets/` pour éliminer tout conflit de politique CSP du navigateur.
+  - **Expression Orale (EO) — Studio Visio-Examen CBT 16:9 & Enregistrement Audio Intégral :**
+    - **Abandon des bulles WhatsApp :** Remplacement par un studio 16:9 officiel FEI avec pod visio cinématique de M. Laurent (`public/brand/examiner-laurent.jpg`), badge `🔴 EN DIRECT`, télémétrie audio et pilule d'état de parole réactive.
+    - **Bouton « Passer les consignes » :** Contrôle total donné au candidat pour couper la voix de l'examinateur et prendre la parole immédiatement.
+    - **Enregistrement Audio Intégral Dual-Channel (`MediaRecorder` + Web Audio API Mixer) :** Mixage en temps réel de la voix du candidat (micro) ET de la voix de l'examinateur M. Laurent (ElevenLabs Charlie) via `createMediaStreamDestination()`. L'archive audio finale contient l'échange complet des deux interlocuteurs sans coupure ni silence unilatéral.
+    - **Lecteur Audio & Téléchargement Post-Examen (`OralDebriefCard`) :** Réécoute complète de la session avec lecteur audio intégré et bouton d'exportation pour le coaching.
+    - **Tiroir d'historique sténographique :** Possibilité de consulter et d'exporter le verbatim des 3 tâches.
+    - **Double Mode Préservé :** Appel Vocal Live Continu (WebRTC ElevenLabs Charlie) + Mode Tour-par-Tour (STT/TTS avec repli clavier discret).
+    - **Colonne Latérale Officielle :** `Sujet officiel de la tâche` (objectifs FEI, situation) + `Progression de l'épreuve` (stepper vertical des 3 tâches).
+    - **Gestionnaire Audio Imperméable :** Éradication de la double voix simultanée et de la voix persistant après la fin de séance grâce à l'invalidation de jeton de session (`speechSessionIdRef`), l'avortement des requêtes TTS (`AbortController`) et la suppression du basculement d'erreur sur pause volontaire. Visibilité plein visage de M. Laurent restaurée.
   - **Migration Système de Toasts Toastify :** Intégration de `react-toastify` via `<ToastifyContainer />` ([components/ui/toastify.tsx](file:///d:/SnowDev/Documents/super4c2/components/ui/toastify.tsx)) dans [app/layout.tsx](file:///d:/SnowDev/Documents/super4c2/app/layout.tsx) avec barre de progression Maple Crimson.
 
 ## 2. Moteur IA In-App Next.js & Notifications Automatisées

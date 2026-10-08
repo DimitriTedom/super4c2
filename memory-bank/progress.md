@@ -26,10 +26,18 @@
   - Support natif de l'API DeepSeek-V3 (`DEEPSEEK_API_KEY`) dans `lib/ai/service.ts` à un coût ultra-compétitif (~0.15 FCFA / copie).
   - Intégration de `react-toastify` via `<ToastifyContainer />` avec thémage Maple Crimson.
 - [x] **Suite des 4 Chantiers Majeurs (EO, EE, CO 39Q, Dashboard/CRS) :**
-  - **Pilier 1 (Expression Orale Live & Appel Continu ElevenLabs) :** 
-    - Mode Tour par Tour (DeepSeek-V3 + ElevenLabs Studio Charlie) avec réécoute vocale sur chaque bulle.
-    - Mode Appel Téléphonique Live (WebRTC / WebSocket ElevenLabs `@elevenlabs/client`) avec Agent certifié `agent_9401m4d8cafdercsd2atwgnkm0zp`, transcription bidirectionnelle temps réel sans latence, détection de parole (VAD), interruption instantanée (*barge-in*), évaluation FEI et persistance PostgreSQL (`UserAttempt`).
-    - Design System Luxe Inspiré de 21st.dev MCP : Visualiseur de spectre audio 24 bandes (`Audio Frequency Visualizer Card`), avatar 3D avec propagation d'ondes concentriques, carte HUD d'appel direct, et barre d'actions post-examen pour navigation fluide.
+  - **Pilier 1 (Expression Orale Live — Refonte Totale Visio-Examen CBT & Enregistrement Audio Intégral) :** 
+    - **Abandon des bulles de chat SMS/WhatsApp :** Remplacement par un véritable studio de télé-examen 16:9 officiel FEI.
+    - **Pod Vidéo 16:9 de l'Examinateur M. Laurent (`public/brand/examiner-laurent.jpg`) :** Badge `🔴 EN DIRECT`, télémétrie audio HD, halo dynamique selon les tours de parole et pilule d'état de parole en surimpression.
+    - **Bouton « Passer les consignes » :** Permet au candidat de couper instantanément l'audio d'instruction et de prendre la parole immédiatement.
+    - **Enregistrement Audio Intégral Dual-Channel (`MediaRecorder` + Web Audio API Mixer) :** Mixage en temps réel de la voix du candidat (micro) ET de la voix de l'examinateur M. Laurent (ElevenLabs Charlie) via `createMediaStreamDestination()`. L'archive audio finale contient l'échange complet des deux interlocuteurs sans coupure ni silence unilatéral.
+    - **Lecteur Audio & Téléchargement Post-Examen (`OralDebriefCard`) :** Lecteur audio intégré pour réécouter sa prestation intégrale, bouton de téléchargement du fichier audio pour débriefing tuteur (fort levier de monétisation SaaS), et tiroir d'historique sténographique des répliques des 3 tâches.
+    - **Colonne Latérale Officielle :** Carte `Sujet officiel de la tâche` (durée, contexte, scénario, objectifs FEI) et stepper vertical `Progression de l'épreuve` (Tâches 1, 2, 3 avec statuts et paliers CEFR).
+    - **Double Mode Préservé :** Appel Vocal Live Temps Réel ElevenLabs WebRTC (`agent_9401m4d8cafdercsd2atwgnkm0zp`) et Mode Tour-par-Tour (Speech Recognition + TTS Charlie + repli clavier discret).
+    - **Correctifs Audio & Visuels Majeurs :**
+      - Résolution du bug des 2 voix simultanées et de la voix qui continue après clôture : gestionnaire autoritaire avec `speechSessionIdRef` et `AbortController`, suppression du basculement fallback intempestif sur `AbortError`.
+      - Visibilité plein cadre de M. Laurent : conteneur à hauteur garantie (`h-[260px]` à `h-[380px]`), cadrage `object-top` dégageant le visage, suppression du voile sombre supérieur.
+      - Réactivité des boutons : « Passer les consignes » coupe net la voix, « Valider ma réponse » reste actionnable dès que l'enregistrement audio est fait.
   - **Pilier 2 (Expression Écrite CBT) :** Évaluation des 3 tâches FEI avec Magic Rewrite C1/C2 et sauvegarde de la tentative dans PostgreSQL.
   - **Pilier 3 (Compréhension Orale 39 Questions) :** Banque intégrale des 39 questions authentiques de CO (`lib/exam/series-co-101.ts`) A1 à C2 avec lecteur CBT officiel et lien direct dans le menu navigation.
   - **Pilier 4 (Calculateur CRS & Dashboard Candidat) :** Tableau de bord candidat avec historique dynamique des tentatives réelles, calcul du niveau NCLC, et redirection `/calculateur-crs` -> `/nclc-calculator`.
