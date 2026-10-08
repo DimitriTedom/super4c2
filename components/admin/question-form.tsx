@@ -9,7 +9,14 @@ import {
   CheckCircle2,
   Monitor,
   Settings2,
+  Sparkles,
+  Loader2,
+  Image as ImageIcon,
+  Trash2,
+  ExternalLink,
 } from "lucide-react";
+import Image from "next/image";
+import { toast } from "react-toastify";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -30,6 +37,7 @@ interface QuestionData {
   nclcTargetLevel: number | null;
   documentTitle: string | null;
   documentText: string | null;
+  documentImageUrl?: string | null;
   prompt: string;
   optionA: string;
   optionB: string;
@@ -60,6 +68,10 @@ export function QuestionForm({
   );
   const [activeTab, setActiveTab] = useState<"form" | "cbt-preview">("form");
 
+  // Visual Image state (Supabase Storage / local CDN)
+  const [imageUrl, setImageUrl] = useState<string>(question?.documentImageUrl || "");
+  const [isGeneratingImage, setIsGeneratingImage] = useState(false);
+
   // Form states for live CBT preview
   const [promptPreview, setPromptPreview] = useState(question?.prompt || "");
   const [docTitlePreview, setDocTitlePreview] = useState(question?.documentTitle || "");
@@ -68,19 +80,63 @@ export function QuestionForm({
   const [optC, setOptC] = useState(question?.optionC || "");
   const [optD, setOptD] = useState(question?.optionD || "");
 
+  async function handleGenerateAiAsset() {
+    setIsGeneratingImage(true);
+    try {
+      const promptToUse = promptPreview || docTitlePreview || "Mise en situation pour épreuve d'examen TCF Canada";
+      const qNum = question?.questionNumber ?? defaultNumber;
+
+      const res = await fetch("/api/admin/generate-asset", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          prompt: promptToUse,
+          discipline: "CE",
+          questionNumber: qNum,
+          seriesNumber,
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || "Échec de génération");
+      }
+
+      setImageUrl(data.url);
+      const isCloud = data.provider === "supabase";
+      toast.success(
+        `Illustration 16:9 générée et filigranée ! (${isCloud ? "Stockée sur Supabase Storage" : "Stockée en CDN local"})`
+      );
+    } catch (err: any) {
+      toast.error(err.message || "Erreur lors de la génération de l'illustration");
+    } finally {
+      setIsGeneratingImage(false);
+    }
+  }
+
   const documentTemplates = [
     {
-      label: "Avis / Annonce",
+      label: "Affiche Promo / Flyer (A1)",
+      snippet:
+        "### 🌟 GRANDE OUVERTURE DU CENTRE AQUATIQUE DE MONTRÉAL !\n\nVenez découvrir nos nouveaux bassins et notre espace bien-être.\n\n- **Date d'inauguration :** Samedi 18 novembre dès 10h00\n- **Offre spéciale :** Entrée gratuite pour les moins de 12 ans et -50% sur les abonnements annuels\n- **Adresse :** 450 avenue du Parc, Montréal\n\n*Restauration sur place et animations tout le week-end.*",
+    },
+    {
+      label: "Horaires & Tarifs (A1/A2)",
+      snippet:
+        "### MUSÉE NATIONAL DES BEAUX-ARTS — INFORMATIONS PRATIQUES\n\n| Période | Horaires d'ouverture | Tarif Adulte | Tarif Réduit |\n| :--- | :--- | :--- | :--- |\n| Mardi au Vendredi | 10h00 – 18h00 | 14,00 $ | 9,00 $ |\n| Samedi & Dimanche | 10h00 – 20h00 | 16,00 $ | 10,00 $ |\n| Lundi | Fermeture hebdomadaire | — | — |\n\n*Audioguide inclus dans le billet d'entrée. Réservation en ligne fortement conseillée.*",
+    },
+    {
+      label: "Avis / Annonce (A2)",
       snippet:
         "### AVIS AUX RÉSIDENTS\n\nEn raison de travaux de maintenance prévus le **mardi 14 octobre**, l'accès aux locaux techniques sera temporairement suspendu entre **08h00 et 17h00**.\n\nNous vous prions de prendre vos dispositions.\n\n*La Direction du Syndic*",
     },
     {
-      label: "Courriel interne",
+      label: "Courriel interne (B1)",
       snippet:
         "**De :** Direction des Ressources Humaines  \n**À :** L'ensemble du personnel  \n**Objet :** Mise en place du nouveau calendrier de travail hybride  \n\nChères et chers collègues,\n\nConformément aux discussions issues du dernier comité, les collaborateurs pourront choisir **deux jours de télétravail** fixes par semaine dès le 1er du mois prochain.\n\nMerci de valider votre planning auprès de votre responsable hiérarchique.",
     },
     {
-      label: "Article d'actualité",
+      label: "Article d'actualité (B2/C1)",
       snippet:
         "## L'essor des tiers-lieux dans les métropoles canadiennes\n\nLongtemps cantonnés aux périphéries, les espaces de cotravail redéfinissent l'urbanisme commercial à Montréal et Toronto. Selon une enquête récente de l'Institut de la statistique, plus de 42 % des professionnels autonomes privilégient désormais ces structures collaboratives pour rompre avec l'isolement du domicile.",
     },
@@ -172,6 +228,18 @@ export function QuestionForm({
                 </span>
                 <span className="text-[10px] text-muted-foreground">Volet de lecture officiel</span>
               </div>
+
+              {imageUrl && (
+                <div className="relative aspect-video w-full overflow-hidden rounded-xl border border-slate-200 bg-white shadow-inner">
+                  <Image
+                    src={imageUrl}
+                    alt="Support visuel officiel"
+                    fill
+                    className="object-contain"
+                  />
+                </div>
+              )}
+
               <div className="text-xs text-foreground/90 whitespace-pre-wrap leading-relaxed">
                 {question?.documentText || "Rédigez le texte du document dans l'onglet Éditeur pour visualiser le rendu ici."}
               </div>
@@ -344,6 +412,86 @@ export function QuestionForm({
             rows={6}
             templates={documentTemplates}
           />
+        </div>
+
+        {/* Support Visuel & Illustration 16:9 (Optionnel · Supabase Storage & IA) */}
+        <div className="rounded-2xl border bg-card p-6 shadow-xs space-y-4">
+          <input type="hidden" name="documentImageUrl" value={imageUrl} />
+
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b pb-3">
+            <div>
+              <h2 className="text-sm font-bold text-foreground flex items-center gap-2">
+                <ImageIcon className="h-4 w-4 text-primary" />
+                <span>Support Visuel &amp; Illustration 16:9 (Optionnel)</span>
+              </h2>
+              <p className="text-[11px] text-muted-foreground mt-0.5">
+                Idéal pour les affiches A1 ou mises en situation. Pour les articles B1-C2, laissez vide pour un affichage 100% texte officiel.
+              </p>
+            </div>
+
+            <Button
+              type="button"
+              onClick={handleGenerateAiAsset}
+              disabled={isGeneratingImage}
+              size="sm"
+              className="bg-primary hover:bg-primary/90 text-white font-bold text-xs rounded-xl shadow-xs shrink-0 gap-1.5"
+            >
+              {isGeneratingImage ? (
+                <>
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                  <span>Génération &amp; Watermark...</span>
+                </>
+              ) : (
+                <>
+                  <Sparkles className="h-3.5 w-3.5 text-amber-300" />
+                  <span>🎨 Générer Visuel IA (16:9)</span>
+                </>
+              )}
+            </Button>
+          </div>
+
+          {imageUrl ? (
+            <div className="space-y-3">
+              <div className="relative aspect-video w-full max-w-lg mx-auto overflow-hidden rounded-2xl border-2 border-primary/20 bg-muted/20 shadow-sm">
+                <Image
+                  src={imageUrl}
+                  alt="Aperçu support visuel"
+                  fill
+                  className="object-contain"
+                />
+              </div>
+
+              <div className="flex items-center justify-between text-xs text-muted-foreground pt-1">
+                <div className="flex items-center gap-2 truncate max-w-md">
+                  <span className="font-mono text-[11px] text-emerald-600 dark:text-emerald-400 font-bold bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 rounded-md border border-emerald-200">
+                    {imageUrl.includes("supabase.co") ? "Supabase Storage" : "CDN Local"}
+                  </span>
+                  <span className="truncate text-[11px] font-mono">{imageUrl}</span>
+                </div>
+
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setImageUrl("")}
+                  className="text-xs text-destructive hover:text-destructive hover:bg-destructive/10 rounded-lg h-7 gap-1"
+                >
+                  <Trash2 className="h-3 w-3" />
+                  <span>Retirer l&apos;image</span>
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <div className="rounded-xl border border-dashed border-border p-6 text-center space-y-2 bg-muted/5">
+              <ImageIcon className="h-7 w-7 text-muted-foreground mx-auto opacity-50" />
+              <p className="text-xs font-semibold text-foreground">
+                Aucun visuel associé — Affichage en pur texte haute lisibilité (Recommandé pour 85% des épreuves)
+              </p>
+              <p className="text-[11px] text-muted-foreground max-w-md mx-auto">
+                Si cette question nécessite une affiche ou une scène visuelle, cliquez sur <strong>« Générer Visuel IA »</strong>. L&apos;IA produira une illustration 16:9, appliquera le filigrane Super4C2 et l&apos;enregistrera automatiquement sur le stockage.
+              </p>
+            </div>
+          )}
         </div>
 
         {/* 3. Question & 4 Options */}

@@ -29,6 +29,7 @@ function normalizeQuestionPayload(formData: FormData) {
   const nclcTargetLevel = toInteger(formData.get("nclcTargetLevel"), 7, 3);
   const documentTitle = toOptionalString(formData.get("documentTitle"));
   const documentText = toOptionalString(formData.get("documentText"));
+  const documentImageUrl = toOptionalString(formData.get("documentImageUrl"));
   const trapAnalysis = toOptionalString(formData.get("trapAnalysis"));
 
   return {
@@ -46,6 +47,7 @@ function normalizeQuestionPayload(formData: FormData) {
     nclcTargetLevel,
     documentTitle,
     documentText,
+    documentImageUrl,
     trapAnalysis,
   };
 }
