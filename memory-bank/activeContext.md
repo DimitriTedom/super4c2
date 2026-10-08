@@ -24,6 +24,11 @@
   - **Barre d'Accents Officielle FEI (Assistance QWERTY) :** Ajout de la barre de boutons de caractères accentués (`é`, `è`, `ê`, `ë`, `à`, `â`, `ç`, `ô`, `î`, `ï`, `ù`, `û`, `œ`, `«`, `»`, `€`) dans [components/exam/written-exam-editor.tsx](file:///d:/SnowDev/Documents/super4c2/components/exam/written-exam-editor.tsx) avec insertion précise au curseur.
   - **Bouton d'Échappatoire Sécurisé :** Ajout du bouton *"Quitter"* dans le header de l'Expression Écrite avec dialogue de confirmation informant de la persistance automatique des brouillons.
   - **Support IA DeepSeek-V3 & OpenAI :** Détection automatique dans [lib/ai/service.ts](file:///d:/SnowDev/Documents/super4c2/lib/ai/service.ts) de `DEEPSEEK_API_KEY` (`deepseek-chat` à ~0.15 FCFA / correction) ou `OPENAI_API_KEY`, avec repli FEI déterministe.
+  - **Coach IA Flottant Super4C2 (Template 21st.dev `Agent Chat`) :**
+    - Création de la route `/api/ai/chat` alimentée par DeepSeek-V3 (`deepseek-chat`) avec prompt d'expertise TCF/TEF Canada et calibrage NCLC 7+.
+    - Création du widget interactif [`components/ai/ai-chat-widget.tsx`](file:///d:/SnowDev/Documents/super4c2/components/ai/ai-chat-widget.tsx) inspiré de 21st.dev : bouton flottant avec badge DeepSeek animé, tiroir extensible, suggestions en 1 clic (*NCLC 7 en EE*, *Connecteurs C1/C2*, *Pièges CO*, *Aide Admin*), indicateur de frappe, bouton de copie et persistance.
+    - Intégration globale dans [`components/app-shell.tsx`](file:///d:/SnowDev/Documents/super4c2/components/app-shell.tsx) (accessible pour les candidats et dans l'admin, automatiquement désactivé pendant les salles d'examen officielles pour éviter les distractions).
+    - Testé et validé à 100% en conditions réelles avec capture d'écran.
   - **Migration Système de Toasts Toastify :** Intégration de `react-toastify` via `<ToastifyContainer />` ([components/ui/toastify.tsx](file:///d:/SnowDev/Documents/super4c2/components/ui/toastify.tsx)) dans [app/layout.tsx](file:///d:/SnowDev/Documents/super4c2/app/layout.tsx) avec barre de progression Maple Crimson.
 
 ## 2. Moteur IA In-App Next.js & Notifications Automatisées
