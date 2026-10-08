@@ -63,6 +63,7 @@
   - **Driver de Stockage Supabase (`lib/storage/exam-storage.ts`) :** Upload direct dans le bucket public Supabase Storage `exam-assets` avec repli fluide en CDN local (`public/images/exam-assets/`) en environnement hors-ligne/dev.
   - **Smart Document Templates Natifs :** Bibliothèque de modèles prêts à l'emploi (Affiche & Flyer A1, Horaires & Tarifs A2, Avis d'immeuble, Courriel d'entreprise, Article d'actualité) permettant à l'admin de concevoir des documents officiels sans la moindre image.
   - **Aperçu Simulateur CBT Live :** Prévisualisation simultanée du document (image et/ou texte) et des 4 options de réponse en conditions réelles d'examen.
+  - **Validation Visuelle E2E en Navigateur :** Éradication d'un processus Node zombi à 5,1 Go de RAM, optimisation du rendu Next.js Image (`unoptimized`) et capture réussie des épreuves CO (Q1 & Q2) et du formulaire Admin CE.
 - [x] **Tableau de Bord & Roadmap Interactif de Déblocage des Séries (`/examens?test=tcf`) :**
   - Faisceaux et jalons de séries (Série 101 à 105).
   - Système de déblocage séquentiel gamifié avec conditions d'accès, points XP et paliers NCLC/CRS (+50 pts).
