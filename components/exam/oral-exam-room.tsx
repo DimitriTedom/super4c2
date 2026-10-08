@@ -1,7 +1,21 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { Mic, MicOff, Clock, Send, RotateCcw, User, Bot, ChevronRight } from "lucide-react";
+import {
+  Mic,
+  MicOff,
+  Clock,
+  Send,
+  RotateCcw,
+  User,
+  Bot,
+  ChevronRight,
+  PhoneCall,
+  PhoneOff,
+  Radio,
+  Sparkles,
+  AlertCircle,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { OralWaveform } from "@/components/exam/oral-waveform";
 import { OralDebriefCard } from "@/components/exam/oral-debrief-card";
@@ -9,6 +23,7 @@ import { formatClock } from "@/components/exam/exam-header";
 import type { OralDialogueMessage, OralExamEvaluation, OralSeries } from "@/lib/exam/oral-types";
 import { evaluateOralExam } from "@/lib/exam/oral-evaluator";
 import { cn } from "@/lib/utils";
+import { Conversation } from "@elevenlabs/client";
 
 interface OralExamRoomProps {
   series: OralSeries;
@@ -28,12 +43,128 @@ export function OralExamRoom({ series }: OralExamRoomProps) {
   const [isExamCompleted, setIsExamCompleted] = useState<boolean>(false);
   const [evaluation, setEvaluation] = useState<OralExamEvaluation | null>(null);
 
+  // États pour le Mode Appel Vocal Temps Réel (WebRTC / ElevenLabs Conversational AI)
+  const [isLiveCallActive, setIsLiveCallActive] = useState<boolean>(false);
+  const [isCallConnecting, setIsCallConnecting] = useState<boolean>(false);
+  const [callError, setCallError] = useState<string | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const conversationRef = useRef<any>(null);
+
   const currentTask = series.tasks[currentTaskIndex];
   const dialogueEndRef = useRef<HTMLDivElement | null>(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const recognitionRef = useRef<any>(null);
+  const currentAudioRef = useRef<HTMLAudioElement | null>(null);
 
-  // Initialisation de la reconnaissance vocale Web Speech API
+  // Arrêt de tous les audios
+  const stopAllAudio = useCallback(() => {
+    if (typeof window !== "undefined") {
+      if (window.speechSynthesis) window.speechSynthesis.cancel();
+      if (currentAudioRef.current) {
+        currentAudioRef.current.pause();
+        currentAudioRef.current = null;
+      }
+    }
+    setIsExaminerSpeaking(false);
+  }, []);
+
+  // Fermeture propre de la session d'appel live
+  const endLiveCall = useCallback(async () => {
+    if (conversationRef.current) {
+      try {
+        await conversationRef.current.endSession();
+      } catch (err) {
+        console.warn("[Live Call] Erreur fermeture session:", err);
+      }
+      conversationRef.current = null;
+    }
+    setIsLiveCallActive(false);
+    setIsCallConnecting(false);
+    setIsExaminerSpeaking(false);
+  }, []);
+
+  // Lancement de l'Appel Vocal Continu avec l'Examinateur ElevenLabs
+  const startLiveCall = async () => {
+    try {
+      setCallError(null);
+      setIsCallConnecting(true);
+      stopAllAudio();
+
+      // 1. Vérification / demande d'autorisation du microphone
+      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        await navigator.mediaDevices.getUserMedia({ audio: true });
+      }
+
+      // 2. Récupération de l'URL signée WebSocket sécurisée
+      const res = await fetch("/api/ai/oral-signed-url");
+      const data = await res.json();
+      if (!data.ok || !data.signedUrl) {
+        throw new Error(data.error || "Impossible d'obtenir le jeton d'appel.");
+      }
+
+      // 3. Initialisation de la conversation en temps réel avec ElevenLabs
+      const conversation = await Conversation.startSession({
+        signedUrl: data.signedUrl,
+        dynamicVariables: {
+          candidate_name: "Candidat",
+          task_number: `Tâche ${currentTaskIndex + 1}`,
+          scenario_topic: currentTask.title,
+          target_level: "NCLC 7+",
+        },
+        onConnect: () => {
+          setIsLiveCallActive(true);
+          setIsCallConnecting(false);
+          setCallError(null);
+        },
+        onDisconnect: () => {
+          setIsLiveCallActive(false);
+          setIsCallConnecting(false);
+          setIsExaminerSpeaking(false);
+        },
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        onError: (err: any) => {
+          console.error("[Live Call] Erreur:", err);
+          const msg = typeof err === "string" ? err : err?.message || "Erreur de connexion audio.";
+          setCallError(msg);
+          setIsLiveCallActive(false);
+          setIsCallConnecting(false);
+        },
+        onModeChange: ({ mode }: { mode: "speaking" | "listening" }) => {
+          setIsExaminerSpeaking(mode === "speaking");
+          setIsRecording(mode === "listening");
+        },
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        onMessage: (payload: any) => {
+          if (payload && payload.message) {
+            const isAgent = payload.role === "agent" || payload.source === "ai";
+            const newMsg: OralDialogueMessage = {
+              id: `live-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+              sender: isAgent ? "examiner" : "candidate",
+              text: payload.message,
+              timestamp: Date.now(),
+            };
+            setDialogues((prev) => ({
+              ...prev,
+              [currentTaskIndex]: [...prev[currentTaskIndex], newMsg],
+            }));
+          }
+        },
+      });
+
+      conversationRef.current = conversation;
+    } catch (error: unknown) {
+      console.error("[Live Call] Échec initialisation:", error);
+      const errMsg =
+        error instanceof Error
+          ? error.message
+          : "Microphone inaccessible ou refusé par le navigateur.";
+      setCallError(errMsg);
+      setIsCallConnecting(false);
+      setIsLiveCallActive(false);
+    }
+  };
+
+  // Initialisation de la reconnaissance vocale Web Speech API pour le mode tour par tour
   useEffect(() => {
     if (typeof window !== "undefined") {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -102,19 +233,6 @@ export function OralExamRoom({ series }: OralExamRoomProps) {
     }
   };
 
-  const currentAudioRef = useRef<HTMLAudioElement | null>(null);
-
-  const stopAllAudio = useCallback(() => {
-    if (typeof window !== "undefined") {
-      if (window.speechSynthesis) window.speechSynthesis.cancel();
-      if (currentAudioRef.current) {
-        currentAudioRef.current.pause();
-        currentAudioRef.current = null;
-      }
-    }
-    setIsExaminerSpeaking(false);
-  }, []);
-
   const playExaminerAudio = useCallback(
     (base64: string, fallbackText: string, onEnd?: () => void) => {
       if (typeof window === "undefined") return;
@@ -131,7 +249,6 @@ export function OralExamRoom({ series }: OralExamRoomProps) {
           if (onEnd) onEnd();
         };
         audio.onerror = () => {
-          // Si échec du format audio, repli sur la synthèse vocale locale
           currentAudioRef.current = null;
           speakExaminerText(fallbackText, onEnd);
         };
@@ -177,13 +294,13 @@ export function OralExamRoom({ series }: OralExamRoomProps) {
     [stopAllAudio]
   );
 
-  // Amorce de chaque tâche par l'examinateur
+  // Amorce de chaque tâche par l'examinateur en mode tour par tour
   useEffect(() => {
     if (isExamCompleted) return;
 
     setRemaining(series.tasks[currentTaskIndex].durationSeconds);
 
-    // Message d'amorce
+    // Message d'amorce par défaut si la tâche n'a pas encore de messages
     const initialPrompt = series.tasks[currentTaskIndex].examinerPrompt;
     setDialogues((prev) => {
       if (prev[currentTaskIndex].length === 0) {
@@ -202,18 +319,23 @@ export function OralExamRoom({ series }: OralExamRoomProps) {
       return prev;
     });
 
-    speakExaminerText(initialPrompt);
+    // Ne pas lire l'audio synthétique local si un appel live est déjà en cours
+    if (!isLiveCallActive) {
+      speakExaminerText(initialPrompt);
+    }
 
     return () => {
       stopAllAudio();
     };
-  }, [currentTaskIndex, isExamCompleted, series.tasks, speakExaminerText, stopAllAudio]);
+  }, [currentTaskIndex, isExamCompleted, isLiveCallActive, series.tasks, speakExaminerText, stopAllAudio]);
 
   // Clôture et évaluation de l'épreuve
   const handleCompleteExam = useCallback(() => {
     setIsExamCompleted(true);
     setIsRecording(false);
+    void endLiveCall();
     stopAllAudio();
+
     if (recognitionRef.current) {
       try {
         recognitionRef.current.stop();
@@ -241,7 +363,7 @@ export function OralExamRoom({ series }: OralExamRoomProps) {
     }).catch(() => {
       // mode hors ligne gracieux
     });
-  }, [dialogues, series, stopAllAudio]);
+  }, [dialogues, endLiveCall, series, stopAllAudio]);
 
   // Minuteur de la tâche active
   useEffect(() => {
@@ -250,11 +372,11 @@ export function OralExamRoom({ series }: OralExamRoomProps) {
     const timer = setInterval(() => {
       setRemaining((prev) => {
         if (prev <= 1) {
-          // Fin de tâche automatique
           if (currentTaskIndex < 2) {
-            setCurrentTaskIndex((t) => (t + 1) as 1 | 2);
+            setCurrentTaskIndex((prevIndex) => (prevIndex + 1) as 1 | 2);
             return series.tasks[currentTaskIndex + 1].durationSeconds;
           } else {
+            clearInterval(timer);
             handleCompleteExam();
             return 0;
           }
@@ -264,14 +386,14 @@ export function OralExamRoom({ series }: OralExamRoomProps) {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [currentTaskIndex, isExamCompleted, series.tasks, handleCompleteExam]);
+  }, [currentTaskIndex, handleCompleteExam, isExamCompleted, series.tasks]);
 
-  // Défilement automatique du chat
+  // Auto-scroll vers le dernier message
   useEffect(() => {
     dialogueEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [dialogues, currentTaskIndex]);
 
-  // Envoi de la réplique du candidat
+  // Envoi de la réplique du candidat (Mode Tour par Tour)
   const handleSendCandidateSpeech = async (customSpeech?: string) => {
     const textToSend = customSpeech || currentCandidateInput;
     if (!textToSend.trim() || isExaminerSpeaking) return;
@@ -359,16 +481,22 @@ export function OralExamRoom({ series }: OralExamRoomProps) {
       } else if (lower.includes("débutant") || lower.includes("niveau") || lower.includes("expérience")) {
         reply = "Absolument aucun prérequis n'est nécessaire. Nos chefs accompagnent les participants pas à pas, même si vous n'avez jamais cuisiné auparavant !";
       } else {
-        reply = "C'est une très bonne question. Nous limitons nos groupes à huit participants pour garantir une ambiance conviviale et un suivi personnalisé. Avez-vous d'autres questions sur l'organisation ?";
+        reply = "C'est une excellente question. Avez-vous d'autres précisions à me demander concernant le programme ou l'organisation pratique des séances ?";
       }
-    } else if (currentTaskIndex === 0) {
-      reply = "Je vous remercie pour cette présentation très claire. Pouvez-vous me dire ce qui vous attire particulièrement dans la culture canadienne ?";
+    } else if (currentTaskIndex === 2) {
+      // Tâche 3 : Point de vue
+      if (lower.includes("d'accord") || lower.includes("oui") || lower.includes("pour")) {
+        reply = "Je comprends bien votre argument. Cependant, ne pensez-vous pas que cette mesure pénaliserait lourdement les travailleurs résidant en grande banlieue ?";
+      } else {
+        reply = "C'est une position intéressante. Quelles solutions concrètes proposeriez-vous alors pour concilier mobilité urbaine et transition écologique ?";
+      }
     } else {
-      reply = "Votre point de vue est très intéressant. Cependant, ne craignez-vous pas que cette mesure pénalise lourdement les commerçants du centre-ville et les personnes à mobilité réduite ?";
+      // Tâche 1 : Entretien
+      reply = "Très bien. Et parlez-moi un peu de vos loisirs ou des projets que vous aimeriez concrétiser une fois installé au Canada ?";
     }
 
     const examinerMsg: OralDialogueMessage = {
-      id: `ex-${Date.now()}`,
+      id: `ex-fallback-${Date.now()}`,
       sender: "examiner",
       text: reply,
       timestamp: Date.now(),
@@ -383,6 +511,7 @@ export function OralExamRoom({ series }: OralExamRoomProps) {
   };
 
   const handleRestart = () => {
+    void endLiveCall();
     if (typeof window !== "undefined" && "speechSynthesis" in window) {
       window.speechSynthesis.cancel();
     }
@@ -395,17 +524,34 @@ export function OralExamRoom({ series }: OralExamRoomProps) {
     setCurrentCandidateInput("");
   };
 
+  // Nettoyage au démontage
+  useEffect(() => {
+    return () => {
+      void endLiveCall();
+      stopAllAudio();
+    };
+  }, [endLiveCall, stopAllAudio]);
+
   return (
     <div className="flex h-screen flex-col bg-background">
       {/* Header officiel */}
       <header className="flex h-16 shrink-0 items-center justify-between gap-4 border-b bg-card px-4 sm:px-6">
-        <div>
-          <p className="text-[11px] font-semibold uppercase tracking-widest text-primary">
-            TCF Canada — Expression Orale
-          </p>
-          <h1 className="font-display text-base font-bold sm:text-lg truncate">
-            {currentTask.title}
-          </h1>
+        <div className="flex items-center gap-3">
+          <div>
+            <p className="text-[11px] font-semibold uppercase tracking-widest text-primary">
+              TCF Canada — Expression Orale
+            </p>
+            <h1 className="font-display text-base font-bold sm:text-lg truncate">
+              {currentTask.title}
+            </h1>
+          </div>
+
+          {isLiveCallActive && (
+            <div className="hidden sm:inline-flex items-center gap-1.5 rounded-full border border-emerald-500/40 bg-emerald-500/10 px-3 py-1 text-xs font-bold text-emerald-600 dark:text-emerald-400">
+              <Radio className="h-3.5 w-3.5 animate-pulse" />
+              <span>Appel Live Actif</span>
+            </div>
+          )}
         </div>
 
         {/* Minuteur */}
@@ -417,7 +563,7 @@ export function OralExamRoom({ series }: OralExamRoomProps) {
           {formatClock(remaining)}
         </div>
 
-        <div>
+        <div className="flex items-center gap-2">
           {!isExamCompleted ? (
             <Button
               variant="outline"
@@ -442,8 +588,8 @@ export function OralExamRoom({ series }: OralExamRoomProps) {
         </div>
       ) : (
         <div className="flex min-h-0 flex-1 flex-col lg:flex-row divide-y lg:divide-y-0 lg:divide-x">
-          {/* Volet Gauche : Avatar Examinateur & Visualiseur Waveform */}
-          <div className="flex flex-col items-center justify-between p-6 sm:p-8 bg-muted/20 lg:w-96 shrink-0">
+          {/* Volet Gauche : Avatar Examinateur & Contrôle de l'Appel Live */}
+          <div className="flex flex-col items-center justify-between p-6 sm:p-8 bg-muted/20 lg:w-96 shrink-0 overflow-y-auto">
             <div className="text-center space-y-2">
               <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
                 Examinateur Officiel IA
@@ -452,11 +598,15 @@ export function OralExamRoom({ series }: OralExamRoomProps) {
             </div>
 
             {/* Avatar immersif avec Halo */}
-            <div className="relative my-6 flex items-center justify-center">
+            <div className="relative my-4 flex items-center justify-center">
               <div
                 className={cn(
                   "absolute h-36 w-36 rounded-full transition-all duration-300",
-                  isExaminerSpeaking
+                  isLiveCallActive
+                    ? isExaminerSpeaking
+                      ? "bg-cyan-500/25 scale-125 animate-pulse"
+                      : "bg-emerald-500/25 scale-110 animate-pulse"
+                    : isExaminerSpeaking
                     ? "bg-cyan-500/20 scale-125 animate-pulse"
                     : isRecording
                     ? "bg-[#E51A31]/20 scale-110 animate-pulse"
@@ -466,7 +616,11 @@ export function OralExamRoom({ series }: OralExamRoomProps) {
               <div
                 className={cn(
                   "relative flex h-28 w-28 items-center justify-center rounded-full border-4 shadow-xl transition-all duration-300",
-                  isExaminerSpeaking
+                  isLiveCallActive
+                    ? isExaminerSpeaking
+                      ? "border-cyan-500 bg-cyan-500/10 text-cyan-600"
+                      : "border-emerald-500 bg-emerald-500/10 text-emerald-600"
+                    : isExaminerSpeaking
                     ? "border-cyan-500 bg-cyan-500/10 text-cyan-600"
                     : isRecording
                     ? "border-[#E51A31] bg-[#E51A31]/10 text-[#E51A31]"
@@ -480,21 +634,95 @@ export function OralExamRoom({ series }: OralExamRoomProps) {
             {/* Waveform dynamique */}
             <div className="w-full text-center space-y-2">
               <OralWaveform
-                isRecording={isRecording}
+                isRecording={isRecording || (isLiveCallActive && !isExaminerSpeaking)}
                 isExaminerSpeaking={isExaminerSpeaking}
               />
               <p className="text-xs font-medium text-muted-foreground">
-                {isExaminerSpeaking
-                  ? "L'examinateur parle..."
-                  : isRecording
-                  ? "Micro ouvert : Parlez maintenant..."
-                  : "En attente de votre réponse"}
+                {isLiveCallActive ? (
+                  isExaminerSpeaking ? (
+                    <span className="text-cyan-600 dark:text-cyan-400 font-bold">
+                      M. Laurent vous parle... (vous pouvez l&apos;interrompre)
+                    </span>
+                  ) : (
+                    <span className="text-emerald-600 dark:text-emerald-400 font-bold">
+                      Micro ouvert : Parlez librement, M. Laurent vous écoute
+                    </span>
+                  )
+                ) : isExaminerSpeaking ? (
+                  "L'examinateur parle..."
+                ) : isRecording ? (
+                  "Micro ouvert : Parlez maintenant..."
+                ) : (
+                  "En attente de votre réponse"
+                )}
               </p>
+            </div>
+
+            {/* CARTE DE CONTRÔLE D'APPEL VOCAL TEMPS RÉEL (ELEVENLABS) */}
+            <div className="w-full my-4">
+              {!isLiveCallActive ? (
+                <div className="rounded-2xl border-2 border-emerald-500/30 bg-gradient-to-b from-emerald-500/10 to-transparent p-4 text-center space-y-2.5 shadow-sm">
+                  <div className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/20 px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-300">
+                    <Sparkles className="h-3 w-3" /> Nouveau · Sans latence
+                  </div>
+                  <h3 className="font-display text-sm font-bold text-foreground">
+                    Mode Appel Téléphonique Live
+                  </h3>
+                  <p className="text-[11px] text-muted-foreground leading-relaxed">
+                    Discutez en continu comme au téléphone avec M. Laurent, sans cliquer sur Envoyer.
+                  </p>
+
+                  {callError && (
+                    <div className="flex items-center gap-1.5 rounded-lg bg-destructive/10 p-2 text-[11px] text-destructive text-left">
+                      <AlertCircle className="h-4 w-4 shrink-0" />
+                      <span>{callError}</span>
+                    </div>
+                  )}
+
+                  <Button
+                    type="button"
+                    onClick={startLiveCall}
+                    disabled={isCallConnecting}
+                    className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold gap-2 shadow-md shadow-emerald-600/20"
+                  >
+                    {isCallConnecting ? (
+                      <>
+                        <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                        Connexion à M. Laurent...
+                      </>
+                    ) : (
+                      <>
+                        <PhoneCall className="h-4 w-4" />
+                        Démarrer l&apos;Appel Vocal en Direct
+                      </>
+                    )}
+                  </Button>
+                </div>
+              ) : (
+                <div className="rounded-2xl border-2 border-emerald-500 bg-emerald-500/10 p-4 text-center space-y-3 shadow-lg animate-in fade-in zoom-in-95">
+                  <div className="inline-flex items-center gap-2 rounded-full bg-emerald-500/20 px-3 py-1 text-xs font-bold text-emerald-700 dark:text-emerald-300">
+                    <span className="h-2 w-2 rounded-full bg-emerald-500 animate-ping" />
+                    En communication avec M. Laurent
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    L&apos;entretien se déroule en direct. Parlez naturellement, le système gère les tours de parole.
+                  </p>
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    onClick={endLiveCall}
+                    className="w-full font-bold gap-2 shadow-md"
+                  >
+                    <PhoneOff className="h-4 w-4" />
+                    Raccrocher l&apos;Appel Live
+                  </Button>
+                </div>
+              )}
             </div>
 
             {/* Sujet de la tâche */}
             {currentTask.roleplayScenario && (
-              <div className="w-full mt-4 rounded-xl border bg-card p-4 text-xs space-y-1.5 shadow-sm">
+              <div className="w-full rounded-xl border bg-card p-4 text-xs space-y-1.5 shadow-sm">
                 <p className="font-bold text-primary uppercase text-[10px] tracking-wider">
                   Votre Mission (Jeu de rôle) :
                 </p>
@@ -512,6 +740,19 @@ export function OralExamRoom({ series }: OralExamRoomProps) {
 
           {/* Volet Droit : Console de Dialogue Interactive */}
           <div className="flex min-h-0 flex-1 flex-col bg-background">
+            {/* Bannière explicative si appel en cours */}
+            {isLiveCallActive && (
+              <div className="flex items-center justify-between border-b bg-emerald-500/10 px-6 py-2 text-xs font-semibold text-emerald-800 dark:text-emerald-300">
+                <span className="flex items-center gap-2">
+                  <Radio className="h-3.5 w-3.5 animate-pulse text-emerald-600" />
+                  Mode Appel Direct actif : vos échanges vocaux sont transcrits en temps réel ci-dessous.
+                </span>
+                <span className="text-[11px] text-muted-foreground">
+                  Alimenté par l&apos;Agent Élite Super4C2
+                </span>
+              </div>
+            )}
+
             {/* Fil de discussion */}
             <div className="flex-1 overflow-y-auto p-6 space-y-4">
               {dialogues[currentTaskIndex]?.map((msg) => {
@@ -553,8 +794,8 @@ export function OralExamRoom({ series }: OralExamRoomProps) {
 
             {/* Zone d'action de réponse (Micro / Texte / Suggestions de relance) */}
             <div className="border-t bg-card p-4 sm:p-6 space-y-3">
-              {/* Suggestions rapides en Tâche 2 pour aider le candidat à tester */}
-              {currentTaskIndex === 1 && (
+              {/* Suggestions rapides en Tâche 2 pour aider le candidat */}
+              {currentTaskIndex === 1 && !isLiveCallActive && (
                 <div className="flex flex-wrap gap-2 text-xs">
                   <span className="text-muted-foreground pt-1 text-[11px]">Questions types :</span>
                   <button
@@ -588,6 +829,7 @@ export function OralExamRoom({ series }: OralExamRoomProps) {
                   size="icon"
                   className={cn("h-11 w-11 shrink-0 rounded-full", isRecording && "animate-pulse")}
                   onClick={toggleRecording}
+                  disabled={isLiveCallActive}
                   title={isRecording ? "Arrêter d'enregistrer" : "Activer le micro"}
                 >
                   {isRecording ? <MicOff className="h-5 w-5" /> : <Mic className="h-5 w-5" />}
@@ -603,18 +845,21 @@ export function OralExamRoom({ series }: OralExamRoomProps) {
                       handleSendCandidateSpeech();
                     }
                   }}
+                  disabled={isLiveCallActive}
                   placeholder={
-                    isRecording
+                    isLiveCallActive
+                      ? "Appel en direct actif : parlez librement dans votre micro..."
+                      : isRecording
                       ? "Parlez dans votre micro ou écrivez..."
                       : "Tapez votre réponse ou utilisez le micro..."
                   }
-                  className="flex-1 rounded-xl border bg-background px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="flex-1 rounded-xl border bg-background px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-60"
                 />
 
                 <Button
                   type="button"
                   onClick={() => handleSendCandidateSpeech()}
-                  disabled={!currentCandidateInput.trim() || isExaminerSpeaking}
+                  disabled={!currentCandidateInput.trim() || isExaminerSpeaking || isLiveCallActive}
                   className="shrink-0 gap-1.5"
                 >
                   <span>Envoyer</span>
@@ -623,7 +868,7 @@ export function OralExamRoom({ series }: OralExamRoomProps) {
               </div>
 
               <div className="flex justify-between items-center text-xs text-muted-foreground pt-1">
-                <span>Réglementation : 12 minutes d&apos;entretien global</span>
+                <span>Réglementation : 12 minutes d&apos;entretien global (FEI)</span>
                 {currentTaskIndex < 2 ? (
                   <Button
                     variant="ghost"

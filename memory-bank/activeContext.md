@@ -32,10 +32,17 @@
     - Synthèse Vocale (Audio TTS) : bouton « Écouter » sur chaque réponse pour entendre la prononciation en français standard naturel.
     - Barre d'action SaaS complète : Copie dans le presse-papier avec toast, retour de satisfaction (pouce levé / baissé), bouton d'agrandissement et réinitialisation.
     - Détection de la page active via `usePathname()` pour adapter les réponses au contexte de navigation du candidat.
-  - **Expression Orale (EO) avec Voix Studio ElevenLabs (`components/exam/oral-exam-room.tsx` & `/api/ai/oral-roleplay`) :**
-    - Prompt système DeepSeek-V3 hautement calibré pour les standards ElevenLabs : ponctuation nette pour le rythme respiratoire, nombres obligatoirement écrits en toutes lettres (ex: « dix-huit heures », « quarante-cinq euros »), élimination totale des didascalies, des symboles et des parenthèses.
-    - Intégration de `generateSpeechBufferWithElevenLabs` dans `/api/ai/oral-roleplay` qui génère le flux audio studio MP3 à la volée (`data:audio/mp3;base64,...`) transmis avec la réponse.
-    - Dans la salle d'examen, l'examinateur virtuel s'exprime avec la voix humaine studio chaleureuse et posée (`Charlie`), avec fallback automatique gracieux sur la synthèse vocale locale si nécessaire. Testé avec succès (réponse instantanée + 192 Ko de flux audio studio).
+  - **Expression Orale (EO) — Double Mode : Tour par Tour & Appel Téléphonique Live (ElevenLabs Conversational AI WebRTC) :**
+    - **Mode Tour par Tour (DeepSeek-V3 + ElevenLabs Studio Charlie) :** Le candidat parle ou tape, l'examinateur IA génère la réplique FEI et l'audio MP3 à la volée (`/api/ai/oral-roleplay`), forme d'onde dynamique et évaluation FEI à la fin.
+    - **Mode Appel Téléphonique Live (Option A - WebRTC / WebSocket ElevenLabs) :**
+      - Agent officiel configuré via API (`agent_9401m4d8cafdercsd2atwgnkm0zp`) : *Examinateur TCF Canada — Super4C2*, voix Charlie (`IKne3meq5aSn9XLyUdCD`), modèle ultra-rapide `eleven_turbo_v2_5`, prompt certifié FEI avec règles strictes de diction.
+      - Variables dynamiques : `candidate_name`, `task_number`, `scenario_topic`, `target_level`.
+      - Route backend sécurisée [app/api/ai/oral-signed-url/route.ts](file:///d:/SnowDev/Documents/super4c2/app/api/ai/oral-signed-url/route.ts) générant les URLs signées de session.
+      - Intégration dans [components/exam/oral-exam-room.tsx](file:///d:/SnowDev/Documents/super4c2/components/exam/oral-exam-room.tsx) via `@elevenlabs/client` :
+        - Bouton d'action proactif *"Démarrer l'Appel Vocal en Direct"* avec état de connexion et gestion des permissions micro.
+        - Conversation fluide continue sans aucun clic sur "Envoyer", détection de silence (VAD) et interruption spontanée (*barge-in*).
+        - Transcription instantanée des deux interlocuteurs dans le fil de discussion et badge *"EN DIRECT"* dans le header.
+        - Raccrochage propre avec libération des ressources audio et évaluation finale.
   - **Migration Système de Toasts Toastify :** Intégration de `react-toastify` via `<ToastifyContainer />` ([components/ui/toastify.tsx](file:///d:/SnowDev/Documents/super4c2/components/ui/toastify.tsx)) dans [app/layout.tsx](file:///d:/SnowDev/Documents/super4c2/app/layout.tsx) avec barre de progression Maple Crimson.
 
 ## 2. Moteur IA In-App Next.js & Notifications Automatisées
