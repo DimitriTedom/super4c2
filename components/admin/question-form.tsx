@@ -236,6 +236,7 @@ export function QuestionForm({
                     alt="Support visuel officiel"
                     fill
                     className="object-contain"
+                    unoptimized
                   />
                 </div>
               )}
@@ -458,6 +459,7 @@ export function QuestionForm({
                   alt="Aperçu support visuel"
                   fill
                   className="object-contain"
+                  unoptimized
                 />
               </div>
 

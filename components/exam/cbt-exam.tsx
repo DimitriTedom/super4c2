@@ -51,7 +51,7 @@ export function CbtExam({ series }: { series: ExamSeriesData }) {
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  });
+  }, [s.finished, s.select, s.toggleFlag, s.next, s.prev]);
 
   if (!s.hydrated) {
     return (
@@ -143,6 +143,7 @@ export function CbtExam({ series }: { series: ExamSeriesData }) {
                       fill
                       className="object-contain"
                       priority
+                      unoptimized
                     />
                   </div>
 
