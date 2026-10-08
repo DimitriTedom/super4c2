@@ -27,10 +27,15 @@
   - **Aura C2™ — L'Intelligence Pédagogique Propriétaire Super4C2 (Template 21st.dev `Agent Chat`) :**
     - Identité de marque 100% propriétaire : aucun modèle tiers n'est cité (mention de DeepSeek éliminée dans toute l'UI et verrouillée dans les instructions système).
     - Garde-fous stricts : Aura C2 est strictement cantonné au domaine d'expertise de Super4C2 (TCF/TEF Canada, NCLC 7+, CRS, épreuves CE/CO/EE/EO, SRS et assistance admin). Si un sujet extérieur est abordé, Aura C2 recentre poliment sur la préparation au test.
+    - Message d'accueil proactif officiel à l'ouverture du chat avec présentation d'Aura C2 et suggestions de questions contextualisées.
     - Rendu Markdown GFM avancé : utilisation de `react-markdown`, `remark-gfm` et `remark-breaks` avec tableaux stylisés, listes, citations et gras.
     - Synthèse Vocale (Audio TTS) : bouton « Écouter » sur chaque réponse pour entendre la prononciation en français standard naturel.
     - Barre d'action SaaS complète : Copie dans le presse-papier avec toast, retour de satisfaction (pouce levé / baissé), bouton d'agrandissement et réinitialisation.
     - Détection de la page active via `usePathname()` pour adapter les réponses au contexte de navigation du candidat.
+  - **Expression Orale (EO) avec Voix Studio ElevenLabs (`components/exam/oral-exam-room.tsx` & `/api/ai/oral-roleplay`) :**
+    - Prompt système DeepSeek-V3 hautement calibré pour les standards ElevenLabs : ponctuation nette pour le rythme respiratoire, nombres obligatoirement écrits en toutes lettres (ex: « dix-huit heures », « quarante-cinq euros »), élimination totale des didascalies, des symboles et des parenthèses.
+    - Intégration de `generateSpeechBufferWithElevenLabs` dans `/api/ai/oral-roleplay` qui génère le flux audio studio MP3 à la volée (`data:audio/mp3;base64,...`) transmis avec la réponse.
+    - Dans la salle d'examen, l'examinateur virtuel s'exprime avec la voix humaine studio chaleureuse et posée (`Charlie`), avec fallback automatique gracieux sur la synthèse vocale locale si nécessaire. Testé avec succès (réponse instantanée + 192 Ko de flux audio studio).
   - **Migration Système de Toasts Toastify :** Intégration de `react-toastify` via `<ToastifyContainer />` ([components/ui/toastify.tsx](file:///d:/SnowDev/Documents/super4c2/components/ui/toastify.tsx)) dans [app/layout.tsx](file:///d:/SnowDev/Documents/super4c2/app/layout.tsx) avec barre de progression Maple Crimson.
 
 ## 2. Moteur IA In-App Next.js & Notifications Automatisées
