@@ -174,11 +174,20 @@ export function CbtExam({ series }: { series: ExamSeriesData }) {
                   </div>
                 </div>
 
-                {/* Authentic Document Card */}
-                <div className="flex-1 rounded-2xl border bg-card p-6 sm:p-8 shadow-sm">
+                {/* Authentic High-Contrast Document Card */}
+                <div className="flex-1 rounded-3xl border-2 border-slate-200/90 dark:border-border bg-white dark:bg-card p-6 sm:p-8 shadow-md flex flex-col">
+                  <div className="flex items-center justify-between border-b pb-3 mb-5">
+                    <span className="inline-flex items-center gap-1.5 text-[11px] font-extrabold uppercase tracking-wider text-blue-700 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/50 px-3 py-1 rounded-full border border-blue-200 dark:border-blue-900/50">
+                      Document Support Officiel · Question {s.question.questionNumber}
+                    </span>
+                    <span className="text-[11px] font-mono text-muted-foreground font-semibold">
+                      Texte copiable &amp; sélectionnable
+                    </span>
+                  </div>
+
                   <article
                     className={cn(
-                      "select-text whitespace-pre-line font-sans text-foreground transition-all",
+                      "select-text whitespace-pre-line font-sans text-slate-900 dark:text-foreground font-medium transition-all tracking-normal flex-1",
                       FONT_SIZE_CLASSES[fontSize],
                     )}
                   >

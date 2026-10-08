@@ -69,10 +69,12 @@
   - Q36–Q39 : Niveau C2
   - Documents complets, prompts, 4 options, explication pédagogique & analyse systématique des pièges (`trapAnalysis`).
 - [x] **Simulateur CBT officiel FEI (`components/exam/cbt-exam.tsx`) :**
-  - Écran scindé avec contrôles de zoom typographique (`A-` / `100%` / `A+`).
-  - Badges de palier CECRL & NCLC et touches clavier visuelles (`[A]`, `[B]`, `[C]`, `[D]`).
+  - **Document Support Haute Visibilité :** Carte blanche texturée pure sur fond neutre CBT (`bg-slate-100/90`), texte intégral copiable et sélectionnable avec contrôles de zoom (`ZoomIn` / `ZoomOut`).
+  - **Bandeau de Question Bleu Institutionnel :** Bandeau dégradé bleu royal (`bg-gradient-to-r from-blue-700 to-indigo-900 text-white`) avec numéro de question et énoncé mis en valeur.
+  - **Sélection des Options en Vert Officiel :** Propositions A/B/C/D avec surbrillance émeraude (`border-emerald-600 bg-emerald-500/10`) et checkmark blanc.
+  - **Grille de Navigation 39 Questions :** Pastilles vertes pleines (`bg-emerald-600 text-white font-bold`) pour toutes les questions répondues, conformément aux standards FEI / Objectif-Canada.
+  - Badges de palier CECRL & NCLC et raccourcis clavier visuels (`[A]`, `[B]`, `[C]`, `[D]`).
   - Décompte officiel 60 minutes avec jauge de progression en temps réel et avertissement avant soumission.
-  - Grille de 39 pastilles avec filtres dynamiques (`Toutes`, `Répondues`, `Non répondues`, `Signalées`).
   - Raccourcis clavier globaux (`A-D`, `←/→`, `F`).
   - Sauvegarde et restauration automatique en temps réel via `localStorage`.
 - [x] **Moteur de scoring & revue pédagogique (`components/exam/exam-result-summary.tsx`) :**

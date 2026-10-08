@@ -116,10 +116,15 @@ export function QuestionPanel({
         </Button>
       </div>
 
-      {/* Question Prompt */}
-      <h2 className="font-display text-xl font-bold leading-snug tracking-tight text-foreground">
-        {question.prompt}
-      </h2>
+      {/* Official Institutional Blue Question Bar */}
+      <div className="rounded-2xl bg-gradient-to-r from-blue-700 via-blue-800 to-indigo-900 text-white p-5 sm:p-6 shadow-md flex items-start gap-4 border border-blue-600/30">
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/20 backdrop-blur-md font-mono text-base font-black text-white shadow-inner border border-white/20">
+          {question.questionNumber}
+        </span>
+        <h2 className="text-base sm:text-lg font-bold leading-snug tracking-tight text-white flex-1 pt-1">
+          {question.prompt}
+        </h2>
+      </div>
 
       {/* Options A / B / C / D */}
       <div role="radiogroup" aria-label="Propositions de réponse" className="space-y-3">
@@ -135,9 +140,9 @@ export function QuestionPanel({
               onClick={() => onSelect(key)}
               className={cn(
                 "group relative flex w-full items-start gap-3.5 rounded-xl border p-4 text-left transition-all",
-                "hover:border-primary/60 hover:bg-accent/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
+                "hover:border-emerald-500/60 hover:bg-emerald-500/[0.03] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500",
                 active
-                  ? "border-primary bg-primary/8 shadow-sm ring-1 ring-primary/40"
+                  ? "border-emerald-600 bg-emerald-500/10 shadow-sm ring-1 ring-emerald-500/40"
                   : "border-border/80 bg-card",
                 disabled && "cursor-default opacity-80",
               )}
@@ -147,8 +152,8 @@ export function QuestionPanel({
                 className={cn(
                   "flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border font-mono text-sm font-bold transition-colors",
                   active
-                    ? "border-primary bg-primary text-primary-foreground shadow-sm"
-                    : "border-muted-foreground/30 bg-muted/40 text-muted-foreground group-hover:border-primary/50 group-hover:text-foreground",
+                    ? "border-emerald-600 bg-emerald-600 text-white shadow-sm"
+                    : "border-muted-foreground/30 bg-muted/40 text-muted-foreground group-hover:border-emerald-500/50 group-hover:text-foreground",
                 )}
               >
                 {key}
@@ -166,7 +171,7 @@ export function QuestionPanel({
 
               {/* Active check indicator */}
               {active && (
-                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
+                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-600 text-white">
                   <Check className="h-3 w-3 stroke-[3]" />
                 </span>
               )}

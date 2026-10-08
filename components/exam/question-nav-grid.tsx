@@ -71,8 +71,8 @@ export function QuestionNavGrid({
 
         {/* Legend Hint */}
         <div className="hidden sm:flex items-center gap-3 text-[11px] text-muted-foreground">
-          <span className="flex items-center gap-1">
-            <span className="h-2.5 w-2.5 rounded bg-primary" /> Répondue
+          <span className="flex items-center gap-1 font-medium">
+            <span className="h-2.5 w-2.5 rounded bg-emerald-600" /> Répondue
           </span>
           <span className="flex items-center gap-1">
             <span className="h-2.5 w-2.5 rounded border bg-background" /> Non répondue
@@ -100,11 +100,11 @@ export function QuestionNavGrid({
                 aria-label={`Question ${q.questionNumber}${isAnswered ? `, répondue (${a.selected})` : ""}${isFlagged ? ", signalée" : ""}`}
                 aria-current={isCurrent ? "step" : undefined}
                 className={cn(
-                  "relative flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-lg border font-mono text-xs sm:text-sm font-semibold tabular-nums transition-all",
+                  "relative flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-lg border font-mono text-xs sm:text-sm font-semibold tabular-nums transition-all cursor-pointer",
                   isAnswered
-                    ? "border-primary bg-primary text-primary-foreground shadow-xs"
-                    : "border-border/80 bg-background text-muted-foreground hover:border-primary/50 hover:text-foreground",
-                  isCurrent && "ring-2 ring-primary ring-offset-2 ring-offset-background font-bold scale-105 z-10",
+                    ? "border-emerald-600 bg-emerald-600 text-white shadow-xs font-bold"
+                    : "border-border/80 bg-background text-muted-foreground hover:border-emerald-500/50 hover:text-foreground",
+                  isCurrent && "ring-2 ring-blue-600 ring-offset-2 ring-offset-background font-black scale-105 z-10",
                 )}
               >
                 {q.questionNumber}
