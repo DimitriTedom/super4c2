@@ -60,6 +60,12 @@
   - **Pipeline d'illustrations situationnelles 16:9 :** Génération vectorielle line-art bleu nuit haute fidélité (`16:9`) sur fond blanc pur représentant avec précision les contextes de test (Restaurant pour Q1, Gare TGV pour Q2, Cinéma pour Q3, Supermarché pour Q4, Boutique de mode pour Q5, Météo pluvieuse pour Q6).
   - **Watermarking Automatique avec Sharp (`public/images/co/`) :** Marquage discret et net de l'emblème iconique feuille d'érable géométrique Super4C2 (`Le Logomark.png`) en bas à droite de chaque image.
   - **Intégration Player CBT (`cbt-exam.tsx`) :** Affichage de la carte d'illustration 16:9 dans le panneau gauche officiel avec le lecteur audio `<AudioPlayerCBT />` arrimé directement en-dessous.
+- **Back-Office CRUD Compréhension Écrite & Visuels 1-Clic (`/admin/series-ce`) :**
+  - **Générateur IA 1-Clic (`POST /api/admin/generate-asset`) :** Bouton magique « 🎨 Générer Visuel IA (16:9) » créant l'illustration en fonction de l'intitulé sans quitter le formulaire.
+  - **Watermark Automatique avec Sharp (`lib/ai/image-watermark.ts`) :** Apposition instantanée de la feuille d'érable Super4C2 en bas à droite.
+  - **Driver de Stockage Supabase (`lib/storage/exam-storage.ts`) :** Upload direct dans le bucket public Supabase Storage `exam-assets` avec repli fluide en CDN local (`public/images/exam-assets/`) en environnement hors-ligne/dev.
+  - **Smart Document Templates Natifs :** Bibliothèque de modèles prêts à l'emploi (Affiche & Flyer A1, Horaires & Tarifs A2, Avis d'immeuble, Courriel d'entreprise, Article d'actualité) permettant à l'admin de concevoir des documents officiels sans la moindre image.
+  - **Aperçu Simulateur CBT Live :** Prévisualisation simultanée du document (image et/ou texte) et des 4 options de réponse en conditions réelles d'examen.
 - **Compréhension Écrite (CE) 100% Production-Ready (Raison d'être première du SaaS) :**
   - **Banque complète 39 questions authentiques Série 101 (`lib/exam/series-ce-101.ts`) :**
     - Q1–Q6 : Niveau A1 (messages courts, affiches, horaires)
