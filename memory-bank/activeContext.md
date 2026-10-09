@@ -16,6 +16,10 @@
 - **Refonte du CTA Final Haut de Gamme & Zéro Débordement Mobile (`app/page.tsx`) :**
   - Élimination du bandeau rouge plat générique et du bouton qui débordait sur smartphone (iPhone 16 Pro Max).
   - Nouveau conteneur Imperial Navy (`#0B132B`) avec trame subtile, halos d'ambiance crimson & cyan, boutons d'action 100% responsives (`w-full sm:w-auto`) et réassurance officielle (Conforme FEI, Sans carte bancaire, Noté 4.9/5).
+- **Enrichissement du Footer avec Réseaux Sociaux & Télémétrie (`components/site-footer.tsx`) :**
+  - Ajout des icônes officielles des communautés et réseaux sociaux avec micro-interactions au survol : **YouTube** (rouge), **Telegram** (bleu ciel), **WhatsApp** (vert émeraude), **LinkedIn** (bleu pro), **X / Twitter** (sombre), **TikTok** (rose/noir).
+  - Ajout d'une pilule de statut système en temps réel : `🟢 Moteur CBT Opérationnel (99.9% Uptime)`.
+  - Badges de réassurance et liens de support direct client.
 - **Icône & Avatar Animé Coach Aura C2™ (Inspiré 21st.dev) :**
   - Élimination de tout risque de copyright : création du composant `<AnimatedAiAvatar />` ([components/ui/animated-ai-avatar.tsx](file:///d:/SnowDev/Documents/super4c2/components/ui/animated-ai-avatar.tsx)) avec corps orbe crimson/navy, pupilles cyan numériques néon clignotantes de manière organique (intervalles 3-5s), anneau d'aura pulsant en élocution (`isSpeaking`) et rotation douce en réflexion (`isThinking`).
   - Intégré avec élégance dans le déclencheur flottant, l'en-tête du chat et l'indicateur de réponse IA de [components/ai/ai-chat-widget.tsx](file:///d:/SnowDev/Documents/super4c2/components/ai/ai-chat-widget.tsx).
