@@ -20,6 +20,13 @@
     - *Simulateur CBT :* Outil surligneur de texte en CE, sélecteur Mode Entraînement vs Mode Examen Strict, réglage de vitesse audio (0.8x, 1x, 1.2x) en CO, pré-test micro/casque en EO intro, badge d'autosave continu en EE.
     - *Dashboard Candidat :* Gestion de l'état initial onboarding pour un candidat avec 0 tentative (remplaçant les valeurs codées en dur), widget compte à rebours vers la date d'examen officiel (J-X), reprise en un clic de la dernière série inachevée.
     - *Compte Candidat :* Formulaire d'édition de profil (nom, programme cible, date d'examen).
+- **Refonte de l'Écran d'Erreur Global (`app/error.tsx`) & Bouton Recharger :**
+  - Remplacement de l'ancien écran statique inadapté hors examen par un composant d'erreur universel haut de gamme :
+    - Bouton principal évident : **« Recharger la page »** (`window.location.reload()`) pour résoudre instantanément les pannes de cache ou interruptions réseau.
+    - Bouton secondaire : **« Réessayer »** (`reset()`) sans rechargement lourd.
+    - Bouton de secours : **« Retour à l'accueil »** (`/`) et lien direct vers le support 7j/7 (`/contact`).
+    - Bouton interactif en 1 clic pour copier le code incident (`error.digest`) dans le presse-papier avec confirmation visuelle.
+    - Message universel rassurant précisant que les réponses et la progression de session restent protégées localement.
 - **Enrichissement du Footer avec Réseaux Sociaux & Télémétrie (`components/site-footer.tsx`) :**
   - Ajout des icônes officielles des communautés et réseaux sociaux avec micro-interactions au survol : **YouTube** (rouge), **Telegram** (bleu ciel), **WhatsApp** (vert émeraude), **LinkedIn** (bleu pro), **X / Twitter** (sombre), **TikTok** (rose/noir).
   - Ajout d'une pilule de statut système en temps réel : `🟢 Moteur CBT Opérationnel (99.9% Uptime)`.
