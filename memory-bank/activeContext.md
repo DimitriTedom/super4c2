@@ -1,6 +1,18 @@
 # Active Context: Super4C2
 
-## 1. Responsiveness Intégrale, Globe Hero & FAQ Officielle, Coach Aura 21st.dev, Média Enrichis
+## 1. Responsiveness Intégrale, Globe Hero & FAQ Officielle, Coach Aura 21st.dev, Média Enrichis & Vitrine CBT
+- **Vitrine Produit & Mockup Cinématique du Simulateur CBT (`components/product-showcase-section.tsx`) :**
+  - Ajout d'une section vitrine haut de gamme sur la page d'accueil (`app/page.tsx`) entre les statistiques et le comparatif, mettant en valeur le mockup photoréaliste de la plateforme CBT Super4C2 (`public/brand/cbt-platform-preview.jpg`).
+  - Système d'onglets interactifs : Double Écran CBT, Examinateur Vocal Interactif, Correction Écrite Instantanée avec points clés certifiés et bouton d'essai direct. Élimine tout ressenti générique / "AI-like" et renforce la conversion.
+- **Studio Médias & YouTube pour Administrateurs de Blog (`components/admin/blog-form.tsx`) :**
+  - Boîte à outils médias intégrée : presets de photos de couverture professionnelles Unsplash (Canada/Immigration, Écran CBT, Studio Oral, Rédaction).
+  - Détecteur d'URL YouTube avec extraction instantanée de la miniature HD en un clic (couverture) et copie directe du code Markdown pour vidéo responsive 16:9.
+  - Double mode de prévisualisation dans la colonne latérale : bascule instantanée entre « Aperçu Carte » (listing `/blog`) et « Article & Médias » (layout de lecture avec ratio 16:9).
+- **Audit & Polissage Responsive Mobile Global :**
+  - `/tarifs` : ajustement du padding (`p-5 sm:p-8`), troncature et formatage réactif des badges de recommandation pour éviter tout débordement sur petits écrans (320px–390px).
+  - `/nclc-calculator` : abréviation réactive des graduations du slider NCLC 4 à 10 (`4`, `5`, `6`, `7★`, etc. sur mobile, étiquettes complètes sur desktop) éliminant tout chevauchement de texte.
+  - `components/site-header.tsx` : suppression du bouton redondant « Épreuves » sur mobile (<640px) déjà présent dans `MobileNavBar`, libérant ~60px pour un espacement respirant.
+  - `components/ai/ai-chat-widget.tsx` : relocalisation au-dessus de la barre de navigation mobile (`bottom-20` sur mobile, `lg:bottom-6` sur desktop) avec bouton compact circulaire sans collision, et séparation stricte des suggestions candidates vs admin.
 - **Icône & Avatar Animé Coach Aura C2™ (Inspiré 21st.dev) :**
   - Élimination de tout risque de copyright : création du composant `<AnimatedAiAvatar />` ([components/ui/animated-ai-avatar.tsx](file:///d:/SnowDev/Documents/super4c2/components/ui/animated-ai-avatar.tsx)) avec corps orbe crimson/navy, pupilles cyan numériques néon clignotantes de manière organique (intervalles 3-5s), anneau d'aura pulsant en élocution (`isSpeaking`) et rotation douce en réflexion (`isThinking`).
   - Intégré avec élégance dans le déclencheur flottant, l'en-tête du chat et l'indicateur de réponse IA de [components/ai/ai-chat-widget.tsx](file:///d:/SnowDev/Documents/super4c2/components/ai/ai-chat-widget.tsx).

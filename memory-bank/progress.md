@@ -1,6 +1,9 @@
 # Progress Tracking: Super4C2
 
 ## Ce qui est Réalisé
+- [x] **Vitrine Produit & Mockup Cinématique CBT :** Intégration du composant `<ProductShowcaseSection />` avec le visuel photoréaliste de la plateforme CBT Super4C2 (`public/brand/cbt-platform-preview.jpg`) et ses 3 onglets de fonctionnalités clés pour éliminer tout aspect générique / "AI-like" et maximiser la conversion.
+- [x] **Studio Médias Admin Blog (`components/admin/blog-form.tsx`) :** Boîte à outils médias avec presets de couvertures officielles Unsplash, détecteur YouTube avec extraction de miniature HD en 1 clic et copie de shortcode markdown, plus prévisualisation alternée « Carte » vs « Article & Médias ».
+- [x] **Audit & Finition Responsive Mobile :** Optimisation des tarifs sur mobile (padding réactif et badge sans débordement sur `/tarifs`), graduation du slider réactive sur `/nclc-calculator`, décalage du widget Coach Aura au-dessus de la barre basse (`bottom-20`), et allègement du header supérieur mobile.
 - [x] **Responsiveness Mobile & Tablette Exemplaire :** Optimisation complète de `/examens?test=tef` et de tous les parcours candidats (grille 3 colonnes adaptative, filtres défilables horizontalement, cartes de quêtes `snap-start`, boutons CTA pleine largeur).
 - [x] **Visibilité & Contraste du Globe 3D Hero :** Calibration des couleurs COBE (`baseColor`, `glowColor`, `mapBrightness`, `diffuse`) pour un contraste immédiat en mode clair comme en mode sombre, positionné harmonieusement sous les titres.
 - [x] **Foire Aux Questions Officielle (FAQ) :** Composant `<FaqSection />` avec recherche temps réel, filtres thématiques, accordéons Framer Motion, affiché sur `app/page.tsx`, dans le footer et sur la route `/faq`.
