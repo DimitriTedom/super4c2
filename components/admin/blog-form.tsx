@@ -10,6 +10,12 @@ import {
   Clock,
   Star,
   Image as ImageIcon,
+  Video,
+  Sparkles,
+  Check,
+  Copy,
+  LayoutTemplate,
+  MonitorPlay,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -23,6 +29,33 @@ import {
 } from "@/components/ui/select";
 import { MarkdownField } from "@/components/admin/markdown-field";
 import { slugify } from "@/lib/admin-crud-utils";
+
+export const COVER_PRESETS = [
+  {
+    name: "🇨🇦 Canada & Entrée Express",
+    url: "https://images.unsplash.com/photo-1517935703635-27c94660ab4f?auto=format&fit=crop&w=1200&q=80",
+  },
+  {
+    name: "💻 Simulateur CBT & Réussite",
+    url: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=1200&q=80",
+  },
+  {
+    name: "🎙️ Studio Oral & Écouteurs",
+    url: "https://images.unsplash.com/photo-1590602847861-f357a9332bbc?auto=format&fit=crop&w=1200&q=80",
+  },
+  {
+    name: "✍️ Expression Écrite & Méthode",
+    url: "https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&w=1200&q=80",
+  },
+];
+
+function extractYouTubeId(url: string): string | null {
+  if (!url) return null;
+  const match = url.match(
+    /(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w-]{11})/
+  );
+  return match ? match[1] : null;
+}
 
 export const BLOG_CATEGORIES = [
   "Stratégie TCF",
@@ -75,6 +108,9 @@ export function BlogForm({
   const [tags, setTags] = useState(post?.tags?.join(", ") || "");
   const [featured, setFeatured] = useState(post?.featured ?? false);
   const [isPublished, setIsPublished] = useState(post?.isPublished ?? true);
+  const [youtubeUrl, setYoutubeUrl] = useState("");
+  const [copiedSnippet, setCopiedSnippet] = useState(false);
+  const [previewMode, setPreviewMode] = useState<"card" | "article">("card");
 
   const handleTitleChange = (val: string) => {
     setTitle(val);
@@ -197,9 +233,12 @@ export function BlogForm({
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-foreground">
-                Image de Couverture (URL)
-              </label>
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-bold text-foreground">
+                  Image de Couverture (URL)
+                </label>
+                <span className="text-[10px] text-muted-foreground">Format 16:9 recommandé</span>
+              </div>
               <Input
                 type="url"
                 name="coverImage"
@@ -208,6 +247,100 @@ export function BlogForm({
                 placeholder="https://images.unsplash.com/..."
                 className="h-10 text-xs rounded-xl bg-muted/20"
               />
+            </div>
+          </div>
+
+          {/* 🎨 Presets d'images officielles & Studio YouTube */}
+          <div className="rounded-xl border border-border/70 bg-muted/30 p-3.5 space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold text-foreground flex items-center gap-1.5">
+                <Sparkles className="h-3.5 w-3.5 text-brand-crimson" />
+                <span>Médiathèque Rapide & Intégrations</span>
+              </span>
+              <span className="text-[10px] text-muted-foreground">Prêt à l&apos;emploi</span>
+            </div>
+
+            {/* Presets Unsplash */}
+            <div className="space-y-1.5">
+              <p className="text-[11px] text-muted-foreground font-medium">
+                Photos de couverture certifiées :
+              </p>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
+                {COVER_PRESETS.map((preset) => (
+                  <button
+                    key={preset.name}
+                    type="button"
+                    onClick={() => setCoverImage(preset.url)}
+                    className="text-left p-1.5 rounded-lg border border-border/60 bg-background/80 hover:bg-primary/5 hover:border-primary/40 transition-colors text-[11px] font-medium text-foreground truncate"
+                    title={preset.name}
+                  >
+                    {preset.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* YouTube Embed Helper */}
+            <div className="pt-2 border-t border-border/50 space-y-2">
+              <p className="text-[11px] text-muted-foreground font-medium flex items-center gap-1">
+                <Video className="h-3.5 w-3.5 text-rose-500" />
+                <span>Intégrer une vidéo YouTube (cours / débrief) :</span>
+              </p>
+              <div className="flex gap-2">
+                <Input
+                  type="text"
+                  placeholder="Coller l'URL YouTube (ex: https://youtu.be/...)"
+                  value={youtubeUrl}
+                  onChange={(e) => setYoutubeUrl(e.target.value)}
+                  className="h-8 text-xs rounded-lg bg-background"
+                />
+                {extractYouTubeId(youtubeUrl) && (
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="secondary"
+                    className="h-8 text-xs gap-1 shrink-0 px-2.5"
+                    onClick={() => {
+                      const ytId = extractYouTubeId(youtubeUrl);
+                      if (ytId) {
+                        setCoverImage(`https://img.youtube.com/vi/${ytId}/maxresdefault.jpg`);
+                      }
+                    }}
+                  >
+                    <ImageIcon className="h-3.5 w-3.5 text-brand-crimson" />
+                    <span>Miniature</span>
+                  </Button>
+                )}
+              </div>
+              {extractYouTubeId(youtubeUrl) && (
+                <div className="flex items-center justify-between text-[11px] bg-rose-500/10 text-rose-700 dark:text-rose-300 p-2 rounded-lg border border-rose-500/20">
+                  <span>ID détecté : <strong className="font-mono">{extractYouTubeId(youtubeUrl)}</strong></span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const ytId = extractYouTubeId(youtubeUrl);
+                      if (ytId) {
+                        navigator.clipboard.writeText(`\nhttps://www.youtube.com/watch?v=${ytId}\n`);
+                        setCopiedSnippet(true);
+                        setTimeout(() => setCopiedSnippet(false), 2000);
+                      }
+                    }}
+                    className="flex items-center gap-1 font-semibold hover:underline"
+                  >
+                    {copiedSnippet ? (
+                      <>
+                        <Check className="h-3 w-3" />
+                        <span>Copié dans le presse-papier !</span>
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="h-3 w-3" />
+                        <span>Copier pour le Markdown</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+              )}
             </div>
           </div>
 
@@ -341,13 +474,37 @@ export function BlogForm({
           </div>
         </form>
 
-        {/* Right Preview Card (Model Pratik-IT / Public Blog Card) */}
+        {/* Right Preview Card (Model Pratik-IT / Public Blog Card & Article Layout) */}
         <aside className="rounded-2xl border bg-card/60 p-5 shadow-xs space-y-4 lg:sticky lg:top-4">
           <div className="flex items-center justify-between border-b pb-3">
-            <h3 className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-primary">
-              <Eye className="h-3.5 w-3.5" />
-              <span>Aperçu Carte Publique</span>
-            </h3>
+            {/* Mode Switcher */}
+            <div className="flex items-center gap-1 bg-muted/60 p-0.5 rounded-lg border border-border/50">
+              <button
+                type="button"
+                onClick={() => setPreviewMode("card")}
+                className={`flex items-center gap-1 px-2.5 py-1 rounded-md text-[11px] font-semibold transition-all ${
+                  previewMode === "card"
+                    ? "bg-background text-foreground shadow-xs"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                <LayoutTemplate className="h-3 w-3" />
+                <span>Carte</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setPreviewMode("article")}
+                className={`flex items-center gap-1 px-2.5 py-1 rounded-md text-[11px] font-semibold transition-all ${
+                  previewMode === "article"
+                    ? "bg-background text-foreground shadow-xs"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                <MonitorPlay className="h-3 w-3" />
+                <span>Article &amp; Médias</span>
+              </button>
+            </div>
+
             <div className="flex items-center gap-1.5">
               {featured && (
                 <span className="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/10 text-amber-600 border border-amber-500/30">
@@ -367,49 +524,111 @@ export function BlogForm({
             </div>
           </div>
 
-          {/* Card Mockup */}
-          <div className="rounded-xl border bg-card overflow-hidden shadow-xs space-y-3">
-            {coverImage ? (
-              <div className="aspect-video w-full bg-muted overflow-hidden relative">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={coverImage}
-                  alt={title}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            ) : (
-              <div className="aspect-video w-full bg-muted/40 flex flex-col items-center justify-center text-muted-foreground text-xs gap-1">
-                <ImageIcon className="h-6 w-6 opacity-30" />
-                <span>Aucune image de couverture</span>
-              </div>
-            )}
+          {previewMode === "card" ? (
+            /* Card Mockup */
+            <div className="rounded-xl border bg-card overflow-hidden shadow-xs space-y-3">
+              {coverImage ? (
+                <div className="aspect-video w-full bg-muted overflow-hidden relative">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={coverImage}
+                    alt={title}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              ) : (
+                <div className="aspect-video w-full bg-muted/40 flex flex-col items-center justify-center text-muted-foreground text-xs gap-1">
+                  <ImageIcon className="h-6 w-6 opacity-30" />
+                  <span>Aucune image de couverture</span>
+                </div>
+              )}
 
-            <div className="p-4 space-y-2">
-              <div className="flex items-center justify-between text-[11px]">
-                <span className="font-bold text-primary uppercase tracking-wide">
-                  {category}
-                </span>
-                <span className="text-muted-foreground flex items-center gap-1 font-mono">
-                  <Clock className="h-3 w-3" />
-                  ~5 min
-                </span>
-              </div>
+              <div className="p-4 space-y-2">
+                <div className="flex items-center justify-between text-[11px]">
+                  <span className="font-bold text-primary uppercase tracking-wide">
+                    {category}
+                  </span>
+                  <span className="text-muted-foreground flex items-center gap-1 font-mono">
+                    <Clock className="h-3 w-3" />
+                    ~5 min
+                  </span>
+                </div>
 
-              <h4 className="font-bold text-foreground text-sm line-clamp-2">
-                {title || "Titre de l'article de blog..."}
-              </h4>
+                <h4 className="font-bold text-foreground text-sm line-clamp-2">
+                  {title || "Titre de l'article de blog..."}
+                </h4>
 
-              <p className="text-xs text-muted-foreground line-clamp-3">
-                {excerpt || "L'extrait accrocheur apparaîtra ici..."}
-              </p>
+                <p className="text-xs text-muted-foreground line-clamp-3">
+                  {excerpt || "L'extrait accrocheur apparaîtra ici..."}
+                </p>
 
-              <div className="pt-2 border-t flex items-center justify-between text-[11px] text-muted-foreground">
-                <span className="font-medium text-foreground">{authorName}</span>
-                <span>{new Date().toLocaleDateString("fr-CA")}</span>
+                <div className="pt-2 border-t flex items-center justify-between text-[11px] text-muted-foreground">
+                  <span className="font-medium text-foreground">{authorName}</span>
+                  <span>{new Date().toLocaleDateString("fr-CA")}</span>
+                </div>
               </div>
             </div>
-          </div>
+          ) : (
+            /* Full Article Media Preview Mockup */
+            <div className="rounded-xl border bg-card p-4 shadow-xs space-y-4">
+              {/* Media Display */}
+              {coverImage ? (
+                <div className="aspect-video w-full rounded-lg bg-black overflow-hidden relative border border-border/60">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={coverImage}
+                    alt={title}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute top-2 left-2 px-2 py-0.5 rounded-full bg-background/80 backdrop-blur-xs text-[10px] font-bold">
+                    16:9 Responsive Media
+                  </div>
+                </div>
+              ) : (
+                <div className="aspect-video w-full rounded-lg bg-muted/30 border border-dashed border-border/80 flex flex-col items-center justify-center text-muted-foreground text-xs gap-1">
+                  <Video className="h-6 w-6 opacity-40 text-brand-crimson" />
+                  <span>Ajoutez une image ou vidéo YouTube</span>
+                </div>
+              )}
+
+              <div className="space-y-2">
+                <span className="inline-block px-2 py-0.5 rounded-md text-[10px] font-bold bg-primary/10 text-primary border border-primary/20">
+                  {category}
+                </span>
+                <h4 className="font-display font-black text-foreground text-base leading-snug">
+                  {title || "Titre intégral de votre publication..."}
+                </h4>
+                <div className="flex items-center gap-2 text-[11px] text-muted-foreground border-b pb-2">
+                  <span className="font-semibold text-foreground">{authorName}</span>
+                  <span>•</span>
+                  <span>{authorRole}</span>
+                </div>
+              </div>
+
+              {excerpt && (
+                <div className="p-2.5 rounded-lg bg-primary/5 border border-primary/20 text-xs text-foreground/90 italic">
+                  &ldquo;{excerpt}&rdquo;
+                </div>
+              )}
+
+              {tags && (
+                <div className="flex flex-wrap gap-1 pt-1">
+                  {tags
+                    .split(",")
+                    .map((t) => t.trim())
+                    .filter(Boolean)
+                    .map((tag) => (
+                      <span
+                        key={tag}
+                        className="text-[10px] px-2 py-0.5 rounded-full bg-muted text-muted-foreground"
+                      >
+                        #{tag}
+                      </span>
+                    ))}
+                </div>
+              )}
+            </div>
+          )}
         </aside>
       </div>
     </div>

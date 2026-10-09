@@ -280,13 +280,15 @@ function SkillSlider({
       />
 
       <div className="flex justify-between text-[10px] text-muted-foreground font-mono">
-        <span>NCLC 4 (A2)</span>
-        <span>NCLC 5 (B1)</span>
-        <span>NCLC 6</span>
-        <span className="text-[#E51A31] font-bold">NCLC 7 (Seuil)</span>
-        <span>NCLC 8</span>
-        <span>NCLC 9 (C1)</span>
-        <span>NCLC 10 (C2)</span>
+        <span title="NCLC 4 (A2)"><span className="hidden sm:inline">NCLC </span>4<span className="hidden sm:inline"> (A2)</span></span>
+        <span title="NCLC 5 (B1)"><span className="hidden sm:inline">NCLC </span>5<span className="hidden sm:inline"> (B1)</span></span>
+        <span title="NCLC 6"><span className="hidden sm:inline">NCLC </span>6</span>
+        <span title="NCLC 7 (Seuil)" className="text-[#E51A31] font-bold">
+          <span className="hidden sm:inline">NCLC </span>7<span className="hidden sm:inline"> (Seuil)</span><span className="sm:hidden">★</span>
+        </span>
+        <span title="NCLC 8"><span className="hidden sm:inline">NCLC </span>8</span>
+        <span title="NCLC 9 (C1)"><span className="hidden sm:inline">NCLC </span>9<span className="hidden sm:inline"> (C1)</span></span>
+        <span title="NCLC 10 (C2)"><span className="hidden sm:inline">NCLC </span>10<span className="hidden sm:inline"> (C2)</span></span>
       </div>
     </div>
   );

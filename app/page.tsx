@@ -18,6 +18,7 @@ import { AnimatedGradientText } from "@/components/ui/animated-gradient-text";
 import { BlurFade } from "@/components/ui/blur-fade";
 import { TestimonialsSection } from "@/components/testimonials-section";
 import { FaqSection } from "@/components/faq-section";
+import { ProductShowcaseSection } from "@/components/product-showcase-section";
 import { prisma } from "@/lib/prisma";
 
 export const metadata = {
@@ -173,6 +174,11 @@ export default async function HomePage() {
             <p className="mt-1 text-xs text-muted-foreground">Objectif B2 / C1 / C2</p>
           </div>
         </section>
+      </BlurFade>
+
+      {/* 💻 VITRINE INTERACTIVE DU SIMULATEUR CBT */}
+      <BlurFade inView>
+        <ProductShowcaseSection />
       </BlurFade>
 
       {/* ⚔️ COMPARATIF CHOC : SUPER4C2 VS OBJECTIF CANADA */}

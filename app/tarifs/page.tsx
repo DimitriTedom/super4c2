@@ -79,14 +79,14 @@ export default function TarifsPage() {
         {plans.map((p, idx) => (
           <div
             key={idx}
-            className={`flex flex-col justify-between rounded-3xl border p-8 shadow-sm transition-all relative ${
+            className={`flex flex-col justify-between rounded-3xl border p-5 sm:p-8 shadow-sm transition-all relative ${
               p.highlight
                 ? "border-primary bg-card ring-2 ring-primary shadow-xl lg:-translate-y-2"
                 : "border-border bg-card"
             }`}
           >
             {p.badge && (
-              <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-primary px-4 py-1 text-[11px] font-bold text-primary-foreground shadow-sm whitespace-nowrap">
+              <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-primary px-3 sm:px-4 py-1 text-[10px] sm:text-[11px] font-bold text-primary-foreground shadow-sm whitespace-nowrap max-w-[92%] truncate text-center">
                 {p.badge}
               </div>
             )}
