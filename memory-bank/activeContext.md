@@ -21,6 +21,13 @@
     - Adaptation complète au Mode Clair : l'intérieur du simulateur n'est plus un bloc noir brutal figé en `bg-slate-950`, mais s'adapte au standard officiel FEI en mode clair (panneaux blancs lumineux, bordures subtiles `border-slate-200`, typographie contrastée, badges émeraude et crimson), tout en conservant son rendu sombre immersif en mode nuit.
   - **Section CTA Finale d'Accueil (`app/page.tsx`) :**
     - Remplacement de l'ancien rectangle noir rigide `bg-[#0B132B]` par une carte premium adaptative : dégradé subtil `from-rose-50/80 via-white to-slate-50/90` avec lueur d'aura crimson en mode clair, et préservation du thème nuit profond `#0B132B` en mode sombre.
+- **Mise en Valeur Haut de Gamme des 4 Cartes d'Épreuves (`app/page.tsx`) :**
+  - Remplacement de l'ancien format étriqué (où les icônes 3D étaient enfermées dans de petits carrés de 56px) par de véritables **cartes vitrines 3D immersives** :
+    - **Scène 3D Héroïque :** Rendu agrandi à 144px (`h-32 w-32 sm:h-36 sm:w-36`) avec socle lumineux d'ambiance radial coloré (rose pour CE, cyan pour CO, ambre pour EE, violet pour EO).
+    - **Micro-interaction tactile au survol :** Lévitation et agrandissement doux (`group-hover:scale-110 group-hover:-translate-y-2`) avec ombres portées douces (`drop-shadow-2xl`).
+    - **Métadonnées officielles FEI :** Badge de durée & format à la racine de chaque carte (`60 min • 39 Q`, `40 min • 39 Audio`, `60 min • 3 Tâches`, `12 min • 3 Tâches`) + niveau cible NCLC 7+.
+    - **Pillules de fonctionnalités clés :** 2 badges distinctifs par épreuve (ex. *Grille 1-39 CBT*, *Écoute Unique*, *Magic Rewrite*, *Voice Agent IA*).
+    - **Boutons d'action personnalisés :** Bouton pleine largeur avec flèche interactive au survol adaptée à chaque discipline.
 - **Audit Exhaustif de l'Expérience Frontend Candidat :**
   - Identification des pistes d'amélioration majeures :
     - *Simulateur CBT :* Outil surligneur de texte en CE, sélecteur Mode Entraînement vs Mode Examen Strict, réglage de vitesse audio (0.8x, 1x, 1.2x) en CO, pré-test micro/casque en EO intro, badge d'autosave continu en EE.
