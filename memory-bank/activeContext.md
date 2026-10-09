@@ -58,6 +58,14 @@
     - Badge visuel en haut à droite avec pastille verte pulsante indiquant le statut (*« 🟢 Sauvegardé à 12:45:10 »* / *« 💾 Sauvegarde... »*).
     - Barre de statut sous la zone de texte rassurant le candidat sur la conservation de ses rédactions sans risque d'effacement.
     - Restauration transparente des 3 tâches en cas de rafraîchissement impromptu.
+- **Chantier 5 Réalisé — Espace Compte Candidat & Édition de Profil Dynamique (`/account`) :**
+  - **Spécification :** Formalisée dans [docs/specs/05-multitenant-architecture-and-dashboards.md](file:///d:/SnowDev/Documents/super4c2/docs/specs/05-multitenant-architecture-and-dashboards.md) (Section 5).
+  - **Endpoint API Dédié :** `PATCH /api/account/profile` avec validation Zod, sécurisé par Supabase Auth et persistance Prisma sur `Profile`.
+  - **Composant `ProfileEditForm` ([components/account/profile-edit-form.tsx](file:///d:/SnowDev/Documents/super4c2/components/account/profile-edit-form.tsx)) :**
+    - Édition en temps réel du nom d'affichage, du pays de résidence et du contact WhatsApp.
+    - Sélecteur d'ambition NCLC (NCLC 7, 8, 9, 10 / C2) avec repères de niveau CEFR.
+    - Configuration de la date d'examen officiel avec **synchronisation immédiate dans le `localStorage` (`super4c2:exam_date`)** pilotant le widget `ExamCountdownWidget` (J-X) du tableau de bord.
+    - Feedback d'enregistrement avec état de chargement et badges de confirmation.
 - **Mega-Menu 2 Colonnes « Simulateurs & IA » (`components/site-nav.tsx`) :**
   - Remplacement de la colonne étroite et interminable (`w-84`) par un menu étendu à 2 colonnes équilibrées (`w-[620px]`) centré sur la barre de navigation.
   - Répartition structurée : Colonne 1 « Épreuves Officielles CBT » (CE, CO, EO, EE) et Colonne 2 « Accélérateurs & Outils » (Calculateur NCLC/CRS, Carnet SRS, Sujets Récents Radar) avec bouton de synthèse vers le simulateur complet. Hauteur divisée par deux, évitant tout débordement sur le titre de la page d'accueil.

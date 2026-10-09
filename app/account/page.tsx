@@ -15,6 +15,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { prisma } from "@/lib/prisma";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { ProfileEditForm } from "@/components/account/profile-edit-form";
 
 export const metadata = {
   title: "Mon Compte — Espace Candidat | Super4C2",
@@ -36,6 +37,14 @@ export default async function AccountPage() {
 
   const displayName = dbUser?.profile?.displayName || user.email?.split("@")[0] || "Candidat";
   const initials = displayName.slice(0, 2).toUpperCase();
+
+  const initialProfile = {
+    displayName: dbUser?.profile?.displayName || null,
+    targetNclc: dbUser?.profile?.targetNclc || 7,
+    examDate: dbUser?.profile?.examDate ? dbUser.profile.examDate.toISOString() : null,
+    country: dbUser?.profile?.country || null,
+    phone: dbUser?.profile?.phone || null,
+  };
 
   return (
     <div className="mx-auto max-w-4xl space-y-8 py-6">
@@ -78,6 +87,9 @@ export default async function AccountPage() {
         </div>
       </div>
 
+      {/* Formulaire interactif d'édition du profil */}
+      <ProfileEditForm initialProfile={initialProfile} userEmail={user.email || ""} />
+
       {/* Grid of Profile Cards */}
       <div className="grid gap-6 sm:grid-cols-2">
         {/* Card 1 : Objectif Immigration & NCLC */}
@@ -87,7 +99,9 @@ export default async function AccountPage() {
               <Target className="h-5 w-5 text-primary" />
               <h2 className="font-display text-lg font-bold">Objectif Linguistique Canada</h2>
             </div>
-            <span className="font-mono text-xs font-bold text-primary">NCLC 7+</span>
+            <span className="font-mono text-xs font-bold text-primary">
+              NCLC {dbUser?.profile?.targetNclc || 7}+
+            </span>
           </div>
 
           <div className="space-y-3 text-sm">
@@ -100,8 +114,16 @@ export default async function AccountPage() {
               <span className="font-bold text-emerald-600">+50 à +62 points</span>
             </div>
             <div className="flex items-center justify-between py-1 border-b border-border/50">
-              <span className="text-muted-foreground">Épreuve prioritaire :</span>
-              <span className="font-semibold">Compréhension Écrite (39Q)</span>
+              <span className="text-muted-foreground">Date officielle :</span>
+              <span className="font-semibold">
+                {dbUser?.profile?.examDate
+                  ? new Date(dbUser.profile.examDate).toLocaleDateString("fr-FR", {
+                      day: "numeric",
+                      month: "long",
+                      year: "numeric",
+                    })
+                  : "Non définie"}
+              </span>
             </div>
             <div className="flex items-center justify-between py-1">
               <span className="text-muted-foreground">Niveau actuel estimé :</span>

@@ -115,3 +115,26 @@ CREATE TABLE organization_members (
     - `J-30 à J-15` : *Phase d'intensification & épreuves complètes*
     - `J-14 à J-1` : *Sprint final & révision des pièges dans le Carnet SRS*
   - Dialogue interactif permettant de configurer ou modifier sa date d'examen en 1 clic.
+
+---
+
+## 5. Spécification Détaillée de l'Espace Compte Candidat (`/account`)
+
+### A. Besoins Métier & User Stories
+* En tant que candidat au TCF Canada, je veux pouvoir :
+  1. Modifier mon nom d'affichage (`displayName`) utilisé dans les débriefings et sur le dashboard.
+  2. Spécifier mon palier d'ambition NCLC (NCLC 7, 8, 9, 10 / C2).
+  3. Définir ma date de passage officiel d'examen, automatiquement répercutée sur le widget `J-X` du Dashboard.
+  4. Renseigner mon pays de résidence et un numéro WhatsApp optionnel pour recevoir les alertes sur les sujets récents.
+
+### B. Endpoint API & Persistance
+* **Route :** `PATCH /api/account/profile`
+* **Sécurité :** Authentification obligatoire via Supabase Server Client.
+* **Schéma de validation Zod :**
+  - `displayName`: `z.string().min(2).max(50).optional()`
+  - `targetNclc`: `z.number().min(4).max(10).optional()`
+  - `examDate`: `z.string().optional().nullable()`
+  - `country`: `z.string().max(60).optional().nullable()`
+  - `phone`: `z.string().max(30).optional().nullable()`
+* **Persistance :** Upsert Prisma sur `profile` rattaché à `User.id`.
+* **Synchronisation Locale :** Mise à jour transparente de la clé `super4c2:exam_date` dans le `localStorage` pour alignement parfait avec le widget du tableau de bord.
