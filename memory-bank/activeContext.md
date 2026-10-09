@@ -15,6 +15,12 @@
     10. `srs-memory-vault.png` — Coffre mémoire avec cerveau lumineux et repères J+1, J+3, J+7 (intégré dans l'en-tête de `/carnet-erreurs`, les raccourcis du dashboard et `SiteNav`).
     11. `crs-calculator-compass.png` — Pièce d'or +50 CRS, boussole et passeport canadien (intégrée dans l'en-tête de `/nclc-calculator`, les raccourcis du dashboard et `SiteNav`).
     12. `expression-ecrite-pen.png` — Stylo plume et parchemin officiel Expression Écrite (EE) (intégré dans la Bento Grid d'accueil, le dashboard, les fiches d'épreuves, le catalogue `/examens` et `SiteNav`).
+- **Harmonisation Thématique en Mode Clair (Showcase CBT & CTA Final) :**
+  - **Vitrine Interactive CBT (`components/product-showcase-section.tsx`) :**
+    - Résolution du problème d'alignement des onglets : passage d'un `flex-wrap` instable (qui plaçait le 3ème onglet seul sur une 2ème ligne) à une grille responsive à 3 colonnes égales (`grid grid-cols-1 sm:grid-cols-3 w-full max-w-3xl`) pour un alignement irréprochable.
+    - Adaptation complète au Mode Clair : l'intérieur du simulateur n'est plus un bloc noir brutal figé en `bg-slate-950`, mais s'adapte au standard officiel FEI en mode clair (panneaux blancs lumineux, bordures subtiles `border-slate-200`, typographie contrastée, badges émeraude et crimson), tout en conservant son rendu sombre immersif en mode nuit.
+  - **Section CTA Finale d'Accueil (`app/page.tsx`) :**
+    - Remplacement de l'ancien rectangle noir rigide `bg-[#0B132B]` par une carte premium adaptative : dégradé subtil `from-rose-50/80 via-white to-slate-50/90` avec lueur d'aura crimson en mode clair, et préservation du thème nuit profond `#0B132B` en mode sombre.
 - **Audit Exhaustif de l'Expérience Frontend Candidat :**
   - Identification des pistes d'amélioration majeures :
     - *Simulateur CBT :* Outil surligneur de texte en CE, sélecteur Mode Entraînement vs Mode Examen Strict, réglage de vitesse audio (0.8x, 1x, 1.2x) en CO, pré-test micro/casque en EO intro, badge d'autosave continu en EE.
