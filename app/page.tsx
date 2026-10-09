@@ -9,6 +9,7 @@ import {
   BookOpenText,
   Headphones,
   PenTool,
+  Clock,
 } from "lucide-react";
 import NumberTicker from "@/components/ui/number-ticker";
 import { Button } from "@/components/ui/button";
@@ -285,92 +286,271 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* 🧩 BENTOGRID DES 4 ÉPREUVES */}
-      <section className="space-y-8 max-w-6xl mx-auto">
-        <div className="text-center space-y-2">
-          <span className="text-xs font-bold uppercase tracking-wider text-primary">
-            Couverture Exhaustive
-          </span>
-          <h2 className="font-display text-3xl sm:text-4xl font-extrabold tracking-tight">
-            Les 4 Épreuves Officielles TCF Canada Maîtrisées
+      {/* 🧩 LES 4 ÉPREUVES OFFICIELLES TCF CANADA MAÎTRISÉES */}
+      <section className="space-y-10 max-w-6xl mx-auto">
+        <div className="text-center space-y-3">
+          <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3.5 py-1 text-xs font-semibold text-primary">
+            <Sparkles className="h-3.5 w-3.5 text-brand-crimson" />
+            <span>Format Conforme FEI • TCF & TEF Canada</span>
+          </div>
+          <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-foreground">
+            Les 4 Épreuves Officielles{" "}
+            <span className="bg-gradient-to-r from-brand-crimson to-rose-600 bg-clip-text text-transparent">
+              Maîtrisées
+            </span>
           </h2>
+          <p className="text-sm sm:text-base text-muted-foreground max-w-2xl mx-auto">
+            Chaque module est une réplique exacte des contraintes de l&apos;examen officiel, optimisée pour débloquer le niveau C1/C2 (NCLC 7+).
+          </p>
         </div>
 
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          <div className="group rounded-2xl border bg-card p-6 space-y-4 shadow-sm hover:border-primary/50 transition-all hover:-translate-y-1 hover:shadow-lg">
-            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 p-1 transition-transform group-hover:scale-105">
-              <Image
-                src="/brand/icons-3d/comprehension-ecrite-book.png"
-                alt="Compréhension Écrite 3D"
-                width={56}
-                height={56}
-                className="h-14 w-14 object-contain drop-shadow-md"
-              />
+          {/* 1. Compréhension Écrite (CE) */}
+          <div className="group relative rounded-3xl border border-border/80 bg-gradient-to-b from-card via-card to-rose-500/[0.03] p-6 shadow-sm hover:shadow-2xl hover:border-rose-500/40 transition-all duration-300 hover:-translate-y-1.5 flex flex-col justify-between overflow-hidden">
+            {/* Ambient glow pedestal behind 3D icon */}
+            <div className="pointer-events-none absolute -top-10 left-1/2 -translate-x-1/2 w-44 h-44 bg-rose-500/15 blur-3xl rounded-full group-hover:bg-rose-500/25 transition-all duration-500" />
+            
+            <div className="relative z-10 space-y-4">
+              {/* Badge format & duration */}
+              <div className="flex items-center justify-between">
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-rose-500/10 px-2.5 py-1 text-[11px] font-bold text-rose-600 dark:text-rose-400 border border-rose-500/20">
+                  <Clock className="h-3 w-3" /> 60 min • 39 Q
+                </span>
+                <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
+                  NCLC 7+
+                </span>
+              </div>
+
+              {/* 3D Icon Hero Stage */}
+              <div className="relative flex items-center justify-center py-2">
+                <div className="relative h-32 w-32 sm:h-36 sm:w-36 transition-transform duration-500 ease-out group-hover:scale-110 group-hover:-translate-y-2">
+                  <Image
+                    src="/brand/icons-3d/comprehension-ecrite-book.png"
+                    alt="Compréhension Écrite 3D"
+                    fill
+                    sizes="144px"
+                    className="object-contain drop-shadow-[0_12px_24px_rgba(225,29,72,0.22)] select-none pointer-events-none"
+                    priority
+                  />
+                </div>
+              </div>
+
+              {/* Content */}
+              <div className="space-y-2 text-left">
+                <h3 className="font-display text-xl font-black text-foreground group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors">
+                  Compréhension Écrite
+                </h3>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  Double écran scindé officiel FEI, zoom typographique, touches rapides A-D et drapeaux de révision.
+                </p>
+              </div>
+
+              {/* Feature pills */}
+              <div className="flex flex-wrap gap-1.5 pt-1 text-[11px]">
+                <span className="rounded-md bg-muted px-2 py-0.5 text-muted-foreground font-medium">
+                  Grille 1-39 CBT
+                </span>
+                <span className="rounded-md bg-muted px-2 py-0.5 text-muted-foreground font-medium">
+                  Zéro Scroll
+                </span>
+              </div>
             </div>
-            <h3 className="font-display text-lg font-bold">Compréhension Écrite</h3>
-            <p className="text-xs text-muted-foreground leading-relaxed">
-              60 minutes, 39 questions à choix multiple. Simulation exacte de l&apos;interface informatique FEI avec grille 1-39 et drapeaux de révision.
-            </p>
-            <Button asChild variant="outline" size="sm" className="w-full text-xs font-semibold">
-              <Link href="/examens/demo-101/ce">Tester le simulateur CE</Link>
-            </Button>
+
+            {/* CTA Button */}
+            <div className="relative z-10 pt-5">
+              <Button asChild variant="outline" size="sm" className="w-full text-xs font-bold rounded-xl border-border/80 group-hover:border-rose-500/50 group-hover:bg-rose-50 dark:group-hover:bg-rose-950/30 group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-all justify-between">
+                <Link href="/examens/demo-101/ce">
+                  <span>Tester le simulateur CE</span>
+                  <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+                </Link>
+              </Button>
+            </div>
           </div>
 
-          <div className="group rounded-2xl border bg-card p-6 space-y-4 shadow-sm hover:border-cyan-500/50 transition-all hover:-translate-y-1 hover:shadow-lg">
-            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-cyan-500/10 p-1 transition-transform group-hover:scale-105">
-              <Image
-                src="/brand/icons-3d/comprehension-orale-headphones.png"
-                alt="Compréhension Orale 3D"
-                width={56}
-                height={56}
-                className="h-14 w-14 object-contain drop-shadow-md"
-              />
+          {/* 2. Compréhension Orale (CO) */}
+          <div className="group relative rounded-3xl border border-border/80 bg-gradient-to-b from-card via-card to-cyan-500/[0.03] p-6 shadow-sm hover:shadow-2xl hover:border-cyan-500/40 transition-all duration-300 hover:-translate-y-1.5 flex flex-col justify-between overflow-hidden">
+            {/* Ambient glow pedestal behind 3D icon */}
+            <div className="pointer-events-none absolute -top-10 left-1/2 -translate-x-1/2 w-44 h-44 bg-cyan-500/15 blur-3xl rounded-full group-hover:bg-cyan-500/25 transition-all duration-500" />
+            
+            <div className="relative z-10 space-y-4">
+              {/* Badge format & duration */}
+              <div className="flex items-center justify-between">
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-cyan-500/10 px-2.5 py-1 text-[11px] font-bold text-cyan-600 dark:text-cyan-400 border border-cyan-500/20">
+                  <Clock className="h-3 w-3" /> 40 min • 39 Audio
+                </span>
+                <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
+                  NCLC 7+
+                </span>
+              </div>
+
+              {/* 3D Icon Hero Stage */}
+              <div className="relative flex items-center justify-center py-2">
+                <div className="relative h-32 w-32 sm:h-36 sm:w-36 transition-transform duration-500 ease-out group-hover:scale-110 group-hover:-translate-y-2">
+                  <Image
+                    src="/brand/icons-3d/comprehension-orale-headphones.png"
+                    alt="Compréhension Orale 3D"
+                    fill
+                    sizes="144px"
+                    className="object-contain drop-shadow-[0_12px_24px_rgba(6,182,212,0.22)] select-none pointer-events-none"
+                    priority
+                  />
+                </div>
+              </div>
+
+              {/* Content */}
+              <div className="space-y-2 text-left">
+                <h3 className="font-display text-xl font-black text-foreground group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors">
+                  Compréhension Orale
+                </h3>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  Lecteur officiel FEI à écoute unique stricte, accents canadiens authentiques et timer verrouillé.
+                </p>
+              </div>
+
+              {/* Feature pills */}
+              <div className="flex flex-wrap gap-1.5 pt-1 text-[11px]">
+                <span className="rounded-md bg-muted px-2 py-0.5 text-muted-foreground font-medium">
+                  Écoute Unique
+                </span>
+                <span className="rounded-md bg-muted px-2 py-0.5 text-muted-foreground font-medium">
+                  Accents Québécois
+                </span>
+              </div>
             </div>
-            <h3 className="font-display text-lg font-bold">Compréhension Orale</h3>
-            <p className="text-xs text-muted-foreground leading-relaxed">
-              40 minutes, 39 documents sonores. Lecteur officiel avec lecture unique obligatoire sans possibilité de rembobinage.
-            </p>
-            <Button asChild variant="outline" size="sm" className="w-full text-xs font-semibold">
-              <Link href="/examens/demo-101-co/co">Tester le simulateur CO</Link>
-            </Button>
+
+            {/* CTA Button */}
+            <div className="relative z-10 pt-5">
+              <Button asChild variant="outline" size="sm" className="w-full text-xs font-bold rounded-xl border-border/80 group-hover:border-cyan-500/50 group-hover:bg-cyan-50 dark:group-hover:bg-cyan-950/30 group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-all justify-between">
+                <Link href="/examens/demo-101-co/co">
+                  <span>Tester le simulateur CO</span>
+                  <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+                </Link>
+              </Button>
+            </div>
           </div>
 
-          <div className="group rounded-2xl border bg-card p-6 space-y-4 shadow-sm hover:border-brand-crimson/50 transition-all hover:-translate-y-1 hover:shadow-lg">
-            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-[#E51A31]/10 p-1 transition-transform group-hover:scale-105">
-              <Image
-                src="/brand/icons-3d/expression-ecrite-pen.png"
-                alt="Expression Écrite 3D"
-                width={56}
-                height={56}
-                className="h-14 w-14 object-contain drop-shadow-md"
-              />
+          {/* 3. Expression Écrite (EE) */}
+          <div className="group relative rounded-3xl border border-border/80 bg-gradient-to-b from-card via-card to-amber-500/[0.03] p-6 shadow-sm hover:shadow-2xl hover:border-amber-500/40 transition-all duration-300 hover:-translate-y-1.5 flex flex-col justify-between overflow-hidden">
+            {/* Ambient glow pedestal behind 3D icon */}
+            <div className="pointer-events-none absolute -top-10 left-1/2 -translate-x-1/2 w-44 h-44 bg-amber-500/15 blur-3xl rounded-full group-hover:bg-amber-500/25 transition-all duration-500" />
+            
+            <div className="relative z-10 space-y-4">
+              {/* Badge format & duration */}
+              <div className="flex items-center justify-between">
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-500/10 px-2.5 py-1 text-[11px] font-bold text-amber-600 dark:text-amber-400 border border-amber-500/20">
+                  <Clock className="h-3 w-3" /> 60 min • 3 Tâches
+                </span>
+                <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
+                  NCLC 7+
+                </span>
+              </div>
+
+              {/* 3D Icon Hero Stage */}
+              <div className="relative flex items-center justify-center py-2">
+                <div className="relative h-32 w-32 sm:h-36 sm:w-36 transition-transform duration-500 ease-out group-hover:scale-110 group-hover:-translate-y-2">
+                  <Image
+                    src="/brand/icons-3d/expression-ecrite-pen.png"
+                    alt="Expression Écrite 3D"
+                    fill
+                    sizes="144px"
+                    className="object-contain drop-shadow-[0_12px_24px_rgba(245,158,11,0.22)] select-none pointer-events-none"
+                    priority
+                  />
+                </div>
+              </div>
+
+              {/* Content */}
+              <div className="space-y-2 text-left">
+                <h3 className="font-display text-xl font-black text-foreground group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
+                  Expression Écrite
+                </h3>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  Compteur de mots en temps réel, désactivation d&apos;autocorrecteur et réécriture C1/C2 en 1 clic.
+                </p>
+              </div>
+
+              {/* Feature pills */}
+              <div className="flex flex-wrap gap-1.5 pt-1 text-[11px]">
+                <span className="rounded-md bg-muted px-2 py-0.5 text-muted-foreground font-medium">
+                  Magic Rewrite
+                </span>
+                <span className="rounded-md bg-muted px-2 py-0.5 text-muted-foreground font-medium">
+                  Critères FEI
+                </span>
+              </div>
             </div>
-            <h3 className="font-display text-lg font-bold">Expression Écrite</h3>
-            <p className="text-xs text-muted-foreground leading-relaxed">
-              60 minutes, 3 tâches FEI. Compteur de mots temps réel, désactivation d&apos;autocorrecteur et Magic Rewrite C1/C2 en un clic.
-            </p>
-            <Button asChild variant="outline" size="sm" className="w-full text-xs font-semibold">
-              <Link href="/examens/demo-101-ee/intro">Accéder à l&apos;atelier écrit</Link>
-            </Button>
+
+            {/* CTA Button */}
+            <div className="relative z-10 pt-5">
+              <Button asChild variant="outline" size="sm" className="w-full text-xs font-bold rounded-xl border-border/80 group-hover:border-amber-500/50 group-hover:bg-amber-50 dark:group-hover:bg-amber-950/30 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-all justify-between">
+                <Link href="/examens/demo-101-ee/intro">
+                  <span>Accéder à l&apos;atelier écrit</span>
+                  <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+                </Link>
+              </Button>
+            </div>
           </div>
 
-          <div className="group rounded-2xl border bg-card p-6 space-y-4 shadow-sm hover:border-amber-500/50 transition-all hover:-translate-y-1 hover:shadow-lg">
-            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-amber-500/10 p-1 transition-transform group-hover:scale-105">
-              <Image
-                src="/brand/icons-3d/expression-orale-microphone.png"
-                alt="Expression Orale 3D"
-                width={56}
-                height={56}
-                className="h-14 w-14 object-contain drop-shadow-md"
-              />
+          {/* 4. Expression Orale (EO) */}
+          <div className="group relative rounded-3xl border border-border/80 bg-gradient-to-b from-card via-card to-violet-500/[0.03] p-6 shadow-sm hover:shadow-2xl hover:border-violet-500/40 transition-all duration-300 hover:-translate-y-1.5 flex flex-col justify-between overflow-hidden">
+            {/* Ambient glow pedestal behind 3D icon */}
+            <div className="pointer-events-none absolute -top-10 left-1/2 -translate-x-1/2 w-44 h-44 bg-violet-500/15 blur-3xl rounded-full group-hover:bg-violet-500/25 transition-all duration-500" />
+            
+            <div className="relative z-10 space-y-4">
+              {/* Badge format & duration */}
+              <div className="flex items-center justify-between">
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-violet-500/10 px-2.5 py-1 text-[11px] font-bold text-violet-600 dark:text-violet-400 border border-violet-500/20">
+                  <Clock className="h-3 w-3" /> 12 min • 3 Tâches
+                </span>
+                <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
+                  NCLC 7+
+                </span>
+              </div>
+
+              {/* 3D Icon Hero Stage */}
+              <div className="relative flex items-center justify-center py-2">
+                <div className="relative h-32 w-32 sm:h-36 sm:w-36 transition-transform duration-500 ease-out group-hover:scale-110 group-hover:-translate-y-2">
+                  <Image
+                    src="/brand/icons-3d/expression-orale-microphone.png"
+                    alt="Expression Orale 3D"
+                    fill
+                    sizes="144px"
+                    className="object-contain drop-shadow-[0_12px_24px_rgba(139,92,246,0.22)] select-none pointer-events-none"
+                    priority
+                  />
+                </div>
+              </div>
+
+              {/* Content */}
+              <div className="space-y-2 text-left">
+                <h3 className="font-display text-xl font-black text-foreground group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors">
+                  Expression Orale
+                </h3>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  Jeu de rôle interactif en visio avec notre Voice Agent M. Laurent. Débrief de prononciation & aisance.
+                </p>
+              </div>
+
+              {/* Feature pills */}
+              <div className="flex flex-wrap gap-1.5 pt-1 text-[11px]">
+                <span className="rounded-md bg-muted px-2 py-0.5 text-muted-foreground font-medium">
+                  Voice Agent IA
+                </span>
+                <span className="rounded-md bg-muted px-2 py-0.5 text-muted-foreground font-medium">
+                  Débrief Vocal
+                </span>
+              </div>
             </div>
-            <h3 className="font-display text-lg font-bold">Expression Orale</h3>
-            <p className="text-xs text-muted-foreground leading-relaxed">
-              12 minutes, 3 tâches dont le jeu de rôle interactif en direct avec notre Voice Agent. Débriefing de fluidité et de prononciation.
-            </p>
-            <Button asChild variant="outline" size="sm" className="w-full text-xs font-semibold">
-              <Link href="/examens/demo-101-eo/intro">Entrer en salle d&apos;oral</Link>
-            </Button>
+
+            {/* CTA Button */}
+            <div className="relative z-10 pt-5">
+              <Button asChild variant="outline" size="sm" className="w-full text-xs font-bold rounded-xl border-border/80 group-hover:border-violet-500/50 group-hover:bg-violet-50 dark:group-hover:bg-violet-950/30 group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-all justify-between">
+                <Link href="/examens/demo-101-eo/intro">
+                  <span>Entrer en salle d&apos;oral</span>
+                  <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+                </Link>
+              </Button>
+            </div>
           </div>
         </div>
       </section>
