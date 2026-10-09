@@ -382,23 +382,23 @@ export default async function HomePage() {
       <FaqSection initialFaqs={faqs} />
 
       {/* 🎯 CTA FINAL HAUTE PERFORMANCE & CONVERSION */}
-      <section className="relative mx-auto max-w-6xl rounded-3xl border border-slate-800 bg-[#0B132B] p-6 sm:p-12 lg:p-16 text-white text-center space-y-6 shadow-2xl overflow-hidden">
+      <section className="relative mx-auto max-w-6xl rounded-3xl border border-red-200/70 dark:border-slate-800 bg-gradient-to-br from-rose-50/80 via-white to-slate-50/90 dark:bg-[#0B132B] dark:from-transparent dark:via-transparent dark:to-transparent p-6 sm:p-12 lg:p-16 text-foreground dark:text-white text-center space-y-6 shadow-xl shadow-red-500/5 dark:shadow-2xl overflow-hidden transition-colors">
         {/* Subtle radial ambient gradients */}
-        <div className="pointer-events-none absolute -top-24 left-1/2 -translate-x-1/2 w-[500px] h-[300px] bg-brand-crimson/20 blur-[100px] rounded-full" />
-        <div className="pointer-events-none absolute -bottom-24 right-10 w-[400px] h-[250px] bg-cyan-500/15 blur-[90px] rounded-full" />
-        <div className="pointer-events-none absolute inset-0 [background-image:radial-gradient(rgba(255,255,255,0.06)_1px,transparent_1px)] [background-size:24px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,black,transparent_80%)]" />
+        <div className="pointer-events-none absolute -top-24 left-1/2 -translate-x-1/2 w-[500px] h-[300px] bg-brand-crimson/15 dark:bg-brand-crimson/20 blur-[100px] rounded-full" />
+        <div className="pointer-events-none absolute -bottom-24 right-10 w-[400px] h-[250px] bg-cyan-500/10 dark:bg-cyan-500/15 blur-[90px] rounded-full" />
+        <div className="pointer-events-none absolute inset-0 [background-image:radial-gradient(rgba(0,0,0,0.04)_1px,transparent_1px)] dark:[background-image:radial-gradient(rgba(255,255,255,0.06)_1px,transparent_1px)] [background-size:24px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,black,transparent_80%)]" />
 
         <div className="relative z-10 space-y-4 max-w-3xl mx-auto">
-          <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3.5 py-1 text-xs font-semibold text-slate-200 backdrop-blur-xs">
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+          <div className="inline-flex items-center gap-2 rounded-full border border-red-200/80 dark:border-white/15 bg-white dark:bg-white/5 px-3.5 py-1 text-xs font-semibold text-slate-700 dark:text-slate-200 shadow-xs dark:shadow-none backdrop-blur-xs">
+            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400 animate-pulse" />
             <span>Objectif Immigration Canada • Entrée Express 2026</span>
           </div>
 
-          <h2 className="font-display text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-tight text-balance">
-            Sécurisez vos <span className="bg-gradient-to-r from-brand-crimson to-rose-400 bg-clip-text text-transparent">+50 Points CRS</span> avec la référence CBT
+          <h2 className="font-display text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-tight text-slate-900 dark:text-white text-balance">
+            Sécurisez vos <span className="bg-gradient-to-r from-brand-crimson to-rose-600 bg-clip-text text-transparent">+50 Points CRS</span> avec la référence CBT
           </h2>
 
-          <p className="text-slate-300 text-xs sm:text-base leading-relaxed max-w-xl mx-auto text-balance">
+          <p className="text-slate-600 dark:text-slate-300 text-xs sm:text-base leading-relaxed max-w-xl mx-auto text-balance">
             Rejoignez les candidats qui s&apos;entraînent sur la réplique exacte du logiciel officiel et réussissent leur examen dès leur première tentative.
           </p>
         </div>
@@ -408,7 +408,7 @@ export default async function HomePage() {
           <Button
             asChild
             size="lg"
-            className="w-full sm:w-auto bg-brand-crimson hover:bg-brand-crimson/90 text-white font-bold text-sm sm:text-base px-6 h-12 rounded-full shadow-lg shadow-brand-crimson/30 gap-2"
+            className="w-full sm:w-auto bg-brand-crimson hover:bg-brand-crimson/90 text-white font-bold text-sm sm:text-base px-6 h-12 rounded-full shadow-lg shadow-brand-crimson/25 gap-2"
           >
             <Link href="/examens?test=tcf">
               <span>Commencer mon Essai Gratuit</span>
@@ -420,7 +420,7 @@ export default async function HomePage() {
             asChild
             variant="outline"
             size="lg"
-            className="w-full sm:w-auto border-white/20 bg-white/5 hover:bg-white/10 text-slate-100 font-semibold text-sm px-6 h-12 rounded-full backdrop-blur-xs"
+            className="w-full sm:w-auto border-slate-300 dark:border-white/20 bg-white dark:bg-white/5 hover:bg-slate-100 dark:hover:bg-white/10 text-slate-800 dark:text-slate-100 font-semibold text-sm px-6 h-12 rounded-full shadow-xs dark:shadow-none backdrop-blur-xs"
           >
             <Link href="/nclc-calculator">
               <span>Calculer mes Points CRS</span>
@@ -429,17 +429,17 @@ export default async function HomePage() {
         </div>
 
         {/* Trust Badges */}
-        <div className="relative z-10 pt-4 border-t border-white/10 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-[11px] sm:text-xs text-slate-400">
+        <div className="relative z-10 pt-4 border-t border-slate-200/80 dark:border-white/10 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-[11px] sm:text-xs text-slate-500 dark:text-slate-400">
           <span className="flex items-center gap-1.5">
-            <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />
+            <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 dark:text-emerald-400" />
             Conforme France Éducation International
           </span>
           <span className="flex items-center gap-1.5">
-            <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />
+            <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 dark:text-emerald-400" />
             Accès immédiat sans carte bancaire
           </span>
           <span className="flex items-center gap-1.5">
-            <CheckCircle2 className="h-3.5 w-3.5 text-cyan-400" />
+            <CheckCircle2 className="h-3.5 w-3.5 text-cyan-600 dark:text-cyan-400" />
             Noté 4.9/5 par les candidats
           </span>
         </div>
