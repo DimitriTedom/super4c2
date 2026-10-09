@@ -1,18 +1,21 @@
 # Active Context: Super4C2
 
 ## 1. Responsiveness Intégrale, Globe Hero & FAQ Officielle, Coach Aura 21st.dev, Média Enrichis & Vitrine CBT
-- **Vitrine Produit & Mockup Cinématique du Simulateur CBT (`components/product-showcase-section.tsx`) :**
-  - Ajout d'une section vitrine haut de gamme sur la page d'accueil (`app/page.tsx`) entre les statistiques et le comparatif, mettant en valeur le mockup photoréaliste de la plateforme CBT Super4C2 (`public/brand/cbt-platform-preview.jpg`).
-  - Système d'onglets interactifs : Double Écran CBT, Examinateur Vocal Interactif, Correction Écrite Instantanée avec points clés certifiés et bouton d'essai direct. Élimine tout ressenti générique / "AI-like" et renforce la conversion.
-- **Studio Médias & YouTube pour Administrateurs de Blog (`components/admin/blog-form.tsx`) :**
-  - Boîte à outils médias intégrée : presets de photos de couverture professionnelles Unsplash (Canada/Immigration, Écran CBT, Studio Oral, Rédaction).
-  - Détecteur d'URL YouTube avec extraction instantanée de la miniature HD en un clic (couverture) et copie directe du code Markdown pour vidéo responsive 16:9.
-  - Double mode de prévisualisation dans la colonne latérale : bascule instantanée entre « Aperçu Carte » (listing `/blog`) et « Article & Médias » (layout de lecture avec ratio 16:9).
-- **Audit & Polissage Responsive Mobile Global :**
-  - `/tarifs` : ajustement du padding (`p-5 sm:p-8`), troncature et formatage réactif des badges de recommandation pour éviter tout débordement sur petits écrans (320px–390px).
-  - `/nclc-calculator` : abréviation réactive des graduations du slider NCLC 4 à 10 (`4`, `5`, `6`, `7★`, etc. sur mobile, étiquettes complètes sur desktop) éliminant tout chevauchement de texte.
-  - `components/site-header.tsx` : suppression du bouton redondant « Épreuves » sur mobile (<640px) déjà présent dans `MobileNavBar`, libérant ~60px pour un espacement respirant.
-  - `components/ai/ai-chat-widget.tsx` : relocalisation au-dessus de la barre de navigation mobile (`bottom-20` sur mobile, `lg:bottom-6` sur desktop) avec bouton compact circulaire sans collision, et séparation stricte des suggestions candidates vs admin.
+- **Simulateur CBT Interactif 21st.dev en Direct (`components/product-showcase-section.tsx`) :**
+  - Remplacement de l'image statique par une véritable fenêtre de simulation CBT interactive dans un cadre bureau macOS/CBT.
+  - 3 modes interactifs en temps réel :
+    1. *Double Écran CBT (CE)* : Document source à gauche, question QCM cliquable (A, B, C, D) avec validation immédiate et explications pédagogiques, grille de navigation 1-39 interactive et compte à rebours dynamique.
+    2. *Examinateur IA Live (EO)* : Pod visio 16:9 de M. Laurent, badge `🔴 EN DIRECT`, ondes sonores réactives et boutons de prise de parole interactive.
+    3. *Magic Rewrite C1/C2 (EE)* : Tâche 3 FEI avec bascule dynamique en un clic entre la copie brute B1 et la version optimisée C1/C2 (Magic Rewrite), barème FEI 5/5 et verdict instantané.
+- **Témoignages Défilants en Marquee Horizontal Automatique (`components/testimonials-section.tsx` & `components/ui/marquee.tsx`) :**
+  - Intégration du composant `<Marquee />` Magic UI avec deux rangées horizontales infinies défilant en sens opposé, pause automatique au survol (`pauseOnHover`), et masques de dégradé latéraux fondus.
+  - Cartes de candidats authentiques avec drapeaux de pays (Algérie, Maroc, Cameroun, Sénégal, Tunisie, France/Québec, Côte d'Ivoire, Liban), scores NCLC 8 à 10 certifiés, +50 points CRS et retours d'expérience.
+- **Comparatif Haut de Gamme Sans Mention d'Objectif Canada (`app/page.tsx`) :**
+  - Suppression de toute mention directe de concurrents nominatifs. Comparaison objective et élégante : « Entraînements Classiques & PDF (Méthodes Passives) » vs « Super4C2 • Plateforme CBT & IA (Standard Officiel) ».
+  - Cartes premium au design soigné (bordures fines, badges de statut, iconographie soignée, typographie Bricolage Grotesque).
+- **Refonte du CTA Final Haut de Gamme & Zéro Débordement Mobile (`app/page.tsx`) :**
+  - Élimination du bandeau rouge plat générique et du bouton qui débordait sur smartphone (iPhone 16 Pro Max).
+  - Nouveau conteneur Imperial Navy (`#0B132B`) avec trame subtile, halos d'ambiance crimson & cyan, boutons d'action 100% responsives (`w-full sm:w-auto`) et réassurance officielle (Conforme FEI, Sans carte bancaire, Noté 4.9/5).
 - **Icône & Avatar Animé Coach Aura C2™ (Inspiré 21st.dev) :**
   - Élimination de tout risque de copyright : création du composant `<AnimatedAiAvatar />` ([components/ui/animated-ai-avatar.tsx](file:///d:/SnowDev/Documents/super4c2/components/ui/animated-ai-avatar.tsx)) avec corps orbe crimson/navy, pupilles cyan numériques néon clignotantes de manière organique (intervalles 3-5s), anneau d'aura pulsant en élocution (`isSpeaking`) et rotation douce en réflexion (`isThinking`).
   - Intégré avec élégance dans le déclencheur flottant, l'en-tête du chat et l'indicateur de réponse IA de [components/ai/ai-chat-widget.tsx](file:///d:/SnowDev/Documents/super4c2/components/ai/ai-chat-widget.tsx).
