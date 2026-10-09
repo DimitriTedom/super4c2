@@ -32,6 +32,7 @@ import {
 } from "@/lib/exam/written-types";
 import { evaluateWrittenExam } from "@/lib/exam/written-evaluator";
 import { formatClock } from "@/components/exam/exam-header";
+import { triggerGlobalLoading } from "@/components/ui/top-body-loader";
 import { cn } from "@/lib/utils";
 
 const SPECIAL_CHARS = [
@@ -126,6 +127,7 @@ export function WrittenExamEditor({ series }: WrittenExamEditorProps) {
     finishedRef.current = true;
     setIsFinished(true);
     setIsEvaluating(true);
+    triggerGlobalLoading(true);
 
     try {
       const response = await fetch("/api/ai/evaluate-written", {
@@ -139,6 +141,7 @@ export function WrittenExamEditor({ series }: WrittenExamEditorProps) {
         if (data.ok && data.result) {
           setResult(data.result);
           setIsEvaluating(false);
+          triggerGlobalLoading(false);
           return;
         }
       }
@@ -149,6 +152,7 @@ export function WrittenExamEditor({ series }: WrittenExamEditorProps) {
     const evalResult = evaluateWrittenExam(series, texts);
     setResult(evalResult);
     setIsEvaluating(false);
+    triggerGlobalLoading(false);
   }, [series, texts]);
 
   // Décompte temps officiel

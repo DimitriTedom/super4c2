@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { computeResult } from "@/lib/exam/scoring";
+import { triggerGlobalLoading } from "@/components/ui/top-body-loader";
 import type {
   AnswersMap,
   ExamResult,
@@ -121,6 +122,7 @@ export function useExamSession(series: ExamSeriesData) {
   const finish = useCallback(() => {
     finishedRef.current = true;
     setFinished(true);
+    triggerGlobalLoading(true);
     const res = computeResult(series.questions, answers, series.discipline);
     void fetch("/api/exam/attempt", {
       method: "POST",
@@ -135,7 +137,11 @@ export function useExamSession(series: ExamSeriesData) {
         answers,
         feedback: res,
       }),
-    }).catch(() => {});
+    })
+      .catch(() => {})
+      .finally(() => {
+        triggerGlobalLoading(false);
+      });
   }, [answers, series]);
 
   // Countdown from absolute deadline; auto-submit at 00:00 (unless paused in practice mode).

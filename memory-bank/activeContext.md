@@ -1,5 +1,17 @@
 # Active Context: Super4C2
 
+## 0. Chantier 7 — États de Chargement, Curseur Feutre Surligneur & Benchmark Concurrentiel (Objectif Canada)
+- **États de Chargement Globaux & UI Feedback :**
+  - Composant `Button` ([components/ui/button.tsx](file:///d:/SnowDev/Documents/super4c2/components/ui/button.tsx)) étendu avec `loading?: boolean` et `loadingText?: string` pour afficher un spinner `<Loader2 className="animate-spin" />`, désactiver les clics indésirables et rassurer l'utilisateur.
+  - Fonction exportée `triggerGlobalLoading(loading: boolean)` ([components/ui/top-body-loader.tsx](file:///d:/SnowDev/Documents/super4c2/components/ui/top-body-loader.tsx)) connectée aux actions clés : soumission d'examen écrit, validation de fin d'examen CBT, sauvegarde de profil candidat.
+- **Curseur Personnalisé Feutre Surligneur FEI :**
+  - Curseur SVG haute fidélité (`.cursor-highlighter` dans [styles/globals.css](file:///d:/SnowDev/Documents/super4c2/styles/globals.css)) représentant un feutre surligneur à pointe biseautée fluorescente jaune/ambre avec mire de ciblage rouge.
+  - Activé en Compréhension Écrite ([components/exam/ce-document-viewer.tsx](file:///d:/SnowDev/Documents/super4c2/components/exam/ce-document-viewer.tsx)) et dans le simulateur vitrine ([components/product-showcase-section.tsx](file:///d:/SnowDev/Documents/super4c2/components/product-showcase-section.tsx)).
+- **Investigation Concurrentielle Approfondie (Objectif Canada) :**
+  - **Tarification Rétro-ingéniée (`/fr/checkout`) :** Formule `j.U(S)` identifiée (1-7j: 1 000 FCFA/j, 15j: 12 500 FCFA, 30j: 17 500 FCFA, 50+j: 500 FCFA/j). Stratégie Super4C2 formalisée dans [docs/specs/spec-competitive-pricing-ielts-roadmap.md](file:///d:/SnowDev/Documents/super4c2/docs/specs/spec-competitive-pricing-ielts-roadmap.md).
+  - **Offre IELTS Rétro-ingéniée (`/fr/examen/ielts`) :** Découpage Cambridge (General 11-17 vs Academic 11-19, Tests 1-4) et plan de mise à niveau bi-filière pour Super4C2.
+  - **Guide Tutoriel Newcomers :** Spécification de la modale en 5 étapes et redirection vers la Communauté VIP (`/communaute`).
+
 ## 1. Intégration des 12 Icônes 3D Transparentes & Audit de l'Expérience Frontend Candidat
 - **Câblage Complet des 12 Icônes 3D (`public/brand/icons-3d/`) :**
   - Récupération et découpe des 12 icônes générées sous Google Flow et finalisées dans Canva :

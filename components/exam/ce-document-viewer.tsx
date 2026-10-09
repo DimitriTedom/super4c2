@@ -210,7 +210,12 @@ export function CeDocumentViewer({
       )}
 
       {/* Authentic High-Contrast Document Card */}
-      <div className="flex-1 rounded-3xl border-2 border-slate-200/90 dark:border-border bg-white dark:bg-card p-6 sm:p-8 shadow-md flex flex-col">
+      <div
+        className={cn(
+          "flex-1 rounded-3xl border-2 border-slate-200/90 dark:border-border bg-white dark:bg-card p-6 sm:p-8 shadow-md flex flex-col transition-all",
+          isHighlighterActive && "ring-2 ring-amber-400/40 border-amber-400/60 dark:border-amber-500/50 cursor-highlighter"
+        )}
+      >
         <div className="flex items-center justify-between border-b pb-3 mb-5">
           <span className="inline-flex items-center gap-1.5 text-[11px] font-extrabold uppercase tracking-wider text-blue-700 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/50 px-3 py-1 rounded-full border border-blue-200 dark:border-blue-900/50">
             Document Support Officiel · Question {questionNumber}
@@ -224,7 +229,7 @@ export function CeDocumentViewer({
           ref={articleRef}
           className={cn(
             "whitespace-pre-line font-sans text-slate-900 dark:text-foreground font-medium transition-all tracking-normal flex-1",
-            isHighlighterActive ? "cursor-text select-text" : "select-text",
+            isHighlighterActive ? "cursor-highlighter select-text" : "select-text",
             FONT_SIZE_CLASSES[fontSize],
           )}
         >

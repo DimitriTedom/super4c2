@@ -373,7 +373,9 @@ export function ProductShowcaseSection() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch">
               {/* Document source à gauche */}
               <div
-                className={`rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/90 p-4 sm:p-5 space-y-3 overflow-y-auto max-h-[300px] leading-relaxed text-slate-700 dark:text-slate-300 shadow-xs ${
+                className={`rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/90 p-4 sm:p-5 space-y-3 overflow-y-auto max-h-[300px] leading-relaxed text-slate-700 dark:text-slate-300 shadow-xs transition-all ${
+                  isHighlighted ? "cursor-highlighter ring-2 ring-amber-400/40 border-amber-400/50" : ""
+                } ${
                   ceFontSize === "sm"
                     ? "text-xs"
                     : ceFontSize === "base"

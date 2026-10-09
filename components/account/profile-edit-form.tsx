@@ -15,6 +15,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { triggerGlobalLoading } from "@/components/ui/top-body-loader";
 import { cn } from "@/lib/utils";
 
 interface ProfileData {
@@ -57,6 +58,7 @@ export function ProfileEditForm({ initialProfile, userEmail }: ProfileEditFormPr
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    triggerGlobalLoading(true);
     setSuccessMsg(null);
     setErrorMsg(null);
 
@@ -95,6 +97,7 @@ export function ProfileEditForm({ initialProfile, userEmail }: ProfileEditFormPr
       setErrorMsg(error.message || "Une erreur est survenue lors de l'enregistrement.");
     } finally {
       setIsLoading(false);
+      triggerGlobalLoading(false);
     }
   };
 
@@ -246,18 +249,14 @@ export function ProfileEditForm({ initialProfile, userEmail }: ProfileEditFormPr
           Les modifications sont enregistrées sur votre espace personnel.
         </span>
 
-        <Button type="submit" disabled={isLoading} className="gap-2 font-semibold shadow-xs">
-          {isLoading ? (
-            <>
-              <RefreshCw className="h-4 w-4 animate-spin" />
-              <span>Enregistrement...</span>
-            </>
-          ) : (
-            <>
-              <Save className="h-4 w-4" />
-              <span>Enregistrer mon profil</span>
-            </>
-          )}
+        <Button
+          type="submit"
+          loading={isLoading}
+          loadingText="Enregistrement en cours..."
+          className="gap-2 font-semibold shadow-xs"
+        >
+          <Save className="h-4 w-4" />
+          <span>Enregistrer mon profil</span>
         </Button>
       </div>
     </form>

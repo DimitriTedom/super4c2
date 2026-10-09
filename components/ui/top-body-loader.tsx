@@ -99,3 +99,17 @@ export function TopBodyLoader(props: TopBodyLoaderProps) {
   );
 }
 
+/**
+ * Trigger the global top laser loader bar programmatically
+ * from any action, form submit, API call or button click.
+ */
+export function triggerGlobalLoading(loading: boolean) {
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(
+      new CustomEvent("super4c2:loading", {
+        detail: { loading },
+      })
+    );
+  }
+}
+
