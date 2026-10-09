@@ -54,11 +54,7 @@ export async function SiteHeader() {
           <SiteNav />
 
           {/* Actions & CTA */}
-          <div className="flex items-center gap-2 sm:gap-3">
-            <Button asChild variant="ghost" size="sm" className="lg:hidden rounded-full px-2.5 text-xs">
-              <Link href="/examens">Épreuves</Link>
-            </Button>
-
+          <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
             <LanguageSwitcher />
 
             <ThemeToggle />
@@ -84,10 +80,11 @@ export async function SiteHeader() {
                 <Button
                   asChild
                   size="sm"
-                  className="rounded-full bg-brand-crimson hover:bg-brand-crimson-dark text-white font-semibold shadow-sm transition-all hover:shadow-md gap-1 px-4"
+                  className="rounded-full bg-brand-crimson hover:bg-brand-crimson-dark text-white font-semibold shadow-sm transition-all hover:shadow-md gap-1 px-3 sm:px-4 text-xs sm:text-sm shrink-0"
                 >
                   <Link href="/test-gratuit">
-                    <span>Essai Gratuit</span>
+                    <span className="hidden sm:inline">Essai Gratuit</span>
+                    <span className="sm:hidden">Essai</span>
                     <ArrowRight className="h-3.5 w-3.5" />
                   </Link>
                 </Button>

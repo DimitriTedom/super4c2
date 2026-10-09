@@ -32,12 +32,46 @@ interface ChatMessage {
   liked?: boolean | null;
 }
 
-const DEFAULT_SUGGESTIONS = [
-  "Comment décrocher le NCLC 7 en Expression Écrite ?",
-  "Donne-moi 5 connecteurs logiques formels de niveau C1/C2.",
-  "Quels sont les pièges classiques en Compréhension Orale ?",
-  "Aide-moi à concevoir un sujet d'examen pour la Tâche 2 (Admin).",
-];
+const getContextSuggestions = (pathname: string): string[] => {
+  if (pathname.startsWith("/admin")) {
+    return [
+      "Aide-moi à concevoir un sujet officiel pour la Tâche 2 d'Expression Écrite.",
+      "Génère 3 questions authentiques de niveau C1 pour la Compréhension Écrite.",
+      "Synthétise les critères de notation du barème officiel FEI 2026.",
+      "Rédige un distracteur piège crédible basé sur un article de presse.",
+    ];
+  }
+  if (pathname.startsWith("/examens")) {
+    return [
+      "Comment gérer mes 60 minutes pour la Compréhension Écrite ?",
+      "Donne-moi 5 connecteurs logiques formels de niveau C1/C2.",
+      "Quels sont les pièges classiques en Compréhension Orale ?",
+      "Comment structurer mon argumentation pour la Tâche 3 de l'EE ?",
+    ];
+  }
+  if (pathname.startsWith("/nclc-calculator")) {
+    return [
+      "Combien de points CRS m'apporte le niveau NCLC 7 ?",
+      "Pourquoi avoir NCLC 6 donne 0 point bonus dans Entrée Express ?",
+      "Quelle est la différence entre les barèmes TCF et TEF Canada ?",
+      "Comment compenser un CLB 6 en anglais avec le français ?",
+    ];
+  }
+  if (pathname.startsWith("/tarifs")) {
+    return [
+      "Quelle formule me recommandez-vous si je passe le test dans 3 semaines ?",
+      "Comment fonctionne la garantie de réussite NCLC 7 ?",
+      "Les corrections de l'Expression Écrite sont-elles illimitées ?",
+      "Puis-je m'entraîner sur mobile aux conditions réelles de l'examen ?",
+    ];
+  }
+  return [
+    "Comment décrocher le NCLC 7 et valider les +50 points CRS ?",
+    "Donne-moi 5 connecteurs logiques formels de niveau C1/C2.",
+    "Quelles sont les épreuves éliminatoires au TCF Canada ?",
+    "Comment s'entraîner à l'Expression Orale avec l'IA ?",
+  ];
+};
 
 const INITIAL_GREETING: ChatMessage = {
   id: "greeting-aura-c2",
@@ -207,21 +241,21 @@ export function AiChatWidget() {
   };
 
   return (
-    <div className="fixed bottom-6 right-6 z-50">
+    <div className="fixed bottom-20 right-4 lg:bottom-6 lg:right-6 z-50">
       {/* Floating Trigger Button */}
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="group relative flex items-center gap-2.5 rounded-full bg-gradient-to-r from-red-600 via-rose-600 to-slate-900 px-3.5 py-2.5 text-white shadow-xl transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-red-500/25 active:scale-95 border border-white/10"
+          className="group relative flex items-center gap-2 rounded-full bg-gradient-to-r from-red-600 via-rose-600 to-slate-900 p-2 sm:px-3.5 sm:py-2.5 text-white shadow-xl transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-red-500/25 active:scale-95 border border-white/10"
           aria-label="Ouvrir le Coach Aura C2™"
         >
-          <span className="relative flex h-2.5 w-2.5">
+          <span className="relative flex h-2.5 w-2.5 ml-0.5 sm:ml-0">
             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
             <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-400" />
           </span>
           <AnimatedAiAvatar size="sm" />
-          <span className="text-sm font-bold tracking-wide">Coach Aura C2™</span>
-          <span className="rounded-full bg-white/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-white">
+          <span className="hidden sm:inline text-sm font-bold tracking-wide">Coach Aura C2™</span>
+          <span className="hidden sm:inline rounded-full bg-white/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-white">
             En ligne
           </span>
         </button>
@@ -234,7 +268,7 @@ export function AiChatWidget() {
             "flex flex-col overflow-hidden rounded-3xl border border-border/80 bg-background/95 backdrop-blur-xl shadow-2xl transition-all duration-300",
             isExpanded
               ? "fixed inset-4 sm:inset-10 z-50"
-              : "w-[92vw] sm:w-[450px] h-[620px] max-h-[85vh]"
+              : "fixed inset-x-3 bottom-20 top-20 sm:static sm:w-[450px] sm:h-[620px] sm:max-h-[85vh]"
           )}
         >
           {/* Header */}
@@ -466,7 +500,7 @@ export function AiChatWidget() {
                   Suggestions de questions :
                 </span>
                 <div className="flex flex-col gap-1.5">
-                  {DEFAULT_SUGGESTIONS.map((sug, idx) => (
+                  {getContextSuggestions(pathname).map((sug, idx) => (
                     <button
                       key={idx}
                       onClick={() => void handleSend(sug)}
