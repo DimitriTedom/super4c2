@@ -1,6 +1,6 @@
 "use client";
 
-import { Flag, Check } from "lucide-react";
+import { Flag, Check, X, Sparkles, HelpCircle, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { OPTION_KEYS, type ExamQuestion, type OptionKey } from "@/lib/exam/types";
 import { cn } from "@/lib/utils";
@@ -14,6 +14,10 @@ interface QuestionPanelProps {
   disabled?: boolean;
   onSelect: (o: OptionKey) => void;
   onToggleFlag: () => void;
+  /** Practice mode capabilities */
+  mode?: "exam" | "practice";
+  revealed?: boolean;
+  onReveal?: () => void;
 }
 
 function getQuestionLevelMeta(questionNumber: number, targetNclc?: number) {
@@ -65,7 +69,7 @@ function getQuestionLevelMeta(questionNumber: number, targetNclc?: number) {
   };
 }
 
-/** Question + A/B/C/D options, accessible as a radiogroup with keyboard indicators */
+/** Question + A/B/C/D options, accessible as a radiogroup with keyboard indicators and practice mode feedback */
 export function QuestionPanel({
   question,
   index,
@@ -75,8 +79,12 @@ export function QuestionPanel({
   disabled,
   onSelect,
   onToggleFlag,
+  mode = "exam",
+  revealed = false,
+  onReveal,
 }: QuestionPanelProps) {
   const levelMeta = getQuestionLevelMeta(question.questionNumber, question.nclcTargetLevel);
+  const isPractice = mode === "practice";
 
   return (
     <div className="mx-auto max-w-xl space-y-6">
@@ -95,6 +103,11 @@ export function QuestionPanel({
           >
             {levelMeta.cefr} · {levelMeta.nclc}
           </span>
+          {isPractice && (
+            <span className="rounded bg-amber-500/15 px-2 py-0.5 text-[10px] font-bold text-amber-700 dark:text-amber-400 border border-amber-500/30">
+              Didactique
+            </span>
+          )}
         </div>
 
         <Button
@@ -130,20 +143,39 @@ export function QuestionPanel({
       <div role="radiogroup" aria-label="Propositions de réponse" className="space-y-3">
         {OPTION_KEYS.map((key) => {
           const active = selected === key;
+          const isCorrect = key === question.correctOption;
+          const isSelectedWrong = active && !isCorrect && revealed;
+
+          // Dynamic styling based on Exam vs Practice Revealed state
+          let optionBorderBg = "border-border/80 bg-card hover:border-emerald-500/60 hover:bg-emerald-500/[0.03]";
+          let letterPill = "border-muted-foreground/30 bg-muted/40 text-muted-foreground";
+
+          if (isPractice && revealed) {
+            if (isCorrect) {
+              optionBorderBg = "border-emerald-500 bg-emerald-500/15 ring-2 ring-emerald-500/40 text-emerald-950 dark:text-emerald-100";
+              letterPill = "border-emerald-600 bg-emerald-600 text-white shadow-sm";
+            } else if (isSelectedWrong) {
+              optionBorderBg = "border-rose-500 bg-rose-500/15 ring-2 ring-rose-500/40 text-rose-950 dark:text-rose-100";
+              letterPill = "border-rose-600 bg-rose-600 text-white shadow-sm";
+            } else {
+              optionBorderBg = "border-border/40 bg-card/60 opacity-60";
+            }
+          } else if (active) {
+            optionBorderBg = "border-emerald-600 bg-emerald-500/10 shadow-sm ring-1 ring-emerald-500/40";
+            letterPill = "border-emerald-600 bg-emerald-600 text-white shadow-sm";
+          }
+
           return (
             <button
               key={key}
               type="button"
               role="radio"
               aria-checked={active}
-              disabled={disabled}
+              disabled={disabled || (isPractice && revealed)}
               onClick={() => onSelect(key)}
               className={cn(
                 "group relative flex w-full items-start gap-3.5 rounded-xl border p-4 text-left transition-all",
-                "hover:border-emerald-500/60 hover:bg-emerald-500/[0.03] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500",
-                active
-                  ? "border-emerald-600 bg-emerald-500/10 shadow-sm ring-1 ring-emerald-500/40"
-                  : "border-border/80 bg-card",
+                optionBorderBg,
                 disabled && "cursor-default opacity-80",
               )}
             >
@@ -151,9 +183,7 @@ export function QuestionPanel({
               <span
                 className={cn(
                   "flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border font-mono text-sm font-bold transition-colors",
-                  active
-                    ? "border-emerald-600 bg-emerald-600 text-white shadow-sm"
-                    : "border-muted-foreground/30 bg-muted/40 text-muted-foreground group-hover:border-emerald-500/50 group-hover:text-foreground",
+                  letterPill,
                 )}
               >
                 {key}
@@ -169,16 +199,68 @@ export function QuestionPanel({
                 {question.options[key]}
               </span>
 
-              {/* Active check indicator */}
-              {active && (
-                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-600 text-white">
-                  <Check className="h-3 w-3 stroke-[3]" />
-                </span>
+              {/* Status Indicator */}
+              {isPractice && revealed ? (
+                isCorrect ? (
+                  <span className="flex items-center gap-1 text-xs font-bold text-emerald-600 dark:text-emerald-400 shrink-0">
+                    <CheckCircle2 className="h-5 w-5 fill-emerald-500 text-white" />
+                    <span className="hidden sm:inline">Bonne réponse</span>
+                  </span>
+                ) : isSelectedWrong ? (
+                  <span className="flex items-center gap-1 text-xs font-bold text-rose-600 dark:text-rose-400 shrink-0">
+                    <X className="h-5 w-5 stroke-[3] text-rose-600" />
+                    <span className="hidden sm:inline">Votre choix</span>
+                  </span>
+                ) : null
+              ) : (
+                active && (
+                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-600 text-white">
+                    <Check className="h-3 w-3 stroke-[3]" />
+                  </span>
+                )
               )}
             </button>
           );
         })}
       </div>
+
+      {/* Practice Mode: Instant Check Button */}
+      {isPractice && selected && !revealed && (
+        <div className="pt-1">
+          <Button
+            onClick={onReveal}
+            className="w-full bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-white font-bold py-2.5 rounded-xl shadow-md gap-2"
+          >
+            <Sparkles className="h-4 w-4" />
+            Vérifier la réponse &amp; Décoder les pièges
+          </Button>
+        </div>
+      )}
+
+      {/* Practice Mode: Didactic Feedback Card */}
+      {isPractice && revealed && (
+        <div className="rounded-2xl border border-border/80 bg-muted/40 p-4 sm:p-5 space-y-3 animate-in fade-in duration-200">
+          <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-primary">
+            <HelpCircle className="h-4 w-4" />
+            <span>Explication Didactique Officielle</span>
+          </div>
+
+          <p className="text-sm text-foreground/90 leading-relaxed font-medium">
+            {question.explanation}
+          </p>
+
+          {question.trapAnalysis && (
+            <div className="pt-2 border-t border-border/50">
+              <span className="text-[11px] font-bold text-amber-600 dark:text-amber-400 block mb-1">
+                ⚠️ Analyse des pièges FEI :
+              </span>
+              <p className="text-xs text-muted-foreground leading-relaxed italic">
+                {question.trapAnalysis}
+              </p>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Keyboard reminder footer */}
       <div className="flex items-center justify-between text-[11px] text-muted-foreground/80 pt-1">

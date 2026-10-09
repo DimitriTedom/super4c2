@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { ChevronLeft, ChevronRight, FileText, ZoomIn, ZoomOut } from "lucide-react";
+import { useEffect } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { useExamSession } from "@/hooks/use-exam-session";
@@ -12,18 +12,9 @@ import { ExamSplitLayout } from "./exam-split-layout";
 import { AudioPlayerCBT } from "./audio-player-cbt";
 import { QuestionNavGrid } from "./question-nav-grid";
 import { QuestionPanel } from "./question-panel";
-import { cn } from "@/lib/utils";
+import { CeDocumentViewer } from "./ce-document-viewer";
 
 const DISCIPLINE_LABEL = { CE: "Compréhension écrite", CO: "Compréhension orale" } as const;
-
-type FontSizeLevel = "sm" | "base" | "lg" | "xl";
-
-const FONT_SIZE_CLASSES: Record<FontSizeLevel, string> = {
-  sm: "text-sm leading-relaxed",
-  base: "text-base leading-relaxed sm:text-lg sm:leading-loose",
-  lg: "text-lg leading-relaxed sm:text-xl sm:leading-loose",
-  xl: "text-xl leading-loose sm:text-2xl sm:leading-loose",
-};
 
 function getDocumentNature(questionNumber: number) {
   if (questionNumber <= 6) return "Annonce publique / Message du quotidien (A1)";
@@ -36,7 +27,6 @@ function getDocumentNature(questionNumber: number) {
 
 export function CbtExam({ series }: { series: ExamSeriesData }) {
   const s = useExamSession(series);
-  const [fontSize, setFontSize] = useState<FontSizeLevel>("base");
 
   // Keyboard shortcuts: A-D select, arrows navigate, F flags.
   useEffect(() => {
@@ -69,18 +59,6 @@ export function CbtExam({ series }: { series: ExamSeriesData }) {
     if (idx !== -1) s.goTo(idx);
   };
 
-  const increaseFontSize = () => {
-    if (fontSize === "sm") setFontSize("base");
-    else if (fontSize === "base") setFontSize("lg");
-    else if (fontSize === "lg") setFontSize("xl");
-  };
-
-  const decreaseFontSize = () => {
-    if (fontSize === "xl") setFontSize("lg");
-    else if (fontSize === "lg") setFontSize("base");
-    else if (fontSize === "base") setFontSize("sm");
-  };
-
   if (s.finished && s.result) {
     return (
       <div className="flex min-h-screen flex-col bg-background">
@@ -94,6 +72,7 @@ export function CbtExam({ series }: { series: ExamSeriesData }) {
           disabled={s.finished}
           onFinish={s.finish}
           onGoToFirstUnanswered={goToFirstUnanswered}
+          mode={s.mode}
         />
         <main className="flex-1 pb-16">
           <ExamResultSummary
@@ -119,6 +98,10 @@ export function CbtExam({ series }: { series: ExamSeriesData }) {
         disabled={s.finished}
         onFinish={s.finish}
         onGoToFirstUnanswered={goToFirstUnanswered}
+        mode={s.mode}
+        onToggleMode={() => s.setMode(s.mode === "exam" ? "practice" : "exam")}
+        isTimerPaused={s.isTimerPaused}
+        onTogglePauseTimer={s.togglePauseTimer}
       />
 
       <ExamSplitLayout
@@ -154,6 +137,9 @@ export function CbtExam({ series }: { series: ExamSeriesData }) {
                       fallbackText={s.question.audioTranscript}
                       played={!!s.played[s.question.id]}
                       onPlayed={() => s.markPlayed(s.question.id)}
+                      mode={s.mode}
+                      onReplay={s.replayAudio}
+                      transcript={s.question.audioTranscript}
                     />
                   </div>
                 </div>
@@ -165,116 +151,68 @@ export function CbtExam({ series }: { series: ExamSeriesData }) {
                     fallbackText={s.question.audioTranscript}
                     played={!!s.played[s.question.id]}
                     onPlayed={() => s.markPlayed(s.question.id)}
+                    mode={s.mode}
+                    onReplay={s.replayAudio}
+                    transcript={s.question.audioTranscript}
                   />
                 </div>
               )}
             </div>
           ) : (
-              <div className="mx-auto flex h-full max-w-2xl flex-col space-y-4">
-                {/* Document Top Bar with Controls */}
-                <div className="flex items-center justify-between border-b pb-3">
-                  <div className="flex items-center gap-2 text-xs text-muted-foreground font-medium">
-                    <FileText className="h-4 w-4 text-primary" />
-                    <span>{getDocumentNature(s.question.questionNumber)}</span>
-                  </div>
-
-                  <div className="flex items-center gap-1">
-                    <span className="text-[11px] text-muted-foreground mr-1 hidden sm:inline">Taille du texte :</span>
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      className="h-7 w-7"
-                      onClick={decreaseFontSize}
-                      disabled={fontSize === "sm"}
-                      title="Diminuer la police"
-                    >
-                      <ZoomOut className="h-3.5 w-3.5" />
-                    </Button>
-                    <button
-                      type="button"
-                      onClick={() => setFontSize("base")}
-                      className="px-1.5 py-0.5 text-xs font-mono font-medium text-muted-foreground hover:text-foreground"
-                      title="Taille standard (100%)"
-                    >
-                      {fontSize === "sm" ? "85%" : fontSize === "base" ? "100%" : fontSize === "lg" ? "115%" : "130%"}
-                    </button>
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      className="h-7 w-7"
-                      onClick={increaseFontSize}
-                      disabled={fontSize === "xl"}
-                      title="Agrandir la police"
-                    >
-                      <ZoomIn className="h-3.5 w-3.5" />
-                    </Button>
-                  </div>
-                </div>
-
-                {/* Authentic High-Contrast Document Card */}
-                <div className="flex-1 rounded-3xl border-2 border-slate-200/90 dark:border-border bg-white dark:bg-card p-6 sm:p-8 shadow-md flex flex-col">
-                  <div className="flex items-center justify-between border-b pb-3 mb-5">
-                    <span className="inline-flex items-center gap-1.5 text-[11px] font-extrabold uppercase tracking-wider text-blue-700 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/50 px-3 py-1 rounded-full border border-blue-200 dark:border-blue-900/50">
-                      Document Support Officiel · Question {s.question.questionNumber}
-                    </span>
-                    <span className="text-[11px] font-mono text-muted-foreground font-semibold">
-                      Texte copiable &amp; sélectionnable
-                    </span>
-                  </div>
-
-                  <article
-                    className={cn(
-                      "select-text whitespace-pre-line font-sans text-slate-900 dark:text-foreground font-medium transition-all tracking-normal flex-1",
-                      FONT_SIZE_CLASSES[fontSize],
-                    )}
-                  >
-                    {s.question.documentText}
-                  </article>
-                </div>
-              </div>
-            )
-          }
-          right={
-            <div className="space-y-8">
-              <QuestionPanel
-                question={s.question}
-                index={s.current}
-                total={s.stats.total}
-                selected={current?.selected}
-                flagged={current?.flagged ?? false}
-                onSelect={s.select}
-                onToggleFlag={s.toggleFlag}
-              />
-              <div className="mx-auto flex max-w-xl justify-between pt-2">
-                <Button
-                  variant="outline"
-                  onClick={s.prev}
-                  disabled={s.current === 0}
-                  className="font-medium"
-                >
-                  <ChevronLeft className="mr-1 h-4 w-4" aria-hidden /> Question précédente
-                </Button>
-                <Button
-                  onClick={s.next}
-                  disabled={s.current === s.stats.total - 1}
-                  className="font-semibold"
-                >
-                  Question suivante <ChevronRight className="ml-1 h-4 w-4" aria-hidden />
-                </Button>
-              </div>
-            </div>
-          }
-          footer={
-            <QuestionNavGrid
-              questions={series.questions}
-              answers={s.answers}
-              current={s.current}
-              filter={s.filter}
-              onFilter={s.setFilter}
-              onSelect={s.goTo}
+            <CeDocumentViewer
+              questionNumber={s.question.questionNumber}
+              documentNature={getDocumentNature(s.question.questionNumber)}
+              documentText={s.question.documentText}
+              highlights={s.questionHighlights}
+              onAddHighlight={s.addHighlight}
+              onClearHighlights={s.clearHighlights}
             />
-          }
-        />
+          )
+        }
+        right={
+          <div className="space-y-8">
+            <QuestionPanel
+              question={s.question}
+              index={s.current}
+              total={s.stats.total}
+              selected={current?.selected}
+              flagged={current?.flagged ?? false}
+              onSelect={s.select}
+              onToggleFlag={s.toggleFlag}
+              mode={s.mode}
+              revealed={s.revealed}
+              onReveal={s.revealAnswer}
+            />
+            <div className="mx-auto flex max-w-xl justify-between pt-2">
+              <Button
+                variant="outline"
+                onClick={s.prev}
+                disabled={s.current === 0}
+                className="font-medium"
+              >
+                <ChevronLeft className="mr-1 h-4 w-4" aria-hidden /> Question précédente
+              </Button>
+              <Button
+                onClick={s.next}
+                disabled={s.current === s.stats.total - 1}
+                className="font-semibold"
+              >
+                Question suivante <ChevronRight className="ml-1 h-4 w-4" aria-hidden />
+              </Button>
+            </div>
+          </div>
+        }
+        footer={
+          <QuestionNavGrid
+            questions={series.questions}
+            answers={s.answers}
+            current={s.current}
+            filter={s.filter}
+            onFilter={s.setFilter}
+            onSelect={s.goTo}
+          />
+        }
+      />
     </div>
   );
 }

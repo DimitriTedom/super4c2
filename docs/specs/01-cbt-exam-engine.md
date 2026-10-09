@@ -125,3 +125,31 @@ model UserAttempt {
 3. `<AudioPlayerCBT />` : Lecteur audio sans retour en arrière avec barre de progression élégante.
 4. `<QuestionNavGrid />` : Barre de 39 pastilles interactives avec filtres (Toutes, Répondues, Non répondues, Signalées).
 5. `<ExamResultSummary />` : Carte de résultat avec badge NCLC, jauge CRS et breakdown pédagogique.
+
+---
+
+## 6. Extension UX Candidat Avancée : Dual Mode, Surligneur CE & Audio Flexible CO
+
+### A. Dual Mode : Examen Strict vs Entraînement Didactique
+* **Mode Examen Strict (Chrono FEI) :**
+  - Chronomètre dégressif strict avec soumission automatique à 00:00.
+  - Aucune réponse ni explication affichée pendant l'épreuve.
+  - En CO : une seule écoute autorisée, sans pause ni réécoute.
+  - Clôture avec calcul de score et débriefing final.
+* **Mode Entraînement Didactique :**
+  - Chronomètre avec bouton pause/reprise pour travailler sans stress.
+  - Bouton interactif « Vérifier la réponse » disponible dès qu'une option est sélectionnée :
+    - Révélation instantanée (vert si correct, rouge si faux).
+    - Affichage de l'explication officielle et de l'analyse des pièges FEI.
+  - En CO : bouton réécoute et accès facultatif à la transcription pour travailler la compréhension fine.
+
+### B. Outil Surligneur Interactif (Highlighter) en Compréhension Écrite (CE)
+* Bouton activable dans la barre d'outils du document support (`Highlighter`).
+* Permet au candidat de surligner des segments textuels dans le document officiel à gauche.
+* Couleur de surlignage feutre ambre/jaune fluo translucide (`bg-amber-300/40 dark:bg-amber-400/30 text-inherit`).
+* Bouton « Effacer le surlignage » pour réinitialiser la vue du document.
+* Persistance des surlignages par question pendant toute la durée de la session.
+
+### C. Contrôle de Vitesse Audio & Flexibilité en Compréhension Orale (CO)
+* Sélecteur de vitesse de lecture intégré au lecteur `<AudioPlayerCBT />` : `0.8x` (écoute analytique), `1.0x` (vitesse officielle FEI), `1.2x` (entraînement intensif à débit rapide).
+* En mode entraînement : réécoute autorisée pour décortiquer les liaisons et accents francophones (québécois, parisien, africain, etc.).

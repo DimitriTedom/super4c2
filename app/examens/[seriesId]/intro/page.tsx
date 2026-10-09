@@ -98,20 +98,78 @@ export default async function IntroPage({
       </div>
 
       {isCO && (
-        <p className="flex items-start gap-3 rounded-xl border border-amber-500/40 bg-amber-500/10 p-4 text-sm text-amber-800 dark:text-amber-300">
-          <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />
-          Branchez votre casque et vérifiez le volume avant de commencer. Dans cette démo, la voix est synthétisée par votre navigateur.
+        <p className="flex items-start gap-3 rounded-xl border border-blue-500/40 bg-blue-500/10 p-4 text-sm text-blue-900 dark:text-blue-300">
+          <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-blue-600 dark:text-blue-400" aria-hidden />
+          <span>
+            <strong>Prêt pour l&apos;écoute ?</strong> Branchez votre casque audio et assurez-vous d&apos;être dans un environnement calme. En mode examen strict, chaque document n&apos;est diffusé qu&apos;une seule fois.
+          </span>
         </p>
       )}
 
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 border-t pt-4">
-        <Button variant="outline" asChild>
-          <Link href="/examens">Retour au catalogue</Link>
-        </Button>
-        <Button asChild size="lg" className="font-bold text-base px-8 shadow-sm">
-          <Link href={`/examens/${series.id}/${isCO ? "co" : "ce"}`}>
-            <Sparkles className="mr-2 h-4 w-4" /> Démarrer l&apos;épreuve de Compréhension Écrite
+      {/* Choix du Mode de Passation */}
+      <div className="space-y-3 pt-2">
+        <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+          Choisissez votre mode d&apos;entraînement
+        </h3>
+
+        <div className="grid gap-4 sm:grid-cols-2">
+          {/* Option 1: Mode Examen Strict */}
+          <Link
+            href={`/examens/${series.id}/${isCO ? "co" : "ce"}?mode=exam`}
+            className="group flex flex-col justify-between rounded-2xl border-2 border-border/80 bg-card p-5 hover:border-blue-600 hover:shadow-md transition-all space-y-4"
+          >
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20">
+                  <Clock className="h-3 w-3" /> Mode Examen Strict
+                </span>
+                <span className="text-[10px] uppercase font-bold text-muted-foreground">Standard FEI</span>
+              </div>
+              <h4 className="font-display font-bold text-base text-foreground group-hover:text-blue-600 transition-colors">
+                Simulation 100% Officielle
+              </h4>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                Chronomètre strict, écoute unique, aucune aide immédiate. Idéal pour évaluer votre vrai score TCF &amp; NCLC.
+              </p>
+            </div>
+            <div className="pt-2">
+              <span className="inline-flex items-center gap-1.5 text-xs font-bold text-blue-600 dark:text-blue-400 group-hover:translate-x-1 transition-transform">
+                Lancer en Mode Examen →
+              </span>
+            </div>
           </Link>
+
+          {/* Option 2: Mode Entraînement Didactique */}
+          <Link
+            href={`/examens/${series.id}/${isCO ? "co" : "ce"}?mode=practice`}
+            className="group flex flex-col justify-between rounded-2xl border-2 border-amber-500/30 bg-amber-500/[0.03] p-5 hover:border-amber-500 hover:shadow-md transition-all space-y-4"
+          >
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-500/15 text-amber-700 dark:text-amber-400 border border-amber-500/30">
+                  <Sparkles className="h-3 w-3 text-amber-500" /> Mode Entraînement
+                </span>
+                <span className="text-[10px] uppercase font-bold text-amber-600">Recommandé</span>
+              </div>
+              <h4 className="font-display font-bold text-base text-foreground group-hover:text-amber-600 transition-colors">
+                Apprentissage Didactique
+              </h4>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                Vérification immédiate, décodage des pièges, pause chrono, surligneur interactif et réécoute audio.
+              </p>
+            </div>
+            <div className="pt-2">
+              <span className="inline-flex items-center gap-1.5 text-xs font-bold text-amber-600 dark:text-amber-400 group-hover:translate-x-1 transition-transform">
+                Lancer en Entraînement →
+              </span>
+            </div>
+          </Link>
+        </div>
+      </div>
+
+      <div className="flex items-center justify-between border-t pt-4">
+        <Button variant="outline" asChild>
+          <Link href="/examens">← Retour au catalogue</Link>
         </Button>
       </div>
     </div>
