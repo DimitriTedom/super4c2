@@ -95,9 +95,16 @@ Exemple : *"L'arbre"* = 2 mots (*L'* + *arbre*). *"C'est-à-dire"* = 1 ou 4 mots
 
 ---
 
-## 5. Composants UI à Réaliser
+## 5. Composants UI & Expérience Candidat
 
 1. `<WordCountBadge current={n} min={min} max={max} />` : Pastille visuelle interactive.
+2. `<FeiEvaluationCard />` : Grille d'évaluation détaillée des 4 critères FEI.
+3. `<MagicRewriteViewer />` : Comparateur de réécriture B2 vers C1/C2.
+4. **Télémétrie d'Autosave Continu & Anti-Stress :**
+   - Mémorisation instantanée dans `localStorage` par tâche et par session d'examen.
+   - Badge visuel dynamique d'enregistrement temps réel (*« 🟢 Sauvegardé en local à HH:MM:SS »*).
+   - Indicateur réactif lors de la frappe (*« 💾 Enregistrement... »*).
+   - Restauration transparente sans perte en cas de rechargement fortuit de page.
 2. `<WrittenTaskEditor task={task} value={text} onChange={setText} />` : Zone d'écriture avec raccourcis et sans autocorrecteur.
 3. `<WrittenExamSplitLayout />` : Présentation du sujet officiel à gauche, éditeur à droite.
 4. `<FeiEvaluationCard result={evalResult} />` : Restitution de la grille de correction FEI avec accordéon interactif.

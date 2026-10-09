@@ -68,6 +68,8 @@ export function WrittenExamEditor({ series }: WrittenExamEditorProps) {
   const [isSubmitOpen, setIsSubmitOpen] = useState<boolean>(false);
   const [isExitOpen, setIsExitOpen] = useState<boolean>(false);
   const [hydrated, setHydrated] = useState<boolean>(false);
+  const [saveStatus, setSaveStatus] = useState<"saved" | "saving">("saved");
+  const [lastSavedAt, setLastSavedAt] = useState<string | null>(null);
   const finishedRef = useRef<boolean>(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -94,17 +96,28 @@ export function WrittenExamEditor({ series }: WrittenExamEditorProps) {
     setHydrated(true);
   }, [storageKey, series.durationSeconds]);
 
-  // Sauvegarde continue
+  // Sauvegarde continue avec télémétrie visuelle
   useEffect(() => {
     if (!hydrated) return;
-    try {
-      localStorage.setItem(
-        storageKey,
-        JSON.stringify({ texts, activeTaskIndex, deadline, isFinished, result })
-      );
-    } catch {
-      // localStorage indisponible
-    }
+    setSaveStatus("saving");
+
+    const timer = setTimeout(() => {
+      try {
+        localStorage.setItem(
+          storageKey,
+          JSON.stringify({ texts, activeTaskIndex, deadline, isFinished, result })
+        );
+        const now = new Date();
+        setLastSavedAt(
+          now.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit", second: "2-digit" })
+        );
+        setSaveStatus("saved");
+      } catch {
+        setSaveStatus("saved");
+      }
+    }, 300);
+
+    return () => clearTimeout(timer);
   }, [hydrated, storageKey, texts, activeTaskIndex, deadline, isFinished, result]);
 
   const [isEvaluating, setIsEvaluating] = useState<boolean>(false);
@@ -217,16 +230,37 @@ export function WrittenExamEditor({ series }: WrittenExamEditorProps) {
         </div>
 
         {/* Minuteur strict */}
-        <div
-          role="timer"
-          className={cn(
-            "flex items-center gap-2 rounded-full border px-4 py-1.5 font-mono text-xl font-bold tabular-nums transition-colors",
-            urgent && "border-orange-500/50 bg-orange-500/10 text-orange-600",
-            critical && "animate-pulse border-red-500/60 bg-red-500/10 text-red-600"
-          )}
-        >
-          <Clock className="h-4 w-4" />
-          {formatClock(remaining)}
+        <div className="flex items-center gap-3">
+          <div
+            role="timer"
+            className={cn(
+              "flex items-center gap-2 rounded-full border px-4 py-1.5 font-mono text-xl font-bold tabular-nums transition-colors",
+              urgent && "border-orange-500/50 bg-orange-500/10 text-orange-600",
+              critical && "animate-pulse border-red-500/60 bg-red-500/10 text-red-600"
+            )}
+          >
+            <Clock className="h-4 w-4" />
+            {formatClock(remaining)}
+          </div>
+
+          {/* Badge d'autosave continu */}
+          <div className="hidden md:flex items-center gap-1.5 text-xs text-muted-foreground border rounded-full px-3 py-1 bg-muted/30">
+            <span
+              className={cn(
+                "h-2 w-2 rounded-full",
+                saveStatus === "saving"
+                  ? "bg-amber-500 animate-pulse"
+                  : "bg-emerald-500"
+              )}
+            />
+            <span className="font-mono text-[11px]">
+              {saveStatus === "saving"
+                ? "Sauvegarde..."
+                : lastSavedAt
+                ? `Sauvegardé à ${lastSavedAt}`
+                : "Sauvegarde auto active"}
+            </span>
+          </div>
         </div>
 
         <div className="flex items-center gap-2">
@@ -456,7 +490,23 @@ export function WrittenExamEditor({ series }: WrittenExamEditorProps) {
               />
 
               <div className="flex justify-between items-center text-xs text-muted-foreground pt-2">
-                <span>Raccourcis : Sauvegarde automatique continue</span>
+                <div className="flex items-center gap-2">
+                  <span
+                    className={cn(
+                      "h-2 w-2 rounded-full",
+                      saveStatus === "saving"
+                        ? "bg-amber-500 animate-pulse"
+                        : "bg-emerald-500"
+                    )}
+                  />
+                  <span className="font-mono text-[11px]">
+                    {saveStatus === "saving"
+                      ? "Enregistrement en local..."
+                      : lastSavedAt
+                      ? `Sauvegardé en local à ${lastSavedAt}`
+                      : "Sauvegarde automatique active"}
+                  </span>
+                </div>
                 {activeTaskIndex < 2 ? (
                   <Button
                     variant="outline"

@@ -51,6 +51,13 @@
     - **Test Microphone Réel (Web Audio API) :** Capture `getUserMedia` avec annulation d'écho et suppression de bruit, analyseur FFT en temps réel, vu-mètre interactif 16 barres dynamiques réagissant au volume de la voix et détection automatique de la parole pour validation.
     - **Test Casque / Audio Officiel :** Lecture de l'enregistrement authentique de l'examinateur M. Laurent (`/audio/eo/laurent-step1.mp3`) permettant de tester les écouteurs et le confort d'écoute avant le début de l'épreuve.
     - **Contrôle d'Accès Sécurisé :** Porte de validation matérielle sur [app/examens/[seriesId]/eo/intro/page.tsx](file:///d:/SnowDev/Documents/super4c2/app/examens/[seriesId]/eo/intro/page.tsx) avec déblocage du bouton de lancement, option de repli courtois et icônes 3D d'Expression Orale.
+- **Chantier 4 Réalisé — Expression Écrite CBT : Télémétrie d'Autosave Continu & Confort de Rédaction :**
+  - **Spécification :** Formalisée dans [docs/specs/02-written-expression-engine.md](file:///d:/SnowDev/Documents/super4c2/docs/specs/02-written-expression-engine.md) (Section 5.4).
+  - **Télémétrie d'Autosave Anti-Stress ([components/exam/written-exam-editor.tsx](file:///d:/SnowDev/Documents/super4c2/components/exam/written-exam-editor.tsx)) :**
+    - Persistance locale instantanée avec debounce (300 ms) et horodatage dynamique précis (`HH:MM:SS`).
+    - Badge visuel en haut à droite avec pastille verte pulsante indiquant le statut (*« 🟢 Sauvegardé à 12:45:10 »* / *« 💾 Sauvegarde... »*).
+    - Barre de statut sous la zone de texte rassurant le candidat sur la conservation de ses rédactions sans risque d'effacement.
+    - Restauration transparente des 3 tâches en cas de rafraîchissement impromptu.
 - **Mega-Menu 2 Colonnes « Simulateurs & IA » (`components/site-nav.tsx`) :**
   - Remplacement de la colonne étroite et interminable (`w-84`) par un menu étendu à 2 colonnes équilibrées (`w-[620px]`) centré sur la barre de navigation.
   - Répartition structurée : Colonne 1 « Épreuves Officielles CBT » (CE, CO, EO, EE) et Colonne 2 « Accélérateurs & Outils » (Calculateur NCLC/CRS, Carnet SRS, Sujets Récents Radar) avec bouton de synthèse vers le simulateur complet. Hauteur divisée par deux, évitant tout débordement sur le titre de la page d'accueil.
