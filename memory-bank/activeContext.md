@@ -9,8 +9,17 @@
   - Activé en Compréhension Écrite ([components/exam/ce-document-viewer.tsx](file:///d:/SnowDev/Documents/super4c2/components/exam/ce-document-viewer.tsx)) et dans le simulateur vitrine ([components/product-showcase-section.tsx](file:///d:/SnowDev/Documents/super4c2/components/product-showcase-section.tsx)).
 - **Investigation Concurrentielle Approfondie (Objectif Canada) :**
   - **Tarification Rétro-ingéniée (`/fr/checkout`) :** Formule `j.U(S)` identifiée (1-7j: 1 000 FCFA/j, 15j: 12 500 FCFA, 30j: 17 500 FCFA, 50+j: 500 FCFA/j). Stratégie Super4C2 formalisée dans [docs/specs/spec-competitive-pricing-ielts-roadmap.md](file:///d:/SnowDev/Documents/super4c2/docs/specs/spec-competitive-pricing-ielts-roadmap.md).
-  - **Offre IELTS Rétro-ingéniée (`/fr/examen/ielts`) :** Découpage Cambridge (General 11-17 vs Academic 11-19, Tests 1-4) et plan de mise à niveau bi-filière pour Super4C2.
-  - **Guide Tutoriel Newcomers :** Spécification de la modale en 5 étapes et redirection vers la Communauté VIP (`/communaute`).
+- **Guide Tutoriel d'Onboarding Interactif ([components/onboarding/newcomer-guide-modal.tsx](file:///d:/SnowDev/Documents/super4c2/components/onboarding/newcomer-guide-modal.tsx)) :**
+  - Modale 5 étapes avec barre de progression laser, icones 3D, aperçus concrets (+50 pts CRS, Dual Mode CBT, Surligneur Interactif, Salle d'Oral Virtuelle, Communauté VIP).
+  - Déclenchement automatique pour les nouveaux arrivants (persistance `super4c2:newcomer_guide_viewed`) et réouverture manuelle à la demande via `openNewcomerGuide()`.
+- **Bouton Flottant & Remplacement de l'Icône WhatsApp ([components/community/floating-community-button.tsx](file:///d:/SnowDev/Documents/super4c2/components/community/floating-community-button.tsx)) :**
+  - Bouton flottant officiel vers `/communaute` avec halo lumineux et bouclier 3D VIP Shield.
+  - Bouton compagnon « Guide Plateforme » pour relancer la visite guidée à tout moment.
+  - Remplacement de l'ancien lien WhatsApp dans le footer ([components/site-footer.tsx](file:///d:/SnowDev/Documents/super4c2/components/site-footer.tsx)) par un bouton direct vers la Communauté VIP.
+- **Architecture IELTS Bi-filière Déployée ([lib/exam/series-progression.ts](file:///d:/SnowDev/Documents/super4c2/lib/exam/series-progression.ts) & [components/exam/exam-roadmap-board.tsx](file:///d:/SnowDev/Documents/super4c2/components/exam/exam-roadmap-board.tsx)) :**
+  - Séparation officielle entre **Section Générale** (IELTS General Training — Immigration & Entrée Express CLB 9) et **Section Académique** (IELTS Academic — Études Supérieures & Ordres).
+  - Séries alignées sur les éditions Cambridge (Cambridge 17, 18, 19 Tests 1 à 4) et « Examens Blancs Officiels ».
+  - Commutateur d'onglets réactif intégré sur `/examens?test=ielts`.
 
 ## 1. Intégration des 12 Icônes 3D Transparentes & Audit de l'Expérience Frontend Candidat
 - **Câblage Complet des 12 Icônes 3D (`public/brand/icons-3d/`) :**

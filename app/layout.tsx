@@ -8,6 +8,8 @@ import { SiteHeader } from "@/components/site-header";
 import { AppShell } from "@/components/app-shell";
 import { Toaster } from "@/components/ui/sonner";
 import { ToastifyContainer } from "@/components/ui/toastify";
+import { NewcomerGuideModal } from "@/components/onboarding/newcomer-guide-modal";
+import { FloatingCommunityButton } from "@/components/community/floating-community-button";
 
 const bricolage = Bricolage_Grotesque({
   subsets: ["latin"],
@@ -53,6 +55,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
           <LanguageProvider>
             <AppShell header={<SiteHeader />}>{children}</AppShell>
+            <FloatingCommunityButton />
+            <NewcomerGuideModal />
             <Toaster />
             <ToastifyContainer />
           </LanguageProvider>

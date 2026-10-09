@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { BrandLogo } from "@/components/brand-logo";
-import { ShieldCheck, Sparkles, Award, MapPin, Mail } from "lucide-react";
+import { ShieldCheck, Sparkles, Award, MapPin, Mail, Users } from "lucide-react";
 import { NewsletterCard } from "@/components/newsletter-card";
 
 export function SiteFooter() {
@@ -103,19 +103,16 @@ export function SiteFooter() {
                   </svg>
                 </a>
 
-                {/* WhatsApp Community */}
-                <a
-                  href="https://chat.whatsapp.com/super4c2"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="h-8 w-8 rounded-lg border border-border/70 bg-background/80 hover:bg-emerald-500/10 hover:border-emerald-500/40 hover:text-emerald-500 text-muted-foreground flex items-center justify-center transition-all duration-200 shadow-2xs group"
-                  title="Canal WhatsApp d'Alertes Tirages Entrée Express"
-                  aria-label="WhatsApp Super4C2"
+                {/* Communauté VIP Hub */}
+                <Link
+                  href="/communaute"
+                  className="h-8 px-2.5 rounded-lg border border-primary/30 bg-primary/10 hover:bg-primary hover:text-white text-primary flex items-center gap-1.5 transition-all duration-200 shadow-2xs group text-xs font-bold"
+                  title="Accéder à la Communauté VIP des 4 C2"
+                  aria-label="Communauté VIP Super4C2"
                 >
-                  <svg className="h-4 w-4 fill-current transition-transform group-hover:scale-110" viewBox="0 0 24 24">
-                    <path d="M17.472 14.382c-.301-.15-1.78-.878-2.056-.979-.275-.101-.475-.15-.675.15-.2.301-.776.979-.951 1.179-.175.2-.351.226-.652.075-.301-.151-1.27-.468-2.42-1.494-.895-.798-1.5-1.784-1.675-2.085-.175-.301-.019-.464.131-.614.136-.135.301-.351.451-.527.151-.176.201-.301.301-.501.101-.2.051-.376-.025-.526-.075-.151-.676-1.63-.927-2.232-.244-.587-.493-.507-.676-.516l-.577-.01c-.2 0-.526.075-.802.376-.275.301-1.052 1.028-1.052 2.508 0 1.48 1.077 2.909 1.228 3.109.15.201 2.12 3.238 5.136 4.542.717.31 1.277.495 1.713.633.72.228 1.376.196 1.894.118.578-.087 1.78-.727 2.03-1.43.25-.702.25-1.304.175-1.43-.075-.125-.275-.2-.576-.351zM12.04 21.785h-.002a9.78 9.78 0 0 1-4.99-1.365l-.358-.213-3.71.973.99-3.618-.233-.371a9.76 9.76 0 0 1-1.498-5.18c0-5.4 4.394-9.794 9.799-9.794a9.75 9.75 0 0 1 6.927 2.871 9.74 9.74 0 0 1 2.868 6.924c0 5.405-4.395 9.797-9.797 9.797zM12.04 0C5.398 0 .013 5.385.013 12.027a11.96 11.96 0 0 0 1.84 6.388L0 24l5.74-1.506a12.03 12.03 0 0 0 6.3 1.765h.005c6.641 0 12.026-5.385 12.026-12.028A12.003 12.003 0 0 0 12.04 0z" />
-                  </svg>
-                </a>
+                  <Users className="h-3.5 w-3.5" />
+                  <span>Communauté VIP</span>
+                </Link>
 
                 {/* LinkedIn */}
                 <a

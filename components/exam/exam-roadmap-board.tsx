@@ -25,6 +25,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 import {
   TEST_CATALOG,
   getSeriesForTest,
@@ -57,6 +58,7 @@ export function ExamRoadmapBoard({
   const [activeTest, setActiveTest] = useState<TestType>(validTest);
   const [activeDiscipline, setActiveDiscipline] = useState<DisciplineType>(initialDiscipline);
   const [viewMode, setViewMode] = useState<"roadmap" | "grid">(initialView);
+  const [ieltsTrack, setIeltsTrack] = useState<"general" | "academic">("general");
 
   // Dynamic unlocking state saved in localStorage
   const [unlockedSeriesIds, setUnlockedSeriesIds] = useState<string[]>([
@@ -64,6 +66,8 @@ export function ExamRoadmapBoard({
     "serie-102",
     "tef-201",
     "ielts-301",
+    "ielts-gen-18-1",
+    "ielts-acad-19-1",
   ]);
 
   useEffect(() => {
@@ -91,7 +95,11 @@ export function ExamRoadmapBoard({
   };
 
   const rawSeriesList = getSeriesForTest(activeTest);
-  const seriesList = rawSeriesList.map((s) => ({
+  const filteredRaw =
+    activeTest === "ielts"
+      ? rawSeriesList.filter((s) => !s.ieltsTrack || s.ieltsTrack === ieltsTrack)
+      : rawSeriesList;
+  const seriesList = filteredRaw.map((s) => ({
     ...s,
     status: unlockedSeriesIds.includes(s.id) || s.status === "COMPLETED" ? "UNLOCKED" : "LOCKED",
   }));
@@ -104,7 +112,11 @@ export function ExamRoadmapBoard({
   const handleTestChange = (test: TestType) => {
     setActiveTest(test);
     const newSeriesList = getSeriesForTest(test);
-    setSelectedSeriesId(newSeriesList[0]?.id || "");
+    const initialList =
+      test === "ielts"
+        ? newSeriesList.filter((s) => !s.ieltsTrack || s.ieltsTrack === ieltsTrack)
+        : newSeriesList;
+    setSelectedSeriesId(initialList[0]?.id || "");
     startTransition(() => {
       const params = new URLSearchParams(searchParams.toString());
       params.set("test", test);
@@ -197,6 +209,59 @@ export function ExamRoadmapBoard({
             </div>
           </div>
         </div>
+
+        {/* 🇬🇧 IELTS Dual Track Switcher: Section Générale vs Section Académique */}
+        {activeTest === "ielts" && (
+          <div className="mt-6 p-4 rounded-2xl border border-indigo-500/20 bg-indigo-500/5 dark:bg-indigo-950/20 flex flex-col sm:flex-row sm:items-center justify-between gap-4 animate-in fade-in duration-200">
+            <div className="space-y-1">
+              <span className="text-[11px] font-extrabold uppercase tracking-wider text-indigo-600 dark:text-indigo-400 flex items-center gap-1.5">
+                <Sparkles className="h-3.5 w-3.5" />
+                <span>Choix de la Filière IELTS Officielle</span>
+              </span>
+              <p className="text-xs text-muted-foreground">
+                Sélectionnez le format requis par vos démarches : Immigration &amp; Entrée Express ou Études Supérieures.
+              </p>
+            </div>
+
+            <div className="inline-flex items-center p-1 rounded-xl bg-background border border-border/80 shadow-2xs shrink-0">
+              <button
+                type="button"
+                onClick={() => {
+                  setIeltsTrack("general");
+                  const genList = rawSeriesList.filter((s) => s.ieltsTrack === "general");
+                  setSelectedSeriesId(genList[0]?.id || "");
+                }}
+                className={cn(
+                  "px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5",
+                  ieltsTrack === "general"
+                    ? "bg-primary text-white shadow-xs"
+                    : "text-muted-foreground hover:text-foreground"
+                )}
+              >
+                <span>🇨🇦 Section Générale</span>
+                <span className="text-[10px] opacity-80">(Express Entry)</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setIeltsTrack("academic");
+                  const acadList = rawSeriesList.filter((s) => s.ieltsTrack === "academic");
+                  setSelectedSeriesId(acadList[0]?.id || "");
+                }}
+                className={cn(
+                  "px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5",
+                  ieltsTrack === "academic"
+                    ? "bg-indigo-600 text-white shadow-xs"
+                    : "text-muted-foreground hover:text-foreground"
+                )}
+              >
+                <span>🎓 Section Académique</span>
+                <span className="text-[10px] opacity-80">(Universités)</span>
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* 🎛️ Filter Bar: Disciplines & View Mode */}
         <div className="mt-8 pt-6 border-t border-border/70 flex flex-col md:flex-row md:items-center justify-between gap-4">
