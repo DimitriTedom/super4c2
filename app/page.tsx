@@ -181,87 +181,101 @@ export default async function HomePage() {
         <ProductShowcaseSection />
       </BlurFade>
 
-      {/* ⚔️ COMPARATIF CHOC : SUPER4C2 VS OBJECTIF CANADA */}
+      {/* ⚔️ COMPARATIF HAUT DE GAMME : MÉTHODES CLASSIQUES VS SUPER4C2 */}
       <section className="space-y-8 max-w-5xl mx-auto">
         <div className="text-center space-y-2">
-          <span className="text-xs font-bold uppercase tracking-wider text-primary">
-            La Différence Technologique
-          </span>
-          <h2 className="font-display text-3xl sm:text-4xl font-extrabold tracking-tight">
-            Pourquoi Super4C2 surpasse les méthodes traditionnelles
+          <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs font-semibold text-primary">
+            <span>Audit Technologique & Pédagogique</span>
+          </div>
+          <h2 className="font-display text-3xl sm:text-4xl font-black tracking-tight text-foreground">
+            Pourquoi Super4C2 fait la différence le jour J
           </h2>
           <p className="text-sm text-muted-foreground max-w-xl mx-auto">
-            Nous avons audité les leaders du marché pour éliminer toutes leurs faiblesses.
+            Une comparaison objective entre les méthodes traditionnelles d&apos;entraînement et l&apos;architecture CBT de nouvelle génération.
           </p>
         </div>
 
-        <div className="rounded-3xl border bg-card overflow-hidden shadow-lg">
-          <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x">
-            {/* Colonne Mauvaises Pratiques (Objectif Canada) */}
-            <div className="p-8 space-y-6 bg-red-500/5">
-              <div className="flex items-center gap-2 text-red-600 dark:text-red-400 font-display font-bold text-lg">
-                <XCircle className="h-6 w-6" />
-                <span>Plateformes Classiques & Objectif Canada</span>
+        <div className="rounded-3xl border border-border/80 bg-card overflow-hidden shadow-xl">
+          <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x border-border/70">
+            {/* Colonne Méthodes Traditionnelles */}
+            <div className="p-6 sm:p-8 space-y-6 bg-muted/20">
+              <div className="flex items-center justify-between border-b border-border/60 pb-4">
+                <div className="flex items-center gap-2.5 text-foreground/80 font-display font-bold text-base sm:text-lg">
+                  <div className="h-8 w-8 rounded-xl bg-destructive/10 text-destructive flex items-center justify-center font-bold text-sm">
+                    ✕
+                  </div>
+                  <span>Entraînements Classiques &amp; PDF</span>
+                </div>
+                <span className="text-[11px] font-semibold text-muted-foreground bg-muted px-2 py-0.5 rounded-md">
+                  Méthodes Passives
+                </span>
               </div>
 
               <ul className="space-y-4 text-xs sm:text-sm text-muted-foreground">
                 <li className="flex items-start gap-3">
-                  <XCircle className="h-4 w-4 text-red-500 shrink-0 mt-0.5" />
+                  <XCircle className="h-4 w-4 text-destructive shrink-0 mt-0.5" />
                   <span>
-                    <strong>Scroll de 18 000 pixels :</strong> Les 39 questions sont empilées sur une seule page géante qui ne ressemble en rien à l&apos;écran d&apos;examen réel.
+                    <strong className="text-foreground/90">Page de 18 000 px à faire défiler :</strong> Les 39 questions sont empilées sans respect de la mise en page officielle, générant fatigue visuelle et désorientation le jour J.
                   </span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <XCircle className="h-4 w-4 text-red-500 shrink-0 mt-0.5" />
+                  <XCircle className="h-4 w-4 text-destructive shrink-0 mt-0.5" />
                   <span>
-                    <strong>Oral Tâche 2 sans répondant :</strong> Vous devez parler seul dans le vide face à un minuteur sans aucune interaction !
+                    <strong className="text-foreground/90">Expression Orale en monologue :</strong> Enregistrement dans le vide face à un minuteur sans aucun dialogue ni question imprévue.
                   </span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <XCircle className="h-4 w-4 text-red-500 shrink-0 mt-0.5" />
+                  <XCircle className="h-4 w-4 text-destructive shrink-0 mt-0.5" />
                   <span>
-                    <strong>Délai de correction de 24h à 48h :</strong> Vos copies écrites attendent des jours pour une simple note sans réécriture de qualité.
+                    <strong className="text-foreground/90">Délai de correction de 24h à 48h :</strong> Vos copies attendent des jours pour une simple appréciation générale sans réécriture didactique.
                   </span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <XCircle className="h-4 w-4 text-red-500 shrink-0 mt-0.5" />
+                  <XCircle className="h-4 w-4 text-destructive shrink-0 mt-0.5" />
                   <span>
-                    <strong>Aucun calcul CRS Entrée Express :</strong> Aucune vision sur l&apos;impact de vos résultats sur votre dossier d&apos;immigration canadienne.
+                    <strong className="text-foreground/90">Aucun suivi des points CRS :</strong> Vous avancez sans mesurer l&apos;impact concret de vos notes sur le seuil d&apos;invitation Entrée Express.
                   </span>
                 </li>
               </ul>
             </div>
 
             {/* Colonne Super4C2 */}
-            <div className="p-8 space-y-6 bg-emerald-500/5 border-l">
-              <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-display font-bold text-lg">
-                <CheckCircle2 className="h-6 w-6" />
-                <span>L&apos;Expérience Super4C2 (Next-Gen)</span>
+            <div className="p-6 sm:p-8 space-y-6 bg-gradient-to-b from-primary/[0.04] to-transparent">
+              <div className="flex items-center justify-between border-b border-primary/20 pb-4">
+                <div className="flex items-center gap-2.5 text-foreground font-display font-bold text-base sm:text-lg">
+                  <div className="h-8 w-8 rounded-xl bg-brand-crimson text-white flex items-center justify-center font-bold text-sm shadow-sm">
+                    ✓
+                  </div>
+                  <span>Super4C2 • Plateforme CBT &amp; IA</span>
+                </div>
+                <span className="text-[11px] font-bold text-brand-crimson bg-primary/10 border border-primary/20 px-2 py-0.5 rounded-md">
+                  Standard Officiel
+                </span>
               </div>
 
-              <ul className="space-y-4 text-xs sm:text-sm text-foreground">
+              <ul className="space-y-4 text-xs sm:text-sm text-foreground/90">
                 <li className="flex items-start gap-3">
                   <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0 mt-0.5" />
                   <span>
-                    <strong>Vrai Moteur CBT Écran Scindé :</strong> Document à gauche, question à droite, grille de 39 pastilles et chronomètre strict non interruptible.
+                    <strong className="text-foreground">Vrai Double Écran Scindé CBT :</strong> Document source à gauche, question ciblée à droite, grille de 39 pastilles interactives et compte à rebours officiel strict.
                   </span>
                 </li>
                 <li className="flex items-start gap-3">
                   <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0 mt-0.5" />
                   <span>
-                    <strong>Jeu de Rôle Oral Interactif en Direct :</strong> L&apos;examinateur IA vocal vous répond et challenge vos questions comme le jour J !
+                    <strong className="text-foreground">Jeu de Rôle Oral Interactif en Direct :</strong> Un examinateur vocal IA simule les Tâches 2 et 3, vous relance avec naturel et analyse votre débit de parole.
                   </span>
                 </li>
                 <li className="flex items-start gap-3">
                   <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0 mt-0.5" />
                   <span>
-                    <strong>Magic Rewrite C1/C2 Instantané :</strong> Vos textes évalués sur la grille officielle FEI avec réécriture modèle pour apprendre immédiatement.
+                    <strong className="text-foreground">Magic Rewrite C1/C2 Instantané (0s) :</strong> Évaluation ligne par ligne sur la grille officielle FEI avec version modèle réécrite pour assimiler le niveau requis.
                   </span>
                 </li>
                 <li className="flex items-start gap-3">
                   <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0 mt-0.5" />
                   <span>
-                    <strong>Simulateur CRS & Carnet SRS :</strong> Vos points bonus calculés en temps réel et vos pièges révisés selon la méthode scientifique (J+1, J+3, J+7).
+                    <strong className="text-foreground">Calculateur CRS &amp; Répétition Espacée :</strong> Projection immédiate de vos +50 points bonus francophone et mémorisation durable via le carnet SRS (J+1, J+3, J+7).
                   </span>
                 </li>
               </ul>
@@ -342,22 +356,67 @@ export default async function HomePage() {
       {/* ❓ FOIRE AUX QUESTIONS OFFICIELLES (FAQ) */}
       <FaqSection initialFaqs={faqs} />
 
-      {/* 🎯 CTA FINAL BANNER */}
-      <section className="mx-auto max-w-6xl rounded-3xl border bg-gradient-to-r from-primary via-primary-dark to-slate-900 p-8 sm:p-14 text-white text-center space-y-6 shadow-2xl">
-        <h2 className="font-display text-3xl sm:text-5xl font-black tracking-tight max-w-2xl mx-auto">
-          Prêt à Valider votre Palier NCLC 7 et Réussir votre Immigration ?
-        </h2>
-        <p className="text-white/80 max-w-xl mx-auto text-sm sm:text-base">
-          Rejoignez les candidats qui s&apos;entraînent sur Super4C2 avec le simulateur officiel et maximisez vos chances pour le tirage au sort Entrée Express.
-        </p>
-        <div className="pt-2">
+      {/* 🎯 CTA FINAL HAUTE PERFORMANCE & CONVERSION */}
+      <section className="relative mx-auto max-w-6xl rounded-3xl border border-slate-800 bg-[#0B132B] p-6 sm:p-12 lg:p-16 text-white text-center space-y-6 shadow-2xl overflow-hidden">
+        {/* Subtle radial ambient gradients */}
+        <div className="pointer-events-none absolute -top-24 left-1/2 -translate-x-1/2 w-[500px] h-[300px] bg-brand-crimson/20 blur-[100px] rounded-full" />
+        <div className="pointer-events-none absolute -bottom-24 right-10 w-[400px] h-[250px] bg-cyan-500/15 blur-[90px] rounded-full" />
+        <div className="pointer-events-none absolute inset-0 [background-image:radial-gradient(rgba(255,255,255,0.06)_1px,transparent_1px)] [background-size:24px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,black,transparent_80%)]" />
+
+        <div className="relative z-10 space-y-4 max-w-3xl mx-auto">
+          <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3.5 py-1 text-xs font-semibold text-slate-200 backdrop-blur-xs">
+            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            <span>Objectif Immigration Canada • Entrée Express 2026</span>
+          </div>
+
+          <h2 className="font-display text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-tight text-balance">
+            Sécurisez vos <span className="bg-gradient-to-r from-brand-crimson to-rose-400 bg-clip-text text-transparent">+50 Points CRS</span> avec la référence CBT
+          </h2>
+
+          <p className="text-slate-300 text-xs sm:text-base leading-relaxed max-w-xl mx-auto text-balance">
+            Rejoignez les candidats qui s&apos;entraînent sur la réplique exacte du logiciel officiel et réussissent leur examen dès leur première tentative.
+          </p>
+        </div>
+
+        {/* Buttons container (Fully responsive, no overflow) */}
+        <div className="relative z-10 flex flex-col sm:flex-row items-center justify-center gap-3 w-full max-w-md mx-auto pt-2">
           <Button
             asChild
             size="lg"
-            className="bg-white text-primary hover:bg-slate-100 font-black text-base px-10 h-14 shadow-xl"
+            className="w-full sm:w-auto bg-brand-crimson hover:bg-brand-crimson/90 text-white font-bold text-sm sm:text-base px-6 h-12 rounded-full shadow-lg shadow-brand-crimson/30 gap-2"
           >
-            <Link href="/examens">Commencer Maintenant (Accès Immédiat)</Link>
+            <Link href="/examens?test=tcf">
+              <span>Commencer mon Essai Gratuit</span>
+              <ArrowRight className="h-4 w-4" />
+            </Link>
           </Button>
+
+          <Button
+            asChild
+            variant="outline"
+            size="lg"
+            className="w-full sm:w-auto border-white/20 bg-white/5 hover:bg-white/10 text-slate-100 font-semibold text-sm px-6 h-12 rounded-full backdrop-blur-xs"
+          >
+            <Link href="/nclc-calculator">
+              <span>Calculer mes Points CRS</span>
+            </Link>
+          </Button>
+        </div>
+
+        {/* Trust Badges */}
+        <div className="relative z-10 pt-4 border-t border-white/10 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-[11px] sm:text-xs text-slate-400">
+          <span className="flex items-center gap-1.5">
+            <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />
+            Conforme France Éducation International
+          </span>
+          <span className="flex items-center gap-1.5">
+            <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />
+            Accès immédiat sans carte bancaire
+          </span>
+          <span className="flex items-center gap-1.5">
+            <CheckCircle2 className="h-3.5 w-3.5 text-cyan-400" />
+            Noté 4.9/5 par les candidats
+          </span>
         </div>
       </section>
       </div>
