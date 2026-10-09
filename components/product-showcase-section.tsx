@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import {
   Monitor,
   Headphones,
@@ -22,14 +22,10 @@ import {
   RotateCcw,
   Flag,
   Highlighter,
-  ZoomIn,
-  ZoomOut,
   Keyboard,
   Radio,
-  Sliders,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 
 type ShowcaseTab = "ce" | "co" | "ee" | "eo";
 
@@ -54,11 +50,15 @@ export function ProductShowcaseSection() {
 
   // ==========================================
   // STATE: MODE 2 - CO (Compréhension Orale)
+  // NATIVE HTML5 AUDIO PLAYER WITH REAL MP3
   // ==========================================
-  const [selectedCoAnswer, setSelectedCoAnswer] = useState<number | null>(1); // B
-  const [isPlayingCo, setIsPlayingCo] = useState<boolean>(false);
-  const [coSeconds, setCoSeconds] = useState<number>(14);
-  const [coSpeed, setCoSpeed] = useState<"1x" | "0.8x" | "1.2x">("1x");
+  const coAudioRef = useRef<HTMLAudioElement | null>(null);
+  const [selectedCoAnswer, setSelectedCoAnswer] = useState<number | null>(null);
+  const [coPlaying, setCoPlaying] = useState<boolean>(false);
+  const [coCurrentTime, setCoCurrentTime] = useState<number>(0);
+  const [coDuration, setCoDuration] = useState<number>(10);
+  const [coSpeed, setCoSpeed] = useState<number>(1.0);
+  const [coPlayedOnce, setCoPlayedOnce] = useState<boolean>(false);
 
   // ==========================================
   // STATE: MODE 3 - EE (Expression Écrite)
@@ -67,12 +67,14 @@ export function ProductShowcaseSection() {
 
   // ==========================================
   // STATE: MODE 4 - EO (Expression Orale)
+  // NATIVE HTML5 AUDIO WITH REAL ELEVENLABS MP3
   // ==========================================
+  const laurentAudioRef = useRef<HTMLAudioElement | null>(null);
   const [eoSpeaking, setEoSpeaking] = useState<boolean>(false);
-  const [laurentSpeaking, setLaurentSpeaking] = useState<boolean>(false);
+  const [laurentPlaying, setLaurentPlaying] = useState<boolean>(false);
   const [eoExchangeStep, setEoExchangeStep] = useState<number>(1);
 
-  // Timer simulation
+  // Main countdown timer simulation
   const [secondsRemaining, setSecondsRemaining] = useState(3522); // ~58 min
   useEffect(() => {
     const timer = setInterval(() => {
@@ -86,6 +88,22 @@ export function ProductShowcaseSection() {
     const s = secs % 60;
     return `${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
   };
+
+  const formatAudioTime = (seconds: number) => {
+    const m = Math.floor(seconds / 60);
+    const s = Math.floor(seconds % 60);
+    return `${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
+  };
+
+  // Pause audios when switching tabs
+  useEffect(() => {
+    if (coAudioRef.current && !coAudioRef.current.paused) {
+      coAudioRef.current.pause();
+    }
+    if (laurentAudioRef.current && !laurentAudioRef.current.paused) {
+      laurentAudioRef.current.pause();
+    }
+  }, [activeTab]);
 
   // ==========================================
   // PHYSICAL KEYBOARD SHORTCUTS (A, B, C, D)
@@ -109,81 +127,80 @@ export function ProductShowcaseSection() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [activeTab]);
 
-  // Clean speech synthesis on unmount
-  useEffect(() => {
-    return () => {
-      if (typeof window !== "undefined" && "speechSynthesis" in window) {
-        window.speechSynthesis.cancel();
-      }
-    };
-  }, []);
-
-  // Web Speech synthesis helper
-  const speakText = (text: string, onEnd?: () => void) => {
-    if (typeof window !== "undefined" && "speechSynthesis" in window) {
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = "fr-FR";
-      utterance.rate = 1.0;
-      utterance.pitch = 1.0;
-      const voices = window.speechSynthesis.getVoices();
-      const frVoice = voices.find((v) => v.lang.startsWith("fr"));
-      if (frVoice) utterance.voice = frVoice;
-      utterance.onend = () => {
-        onEnd?.();
-      };
-      utterance.onerror = () => {
-        onEnd?.();
-      };
-      window.speechSynthesis.speak(utterance);
-    } else {
-      setTimeout(() => onEnd?.(), 3000);
-    }
-  };
-
-  const handlePlayLaurent = () => {
-    if (laurentSpeaking) {
-      if (typeof window !== "undefined" && "speechSynthesis" in window) {
-        window.speechSynthesis.cancel();
-      }
-      setLaurentSpeaking(false);
-      return;
-    }
-    const text =
-      eoExchangeStep === 1
-        ? "Bonjour ! Absolument, les cours débutent à huit heures le samedi. Cependant, nous exigeons un certificat médical complet avant toute inscription. Est-ce que votre fils a déjà patiné auparavant ?"
-        : "Très bien, c'est un point positif. Concernant l'équipement de protection, préférez-vous louer notre pack ou acheter votre propre matériel agréé ?";
-    setLaurentSpeaking(true);
-    speakText(text, () => setLaurentSpeaking(false));
-  };
-
+  // ==========================================
+  // AUDIO CONTROLS (NATIVE HTML5)
+  // ==========================================
   const handleTogglePlayCo = () => {
-    if (isPlayingCo) {
-      if (typeof window !== "undefined" && "speechSynthesis" in window) {
-        window.speechSynthesis.cancel();
-      }
-      setIsPlayingCo(false);
+    if (!coAudioRef.current) return;
+    if (coPlaying) {
+      coAudioRef.current.pause();
     } else {
-      setIsPlayingCo(true);
-      const audioText =
-        "Radio Canada Montréal : La hausse des frais de scolarité dans les universités anglophones a provoqué une augmentation de 35% des inscriptions dans les cégeps francophones. La mesure incitative accordant l'accès direct aux bourses d'études provinciales semble porter ses fruits, malgré les réticences initiales des doyens d'universités.";
-      speakText(audioText, () => setIsPlayingCo(false));
+      void coAudioRef.current.play().catch((err) => {
+        console.warn("Autoplay restriction:", err);
+      });
     }
   };
 
-  // CO timer simulation
-  useEffect(() => {
-    let interval: NodeJS.Timeout;
-    if (isPlayingCo) {
-      interval = setInterval(() => {
-        setCoSeconds((prev) => (prev >= 32 ? 0 : prev + 1));
-      }, 1000);
+  const handleChangeCoSpeed = (speed: number) => {
+    setCoSpeed(speed);
+    if (coAudioRef.current) {
+      coAudioRef.current.playbackRate = speed;
     }
-    return () => clearInterval(interval);
-  }, [isPlayingCo]);
+  };
+
+  const handleResetCoAudio = () => {
+    if (coAudioRef.current) {
+      coAudioRef.current.currentTime = 0;
+      void coAudioRef.current.play().catch(() => {});
+    }
+  };
+
+  const handleTogglePlayLaurent = () => {
+    if (!laurentAudioRef.current) return;
+    if (laurentPlaying) {
+      laurentAudioRef.current.pause();
+    } else {
+      laurentAudioRef.current.currentTime = 0;
+      void laurentAudioRef.current.play().catch((err) => {
+        console.warn("Autoplay restriction:", err);
+      });
+    }
+  };
 
   return (
     <section className="relative mx-auto max-w-6xl space-y-8 px-2 sm:px-4">
+      {/* Hidden Native Audio Players */}
+      <audio
+        ref={coAudioRef}
+        src="/audio/co/co-101-q2.mp3"
+        preload="metadata"
+        onPlay={() => setCoPlaying(true)}
+        onPause={() => setCoPlaying(false)}
+        onTimeUpdate={() => {
+          if (coAudioRef.current) {
+            setCoCurrentTime(coAudioRef.current.currentTime);
+          }
+        }}
+        onLoadedMetadata={() => {
+          if (coAudioRef.current) {
+            setCoDuration(coAudioRef.current.duration || 10);
+          }
+        }}
+        onEnded={() => {
+          setCoPlaying(false);
+          setCoPlayedOnce(true);
+        }}
+      />
+
+      <audio
+        ref={laurentAudioRef}
+        src={eoExchangeStep === 1 ? "/audio/eo/laurent-step1.mp3" : "/audio/eo/laurent-step2.mp3"}
+        preload="metadata"
+        onPlay={() => setLaurentPlaying(true)}
+        onPause={() => setLaurentPlaying(false)}
+        onEnded={() => setLaurentPlaying(false)}
+      />
+
       {/* Header */}
       <div className="text-center space-y-3">
         <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3.5 py-1 text-xs font-semibold text-primary">
@@ -197,7 +214,7 @@ export function ProductShowcaseSection() {
           </span>
         </h2>
         <p className="text-sm sm:text-base text-muted-foreground max-w-2xl mx-auto">
-          Testez ci-dessous les 4 moteurs technologiques de Super4C2. Cliquez sur les épreuves, répondez aux questions avec votre clavier ou souris, et écoutez l&apos;examinateur.
+          Testez ci-dessous les 4 moteurs technologiques de Super4C2. Cliquez sur les épreuves, répondez aux questions avec votre clavier ou souris, et écoutez les vrais enregistrements studio.
         </p>
       </div>
 
@@ -499,7 +516,7 @@ export function ProductShowcaseSection() {
         )}
 
         {/* =========================================================================
-            MODE 2 : COMPRÉHENSION ORALE (LECTEUR AUDIO FEI • ÉCOUTE UNIQUE • RADIO)
+            MODE 2 : COMPRÉHENSION ORALE (LECTEUR AUDIO FEI • VRAI MP3 STUDIO)
            ========================================================================= */}
         {activeTab === "co" && (
           <div className="p-3 sm:p-5 space-y-4 bg-slate-100/90 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-[470px] transition-colors">
@@ -509,26 +526,26 @@ export function ProductShowcaseSection() {
                 <span className="font-bold text-cyan-600 dark:text-cyan-400">TCF CANADA CBT • AUDIO</span>
                 <span className="text-slate-300 dark:text-slate-500">•</span>
                 <span className="text-slate-600 dark:text-slate-300 font-medium">
-                  Document Sonore 12 / 39 (Niveau B2)
+                  Document Sonore 2 / 39 (Niveau A1 / A2)
                 </span>
                 <span className="hidden md:inline-flex text-[10px] bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 px-2 py-0.5 rounded font-mono border border-cyan-500/20">
                   🔒 Écoute Unique Stricte
                 </span>
               </div>
               <div className="flex items-center gap-2 text-[11px] text-slate-500 dark:text-slate-400">
-                <span>Régulation vitesse :</span>
-                {(["0.8x", "1x", "1.2x"] as const).map((spd) => (
+                <span>Vitesse audio :</span>
+                {([0.8, 1.0, 1.2] as const).map((spd) => (
                   <button
                     key={spd}
                     type="button"
-                    onClick={() => setCoSpeed(spd)}
+                    onClick={() => handleChangeCoSpeed(spd)}
                     className={`px-2 py-0.5 rounded text-[10px] font-bold font-mono transition-all ${
                       coSpeed === spd
                         ? "bg-cyan-600 text-white shadow-xs"
                         : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700"
                     }`}
                   >
-                    {spd}
+                    {spd}x
                   </button>
                 ))}
               </div>
@@ -541,82 +558,99 @@ export function ProductShowcaseSection() {
                 <div className="space-y-3">
                   <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2">
                     <span className="font-bold uppercase tracking-wider text-[11px] text-cyan-600 dark:text-cyan-400 flex items-center gap-1.5">
-                      <Radio className="h-3.5 w-3.5 text-cyan-500 animate-pulse" />
-                      Document Audio Officiel
+                      <Radio className={`h-3.5 w-3.5 text-cyan-500 ${coPlaying ? "animate-pulse" : ""}`} />
+                      Document Audio Officiel FEI
                     </span>
                     <span className="text-[10px] bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded text-slate-600 dark:text-slate-400 font-mono">
-                      Chronique Radio Canada
+                      Annonce en Gare SNCF
                     </span>
                   </div>
 
                   <h4 className="font-bold text-slate-900 dark:text-slate-100 text-sm">
-                    Mesures incitatives pour les études francophones au Québec
+                    Retard imprévu d&apos;une liaison ferroviaire
                   </h4>
 
                   <p className="text-xs text-muted-foreground leading-relaxed">
-                    Vous allez entendre un document sonore une seule fois. Écoutez attentivement avant de répondre à la question.
+                    Vous allez entendre une annonce officielle diffusée dans un haut-parleur. Écoutez attentivement avant de répondre à la question.
                   </p>
 
                   {/* Lecteur Audio Physique FEI */}
                   <div className="rounded-xl border border-cyan-500/20 bg-gradient-to-br from-cyan-50/70 to-slate-50/50 dark:from-cyan-950/20 dark:to-slate-900/60 p-3.5 space-y-3">
                     <div className="flex items-center justify-between text-xs">
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-3">
                         <button
                           type="button"
                           onClick={handleTogglePlayCo}
-                          className="h-9 w-9 rounded-full bg-cyan-600 hover:bg-cyan-500 text-white flex items-center justify-center shadow-md shadow-cyan-600/30 transition-all hover:scale-105 active:scale-95"
-                          title="Lancer / Mettre en pause le document sonore"
+                          className="h-10 w-10 rounded-full bg-cyan-600 hover:bg-cyan-500 text-white flex items-center justify-center shadow-md shadow-cyan-600/30 transition-all hover:scale-105 active:scale-95 shrink-0"
+                          title={coPlaying ? "Mettre en pause" : "Lancer l'écoute audio"}
                         >
-                          {isPlayingCo ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4 ml-0.5" />}
+                          {coPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4 ml-0.5" />}
                         </button>
                         <div>
                           <p className="font-bold text-xs text-slate-900 dark:text-slate-100">
-                            {isPlayingCo ? "Lecture en cours (Audio HD)..." : "Cliquer pour écouter l'audio"}
+                            {coPlaying
+                              ? "Diffusion audio en cours..."
+                              : coPlayedOnce
+                              ? "Document écouté (1 écoute terminée)"
+                              : "Cliquer pour écouter l'audio"}
                           </p>
                           <p className="text-[10px] text-slate-500 dark:text-slate-400 font-mono">
-                            Voix officielle accent québécois
+                            Enregistrement studio MP3 officiel FEI
                           </p>
                         </div>
                       </div>
 
                       <div className="font-mono text-xs font-bold text-cyan-700 dark:text-cyan-400">
-                        00:{coSeconds.toString().padStart(2, "0")} / 00:32
+                        {formatAudioTime(coCurrentTime)} / {formatAudioTime(coDuration)}
                       </div>
                     </div>
 
-                    {/* Progress bar (no seekable scrub according to FEI regulations) */}
+                    {/* Progress bar */}
                     <div className="space-y-1">
                       <div className="h-2 w-full rounded-full bg-slate-200 dark:bg-slate-800 overflow-hidden">
-                        <motion.div
-                          className="h-full bg-gradient-to-r from-cyan-500 to-blue-500"
-                          style={{ width: `${(coSeconds / 32) * 100}%` }}
-                          transition={{ ease: "linear" }}
+                        <div
+                          className="h-full bg-gradient-to-r from-cyan-500 to-blue-500 transition-all duration-100"
+                          style={{
+                            width: `${coDuration > 0 ? (coCurrentTime / coDuration) * 100 : 0}%`,
+                          }}
                         />
                       </div>
                       <div className="flex justify-between text-[10px] text-slate-400 font-mono">
-                        <span>Écoute unique</span>
-                        <span>Rembobinage désactivé (Standard FEI)</span>
+                        <span>Écoute unique FEI</span>
+                        {coPlayedOnce && (
+                          <button
+                            type="button"
+                            onClick={handleResetCoAudio}
+                            className="text-cyan-600 dark:text-cyan-400 hover:underline flex items-center gap-1 font-semibold"
+                          >
+                            <RotateCcw className="h-2.5 w-2.5" /> Réécouter (Mode Démo)
+                          </button>
+                        )}
                       </div>
                     </div>
 
-                    {/* Waveform animated equalizer bars */}
+                    {/* Waveform dynamic equalizer bars */}
                     <div className="flex items-center justify-center gap-1 h-7 pt-1">
                       {Array.from({ length: 28 }).map((_, i) => (
                         <motion.span
                           key={i}
                           animate={
-                            isPlayingCo
+                            coPlaying
                               ? {
-                                  scaleY: [0.3, Math.sin(i * 0.8) * 0.6 + 0.8, 0.2],
+                                  scaleY: [0.25, Math.sin(i * 0.7 + coCurrentTime * 4) * 0.5 + 0.75, 0.25],
                                 }
                               : { scaleY: 0.25 }
                           }
                           transition={{
-                            duration: 0.6 + (i % 5) * 0.1,
-                            repeat: isPlayingCo ? Infinity : 0,
+                            duration: 0.5 + (i % 4) * 0.1,
+                            repeat: coPlaying ? Infinity : 0,
                             ease: "easeInOut",
                           }}
-                          className="w-1 rounded-full bg-cyan-500 dark:bg-cyan-400/80 origin-bottom"
+                          className={`w-1 rounded-full origin-bottom transition-colors ${
+                            coPlaying
+                              ? "bg-cyan-500 dark:bg-cyan-400 shadow-xs shadow-cyan-400/50"
+                              : "bg-slate-300 dark:bg-slate-700"
+                          }`}
                           style={{ height: "24px" }}
                         />
                       ))}
@@ -627,9 +661,9 @@ export function ProductShowcaseSection() {
                 <div className="p-2.5 rounded-lg bg-cyan-500/10 border border-cyan-500/20 text-[11px] text-cyan-800 dark:text-cyan-300 flex items-center justify-between">
                   <span className="flex items-center gap-1.5 font-medium">
                     <ShieldCheck className="h-4 w-4 text-cyan-600 dark:text-cyan-400" />
-                    Simulation audio officielle certifiée sans coupure
+                    Fichier MP3 natif : zéro lag, zéro voix robotique
                   </span>
-                  <span className="font-mono font-bold text-[10px]">CO 39/39</span>
+                  <span className="font-mono font-bold text-[10px]">CO 2/39</span>
                 </div>
               </div>
 
@@ -644,21 +678,21 @@ export function ProductShowcaseSection() {
                   </div>
 
                   <p className="text-xs sm:text-sm font-semibold text-slate-900 dark:text-slate-100">
-                    Selon la chroniqueuse, quelle mesure explique principalement l&apos;augmentation des inscriptions francophones ?
+                    Quelle information est donnée dans cette annonce ?
                   </p>
 
                   {/* Options A, B, C, D */}
                   <div className="space-y-2 pt-1">
                     {[
-                      { id: 0, letter: "A", text: "L'instauration d'un quota strict dans les facultés de droit." },
+                      { id: 0, letter: "A", text: "Le train pour Lyon est supprimé." },
+                      { id: 1, letter: "B", text: "Le train pour Lyon part en avance." },
                       {
-                        id: 1,
-                        letter: "B",
-                        text: "L'accès direct aux bourses d'études provinciales.",
+                        id: 2,
+                        letter: "C",
+                        text: "Le train pour Lyon est en retard.",
                         isCorrect: true,
                       },
-                      { id: 2, letter: "C", text: "La fermeture complète des programmes anglophones." },
-                      { id: 3, letter: "D", text: "L'obligation formulée par les employeurs fédéraux." },
+                      { id: 3, letter: "D", text: "Le quai du train pour Lyon a changé." },
                     ].map((opt) => {
                       const isSelected = selectedCoAnswer === opt.id;
                       return (
@@ -694,9 +728,9 @@ export function ProductShowcaseSection() {
                   <div className="p-2.5 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/30 text-[11px] text-emerald-800 dark:text-emerald-300 flex items-start gap-2">
                     <CheckCircle2 className="h-3.5 w-3.5 shrink-0 mt-0.5 text-emerald-600 dark:text-emerald-400" />
                     <span>
-                      {selectedCoAnswer === 1
-                        ? "Bravo ! Réponse validée : Le document audio mentionne explicitement « la mesure incitative accordant l'accès direct aux bourses d'études provinciales »."
-                        : "Attention : réécoutez l'audio en vous concentrant sur la raison financière provinciale."}
+                      {selectedCoAnswer === 2
+                        ? "Bravo ! Réponse validée : L'annonce sonore indique clairement « le train à destination de Lyon aura quarante minutes de retard » (retardé, pas supprimé)."
+                        : "Attention aux pièges : réécoutez l'extrait, le train n'est pas supprimé mais subit un retard de 40 min."}
                     </span>
                   </div>
                 )}
@@ -707,13 +741,15 @@ export function ProductShowcaseSection() {
             <div className="pt-2 border-t border-slate-200 dark:border-slate-800 space-y-1.5">
               <div className="flex items-center justify-between text-[11px] text-slate-600 dark:text-slate-400">
                 <span>Grille Officielle des 39 Questions Audio (Cliquer pour naviguer) :</span>
-                <span className="font-mono text-cyan-600 dark:text-cyan-400 font-semibold">1 répondu • 38 en attente</span>
+                <span className="font-mono text-cyan-600 dark:text-cyan-400 font-semibold">
+                  {selectedCoAnswer !== null ? "1 répondu" : "0 répondu"} • 38 en attente
+                </span>
               </div>
               <div className="flex flex-wrap gap-1">
                 {Array.from({ length: 39 }).map((_, idx) => {
                   const num = idx + 1;
-                  const isActive = num === 12;
-                  const isAnswered = num === 12;
+                  const isActive = num === 2;
+                  const isAnswered = num === 2 && selectedCoAnswer !== null;
                   return (
                     <button
                       key={num}
@@ -836,7 +872,7 @@ export function ProductShowcaseSection() {
         )}
 
         {/* =========================================================================
-            MODE 4 : EXPRESSION ORALE EN DIRECT (STUDIO VIDÉO 16:9 + IA VOCALE)
+            MODE 4 : EXPRESSION ORALE EN DIRECT (STUDIO VIDÉO 16:9 + VOIX ELEVENLABS)
            ========================================================================= */}
         {activeTab === "eo" && (
           <div className="p-4 sm:p-6 space-y-4 bg-slate-100/90 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-[470px] transition-colors">
@@ -862,11 +898,11 @@ export function ProductShowcaseSection() {
                   <span className="font-semibold text-slate-200">M. Laurent (Examinateur FEI)</span>
                   {/* Waveform animation */}
                   <div className="flex items-center gap-0.5">
-                    <span className={`h-2 w-0.5 bg-cyan-400 ${laurentSpeaking ? "animate-pulse" : ""}`} />
-                    <span className={`h-4 w-0.5 bg-cyan-400 ${laurentSpeaking ? "animate-bounce" : ""}`} />
-                    <span className={`h-3 w-0.5 bg-cyan-400 ${laurentSpeaking ? "animate-pulse" : ""}`} />
-                    <span className={`h-5 w-0.5 bg-cyan-400 ${laurentSpeaking ? "animate-bounce" : ""}`} />
-                    <span className={`h-2 w-0.5 bg-cyan-400 ${laurentSpeaking ? "animate-pulse" : ""}`} />
+                    <span className={`h-2 w-0.5 bg-cyan-400 ${laurentPlaying ? "animate-pulse" : ""}`} />
+                    <span className={`h-4 w-0.5 bg-cyan-400 ${laurentPlaying ? "animate-bounce" : ""}`} />
+                    <span className={`h-3 w-0.5 bg-cyan-400 ${laurentPlaying ? "animate-pulse" : ""}`} />
+                    <span className={`h-5 w-0.5 bg-cyan-400 ${laurentPlaying ? "animate-bounce" : ""}`} />
+                    <span className={`h-2 w-0.5 bg-cyan-400 ${laurentPlaying ? "animate-pulse" : ""}`} />
                   </div>
                 </div>
               </div>
@@ -890,11 +926,11 @@ export function ProductShowcaseSection() {
                     </span>
                     <button
                       type="button"
-                      onClick={handlePlayLaurent}
-                      className="inline-flex items-center gap-1 font-mono text-[10px] font-bold text-cyan-600 dark:text-cyan-400 bg-white dark:bg-cyan-900/50 hover:bg-cyan-100 px-2 py-0.5 rounded border border-cyan-300 dark:border-cyan-700 transition-all"
+                      onClick={handleTogglePlayLaurent}
+                      className="inline-flex items-center gap-1 font-mono text-[10px] font-bold text-cyan-600 dark:text-cyan-400 bg-white dark:bg-cyan-900/50 hover:bg-cyan-100 px-2 py-0.5 rounded border border-cyan-300 dark:border-cyan-700 transition-all shadow-xs active:scale-95"
                     >
-                      {laurentSpeaking ? <VolumeX className="h-3 w-3" /> : <Volume2 className="h-3 w-3" />}
-                      <span>{laurentSpeaking ? "Arrêter la voix" : "🔊 Écouter la voix HD"}</span>
+                      {laurentPlaying ? <VolumeX className="h-3 w-3" /> : <Volume2 className="h-3 w-3" />}
+                      <span>{laurentPlaying ? "Arrêter la voix" : "🔊 Écouter la voix Studio"}</span>
                     </button>
                   </div>
                   <p className="text-xs sm:text-sm text-slate-800 dark:text-slate-200 italic">
@@ -928,7 +964,13 @@ export function ProductShowcaseSection() {
                       type="button"
                       size="sm"
                       variant="outline"
-                      onClick={() => setEoExchangeStep((s) => (s === 1 ? 2 : 1))}
+                      onClick={() => {
+                        setEoExchangeStep((s) => (s === 1 ? 2 : 1));
+                        if (laurentAudioRef.current) {
+                          laurentAudioRef.current.pause();
+                        }
+                        setLaurentPlaying(false);
+                      }}
                       className="border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs gap-1"
                     >
                       <RotateCcw className="h-3 w-3" />
