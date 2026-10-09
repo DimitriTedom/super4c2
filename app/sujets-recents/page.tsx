@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import {
   Sparkles,
@@ -135,16 +136,28 @@ export default function SujetsRecentsPage() {
   return (
     <div className="mx-auto max-w-5xl space-y-12 py-4">
       {/* 🧭 En-tête */}
-      <div className="space-y-3 max-w-3xl">
-        <span className="rounded-full bg-primary/10 px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-primary inline-flex items-center gap-1.5">
-          <BookMarked className="h-3.5 w-3.5" /> Veille Continue des Centres FEI 2026
-        </span>
-        <h1 className="font-display text-3xl sm:text-5xl font-black tracking-tight text-foreground">
-          Banque des Sujets Récents d&apos;Expression
-        </h1>
-        <p className="text-muted-foreground text-sm sm:text-base leading-relaxed">
-          Accédez aux vrais sujets rapportés par les candidats lors des sessions officielles récentes, enrichis de suggestions lexicales C1/C2 et d&apos;un accès direct au simulateur d&apos;examen.
-        </p>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 border-b pb-6">
+        <div className="space-y-3 max-w-3xl">
+          <span className="rounded-full bg-primary/10 px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-primary inline-flex items-center gap-1.5">
+            <BookMarked className="h-3.5 w-3.5" /> Veille Continue des Centres FEI 2026
+          </span>
+          <h1 className="font-display text-3xl sm:text-5xl font-black tracking-tight text-foreground">
+            Banque des Sujets Récents d&apos;Expression
+          </h1>
+          <p className="text-muted-foreground text-sm sm:text-base leading-relaxed">
+            Accédez aux vrais sujets rapportés par les candidats lors des sessions officielles récentes, enrichis de suggestions lexicales C1/C2 et d&apos;un accès direct au simulateur d&apos;examen.
+          </p>
+        </div>
+        <div className="shrink-0 flex items-center justify-center p-2 rounded-3xl bg-primary/5 border border-primary/20 shadow-sm">
+          <Image
+            src="/brand/icons-3d/radar-recent-topics.png"
+            alt="Veille Sujets Récents 3D"
+            width={90}
+            height={90}
+            className="h-20 w-20 object-contain drop-shadow-md"
+            priority
+          />
+        </div>
       </div>
 
       {/* 🔍 Filtres */}

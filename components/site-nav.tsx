@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
@@ -210,8 +211,14 @@ export function SiteNav() {
                 href="/examens/demo-101-ce/intro"
                 className="flex items-start gap-3 rounded-xl p-2.5 hover:bg-muted/70 transition-colors group"
               >
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-rose-500/10 text-rose-500 group-hover:bg-rose-500 group-hover:text-white transition-colors">
-                  <BookOpen className="h-4 w-4" />
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 p-1 group-hover:scale-105 transition-transform">
+                  <Image
+                    src="/brand/icons-3d/comprehension-ecrite-book.png"
+                    alt="CE"
+                    width={32}
+                    height={32}
+                    className="h-7 w-7 object-contain drop-shadow-sm"
+                  />
                 </div>
                 <div>
                   <div className="text-xs font-bold text-foreground flex items-center gap-1.5">
@@ -230,13 +237,19 @@ export function SiteNav() {
                 href="/examens/demo-101-ce/co"
                 className="flex items-start gap-3 rounded-xl p-2.5 hover:bg-muted/70 transition-colors group"
               >
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-blue-500/10 text-blue-500 group-hover:bg-blue-500 group-hover:text-white transition-colors">
-                  <Headphones className="h-4 w-4" />
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-cyan-500/10 p-1 group-hover:scale-105 transition-transform">
+                  <Image
+                    src="/brand/icons-3d/comprehension-orale-headphones.png"
+                    alt="CO"
+                    width={32}
+                    height={32}
+                    className="h-7 w-7 object-contain drop-shadow-sm"
+                  />
                 </div>
                 <div>
                   <div className="text-xs font-bold text-foreground flex items-center gap-1.5">
                     <span>Compréhension Orale (CO)</span>
-                    <span className="rounded bg-blue-500/10 px-1 py-0.2 text-[9px] font-bold text-blue-500">
+                    <span className="rounded bg-cyan-500/10 px-1 py-0.2 text-[9px] font-bold text-cyan-600 dark:text-cyan-400">
                       39Q
                     </span>
                   </div>
@@ -250,13 +263,19 @@ export function SiteNav() {
                 href="/examens/demo-101-ce/eo/intro"
                 className="flex items-start gap-3 rounded-xl p-2.5 hover:bg-muted/70 transition-colors group"
               >
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-cyan-500/10 text-cyan-500 group-hover:bg-cyan-500 group-hover:text-white transition-colors">
-                  <Mic className="h-4 w-4" />
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-amber-500/10 p-1 group-hover:scale-105 transition-transform">
+                  <Image
+                    src="/brand/icons-3d/expression-orale-microphone.png"
+                    alt="EO"
+                    width={32}
+                    height={32}
+                    className="h-7 w-7 object-contain drop-shadow-sm"
+                  />
                 </div>
                 <div>
                   <div className="text-xs font-bold text-foreground flex items-center gap-1.5">
                     <span>Expression Orale IA</span>
-                    <span className="rounded bg-cyan-500/15 px-1 py-0.2 text-[9px] font-bold text-cyan-600 dark:text-cyan-400">
+                    <span className="rounded bg-amber-500/15 px-1 py-0.2 text-[9px] font-bold text-amber-600 dark:text-amber-400">
                       Live
                     </span>
                   </div>
@@ -270,8 +289,14 @@ export function SiteNav() {
                 href="/examens/demo-101-ee/intro"
                 className="flex items-start gap-3 rounded-xl p-2.5 hover:bg-muted/70 transition-colors group"
               >
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-amber-500/10 text-amber-500 group-hover:bg-amber-500 group-hover:text-white transition-colors">
-                  <PenTool className="h-4 w-4" />
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#E51A31]/10 p-1 group-hover:scale-105 transition-transform">
+                  <Image
+                    src="/brand/icons-3d/expression-ecrite-pen.png"
+                    alt="EE"
+                    width={32}
+                    height={32}
+                    className="h-7 w-7 object-contain drop-shadow-sm"
+                  />
                 </div>
                 <div>
                   <div className="text-xs font-bold text-foreground flex items-center gap-1.5">
@@ -288,8 +313,14 @@ export function SiteNav() {
                 href="/carnet-erreurs"
                 className="flex items-start gap-3 rounded-xl p-2.5 hover:bg-muted/70 transition-colors group"
               >
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-purple-500/10 text-purple-500 group-hover:bg-purple-500 group-hover:text-white transition-colors">
-                  <Brain className="h-4 w-4" />
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-purple-500/10 p-1 group-hover:scale-105 transition-transform">
+                  <Image
+                    src="/brand/icons-3d/srs-memory-vault.png"
+                    alt="SRS"
+                    width={32}
+                    height={32}
+                    className="h-7 w-7 object-contain drop-shadow-sm"
+                  />
                 </div>
                 <div>
                   <div className="text-xs font-bold text-foreground">
@@ -305,8 +336,14 @@ export function SiteNav() {
                 href="/nclc-calculator"
                 className="flex items-start gap-3 rounded-xl p-2.5 hover:bg-muted/70 transition-colors group"
               >
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-500 group-hover:bg-emerald-500 group-hover:text-white transition-colors">
-                  <Calculator className="h-4 w-4" />
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-500/10 p-1 group-hover:scale-105 transition-transform">
+                  <Image
+                    src="/brand/icons-3d/crs-calculator-compass.png"
+                    alt="CRS"
+                    width={32}
+                    height={32}
+                    className="h-7 w-7 object-contain drop-shadow-sm"
+                  />
                 </div>
                 <div>
                   <div className="text-xs font-bold text-foreground flex items-center gap-1.5">
@@ -359,8 +396,14 @@ export function SiteNav() {
                 href="/blog"
                 className="flex items-start gap-3 rounded-xl p-2.5 hover:bg-muted/70 transition-colors group"
               >
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
-                  <Newspaper className="h-4 w-4" />
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 p-1 group-hover:scale-105 transition-transform">
+                  <Image
+                    src="/brand/icons-3d/radar-recent-topics.png"
+                    alt="Blog"
+                    width={32}
+                    height={32}
+                    className="h-7 w-7 object-contain drop-shadow-sm"
+                  />
                 </div>
                 <div>
                   <div className="text-xs font-bold text-foreground">
@@ -376,8 +419,14 @@ export function SiteNav() {
                 href="/communaute"
                 className="flex items-start gap-3 rounded-xl p-2.5 hover:bg-muted/70 transition-colors group"
               >
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-cyan-500/10 text-cyan-500 group-hover:bg-cyan-500 group-hover:text-white transition-colors">
-                  <Users className="h-4 w-4" />
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-cyan-500/10 p-1 group-hover:scale-105 transition-transform">
+                  <Image
+                    src="/brand/icons-3d/vip-community-shield.png"
+                    alt="Communauté VIP"
+                    width={32}
+                    height={32}
+                    className="h-7 w-7 object-contain drop-shadow-sm"
+                  />
                 </div>
                 <div>
                   <div className="text-xs font-bold text-foreground">

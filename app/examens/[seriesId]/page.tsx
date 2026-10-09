@@ -1,6 +1,7 @@
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
-import { BookOpenText, Headphones, PenTool, Mic, Clock, ListChecks, Sparkles, ArrowRight, ShieldCheck } from "lucide-react";
+import { Clock, ListChecks, Sparkles, ArrowRight, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { getMockSeries } from "@/lib/exam/mock-series";
 
@@ -21,16 +22,28 @@ export default async function SeriesDisciplineSelectorPage({
   return (
     <div className="mx-auto max-w-4xl space-y-10 py-6">
       {/* Top Banner */}
-      <div className="space-y-3 text-center sm:text-left border-b pb-6">
-        <div className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-bold uppercase tracking-wider text-primary">
-          <ShieldCheck className="h-3.5 w-3.5" /> Simulateur Officiel FEI · Nouveau Format TCF Canada
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 border-b pb-6">
+        <div className="space-y-3 text-center sm:text-left">
+          <div className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-bold uppercase tracking-wider text-primary">
+            <ShieldCheck className="h-3.5 w-3.5" /> Simulateur Officiel FEI · Nouveau Format TCF Canada
+          </div>
+          <h1 className="font-display text-2xl sm:text-4xl font-extrabold tracking-tight">
+            Vous êtes sur le point de commencer la Série {series.seriesNumber || 101}
+          </h1>
+          <p className="text-base text-muted-foreground max-w-2xl">
+            Vous devez choisir une discipline pour débuter le test. Toutes nos simulations respectent scrupuleusement les contraintes officielles de France Éducation International.
+          </p>
         </div>
-        <h1 className="font-display text-2xl sm:text-4xl font-extrabold tracking-tight">
-          Vous êtes sur le point de commencer la Série {series.seriesNumber || 101}
-        </h1>
-        <p className="text-base text-muted-foreground max-w-2xl">
-          Vous devez choisir une discipline pour débuter le test. Toutes nos simulations respectent scrupuleusement les contraintes officielles de France Éducation International.
-        </p>
+        <div className="shrink-0 hidden sm:flex items-center justify-center p-2 rounded-3xl bg-primary/5 border border-primary/20 shadow-sm">
+          <Image
+            src="/brand/icons-3d/cbt-dual-screen-simulator.png"
+            alt="CBT Simulator"
+            width={84}
+            height={84}
+            className="h-20 w-20 object-contain drop-shadow-md"
+            priority
+          />
+        </div>
       </div>
 
       {/* 4 Disciplines Grid */}
@@ -43,8 +56,14 @@ export default async function SeriesDisciplineSelectorPage({
 
           <div className="space-y-4 pt-2">
             <div className="flex items-center justify-between">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/15 text-primary">
-                <BookOpenText className="h-6 w-6" />
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 p-1 transition-transform group-hover:scale-105">
+                <Image
+                  src="/brand/icons-3d/comprehension-ecrite-book.png"
+                  alt="Compréhension Écrite"
+                  width={48}
+                  height={48}
+                  className="h-12 w-12 object-contain drop-shadow-sm"
+                />
               </div>
               <div className="text-right">
                 <span className="font-mono text-xs font-semibold text-primary block">Barème FEI (100–699)</span>
@@ -80,13 +99,19 @@ export default async function SeriesDisciplineSelectorPage({
         </div>
 
         {/* 2. Compréhension Orale */}
-        <div className="group flex flex-col justify-between rounded-3xl border bg-card p-6 shadow-xs transition-all hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg">
+        <div className="group flex flex-col justify-between rounded-3xl border bg-card p-6 shadow-xs transition-all hover:-translate-y-1 hover:border-cyan-500/40 hover:shadow-lg">
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-muted text-foreground">
-                <Headphones className="h-6 w-6" />
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-cyan-500/10 p-1 transition-transform group-hover:scale-105">
+                <Image
+                  src="/brand/icons-3d/comprehension-orale-headphones.png"
+                  alt="Compréhension Orale"
+                  width={48}
+                  height={48}
+                  className="h-12 w-12 object-contain drop-shadow-sm"
+                />
               </div>
-              <span className="font-mono text-xs text-muted-foreground">Mono-écoute stricte</span>
+              <span className="font-mono text-xs text-cyan-600 dark:text-cyan-400 font-bold">Mono-écoute stricte</span>
             </div>
 
             <div>
@@ -117,13 +142,19 @@ export default async function SeriesDisciplineSelectorPage({
         </div>
 
         {/* 3. Expression Écrite */}
-        <div className="group flex flex-col justify-between rounded-3xl border bg-card p-6 shadow-xs transition-all hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg">
+        <div className="group flex flex-col justify-between rounded-3xl border bg-card p-6 shadow-xs transition-all hover:-translate-y-1 hover:border-brand-crimson/40 hover:shadow-lg">
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-muted text-foreground">
-                <PenTool className="h-6 w-6" />
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#E51A31]/10 p-1 transition-transform group-hover:scale-105">
+                <Image
+                  src="/brand/icons-3d/expression-ecrite-pen.png"
+                  alt="Expression Écrite"
+                  width={48}
+                  height={48}
+                  className="h-12 w-12 object-contain drop-shadow-sm"
+                />
               </div>
-              <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[11px] font-semibold text-primary">
+              <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-[11px] font-semibold text-primary">
                 Correction IA FEI
               </span>
             </div>
@@ -156,13 +187,19 @@ export default async function SeriesDisciplineSelectorPage({
         </div>
 
         {/* 4. Expression Orale */}
-        <div className="group flex flex-col justify-between rounded-3xl border bg-card p-6 shadow-xs transition-all hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg">
+        <div className="group flex flex-col justify-between rounded-3xl border bg-card p-6 shadow-xs transition-all hover:-translate-y-1 hover:border-amber-500/40 hover:shadow-lg">
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-muted text-foreground">
-                <Mic className="h-6 w-6" />
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-500/10 p-1 transition-transform group-hover:scale-105">
+                <Image
+                  src="/brand/icons-3d/expression-orale-microphone.png"
+                  alt="Expression Orale"
+                  width={48}
+                  height={48}
+                  className="h-12 w-12 object-contain drop-shadow-sm"
+                />
               </div>
-              <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[11px] font-semibold text-primary">
+              <span className="rounded-full bg-amber-500/15 px-2.5 py-0.5 text-[11px] font-semibold text-amber-600 dark:text-amber-400">
                 Voice Agent Live
               </span>
             </div>

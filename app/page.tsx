@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import {
   Sparkles,
   ArrowRight,
@@ -296,54 +297,78 @@ export default async function HomePage() {
         </div>
 
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          <div className="rounded-2xl border bg-card p-6 space-y-4 shadow-sm hover:border-primary/50 transition-all">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
-              <BookOpenText className="h-6 w-6" />
+          <div className="group rounded-2xl border bg-card p-6 space-y-4 shadow-sm hover:border-primary/50 transition-all hover:-translate-y-1 hover:shadow-lg">
+            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 p-1 transition-transform group-hover:scale-105">
+              <Image
+                src="/brand/icons-3d/comprehension-ecrite-book.png"
+                alt="Compréhension Écrite 3D"
+                width={56}
+                height={56}
+                className="h-14 w-14 object-contain drop-shadow-md"
+              />
             </div>
             <h3 className="font-display text-lg font-bold">Compréhension Écrite</h3>
             <p className="text-xs text-muted-foreground leading-relaxed">
               60 minutes, 39 questions à choix multiple. Simulation exacte de l&apos;interface informatique FEI avec grille 1-39 et drapeaux de révision.
             </p>
-            <Button asChild variant="outline" size="sm" className="w-full text-xs">
+            <Button asChild variant="outline" size="sm" className="w-full text-xs font-semibold">
               <Link href="/examens/demo-101/ce">Tester le simulateur CE</Link>
             </Button>
           </div>
 
-          <div className="rounded-2xl border bg-card p-6 space-y-4 shadow-sm hover:border-primary/50 transition-all">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-cyan-500/10 text-cyan-600">
-              <Headphones className="h-6 w-6" />
+          <div className="group rounded-2xl border bg-card p-6 space-y-4 shadow-sm hover:border-cyan-500/50 transition-all hover:-translate-y-1 hover:shadow-lg">
+            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-cyan-500/10 p-1 transition-transform group-hover:scale-105">
+              <Image
+                src="/brand/icons-3d/comprehension-orale-headphones.png"
+                alt="Compréhension Orale 3D"
+                width={56}
+                height={56}
+                className="h-14 w-14 object-contain drop-shadow-md"
+              />
             </div>
             <h3 className="font-display text-lg font-bold">Compréhension Orale</h3>
             <p className="text-xs text-muted-foreground leading-relaxed">
               40 minutes, 39 documents sonores. Lecteur officiel avec lecture unique obligatoire sans possibilité de rembobinage.
             </p>
-            <Button asChild variant="outline" size="sm" className="w-full text-xs">
+            <Button asChild variant="outline" size="sm" className="w-full text-xs font-semibold">
               <Link href="/examens/demo-101-co/co">Tester le simulateur CO</Link>
             </Button>
           </div>
 
-          <div className="rounded-2xl border bg-card p-6 space-y-4 shadow-sm hover:border-primary/50 transition-all">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#E51A31]/10 text-[#E51A31]">
-              <PenTool className="h-6 w-6" />
+          <div className="group rounded-2xl border bg-card p-6 space-y-4 shadow-sm hover:border-brand-crimson/50 transition-all hover:-translate-y-1 hover:shadow-lg">
+            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-[#E51A31]/10 p-1 transition-transform group-hover:scale-105">
+              <Image
+                src="/brand/icons-3d/expression-ecrite-pen.png"
+                alt="Expression Écrite 3D"
+                width={56}
+                height={56}
+                className="h-14 w-14 object-contain drop-shadow-md"
+              />
             </div>
             <h3 className="font-display text-lg font-bold">Expression Écrite</h3>
             <p className="text-xs text-muted-foreground leading-relaxed">
               60 minutes, 3 tâches FEI. Compteur de mots temps réel, désactivation d&apos;autocorrecteur et Magic Rewrite C1/C2 en un clic.
             </p>
-            <Button asChild variant="outline" size="sm" className="w-full text-xs">
+            <Button asChild variant="outline" size="sm" className="w-full text-xs font-semibold">
               <Link href="/examens/demo-101-ee/intro">Accéder à l&apos;atelier écrit</Link>
             </Button>
           </div>
 
-          <div className="rounded-2xl border bg-card p-6 space-y-4 shadow-sm hover:border-primary/50 transition-all">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-amber-500/10 text-amber-600">
-              <Mic className="h-6 w-6" />
+          <div className="group rounded-2xl border bg-card p-6 space-y-4 shadow-sm hover:border-amber-500/50 transition-all hover:-translate-y-1 hover:shadow-lg">
+            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-amber-500/10 p-1 transition-transform group-hover:scale-105">
+              <Image
+                src="/brand/icons-3d/expression-orale-microphone.png"
+                alt="Expression Orale 3D"
+                width={56}
+                height={56}
+                className="h-14 w-14 object-contain drop-shadow-md"
+              />
             </div>
             <h3 className="font-display text-lg font-bold">Expression Orale</h3>
             <p className="text-xs text-muted-foreground leading-relaxed">
               12 minutes, 3 tâches dont le jeu de rôle interactif en direct avec notre Voice Agent. Débriefing de fluidité et de prononciation.
             </p>
-            <Button asChild variant="outline" size="sm" className="w-full text-xs">
+            <Button asChild variant="outline" size="sm" className="w-full text-xs font-semibold">
               <Link href="/examens/demo-101-eo/intro">Entrer en salle d&apos;oral</Link>
             </Button>
           </div>

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import {
   Users,
   MessageCircle,
@@ -53,7 +54,17 @@ export default function CommunautePage() {
   return (
     <div className="mx-auto max-w-5xl space-y-12 py-4">
       {/* 🧭 En-tête */}
-      <div className="text-center max-w-2xl mx-auto space-y-3">
+      <div className="flex flex-col items-center text-center max-w-2xl mx-auto space-y-4">
+        <div className="flex items-center justify-center p-2 rounded-3xl bg-primary/5 border border-primary/20 shadow-sm">
+          <Image
+            src="/brand/icons-3d/vip-community-shield.png"
+            alt="Communauté VIP 3D"
+            width={84}
+            height={84}
+            className="h-20 w-20 object-contain drop-shadow-md"
+            priority
+          />
+        </div>
         <span className="rounded-full bg-primary/10 px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-primary inline-flex items-center gap-1.5">
           <Users className="h-3.5 w-3.5" /> Réseau d&apos;Entraide International
         </span>

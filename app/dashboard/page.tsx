@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { redirect } from "next/navigation";
 import {
   BookOpenText,
@@ -50,7 +51,7 @@ export default async function DashboardPage() {
     }
   });
 
-  // Profil des 4 compétences clés
+  // Profil des 4 compétences clés avec icônes 3D
   const currentSkills = [
     {
       code: "CE",
@@ -59,6 +60,7 @@ export default async function DashboardPage() {
       target: 7,
       ok: (latestByDiscipline.COMPREHENSION_ECRITE || 8) >= 7,
       href: "/examens/demo-101-ce/intro",
+      icon3d: "/brand/icons-3d/comprehension-ecrite-book.png",
       icon: BookOpenText,
     },
     {
@@ -68,6 +70,7 @@ export default async function DashboardPage() {
       target: 7,
       ok: (latestByDiscipline.COMPREHENSION_ORALE || 7) >= 7,
       href: "/examens/demo-101-ce/co",
+      icon3d: "/brand/icons-3d/comprehension-orale-headphones.png",
       icon: Headphones,
     },
     {
@@ -77,6 +80,7 @@ export default async function DashboardPage() {
       target: 7,
       ok: (latestByDiscipline.EXPRESSION_ECRITE || 7) >= 7,
       href: "/examens/demo-101-ce/ee/intro",
+      icon3d: "/brand/icons-3d/expression-ecrite-pen.png",
       icon: PenTool,
     },
     {
@@ -86,6 +90,7 @@ export default async function DashboardPage() {
       target: 7,
       ok: (latestByDiscipline.EXPRESSION_ORALE || 6) >= 7,
       href: "/examens/demo-101-ce/eo/intro",
+      icon3d: "/brand/icons-3d/expression-orale-microphone.png",
       icon: Mic,
     },
   ];
@@ -109,15 +114,27 @@ export default async function DashboardPage() {
         </div>
 
         <div className="flex items-center gap-3">
-          <Button asChild variant="outline">
-            <Link href="/carnet-erreurs" className="gap-2">
-              <BookMarked className="h-4 w-4 text-[#E51A31]" />
+          <Button asChild variant="outline" className="gap-2.5">
+            <Link href="/carnet-erreurs" className="flex items-center gap-2">
+              <Image
+                src="/brand/icons-3d/srs-memory-vault.png"
+                alt="SRS"
+                width={22}
+                height={22}
+                className="h-5 w-5 object-contain"
+              />
               <span>Carnet d&apos;Erreurs SRS</span>
             </Link>
           </Button>
-          <Button asChild className="bg-[#E51A31] hover:bg-[#B31224] text-white">
-            <Link href="/examens" className="gap-2">
-              <Sparkles className="h-4 w-4" />
+          <Button asChild className="bg-[#E51A31] hover:bg-[#B31224] text-white gap-2 shadow-sm">
+            <Link href="/examens" className="flex items-center gap-2">
+              <Image
+                src="/brand/icons-3d/cbt-dual-screen-simulator.png"
+                alt="CBT"
+                width={22}
+                height={22}
+                className="h-5 w-5 object-contain"
+              />
               <span>Simulateur d&apos;Examen</span>
             </Link>
           </Button>
@@ -130,23 +147,36 @@ export default async function DashboardPage() {
           <h2 className="font-display text-xl font-bold">Votre Niveau par Épreuve (NCLC)</h2>
           <Link
             href="/nclc-calculator"
-            className="text-xs text-primary font-semibold hover:underline flex items-center gap-1"
+            className="text-xs text-primary font-semibold hover:underline flex items-center gap-1.5"
           >
-            Calculateur de points CRS <ArrowRight className="h-3.5 w-3.5" />
+            <Image
+              src="/brand/icons-3d/crs-calculator-compass.png"
+              alt="CRS"
+              width={18}
+              height={18}
+              className="h-4 w-4 object-contain"
+            />
+            <span>Calculateur de points CRS</span>
+            <ArrowRight className="h-3.5 w-3.5" />
           </Link>
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {currentSkills.map((sk) => {
-            const Icon = sk.icon;
             return (
               <div
                 key={sk.code}
-                className="rounded-2xl border bg-card p-5 space-y-4 shadow-sm transition-all hover:border-primary/40"
+                className="group rounded-2xl border bg-card p-5 space-y-4 shadow-sm transition-all hover:border-primary/40 hover:-translate-y-0.5 hover:shadow-md"
               >
                 <div className="flex items-center justify-between">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                    <Icon className="h-5 w-5" />
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 p-1 transition-transform group-hover:scale-105">
+                    <Image
+                      src={sk.icon3d}
+                      alt={sk.name}
+                      width={44}
+                      height={44}
+                      className="h-10 w-10 object-contain drop-shadow-sm"
+                    />
                   </div>
                   <span
                     className={`font-mono text-xs font-bold px-2 py-0.5 rounded-full border ${
@@ -169,7 +199,7 @@ export default async function DashboardPage() {
                   </div>
                 </div>
 
-                <Button asChild variant="outline" size="sm" className="w-full text-xs">
+                <Button asChild variant="outline" size="sm" className="w-full text-xs font-semibold">
                   <Link href={sk.href}>S&apos;entraîner en conditions réelles</Link>
                 </Button>
               </div>

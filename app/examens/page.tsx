@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Suspense } from "react";
 import { Clock, ListChecks, PenTool, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -49,9 +50,15 @@ export default async function ExamCataloguePage({ searchParams }: ExamCatalogueP
       {/* ✍️ 2. Entraînement Ciblé aux Expressions (EE & EO avec IA) */}
       <section className="space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-border/80 pb-3">
-          <div className="flex items-center gap-2.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-500/15 text-amber-500">
-              <PenTool className="h-5 w-5" />
+          <div className="flex items-center gap-3">
+            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary/10 p-1">
+              <Image
+                src="/brand/icons-3d/expression-ecrite-pen.png"
+                alt="Expressions"
+                width={36}
+                height={36}
+                className="h-8 w-8 object-contain drop-shadow-sm"
+              />
             </div>
             <div>
               <h2 className="font-display text-xl sm:text-2xl font-bold">
@@ -75,8 +82,14 @@ export default async function ExamCataloguePage({ searchParams }: ExamCatalogueP
             >
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-                    <PenTool className="h-5 w-5" />
+                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 p-1 transition-transform group-hover:scale-105">
+                    <Image
+                      src="/brand/icons-3d/expression-ecrite-pen.png"
+                      alt={s.title}
+                      width={40}
+                      height={40}
+                      className="h-9 w-9 object-contain drop-shadow-sm"
+                    />
                   </div>
                   <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-[10px] font-bold text-primary">
                     Série {201 + idx}

@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React from "react";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
@@ -17,42 +18,19 @@ export function AnimatedAiAvatar({
   isSpeaking = false,
   isThinking = false,
 }: AnimatedAiAvatarProps) {
-  const [isBlinking, setIsBlinking] = useState(false);
-
-  // Natural blinking effect every 3.2 to 5 seconds
-  useEffect(() => {
-    let timeoutId: NodeJS.Timeout;
-
-    const scheduleBlink = () => {
-      const nextBlink = Math.random() * 2500 + 3000;
-      timeoutId = setTimeout(() => {
-        setIsBlinking(true);
-        setTimeout(() => {
-          setIsBlinking(false);
-          scheduleBlink();
-        }, 180);
-      }, nextBlink);
-    };
-
-    scheduleBlink();
-    return () => clearTimeout(timeoutId);
-  }, []);
-
   const sizeDimensions = {
-    sm: "w-7 h-7",
-    md: "w-9 h-9",
-    lg: "w-12 h-12",
-    xl: "w-16 h-16",
+    sm: "w-8 h-8",
+    md: "w-10 h-10",
+    lg: "w-14 h-14",
+    xl: "w-20 h-20",
   };
 
-  const eyeDimensions = {
-    sm: { w: 4, h: 6, r: 2 },
-    md: { w: 6, h: 9, r: 3 },
-    lg: { w: 8, h: 12, r: 4 },
-    xl: { w: 10, h: 16, r: 5 },
+  const imageSizes = {
+    sm: 32,
+    md: 40,
+    lg: 56,
+    xl: 80,
   };
-
-  const currentEye = eyeDimensions[size];
 
   return (
     <div
@@ -62,15 +40,15 @@ export function AnimatedAiAvatar({
         className
       )}
     >
-      {/* Outer ambient energy ring when speaking or active */}
+      {/* Outer ambient energy ring when speaking */}
       {isSpeaking && (
         <motion.div
           animate={{
-            scale: [1, 1.35, 1],
-            opacity: [0.6, 0.1, 0.6],
+            scale: [1, 1.25, 1],
+            opacity: [0.6, 0.15, 0.6],
           }}
           transition={{
-            duration: 1.6,
+            duration: 1.5,
             repeat: Infinity,
             ease: "easeInOut",
           }}
@@ -78,74 +56,28 @@ export function AnimatedAiAvatar({
         />
       )}
 
-      {/* Outer floating shell */}
+      {/* Floating shell with 3D Orb */}
       <motion.div
         animate={
           isThinking
-            ? { rotate: 360 }
-            : {
-                y: [0, -2, 0],
-              }
+            ? { rotate: [0, 8, -8, 0], y: [0, -3, 0] }
+            : { y: [0, -2.5, 0] }
         }
-        transition={
-          isThinking
-            ? { duration: 6, repeat: Infinity, ease: "linear" }
-            : { duration: 3, repeat: Infinity, ease: "easeInOut" }
-        }
-        className="relative w-full h-full rounded-2xl sm:rounded-3xl p-[1.5px] bg-gradient-to-b from-red-500 via-rose-600 to-slate-900 shadow-md shadow-red-500/20 flex items-center justify-center overflow-hidden"
+        transition={{
+          duration: isThinking ? 2 : 3.5,
+          repeat: Infinity,
+          ease: "easeInOut",
+        }}
+        className="relative w-full h-full flex items-center justify-center"
       >
-        {/* Glossy sphere body */}
-        <div className="relative w-full h-full rounded-[inherit] bg-gradient-to-b from-rose-950/90 via-slate-950 to-black flex items-center justify-center overflow-hidden">
-          {/* Top specular highlight */}
-          <div className="absolute top-0 inset-x-0 h-1/2 bg-gradient-to-b from-white/20 to-transparent pointer-events-none rounded-t-[inherit]" />
-
-          {/* Cyan visor background glow */}
-          <div
-            className={cn(
-              "absolute inset-1 rounded-xl bg-cyan-950/40 border border-cyan-500/20 flex items-center justify-center transition-all",
-              isSpeaking && "bg-cyan-900/50 border-cyan-400/40 shadow-[0_0_12px_rgba(6,182,212,0.3)]"
-            )}
-          >
-            {/* Digital Eyes Display */}
-            <div className="flex items-center gap-1.5 sm:gap-2">
-              {/* Left Eye */}
-              <motion.div
-                animate={{
-                  scaleY: isBlinking ? 0.1 : isSpeaking ? [1, 1.2, 0.9, 1.1] : 1,
-                  scaleX: isSpeaking ? [1, 0.9, 1.1, 1] : 1,
-                }}
-                transition={{
-                  duration: isBlinking ? 0.15 : 0.8,
-                  repeat: isSpeaking ? Infinity : 0,
-                }}
-                style={{
-                  width: `${currentEye.w}px`,
-                  height: `${currentEye.h}px`,
-                  borderRadius: `${currentEye.r}px`,
-                }}
-                className="bg-cyan-400 shadow-[0_0_8px_#22d3ee,0_0_14px_#06b6d4] transition-all"
-              />
-
-              {/* Right Eye */}
-              <motion.div
-                animate={{
-                  scaleY: isBlinking ? 0.1 : isSpeaking ? [1, 1.2, 0.9, 1.1] : 1,
-                  scaleX: isSpeaking ? [1, 0.9, 1.1, 1] : 1,
-                }}
-                transition={{
-                  duration: isBlinking ? 0.15 : 0.8,
-                  repeat: isSpeaking ? Infinity : 0,
-                }}
-                style={{
-                  width: `${currentEye.w}px`,
-                  height: `${currentEye.h}px`,
-                  borderRadius: `${currentEye.r}px`,
-                }}
-                className="bg-cyan-400 shadow-[0_0_8px_#22d3ee,0_0_14px_#06b6d4] transition-all"
-              />
-            </div>
-          </div>
-        </div>
+        <Image
+          src="/brand/icons-3d/ai-assistant-orb.png"
+          alt="Aura C2 AI Avatar"
+          width={imageSizes[size]}
+          height={imageSizes[size]}
+          className="w-full h-full object-contain drop-shadow-md select-none pointer-events-none"
+          priority
+        />
       </motion.div>
     </div>
   );
