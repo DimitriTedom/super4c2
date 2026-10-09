@@ -89,3 +89,29 @@ CREATE TABLE organization_members (
   - Radar des 4 compétences linguistiques (CE, CO, EE, EO).
   - Jauge d'atteinte du NCLC 7 et bonus Entrée Express (+50 points CRS).
   - Accès direct au simulateur CBT, au carnet d'erreurs SRS et à la date de son examen.
+
+---
+
+## 4. Spécification Détaillée du Dashboard Candidat : Expérience Onboarding & Compte à Rebours J-X
+
+### A. Expérience Onboarding Nouveaux Comptes (0 Tentative)
+* **Problématique résolue :** Élimination des scores fictifs trompeurs (NCLC 8/7/7/6) pour les nouveaux inscrits.
+* **Comportement dynamique :**
+  - Si `recentAttempts.length === 0` :
+    - Affichage d'un hero card onboarding chaleureux : *« Bienvenue sur votre cockpit TCF Canada ! »*.
+    - Statut des 4 compétences : marqué `Non évalué (À passer)` avec bouton d'action direct `Passer le test diagnostique`.
+    - Checklist d'onboarding en 3 étapes :
+      1. *Passer un premier test diagnostique (CE ou CO)* — Bouton CTA direct.
+      2. *Définir la date de votre examen officiel* — Widget J-X.
+      3. *Ancrer vos points faibles dans le Carnet SRS* — Répétition espacée.
+  - Dès qu'une tentative est soumise en base (`userAttempt`), bascule automatique vers le mode analytique avec vrai niveau NCLC mesuré.
+
+### B. Widget Compte à Rebours de l'Examen Officiel (J-X)
+* **Objectif :** Créer une dynamique psychologique d'entraînement active et responsabiliser le candidat face à sa deadline d'immigration.
+* **Fonctionnalités du widget :**
+  - Calcul dynamique : `Math.ceil((examDate - now) / (1000 * 60 * 60 * 24))` affichant `J-X` (ex. `J-35 avant votre test`).
+  - Statut adaptatif :
+    - `J-60+` : *Phase d'apprentissage & diagnostic*
+    - `J-30 à J-15` : *Phase d'intensification & épreuves complètes*
+    - `J-14 à J-1` : *Sprint final & révision des pièges dans le Carnet SRS*
+  - Dialogue interactif permettant de configurer ou modifier sa date d'examen en 1 clic.

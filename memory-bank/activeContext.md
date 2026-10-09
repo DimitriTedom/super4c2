@@ -31,6 +31,20 @@
   - **Corrigé & Décodage des Pièges Immédiat :** Bouton « Vérifier la réponse » dans [components/exam/question-panel.tsx](file:///d:/SnowDev/Documents/super4c2/components/exam/question-panel.tsx) révélant la bonne réponse en vert, le choix en rouge, l'explication officielle et l'analyse des pièges FEI.
   - **Outil Surligneur Interactif en CE ([components/exam/ce-document-viewer.tsx](file:///d:/SnowDev/Documents/super4c2/components/exam/ce-document-viewer.tsx)) :** Feutre surligneur ambre translucide, surlignage automatique au clic/sélection, persistance par question dans la session et gomme d'effacement.
   - **Vitesse Audio CO & Réécoute ([components/exam/audio-player-cbt.tsx](file:///d:/SnowDev/Documents/super4c2/components/exam/audio-player-cbt.tsx)) :** Sélecteur `0.8x / 1.0x / 1.2x` (`playbackRate`), réécoute illimitée en mode entraînement et tiroir de transcription.
+- **Chantier 2 Réalisé — Dashboard Candidat : Expérience Onboarding Engageante & Compte à Rebours J-X :**
+  - **Spécification :** Formalisée dans [docs/specs/05-multitenant-architecture-and-dashboards.md](file:///d:/SnowDev/Documents/super4c2/docs/specs/05-multitenant-architecture-and-dashboards.md) (Section 4).
+  - **Éradication des Faux Scores Hardcodés :** Suppression des scores arbitraires (NCLC 8/7/7/6) qui félicitaient faussement les nouveaux inscrits sans tentative.
+  - **État Onboarding Engageant (`hasAttempts === false`) :**
+    - Carte d'accueil héroïque invitant à passer le **Test Diagnostique Initial (15 min)** avec CTA direct vers la Série 101 CE en mode entraînement.
+    - Grille des 4 épreuves étiquetée `Non évalué` avec bouton d'action direct `Passer le test`.
+    - Checklist d'onboarding en 3 étapes (*1. Test Diagnostique Rapide, 2. Fixer la Date d'Examen, 3. Carnet SRS & Ancrage*).
+  - **Widget Compte à Rebours Examen Officiel J-X ([components/dashboard/exam-countdown-widget.tsx](file:///d:/SnowDev/Documents/super4c2/components/dashboard/exam-countdown-widget.tsx)) :**
+    - Calcul dynamique du nombre de jours restants jusqu'au test officiel avec dialogue interactif de configuration de date.
+    - Badges de phase adaptatifs (*Phase d'Apprentissage*, *Phase Intensive*, *Sprint Final*) et conseils stratégiques de révision.
+  - **Mode Analytique Réel (`hasAttempts === true`) :**
+    - Affichage des vrais scores NCLC issus de la base de données PostgreSQL (`prisma.userAttempt`).
+    - Statut d'épreuve réel : `Seuil NCLC 7 atteint ✓`, `Priorité de révision ⚠` ou `Non évalué`.
+    - Bannière Entrée Express calculant dynamiquement le nombre d'épreuves restantes pour débloquer les +50 points CRS.
 - **Mega-Menu 2 Colonnes « Simulateurs & IA » (`components/site-nav.tsx`) :**
   - Remplacement de la colonne étroite et interminable (`w-84`) par un menu étendu à 2 colonnes équilibrées (`w-[620px]`) centré sur la barre de navigation.
   - Répartition structurée : Colonne 1 « Épreuves Officielles CBT » (CE, CO, EO, EE) et Colonne 2 « Accélérateurs & Outils » (Calculateur NCLC/CRS, Carnet SRS, Sujets Récents Radar) avec bouton de synthèse vers le simulateur complet. Hauteur divisée par deux, évitant tout débordement sur le titre de la page d'accueil.
