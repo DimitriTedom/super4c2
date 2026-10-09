@@ -66,6 +66,18 @@
     - Sélecteur d'ambition NCLC (NCLC 7, 8, 9, 10 / C2) avec repères de niveau CEFR.
     - Configuration de la date d'examen officiel avec **synchronisation immédiate dans le `localStorage` (`super4c2:exam_date`)** pilotant le widget `ExamCountdownWidget` (J-X) du tableau de bord.
     - Feedback d'enregistrement avec état de chargement et badges de confirmation.
+- **Améliorations Ergonomie & Magic UI — Bouton Scroll-to-Top & Loader Haut de Page :**
+  - **Bouton Auto-Scroll vers le Haut (`components/ui/scroll-to-top.tsx`) :**
+    - Bouton flottant (`fixed bottom-24 right-5 sm:bottom-28 sm:right-7 z-40`) n'obstruant pas le chat IA.
+    - Apparition animée avec Framer Motion (`AnimatePresence`) lorsque le défilement dépasse 280 px.
+    - **Jauge circulaire SVG de progression (0-100%)** intégrée autour du bouton, se traçant au fur et à mesure du scroll.
+    - Flèche directionnelle avec micro-animation au survol et défilement fluide vers le haut (`window.scrollTo({ top: 0, behavior: "smooth" })`).
+  - **Barre de Défilement Haut de Page Magic UI (`components/ui/scroll-progress.tsx`) :**
+    - Barre laser dégradé crimson/bleu (`from-[#E51A31] via-[#FF5E62] to-[#3B82F6]`) fixée au sommet du body (`fixed top-0 inset-x-0 z-[100] h-[3px]`).
+  - **Loader d'État & Transitions de Route (`components/ui/top-body-loader.tsx`) :**
+    - Barre lumineuse réagissant aux changements d'URL et aux états asynchrones avec animation de progression et disparition progressive (avec contournement `Suspense`).
+  - **Composant Magic UI `BorderBeam` (`components/ui/border-beam.tsx`) :**
+    - Faisceau lumineux cinématique tournant autour des bordures des conteneurs.
 - **Mega-Menu 2 Colonnes « Simulateurs & IA » (`components/site-nav.tsx`) :**
   - Remplacement de la colonne étroite et interminable (`w-84`) par un menu étendu à 2 colonnes équilibrées (`w-[620px]`) centré sur la barre de navigation.
   - Répartition structurée : Colonne 1 « Épreuves Officielles CBT » (CE, CO, EO, EE) et Colonne 2 « Accélérateurs & Outils » (Calculateur NCLC/CRS, Carnet SRS, Sujets Récents Radar) avec bouton de synthèse vers le simulateur complet. Hauteur divisée par deux, évitant tout débordement sur le titre de la page d'accueil.

@@ -9,6 +9,9 @@ const EXAM_ROOM = /^\/examens\/[^/]+\/(ce|co|ee|eo)\/?$/;
 import { SiteFooter } from "@/components/site-footer";
 import { MobileNavBar } from "@/components/mobile-nav";
 import { AiChatWidget } from "@/components/ai/ai-chat-widget";
+import { ScrollProgress } from "@/components/ui/scroll-progress";
+import { TopBodyLoader } from "@/components/ui/top-body-loader";
+import { ScrollToTop } from "@/components/ui/scroll-to-top";
 
 interface AppShellProps {
   header: ReactNode;
@@ -27,8 +30,11 @@ export function AppShell({ header, children }: AppShellProps) {
   if (isAdmin) {
     return (
       <>
+        <TopBodyLoader />
+        <ScrollProgress />
         {children}
         <AiChatWidget />
+        <ScrollToTop />
       </>
     );
   }
@@ -37,14 +43,20 @@ export function AppShell({ header, children }: AppShellProps) {
   const isFullWidth = pathname === "/";
 
   return (
-    <div className="flex min-h-screen flex-col justify-between pb-16 lg:pb-0">
+    <div className="flex min-h-screen flex-col justify-between pb-16 lg:pb-0 relative">
+      {/* Barre de chargement d'état & de défilement en haut du body */}
+      <TopBodyLoader />
+      <ScrollProgress />
+
       <div>
         {header}
         <main className={isFullWidth ? "w-full" : "mx-auto max-w-7xl px-4 py-8"}>{children}</main>
       </div>
+
       <SiteFooter />
       <MobileNavBar />
       <AiChatWidget />
+      <ScrollToTop />
     </div>
   );
 }
