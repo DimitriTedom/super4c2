@@ -3,7 +3,7 @@
 ## 1. Intégration des 12 Icônes 3D Transparentes & Audit de l'Expérience Frontend Candidat
 - **Câblage Complet des 12 Icônes 3D (`public/brand/icons-3d/`) :**
   - Récupération et découpe des 12 icônes générées sous Google Flow et finalisées dans Canva :
-    1. `ai-assistant-orb.png` — Orbe interactif du Coach Aura C2™ (intégré à `<AnimatedAiAvatar />` avec micro-animations Framer Motion de lévitation et d'aura).
+    1. `ai-assistant-orb.png` — Orbe 3D interactif du Coach Aura C2™ (disponible en asset 3D haute résolution ; la pilule flottante et l'en-tête du chat conservent le composant vectoriel animé `<AnimatedAiAvatar />` avec pupilles cyan clignotantes de façon organique).
     2. `cbt-dual-screen-simulator.png` — Simulateur double écran officiel CBT (intégré au sélecteur d'épreuves `/examens/[seriesId]` et au Dashboard).
     3. `diploma-achievement.png` — Diplôme officiel et réussite NCLC 7 / C2.
     4. `vip-community-shield.png` — Bouclier d'entraide communautaire VIP (intégré dans l'en-tête de `/communaute` et dans le menu `SiteNav`).
