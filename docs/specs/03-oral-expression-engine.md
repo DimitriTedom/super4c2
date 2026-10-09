@@ -34,10 +34,20 @@ Sur le marché actuel (notamment chez *Objectif Canada*), le simulateur oral est
 
 ## 3. Parcours Utilisateur & Interface
 
-1. **Écran de Préparation & Vérification Micro (`/examens/[seriesId]/eo/intro`) :**
-   * Test du microphone du candidat avec jauge de volume en direct.
-   * Vérification des écouteurs / casque recommandés pour éviter l'effet d'écho.
-   * Rappel des consignes pour chaque tâche.
+1. **Écran de Préparation & Vérification Micro & Casque (`/examens/[seriesId]/eo/intro`) :**
+   * **Module Interactif de Vérification Matérielle (`OralHardwareCheck`) :**
+     - **Test du Microphone en temps réel (Web Audio API) :**
+       - Demande de permission micro avec gestion d'erreurs (accès refusé, absence de périphérique).
+       - Jauge de volume dynamique (Vu-mètre fluide 16 segments) mesurant le niveau d'entrée via `AnalyserNode`.
+       - Détection de voix active (> seuil d'élocution) confirmant la sensibilité adéquate du micro.
+     - **Test du Casque / Sortie Audio :**
+       - Extrait audio de calibrage joué directement avec la voix officielle de M. Laurent (`/audio/eo/laurent-step1.mp3`).
+       - Confirmation auditive en un clic (*« J'entends distinctement l'examinateur »*).
+     - **Porte d'Accès Sécurisée :**
+       - Déblocage automatique du bouton de lancement de l'épreuve une fois le diagnostic matériel validé.
+       - Option de contournement courtois pour les utilisateurs expérimentés.
+   * **Rappel des Consignes & Stratégie FEI :**
+     - Durée, grille de notation par critères et consignes spécifiques aux 3 tâches.
 
 2. **La Salle d'Examen Orale Virtuelle (`/examens/[seriesId]/eo`) :**
    * Présentation du visage/avatar stylisé de l'examinateur IA (style épuré EdTech/Fintech avec halo d'écoute réactif).

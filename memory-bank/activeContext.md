@@ -45,6 +45,12 @@
     - Affichage des vrais scores NCLC issus de la base de données PostgreSQL (`prisma.userAttempt`).
     - Statut d'épreuve réel : `Seuil NCLC 7 atteint ✓`, `Priorité de révision ⚠` ou `Non évalué`.
     - Bannière Entrée Express calculant dynamiquement le nombre d'épreuves restantes pour débloquer les +50 points CRS.
+- **Chantier 3 Réalisé — Salle d'Oral EO : Pré-test Micro & Casque Interactif :**
+  - **Spécification :** Formalisée dans [docs/specs/03-oral-expression-engine.md](file:///d:/SnowDev/Documents/super4c2/docs/specs/03-oral-expression-engine.md) (Section 3.1).
+  - **Composant `OralHardwareCheck` ([components/exam/oral-hardware-check.tsx](file:///d:/SnowDev/Documents/super4c2/components/exam/oral-hardware-check.tsx)) :**
+    - **Test Microphone Réel (Web Audio API) :** Capture `getUserMedia` avec annulation d'écho et suppression de bruit, analyseur FFT en temps réel, vu-mètre interactif 16 barres dynamiques réagissant au volume de la voix et détection automatique de la parole pour validation.
+    - **Test Casque / Audio Officiel :** Lecture de l'enregistrement authentique de l'examinateur M. Laurent (`/audio/eo/laurent-step1.mp3`) permettant de tester les écouteurs et le confort d'écoute avant le début de l'épreuve.
+    - **Contrôle d'Accès Sécurisé :** Porte de validation matérielle sur [app/examens/[seriesId]/eo/intro/page.tsx](file:///d:/SnowDev/Documents/super4c2/app/examens/[seriesId]/eo/intro/page.tsx) avec déblocage du bouton de lancement, option de repli courtois et icônes 3D d'Expression Orale.
 - **Mega-Menu 2 Colonnes « Simulateurs & IA » (`components/site-nav.tsx`) :**
   - Remplacement de la colonne étroite et interminable (`w-84`) par un menu étendu à 2 colonnes équilibrées (`w-[620px]`) centré sur la barre de navigation.
   - Répartition structurée : Colonne 1 « Épreuves Officielles CBT » (CE, CO, EO, EE) et Colonne 2 « Accélérateurs & Outils » (Calculateur NCLC/CRS, Carnet SRS, Sujets Récents Radar) avec bouton de synthèse vers le simulateur complet. Hauteur divisée par deux, évitant tout débordement sur le titre de la page d'accueil.
