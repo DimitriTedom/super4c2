@@ -16,6 +16,12 @@
 - **Refonte du CTA Final Haut de Gamme & Zéro Débordement Mobile (`app/page.tsx`) :**
   - Élimination du bandeau rouge plat générique et du bouton qui débordait sur smartphone (iPhone 16 Pro Max).
   - Nouveau conteneur Imperial Navy (`#0B132B`) avec trame subtile, halos d'ambiance crimson & cyan, boutons d'action 100% responsives (`w-full sm:w-auto`) et réassurance officielle (Conforme FEI, Sans carte bancaire, Noté 4.9/5).
+- **Remplacement des Calendriers Natifs par Shadcn UI (`components/ui/calendar.tsx` & `components/ui/date-picker.tsx`) :**
+  - Fin du sélecteur de date navigateur HTML5 brut : création des composants `<Calendar />`, `<Popover />` et `<DatePicker />` avec support complet de la locale française (`date-fns/locale/fr`), sélection fluide, navigation par mois et bouton de réinitialisation.
+  - Déployé dans le formulaire de contact et réservation d'examen ([`app/contact/page.tsx`](file:///d:/SnowDev/Documents/super4c2/app/contact/page.tsx)).
+- **Cahier des Prompts 3D Premium pour Google Flow ([`prompts/google-flow-3d-icons.txt`](file:///d:/SnowDev/Documents/super4c2/prompts/google-flow-3d-icons.txt)) :**
+  - Identification précise des 12 emplacements clés de l'application (4 Épreuves CE, CO, EE, EO + Simulateur CBT, Calculateur CRS +50, Carnet SRS, Sujets Récents, Tarifs VIP, Coach Aura C2, Communauté, Diplôme FEI).
+  - Rédaction des 12 prompts ultra-qualitatifs séparés par un paragraphe double interligne, calibrés pour la génération par lot dans Google Flow / Veo (Claymorphism & Glassmorphism 3D, palette Crimson/Navy/Gold, éclairage de studio, fond isolé pour découpe).
 - **Enrichissement du Footer avec Réseaux Sociaux & Télémétrie (`components/site-footer.tsx`) :**
   - Ajout des icônes officielles des communautés et réseaux sociaux avec micro-interactions au survol : **YouTube** (rouge), **Telegram** (bleu ciel), **WhatsApp** (vert émeraude), **LinkedIn** (bleu pro), **X / Twitter** (sombre), **TikTok** (rose/noir).
   - Ajout d'une pilule de statut système en temps réel : `🟢 Moteur CBT Opérationnel (99.9% Uptime)`.
