@@ -1,40 +1,76 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Monitor,
-  Mic,
+  Headphones,
   PenTool,
+  Mic,
   Clock,
   Sparkles,
   ArrowRight,
   ShieldCheck,
   CheckCircle2,
   Volume2,
-  Flame,
+  VolumeX,
+  Play,
+  Pause,
   Wand2,
-  ChevronRight,
   RotateCcw,
   Flag,
+  Highlighter,
+  ZoomIn,
+  ZoomOut,
+  Keyboard,
+  Radio,
+  Sliders,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
-export function ProductShowcaseSection() {
-  const [activeTab, setActiveTab] = useState<"ce" | "eo" | "ee">("ce");
+type ShowcaseTab = "ce" | "co" | "ee" | "eo";
 
-  // State for CE (Compréhension Écrite) interactive demo
+const TABS = [
+  { id: "ce" as const, label: "1. Double Écran CBT (CE)", icon: Monitor, color: "text-brand-crimson" },
+  { id: "co" as const, label: "2. Lecteur Audio FEI (CO)", icon: Headphones, color: "text-cyan-500" },
+  { id: "ee" as const, label: "3. Magic Rewrite C1/C2 (EE)", icon: PenTool, color: "text-amber-500" },
+  { id: "eo" as const, label: "4. Examinateur IA Live (EO)", icon: Mic, color: "text-violet-500" },
+];
+
+export function ProductShowcaseSection() {
+  const [activeTab, setActiveTab] = useState<ShowcaseTab>("ce");
+  const [lastPressedKey, setLastPressedKey] = useState<string | null>(null);
+
+  // ==========================================
+  // STATE: MODE 1 - CE (Compréhension Écrite)
+  // ==========================================
   const [selectedCeAnswer, setSelectedCeAnswer] = useState<number | null>(1); // B
   const [activeQuestionNumber, setActiveQuestionNumber] = useState<number>(4);
+  const [isHighlighted, setIsHighlighted] = useState<boolean>(true);
+  const [ceFontSize, setCeFontSize] = useState<"sm" | "base" | "lg">("base");
 
-  // State for EO (Expression Orale) interactive demo
+  // ==========================================
+  // STATE: MODE 2 - CO (Compréhension Orale)
+  // ==========================================
+  const [selectedCoAnswer, setSelectedCoAnswer] = useState<number | null>(1); // B
+  const [isPlayingCo, setIsPlayingCo] = useState<boolean>(false);
+  const [coSeconds, setCoSeconds] = useState<number>(14);
+  const [coSpeed, setCoSpeed] = useState<"1x" | "0.8x" | "1.2x">("1x");
+
+  // ==========================================
+  // STATE: MODE 3 - EE (Expression Écrite)
+  // ==========================================
+  const [showMagicRewrite, setShowMagicRewrite] = useState<boolean>(true);
+
+  // ==========================================
+  // STATE: MODE 4 - EO (Expression Orale)
+  // ==========================================
   const [eoSpeaking, setEoSpeaking] = useState<boolean>(false);
+  const [laurentSpeaking, setLaurentSpeaking] = useState<boolean>(false);
   const [eoExchangeStep, setEoExchangeStep] = useState<number>(1);
-
-  // State for EE (Expression Écrite) interactive demo
-  const [showMagicRewrite, setShowMagicRewrite] = useState<boolean>(false);
 
   // Timer simulation
   const [secondsRemaining, setSecondsRemaining] = useState(3522); // ~58 min
@@ -51,85 +87,181 @@ export function ProductShowcaseSection() {
     return `${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
   };
 
+  // ==========================================
+  // PHYSICAL KEYBOARD SHORTCUTS (A, B, C, D)
+  // ==========================================
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (["INPUT", "TEXTAREA"].includes((e.target as HTMLElement)?.tagName)) return;
+      const key = e.key.toUpperCase();
+      const map: Record<string, number> = { A: 0, B: 1, C: 2, D: 3 };
+      if (key in map) {
+        setLastPressedKey(key);
+        if (activeTab === "ce") {
+          setSelectedCeAnswer(map[key]);
+        } else if (activeTab === "co") {
+          setSelectedCoAnswer(map[key]);
+        }
+        setTimeout(() => setLastPressedKey(null), 900);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [activeTab]);
+
+  // Clean speech synthesis on unmount
+  useEffect(() => {
+    return () => {
+      if (typeof window !== "undefined" && "speechSynthesis" in window) {
+        window.speechSynthesis.cancel();
+      }
+    };
+  }, []);
+
+  // Web Speech synthesis helper
+  const speakText = (text: string, onEnd?: () => void) => {
+    if (typeof window !== "undefined" && "speechSynthesis" in window) {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = "fr-FR";
+      utterance.rate = 1.0;
+      utterance.pitch = 1.0;
+      const voices = window.speechSynthesis.getVoices();
+      const frVoice = voices.find((v) => v.lang.startsWith("fr"));
+      if (frVoice) utterance.voice = frVoice;
+      utterance.onend = () => {
+        onEnd?.();
+      };
+      utterance.onerror = () => {
+        onEnd?.();
+      };
+      window.speechSynthesis.speak(utterance);
+    } else {
+      setTimeout(() => onEnd?.(), 3000);
+    }
+  };
+
+  const handlePlayLaurent = () => {
+    if (laurentSpeaking) {
+      if (typeof window !== "undefined" && "speechSynthesis" in window) {
+        window.speechSynthesis.cancel();
+      }
+      setLaurentSpeaking(false);
+      return;
+    }
+    const text =
+      eoExchangeStep === 1
+        ? "Bonjour ! Absolument, les cours débutent à huit heures le samedi. Cependant, nous exigeons un certificat médical complet avant toute inscription. Est-ce que votre fils a déjà patiné auparavant ?"
+        : "Très bien, c'est un point positif. Concernant l'équipement de protection, préférez-vous louer notre pack ou acheter votre propre matériel agréé ?";
+    setLaurentSpeaking(true);
+    speakText(text, () => setLaurentSpeaking(false));
+  };
+
+  const handleTogglePlayCo = () => {
+    if (isPlayingCo) {
+      if (typeof window !== "undefined" && "speechSynthesis" in window) {
+        window.speechSynthesis.cancel();
+      }
+      setIsPlayingCo(false);
+    } else {
+      setIsPlayingCo(true);
+      const audioText =
+        "Radio Canada Montréal : La hausse des frais de scolarité dans les universités anglophones a provoqué une augmentation de 35% des inscriptions dans les cégeps francophones. La mesure incitative accordant l'accès direct aux bourses d'études provinciales semble porter ses fruits, malgré les réticences initiales des doyens d'universités.";
+      speakText(audioText, () => setIsPlayingCo(false));
+    }
+  };
+
+  // CO timer simulation
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (isPlayingCo) {
+      interval = setInterval(() => {
+        setCoSeconds((prev) => (prev >= 32 ? 0 : prev + 1));
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [isPlayingCo]);
+
   return (
     <section className="relative mx-auto max-w-6xl space-y-8 px-2 sm:px-4">
       {/* Header */}
       <div className="text-center space-y-3">
         <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3.5 py-1 text-xs font-semibold text-primary">
           <Sparkles className="h-3.5 w-3.5 text-brand-crimson" />
-          <span>Simulateur Interactif en Direct</span>
+          <span>Simulateur Interactif en Direct • 4 Épreuves CBT</span>
         </div>
         <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-foreground">
           Touchez l&apos;interface d&apos;examen,{" "}
-          <span className="bg-gradient-to-r from-brand-crimson to-rose-500 bg-clip-text text-transparent">
+          <span className="bg-gradient-to-r from-brand-crimson to-rose-600 bg-clip-text text-transparent">
             avant le jour J
           </span>
         </h2>
         <p className="text-sm sm:text-base text-muted-foreground max-w-2xl mx-auto">
-          Testez directement ci-dessous les trois moteurs technologiques qui font la renommée de Super4C2. Cliquez sur les questions et les boutons pour interagir.
+          Testez ci-dessous les 4 moteurs technologiques de Super4C2. Cliquez sur les épreuves, répondez aux questions avec votre clavier ou souris, et écoutez l&apos;examinateur.
         </p>
       </div>
 
-      {/* Tabs navigation */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 w-full max-w-3xl mx-auto p-1.5 rounded-2xl bg-muted/70 dark:bg-slate-900/80 border border-border/80">
-        <button
-          type="button"
-          onClick={() => setActiveTab("ce")}
-          className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all ${
-            activeTab === "ce"
-              ? "bg-background text-foreground shadow-sm border border-border/80"
-              : "text-muted-foreground hover:text-foreground hover:bg-background/50"
-          }`}
-        >
-          <Monitor className={`h-4 w-4 ${activeTab === "ce" ? "text-brand-crimson" : "text-muted-foreground"}`} />
-          <span>1. Double Écran CBT (CE)</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setActiveTab("eo")}
-          className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all ${
-            activeTab === "eo"
-              ? "bg-background text-foreground shadow-sm border border-border/80"
-              : "text-muted-foreground hover:text-foreground hover:bg-background/50"
-          }`}
-        >
-          <Mic className={`h-4 w-4 ${activeTab === "eo" ? "text-brand-crimson" : "text-muted-foreground"}`} />
-          <span>2. Examinateur IA Live (EO)</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setActiveTab("ee")}
-          className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all ${
-            activeTab === "ee"
-              ? "bg-background text-foreground shadow-sm border border-border/80"
-              : "text-muted-foreground hover:text-foreground hover:bg-background/50"
-          }`}
-        >
-          <PenTool className={`h-4 w-4 ${activeTab === "ee" ? "text-brand-crimson" : "text-muted-foreground"}`} />
-          <span>3. Magic Rewrite C1/C2 (EE)</span>
-        </button>
+      {/* 4 Tabs navigation with smooth Framer Motion layout pill */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 w-full max-w-4xl mx-auto p-1.5 rounded-2xl bg-muted/70 dark:bg-slate-900/80 border border-border/80">
+        {TABS.map((tab) => {
+          const isActive = activeTab === tab.id;
+          const Icon = tab.icon;
+          return (
+            <button
+              key={tab.id}
+              type="button"
+              onClick={() => setActiveTab(tab.id)}
+              className={`relative flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-colors duration-200 ${
+                isActive
+                  ? "text-foreground font-bold"
+                  : "text-muted-foreground hover:text-foreground hover:bg-background/40"
+              }`}
+            >
+              {isActive && (
+                <motion.div
+                  layoutId="activeProductShowcaseTab"
+                  className="absolute inset-0 rounded-xl bg-background shadow-sm border border-border/80"
+                  transition={{ type: "spring", stiffness: 450, damping: 32 }}
+                />
+              )}
+              <span className="relative z-10 flex items-center gap-2">
+                <Icon className={`h-4 w-4 ${isActive ? tab.color : "text-muted-foreground"}`} />
+                <span className="truncate">{tab.label}</span>
+              </span>
+            </button>
+          );
+        })}
       </div>
 
-      {/* Interactive Simulator Shell (MacOS/CBT style) */}
-      <div className="rounded-3xl border border-border/80 bg-card shadow-2xl overflow-hidden transition-all duration-300">
+      {/* Interactive Simulator Shell (MacOS / Official CBT Workstation Style) */}
+      <div className="rounded-3xl border border-slate-200 dark:border-border/80 bg-slate-50 dark:bg-card shadow-2xl overflow-hidden transition-all duration-300">
         {/* Title bar / Top Bar */}
         <div className="bg-slate-900 text-slate-200 px-4 py-3 flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 text-xs select-none">
-          {/* Traffic dots */}
+          {/* Traffic dots & Engine version */}
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-1.5">
-              <span className="h-3 w-3 rounded-full bg-rose-500 inline-block" />
-              <span className="h-3 w-3 rounded-full bg-amber-500 inline-block" />
-              <span className="h-3 w-3 rounded-full bg-emerald-500 inline-block" />
+              <span className="h-3 w-3 rounded-full bg-rose-500 inline-block shadow-xs" />
+              <span className="h-3 w-3 rounded-full bg-amber-500 inline-block shadow-xs" />
+              <span className="h-3 w-3 rounded-full bg-emerald-500 inline-block shadow-xs" />
             </div>
             <span className="font-mono text-slate-400 pl-2 text-[11px] hidden sm:inline">
               Super4C2 CBT Engine v3.4 • France Éducation International
             </span>
           </div>
 
-          {/* Status pill & Timer */}
-          <div className="flex items-center gap-3">
+          {/* Keyboard shortcut detection badge & Timer */}
+          <div className="flex items-center gap-2 sm:gap-3">
+            {lastPressedKey && (
+              <motion.span
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.8, opacity: 0 }}
+                className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-brand-crimson/20 text-brand-crimson border border-brand-crimson/40 text-[10px] font-mono font-bold animate-pulse"
+              >
+                <Keyboard className="h-3 w-3" /> Touche [{lastPressedKey}] pressée !
+              </motion.span>
+            )}
+
             <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 font-semibold text-[11px]">
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
               Épreuve Conforme CBT
@@ -143,25 +275,79 @@ export function ProductShowcaseSection() {
         </div>
 
         {/* =========================================================================
-            MODE 1 : COMPRÉHENSION ÉCRITE (DOUBLE ÉCRAN CBT + 39 QUESTIONS)
+            MODE 1 : COMPRÉHENSION ÉCRITE (DOUBLE ÉCRAN CBT + SURLIGNEUR + ZOOM)
            ========================================================================= */}
         {activeTab === "ce" && (
-          <div className="p-3 sm:p-5 space-y-4 bg-slate-100/90 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-[460px] transition-colors">
-            {/* Header info */}
-            <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-2 text-xs">
+          <div className="p-3 sm:p-5 space-y-4 bg-slate-100/90 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-[470px] transition-colors">
+            {/* Header info & Tools */}
+            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 dark:border-slate-800 pb-2 text-xs">
               <div className="flex items-center gap-2">
                 <span className="font-bold text-brand-crimson">TCF CANADA CBT</span>
                 <span className="text-slate-300 dark:text-slate-500">•</span>
-                <span className="text-slate-600 dark:text-slate-300 font-medium">Question {activeQuestionNumber} / 39 (Niveau B2)</span>
+                <span className="text-slate-600 dark:text-slate-300 font-medium">
+                  Question {activeQuestionNumber} / 39 (Niveau B2)
+                </span>
+                <span className="hidden md:inline-flex text-[10px] bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400 px-2 py-0.5 rounded font-mono">
+                  ⌨️ Touches A, B, C, D actives
+                </span>
               </div>
-              <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400 text-[11px]">
+
+              {/* CE Tools: Highlighter toggle + Zoom + Flag */}
+              <div className="flex items-center gap-2 text-[11px]">
                 <button
                   type="button"
-                  className="hover:text-amber-500 dark:hover:text-amber-400 flex items-center gap-1 transition-colors"
+                  onClick={() => setIsHighlighted(!isHighlighted)}
+                  className={`flex items-center gap-1 px-2.5 py-1 rounded-md transition-all font-semibold ${
+                    isHighlighted
+                      ? "bg-amber-400/20 text-amber-800 dark:text-amber-300 border border-amber-400/40 shadow-xs"
+                      : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 border border-slate-200 dark:border-slate-700"
+                  }`}
+                  title="Activer ou masquer le surlignage officiel de l'indice"
+                >
+                  <Highlighter className="h-3 w-3 text-amber-500" />
+                  <span>{isHighlighted ? "Surligneur Actif" : "Surligner l'indice"}</span>
+                </button>
+
+                <div className="hidden sm:flex items-center bg-white dark:bg-slate-800 rounded-md border border-slate-200 dark:border-slate-700 p-0.5 text-slate-600 dark:text-slate-400">
+                  <button
+                    type="button"
+                    onClick={() => setCeFontSize("sm")}
+                    className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${
+                      ceFontSize === "sm" ? "bg-slate-200 dark:bg-slate-700 text-foreground" : "hover:text-foreground"
+                    }`}
+                    title="Police réduite (A-)"
+                  >
+                    A-
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setCeFontSize("base")}
+                    className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${
+                      ceFontSize === "base" ? "bg-slate-200 dark:bg-slate-700 text-foreground" : "hover:text-foreground"
+                    }`}
+                    title="Police normale"
+                  >
+                    A
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setCeFontSize("lg")}
+                    className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${
+                      ceFontSize === "lg" ? "bg-slate-200 dark:bg-slate-700 text-foreground" : "hover:text-foreground"
+                    }`}
+                    title="Police agrandie (A+)"
+                  >
+                    A+
+                  </button>
+                </div>
+
+                <button
+                  type="button"
+                  className="hover:text-amber-500 dark:hover:text-amber-400 flex items-center gap-1 transition-colors px-2 py-1 rounded bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400"
                   title="Marquer pour révision"
                 >
                   <Flag className="h-3 w-3" />
-                  <span>Marquer</span>
+                  <span className="hidden sm:inline">Marquer</span>
                 </button>
               </div>
             </div>
@@ -169,7 +355,15 @@ export function ProductShowcaseSection() {
             {/* Split Screen layout */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch">
               {/* Document source à gauche */}
-              <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/90 p-4 sm:p-5 space-y-3 overflow-y-auto max-h-[300px] text-xs sm:text-[13px] leading-relaxed text-slate-700 dark:text-slate-300 shadow-xs">
+              <div
+                className={`rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/90 p-4 sm:p-5 space-y-3 overflow-y-auto max-h-[300px] leading-relaxed text-slate-700 dark:text-slate-300 shadow-xs ${
+                  ceFontSize === "sm"
+                    ? "text-xs"
+                    : ceFontSize === "base"
+                    ? "text-xs sm:text-[13px]"
+                    : "text-sm sm:text-[15px]"
+                }`}
+              >
                 <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2">
                   <span className="font-bold uppercase tracking-wider text-[11px] text-slate-400 dark:text-slate-400">
                     Document Source
@@ -184,10 +378,16 @@ export function ProductShowcaseSection() {
                 <p>
                   Depuis 2021, les provinces de l&apos;Atlantique (Nouveau-Brunswick, Nouvelle-Écosse) connaissent un afflux inédit de travailleurs qualifiés francophones. Face au coût de l&apos;immobilier dans les métropoles de Toronto et Vancouver, ces régions séduisent par leur qualité de vie et des voies d&apos;immigration facilitées.
                 </p>
-                <p className="bg-brand-crimson/10 border-l-2 border-brand-crimson pl-2 py-1 text-slate-800 dark:text-slate-200">
-                  <em>
-                    « L&apos;accès simplifié à la résidence permanente pour les francophones compense largement l&apos;éloignement géographique des grands centres urbains »
-                  </em>
+                <p className="border-l-2 border-brand-crimson pl-2.5 py-1 text-slate-800 dark:text-slate-200">
+                  {isHighlighted ? (
+                    <mark className="bg-amber-300/40 dark:bg-amber-400/30 text-amber-950 dark:text-amber-100 font-semibold px-1 rounded transition-all duration-300 ring-1 ring-amber-400/50">
+                      « L&apos;accès simplifié à la résidence permanente pour les francophones compense largement l&apos;éloignement géographique des grands centres urbains »
+                    </mark>
+                  ) : (
+                    <span>
+                      « L&apos;accès simplifié à la résidence permanente pour les francophones compense largement l&apos;éloignement géographique des grands centres urbains »
+                    </span>
+                  )}
                   , souligne la sociologue québécoise Marcelle Dupont.
                 </p>
                 <p>
@@ -199,7 +399,7 @@ export function ProductShowcaseSection() {
               <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/90 p-4 sm:p-5 space-y-4 flex flex-col justify-between shadow-xs">
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-[11px] font-bold text-cyan-600 dark:text-cyan-400 uppercase tracking-wide">
+                    <span className="text-[11px] font-bold text-brand-crimson uppercase tracking-wide">
                       Question à Choix Unique
                     </span>
                     <span className="text-[10px] text-slate-400 dark:text-slate-500 font-mono">1 point</span>
@@ -299,99 +499,237 @@ export function ProductShowcaseSection() {
         )}
 
         {/* =========================================================================
-            MODE 2 : EXPRESSION ORALE EN DIRECT (STUDIO VIDÉO 16:9 + IA VOCALE)
+            MODE 2 : COMPRÉHENSION ORALE (LECTEUR AUDIO FEI • ÉCOUTE UNIQUE • RADIO)
            ========================================================================= */}
-        {activeTab === "eo" && (
-          <div className="p-4 sm:p-6 space-y-4 bg-slate-100/90 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-[460px] transition-colors">
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-5 items-center">
-              {/* Pod Visio Examinateur Laurent (16:9) */}
-              <div className="md:col-span-6 relative aspect-video rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 bg-slate-900 shadow-md">
-                <Image
-                  src="/brand/examiner-laurent.jpg"
-                  alt="M. Laurent - Examinateur Officiel Super4C2"
-                  fill
-                  className="object-cover object-top"
-                  sizes="(max-width: 768px) 100vw, 500px"
-                />
+        {activeTab === "co" && (
+          <div className="p-3 sm:p-5 space-y-4 bg-slate-100/90 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-[470px] transition-colors">
+            {/* Header info */}
+            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 dark:border-slate-800 pb-2 text-xs">
+              <div className="flex items-center gap-2">
+                <span className="font-bold text-cyan-600 dark:text-cyan-400">TCF CANADA CBT • AUDIO</span>
+                <span className="text-slate-300 dark:text-slate-500">•</span>
+                <span className="text-slate-600 dark:text-slate-300 font-medium">
+                  Document Sonore 12 / 39 (Niveau B2)
+                </span>
+                <span className="hidden md:inline-flex text-[10px] bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 px-2 py-0.5 rounded font-mono border border-cyan-500/20">
+                  🔒 Écoute Unique Stricte
+                </span>
+              </div>
+              <div className="flex items-center gap-2 text-[11px] text-slate-500 dark:text-slate-400">
+                <span>Régulation vitesse :</span>
+                {(["0.8x", "1x", "1.2x"] as const).map((spd) => (
+                  <button
+                    key={spd}
+                    type="button"
+                    onClick={() => setCoSpeed(spd)}
+                    className={`px-2 py-0.5 rounded text-[10px] font-bold font-mono transition-all ${
+                      coSpeed === spd
+                        ? "bg-cyan-600 text-white shadow-xs"
+                        : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700"
+                    }`}
+                  >
+                    {spd}
+                  </button>
+                ))}
+              </div>
+            </div>
 
-                {/* Live indicators */}
-                <div className="absolute top-3 left-3 flex items-center gap-1.5 bg-background/85 dark:bg-slate-950/85 backdrop-blur-md px-2.5 py-1 rounded-full text-[11px] font-bold border border-white/20">
-                  <span className="h-2 w-2 rounded-full bg-rose-500 animate-ping" />
-                  <span className="text-rose-500">🔴 EN DIRECT</span>
-                  <span className="text-slate-700 dark:text-slate-400">• Tâche 2</span>
+            {/* Split Screen layout */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch">
+              {/* Lecteur officiel FEI à gauche */}
+              <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/90 p-4 sm:p-5 space-y-4 flex flex-col justify-between shadow-xs">
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2">
+                    <span className="font-bold uppercase tracking-wider text-[11px] text-cyan-600 dark:text-cyan-400 flex items-center gap-1.5">
+                      <Radio className="h-3.5 w-3.5 text-cyan-500 animate-pulse" />
+                      Document Audio Officiel
+                    </span>
+                    <span className="text-[10px] bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded text-slate-600 dark:text-slate-400 font-mono">
+                      Chronique Radio Canada
+                    </span>
+                  </div>
+
+                  <h4 className="font-bold text-slate-900 dark:text-slate-100 text-sm">
+                    Mesures incitatives pour les études francophones au Québec
+                  </h4>
+
+                  <p className="text-xs text-muted-foreground leading-relaxed">
+                    Vous allez entendre un document sonore une seule fois. Écoutez attentivement avant de répondre à la question.
+                  </p>
+
+                  {/* Lecteur Audio Physique FEI */}
+                  <div className="rounded-xl border border-cyan-500/20 bg-gradient-to-br from-cyan-50/70 to-slate-50/50 dark:from-cyan-950/20 dark:to-slate-900/60 p-3.5 space-y-3">
+                    <div className="flex items-center justify-between text-xs">
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={handleTogglePlayCo}
+                          className="h-9 w-9 rounded-full bg-cyan-600 hover:bg-cyan-500 text-white flex items-center justify-center shadow-md shadow-cyan-600/30 transition-all hover:scale-105 active:scale-95"
+                          title="Lancer / Mettre en pause le document sonore"
+                        >
+                          {isPlayingCo ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4 ml-0.5" />}
+                        </button>
+                        <div>
+                          <p className="font-bold text-xs text-slate-900 dark:text-slate-100">
+                            {isPlayingCo ? "Lecture en cours (Audio HD)..." : "Cliquer pour écouter l'audio"}
+                          </p>
+                          <p className="text-[10px] text-slate-500 dark:text-slate-400 font-mono">
+                            Voix officielle accent québécois
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="font-mono text-xs font-bold text-cyan-700 dark:text-cyan-400">
+                        00:{coSeconds.toString().padStart(2, "0")} / 00:32
+                      </div>
+                    </div>
+
+                    {/* Progress bar (no seekable scrub according to FEI regulations) */}
+                    <div className="space-y-1">
+                      <div className="h-2 w-full rounded-full bg-slate-200 dark:bg-slate-800 overflow-hidden">
+                        <motion.div
+                          className="h-full bg-gradient-to-r from-cyan-500 to-blue-500"
+                          style={{ width: `${(coSeconds / 32) * 100}%` }}
+                          transition={{ ease: "linear" }}
+                        />
+                      </div>
+                      <div className="flex justify-between text-[10px] text-slate-400 font-mono">
+                        <span>Écoute unique</span>
+                        <span>Rembobinage désactivé (Standard FEI)</span>
+                      </div>
+                    </div>
+
+                    {/* Waveform animated equalizer bars */}
+                    <div className="flex items-center justify-center gap-1 h-7 pt-1">
+                      {Array.from({ length: 28 }).map((_, i) => (
+                        <motion.span
+                          key={i}
+                          animate={
+                            isPlayingCo
+                              ? {
+                                  scaleY: [0.3, Math.sin(i * 0.8) * 0.6 + 0.8, 0.2],
+                                }
+                              : { scaleY: 0.25 }
+                          }
+                          transition={{
+                            duration: 0.6 + (i % 5) * 0.1,
+                            repeat: isPlayingCo ? Infinity : 0,
+                            ease: "easeInOut",
+                          }}
+                          className="w-1 rounded-full bg-cyan-500 dark:bg-cyan-400/80 origin-bottom"
+                          style={{ height: "24px" }}
+                        />
+                      ))}
+                    </div>
+                  </div>
                 </div>
 
-                <div className="absolute bottom-3 inset-x-3 flex items-center justify-between bg-slate-950/80 backdrop-blur-md px-3 py-1.5 rounded-xl border border-white/10 text-xs">
-                  <span className="font-semibold text-slate-200">M. Laurent (Examinateur FEI)</span>
-                  {/* Waveform animation */}
-                  <div className="flex items-center gap-0.5">
-                    <span className="h-2 w-0.5 bg-cyan-400 animate-pulse" />
-                    <span className="h-4 w-0.5 bg-cyan-400 animate-bounce" />
-                    <span className="h-3 w-0.5 bg-cyan-400 animate-pulse" />
-                    <span className="h-5 w-0.5 bg-cyan-400 animate-bounce" />
-                    <span className="h-2 w-0.5 bg-cyan-400 animate-pulse" />
-                  </div>
+                <div className="p-2.5 rounded-lg bg-cyan-500/10 border border-cyan-500/20 text-[11px] text-cyan-800 dark:text-cyan-300 flex items-center justify-between">
+                  <span className="flex items-center gap-1.5 font-medium">
+                    <ShieldCheck className="h-4 w-4 text-cyan-600 dark:text-cyan-400" />
+                    Simulation audio officielle certifiée sans coupure
+                  </span>
+                  <span className="font-mono font-bold text-[10px]">CO 39/39</span>
                 </div>
               </div>
 
-              {/* Panneau de dialogue interactif */}
-              <div className="md:col-span-6 space-y-3">
-                <div className="p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-1.5 shadow-xs">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-primary">
-                    Consigne Officielle Tâche 2 (Jeu de rôle • 5 min)
-                  </span>
-                  <p className="text-xs text-slate-600 dark:text-slate-300">
-                    Vous souhaitez inscrire votre enfant à une école de hockey sur glace à Montréal. Vous interrogez le directeur (M. Laurent) pour obtenir des précisions sur les horaires, les tarifs et l&apos;équipement.
-                  </p>
-                </div>
-
-                {/* Réplique de M. Laurent */}
-                <div className="p-3 rounded-xl bg-cyan-50 dark:bg-cyan-950/40 border border-cyan-200 dark:border-cyan-800/40 space-y-1.5">
-                  <div className="flex items-center justify-between text-[11px]">
-                    <span className="font-bold text-cyan-700 dark:text-cyan-400 flex items-center gap-1">
-                      <Volume2 className="h-3.5 w-3.5" /> M. Laurent vous répond :
+              {/* Questions et choix QCM à droite */}
+              <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/90 p-4 sm:p-5 space-y-4 flex flex-col justify-between shadow-xs">
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[11px] font-bold text-cyan-600 dark:text-cyan-400 uppercase tracking-wide">
+                      Question à Choix Unique (CO)
                     </span>
-                    <span className="text-[10px] text-cyan-600/70 dark:text-cyan-300/60 font-mono">Audio HD</span>
+                    <span className="text-[10px] text-slate-400 dark:text-slate-500 font-mono">1 point</span>
                   </div>
-                  <p className="text-xs sm:text-sm text-slate-800 dark:text-slate-200 italic">
-                    {eoExchangeStep === 1
-                      ? "« Bonjour ! Absolument, les cours débutent à 8h le samedi. Cependant, nous exigeons un certificat médical complet avant toute inscription. Est-ce que votre fils a déjà patiné auparavant ? »"
-                      : "« Très bien, c'est un point positif. Concernant l'équipement de protection, préférez-vous louer notre pack ou acheter votre propre matériel agréé ? »"}
+
+                  <p className="text-xs sm:text-sm font-semibold text-slate-900 dark:text-slate-100">
+                    Selon la chroniqueuse, quelle mesure explique principalement l&apos;augmentation des inscriptions francophones ?
                   </p>
-                </div>
 
-                {/* Actions candidat interactives */}
-                <div className="space-y-2 pt-1">
-                  <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Votre tour de parole :</p>
-                  <div className="flex flex-wrap gap-2">
-                    <Button
-                      type="button"
-                      size="sm"
-                      onClick={() => {
-                        setEoSpeaking(true);
-                        setTimeout(() => {
-                          setEoSpeaking(false);
-                          setEoExchangeStep((s) => (s === 1 ? 2 : 1));
-                        }, 1200);
-                      }}
-                      className="bg-brand-crimson hover:bg-brand-crimson/90 text-white text-xs font-bold gap-1.5"
-                    >
-                      <Mic className="h-3.5 w-3.5" />
-                      <span>{eoSpeaking ? "Enregistrement en cours..." : "Simuler ma réponse vocale"}</span>
-                    </Button>
-
-                    <Button
-                      type="button"
-                      size="sm"
-                      variant="outline"
-                      onClick={() => setEoExchangeStep((s) => (s === 1 ? 2 : 1))}
-                      className="border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs gap-1"
-                    >
-                      <RotateCcw className="h-3 w-3" />
-                      <span>Relancer l&apos;examinateur</span>
-                    </Button>
+                  {/* Options A, B, C, D */}
+                  <div className="space-y-2 pt-1">
+                    {[
+                      { id: 0, letter: "A", text: "L'instauration d'un quota strict dans les facultés de droit." },
+                      {
+                        id: 1,
+                        letter: "B",
+                        text: "L'accès direct aux bourses d'études provinciales.",
+                        isCorrect: true,
+                      },
+                      { id: 2, letter: "C", text: "La fermeture complète des programmes anglophones." },
+                      { id: 3, letter: "D", text: "L'obligation formulée par les employeurs fédéraux." },
+                    ].map((opt) => {
+                      const isSelected = selectedCoAnswer === opt.id;
+                      return (
+                        <button
+                          key={opt.id}
+                          type="button"
+                          onClick={() => setSelectedCoAnswer(opt.id)}
+                          className={`w-full text-left p-2.5 rounded-lg border text-xs font-medium transition-all flex items-center justify-between ${
+                            isSelected
+                              ? "border-cyan-500 bg-cyan-500/10 dark:bg-cyan-500/20 text-cyan-800 dark:text-white shadow-xs ring-1 ring-cyan-500"
+                              : "border-slate-200 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-950/70 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/60"
+                          }`}
+                        >
+                          <div className="flex items-center gap-2.5">
+                            <span
+                              className={`h-5 w-5 rounded-full text-[11px] font-bold flex items-center justify-center font-mono ${
+                                isSelected ? "bg-cyan-600 text-white" : "bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300"
+                              }`}
+                            >
+                              {opt.letter}
+                            </span>
+                            <span>{opt.text}</span>
+                          </div>
+                          {isSelected && <CheckCircle2 className="h-4 w-4 text-emerald-500 dark:text-emerald-400 shrink-0" />}
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
+
+                {/* Explication pédagogique instantanée */}
+                {selectedCoAnswer !== null && (
+                  <div className="p-2.5 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/30 text-[11px] text-emerald-800 dark:text-emerald-300 flex items-start gap-2">
+                    <CheckCircle2 className="h-3.5 w-3.5 shrink-0 mt-0.5 text-emerald-600 dark:text-emerald-400" />
+                    <span>
+                      {selectedCoAnswer === 1
+                        ? "Bravo ! Réponse validée : Le document audio mentionne explicitement « la mesure incitative accordant l'accès direct aux bourses d'études provinciales »."
+                        : "Attention : réécoutez l'audio en vous concentrant sur la raison financière provinciale."}
+                    </span>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Navigation 39 questions grid */}
+            <div className="pt-2 border-t border-slate-200 dark:border-slate-800 space-y-1.5">
+              <div className="flex items-center justify-between text-[11px] text-slate-600 dark:text-slate-400">
+                <span>Grille Officielle des 39 Questions Audio (Cliquer pour naviguer) :</span>
+                <span className="font-mono text-cyan-600 dark:text-cyan-400 font-semibold">1 répondu • 38 en attente</span>
+              </div>
+              <div className="flex flex-wrap gap-1">
+                {Array.from({ length: 39 }).map((_, idx) => {
+                  const num = idx + 1;
+                  const isActive = num === 12;
+                  const isAnswered = num === 12;
+                  return (
+                    <button
+                      key={num}
+                      type="button"
+                      className={`h-6 w-6 rounded text-[10px] font-mono font-bold transition-all ${
+                        isActive
+                          ? "bg-cyan-600 text-white ring-1 ring-white"
+                          : isAnswered
+                          ? "bg-emerald-600 text-white"
+                          : "bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-300 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-slate-200"
+                      }`}
+                    >
+                      {num}
+                    </button>
+                  );
+                })}
               </div>
             </div>
           </div>
@@ -401,7 +739,7 @@ export function ProductShowcaseSection() {
             MODE 3 : EXPRESSION ÉCRITE (MAGIC REWRITE C1/C2 & CRITÈRES FEI)
            ========================================================================= */}
         {activeTab === "ee" && (
-          <div className="p-4 sm:p-6 space-y-4 bg-slate-100/90 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-[460px] transition-colors">
+          <div className="p-4 sm:p-6 space-y-4 bg-slate-100/90 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-[470px] transition-colors">
             <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 dark:border-slate-800 pb-3">
               <div>
                 <span className="text-[10px] font-bold uppercase tracking-wider text-brand-crimson">
@@ -497,11 +835,117 @@ export function ProductShowcaseSection() {
           </div>
         )}
 
+        {/* =========================================================================
+            MODE 4 : EXPRESSION ORALE EN DIRECT (STUDIO VIDÉO 16:9 + IA VOCALE)
+           ========================================================================= */}
+        {activeTab === "eo" && (
+          <div className="p-4 sm:p-6 space-y-4 bg-slate-100/90 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-[470px] transition-colors">
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-5 items-center">
+              {/* Pod Visio Examinateur Laurent (16:9) */}
+              <div className="md:col-span-6 relative aspect-video rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 bg-slate-900 shadow-md">
+                <Image
+                  src="/brand/examiner-laurent.jpg"
+                  alt="M. Laurent - Examinateur Officiel Super4C2"
+                  fill
+                  className="object-cover object-top"
+                  sizes="(max-width: 768px) 100vw, 500px"
+                />
+
+                {/* Live indicators */}
+                <div className="absolute top-3 left-3 flex items-center gap-1.5 bg-background/85 dark:bg-slate-950/85 backdrop-blur-md px-2.5 py-1 rounded-full text-[11px] font-bold border border-white/20">
+                  <span className="h-2 w-2 rounded-full bg-rose-500 animate-ping" />
+                  <span className="text-rose-500">🔴 EN DIRECT</span>
+                  <span className="text-slate-700 dark:text-slate-400">• Tâche 2</span>
+                </div>
+
+                <div className="absolute bottom-3 inset-x-3 flex items-center justify-between bg-slate-950/80 backdrop-blur-md px-3 py-1.5 rounded-xl border border-white/10 text-xs">
+                  <span className="font-semibold text-slate-200">M. Laurent (Examinateur FEI)</span>
+                  {/* Waveform animation */}
+                  <div className="flex items-center gap-0.5">
+                    <span className={`h-2 w-0.5 bg-cyan-400 ${laurentSpeaking ? "animate-pulse" : ""}`} />
+                    <span className={`h-4 w-0.5 bg-cyan-400 ${laurentSpeaking ? "animate-bounce" : ""}`} />
+                    <span className={`h-3 w-0.5 bg-cyan-400 ${laurentSpeaking ? "animate-pulse" : ""}`} />
+                    <span className={`h-5 w-0.5 bg-cyan-400 ${laurentSpeaking ? "animate-bounce" : ""}`} />
+                    <span className={`h-2 w-0.5 bg-cyan-400 ${laurentSpeaking ? "animate-pulse" : ""}`} />
+                  </div>
+                </div>
+              </div>
+
+              {/* Panneau de dialogue interactif */}
+              <div className="md:col-span-6 space-y-3">
+                <div className="p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-1.5 shadow-xs">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-primary">
+                    Consigne Officielle Tâche 2 (Jeu de rôle • 5 min)
+                  </span>
+                  <p className="text-xs text-slate-600 dark:text-slate-300">
+                    Vous souhaitez inscrire votre enfant à une école de hockey sur glace à Montréal. Vous interrogez le directeur (M. Laurent) pour obtenir des précisions sur les horaires, les tarifs et l&apos;équipement.
+                  </p>
+                </div>
+
+                {/* Réplique de M. Laurent avec bouton d'écoute audio direct */}
+                <div className="p-3 rounded-xl bg-cyan-50 dark:bg-cyan-950/40 border border-cyan-200 dark:border-cyan-800/40 space-y-2">
+                  <div className="flex items-center justify-between text-[11px]">
+                    <span className="font-bold text-cyan-700 dark:text-cyan-400 flex items-center gap-1">
+                      <Volume2 className="h-3.5 w-3.5" /> M. Laurent vous répond :
+                    </span>
+                    <button
+                      type="button"
+                      onClick={handlePlayLaurent}
+                      className="inline-flex items-center gap-1 font-mono text-[10px] font-bold text-cyan-600 dark:text-cyan-400 bg-white dark:bg-cyan-900/50 hover:bg-cyan-100 px-2 py-0.5 rounded border border-cyan-300 dark:border-cyan-700 transition-all"
+                    >
+                      {laurentSpeaking ? <VolumeX className="h-3 w-3" /> : <Volume2 className="h-3 w-3" />}
+                      <span>{laurentSpeaking ? "Arrêter la voix" : "🔊 Écouter la voix HD"}</span>
+                    </button>
+                  </div>
+                  <p className="text-xs sm:text-sm text-slate-800 dark:text-slate-200 italic">
+                    {eoExchangeStep === 1
+                      ? "« Bonjour ! Absolument, les cours débutent à 8h le samedi. Cependant, nous exigeons un certificat médical complet avant toute inscription. Est-ce que votre fils a déjà patiné auparavant ? »"
+                      : "« Très bien, c'est un point positif. Concernant l'équipement de protection, préférez-vous louer notre pack ou acheter votre propre matériel agréé ? »"}
+                  </p>
+                </div>
+
+                {/* Actions candidat interactives */}
+                <div className="space-y-2 pt-1">
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Votre tour de parole :</p>
+                  <div className="flex flex-wrap gap-2">
+                    <Button
+                      type="button"
+                      size="sm"
+                      onClick={() => {
+                        setEoSpeaking(true);
+                        setTimeout(() => {
+                          setEoSpeaking(false);
+                          setEoExchangeStep((s) => (s === 1 ? 2 : 1));
+                        }, 1200);
+                      }}
+                      className="bg-brand-crimson hover:bg-brand-crimson/90 text-white text-xs font-bold gap-1.5"
+                    >
+                      <Mic className="h-3.5 w-3.5" />
+                      <span>{eoSpeaking ? "Enregistrement en cours..." : "Simuler ma réponse vocale"}</span>
+                    </Button>
+
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="outline"
+                      onClick={() => setEoExchangeStep((s) => (s === 1 ? 2 : 1))}
+                      className="border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs gap-1"
+                    >
+                      <RotateCcw className="h-3 w-3" />
+                      <span>Relancer l&apos;examinateur</span>
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Footer banner with CTA */}
         <div className="bg-slate-900 border-t border-slate-800 p-3 sm:p-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
           <div className="flex items-center gap-2 text-slate-300">
             <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
-            <span>Plus de 1 200 questions officielles disponibles en continu.</span>
+            <span>Plus de 1 200 questions officielles FEI disponibles en continu avec correction instantanée.</span>
           </div>
 
           <Button
