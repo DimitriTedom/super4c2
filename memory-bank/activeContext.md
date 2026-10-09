@@ -1,27 +1,25 @@
 # Active Context: Super4C2
 
-## 1. Responsiveness Intégrale, Globe Hero & FAQ Officielle, Coach Aura 21st.dev, Média Enrichis & Vitrine CBT
-- **Simulateur CBT Interactif 21st.dev en Direct (`components/product-showcase-section.tsx`) :**
-  - Remplacement de l'image statique par une véritable fenêtre de simulation CBT interactive dans un cadre bureau macOS/CBT.
-  - 3 modes interactifs en temps réel :
-    1. *Double Écran CBT (CE)* : Document source à gauche, question QCM cliquable (A, B, C, D) avec validation immédiate et explications pédagogiques, grille de navigation 1-39 interactive et compte à rebours dynamique.
-    2. *Examinateur IA Live (EO)* : Pod visio 16:9 de M. Laurent, badge `🔴 EN DIRECT`, ondes sonores réactives et boutons de prise de parole interactive.
-    3. *Magic Rewrite C1/C2 (EE)* : Tâche 3 FEI avec bascule dynamique en un clic entre la copie brute B1 et la version optimisée C1/C2 (Magic Rewrite), barème FEI 5/5 et verdict instantané.
-- **Témoignages Défilants en Marquee Horizontal Automatique (`components/testimonials-section.tsx` & `components/ui/marquee.tsx`) :**
-  - Intégration du composant `<Marquee />` Magic UI avec deux rangées horizontales infinies défilant en sens opposé, pause automatique au survol (`pauseOnHover`), et masques de dégradé latéraux fondus.
-  - Cartes de candidats authentiques avec drapeaux de pays (Algérie, Maroc, Cameroun, Sénégal, Tunisie, France/Québec, Côte d'Ivoire, Liban), scores NCLC 8 à 10 certifiés, +50 points CRS et retours d'expérience.
-- **Comparatif Haut de Gamme Sans Mention d'Objectif Canada (`app/page.tsx`) :**
-  - Suppression de toute mention directe de concurrents nominatifs. Comparaison objective et élégante : « Entraînements Classiques & PDF (Méthodes Passives) » vs « Super4C2 • Plateforme CBT & IA (Standard Officiel) ».
-  - Cartes premium au design soigné (bordures fines, badges de statut, iconographie soignée, typographie Bricolage Grotesque).
-- **Refonte du CTA Final Haut de Gamme & Zéro Débordement Mobile (`app/page.tsx`) :**
-  - Élimination du bandeau rouge plat générique et du bouton qui débordait sur smartphone (iPhone 16 Pro Max).
-  - Nouveau conteneur Imperial Navy (`#0B132B`) avec trame subtile, halos d'ambiance crimson & cyan, boutons d'action 100% responsives (`w-full sm:w-auto`) et réassurance officielle (Conforme FEI, Sans carte bancaire, Noté 4.9/5).
-- **Remplacement des Calendriers Natifs par Shadcn UI (`components/ui/calendar.tsx` & `components/ui/date-picker.tsx`) :**
-  - Fin du sélecteur de date navigateur HTML5 brut : création des composants `<Calendar />`, `<Popover />` et `<DatePicker />` avec support complet de la locale française (`date-fns/locale/fr`), sélection fluide, navigation par mois et bouton de réinitialisation.
-  - Déployé dans le formulaire de contact et réservation d'examen ([`app/contact/page.tsx`](file:///d:/SnowDev/Documents/super4c2/app/contact/page.tsx)).
-- **Cahier des Prompts 3D Premium pour Google Flow ([`prompts/google-flow-3d-icons.txt`](file:///d:/SnowDev/Documents/super4c2/prompts/google-flow-3d-icons.txt)) :**
-  - Identification précise des 12 emplacements clés de l'application (4 Épreuves CE, CO, EE, EO + Simulateur CBT, Calculateur CRS +50, Carnet SRS, Sujets Récents, Tarifs VIP, Coach Aura C2, Communauté, Diplôme FEI).
-  - Rédaction des 12 prompts ultra-qualitatifs séparés par un paragraphe double interligne, calibrés pour la génération par lot dans Google Flow / Veo (Claymorphism & Glassmorphism 3D, palette Crimson/Navy/Gold, éclairage de studio, fond isolé pour découpe).
+## 1. Intégration des 12 Icônes 3D Transparentes & Audit de l'Expérience Frontend Candidat
+- **Câblage Complet des 12 Icônes 3D (`public/brand/icons-3d/`) :**
+  - Récupération et découpe des 12 icônes générées sous Google Flow et finalisées dans Canva :
+    1. `ai-assistant-orb.png` — Orbe interactif du Coach Aura C2™ (intégré à `<AnimatedAiAvatar />` avec micro-animations Framer Motion de lévitation et d'aura).
+    2. `cbt-dual-screen-simulator.png` — Simulateur double écran officiel CBT (intégré au sélecteur d'épreuves `/examens/[seriesId]` et au Dashboard).
+    3. `diploma-achievement.png` — Diplôme officiel et réussite NCLC 7 / C2.
+    4. `vip-community-shield.png` — Bouclier d'entraide communautaire VIP (intégré dans l'en-tête de `/communaute` et dans le menu `SiteNav`).
+    5. `comprehension-orale-headphones.png` — Casque audio et ondes sonores Compréhension Orale (CO) (intégré dans la Bento Grid d'accueil, les fiches d'épreuves, le dashboard et `SiteNav`).
+    6. `radar-recent-topics.png` — Dossier diplomatique et radar satellite pour les Sujets Récents (intégré dans l'en-tête de `/sujets-recents` et dans `SiteNav`).
+    7. `expression-orale-microphone.png` — Microphone de studio Expression Orale (EO) (intégré dans la Bento Grid d'accueil, le dashboard, les fiches d'épreuves et `SiteNav`).
+    8. `vip-pricing-pass.png` — Carte VIP Access Pass avec puce et diamant (intégrée dans l'en-tête de la page `/tarifs`).
+    9. `comprehension-ecrite-book.png` — Livre ouvert et loupe Compréhension Écrite (CE) (intégré dans la Bento Grid d'accueil, le dashboard, les fiches d'épreuves et `SiteNav`).
+    10. `srs-memory-vault.png` — Coffre mémoire avec cerveau lumineux et repères J+1, J+3, J+7 (intégré dans l'en-tête de `/carnet-erreurs`, les raccourcis du dashboard et `SiteNav`).
+    11. `crs-calculator-compass.png` — Pièce d'or +50 CRS, boussole et passeport canadien (intégrée dans l'en-tête de `/nclc-calculator`, les raccourcis du dashboard et `SiteNav`).
+    12. `expression-ecrite-pen.png` — Stylo plume et parchemin officiel Expression Écrite (EE) (intégré dans la Bento Grid d'accueil, le dashboard, les fiches d'épreuves, le catalogue `/examens` et `SiteNav`).
+- **Audit Exhaustif de l'Expérience Frontend Candidat :**
+  - Identification des pistes d'amélioration majeures :
+    - *Simulateur CBT :* Outil surligneur de texte en CE, sélecteur Mode Entraînement vs Mode Examen Strict, réglage de vitesse audio (0.8x, 1x, 1.2x) en CO, pré-test micro/casque en EO intro, badge d'autosave continu en EE.
+    - *Dashboard Candidat :* Gestion de l'état initial onboarding pour un candidat avec 0 tentative (remplaçant les valeurs codées en dur), widget compte à rebours vers la date d'examen officiel (J-X), reprise en un clic de la dernière série inachevée.
+    - *Compte Candidat :* Formulaire d'édition de profil (nom, programme cible, date d'examen).
 - **Enrichissement du Footer avec Réseaux Sociaux & Télémétrie (`components/site-footer.tsx`) :**
   - Ajout des icônes officielles des communautés et réseaux sociaux avec micro-interactions au survol : **YouTube** (rouge), **Telegram** (bleu ciel), **WhatsApp** (vert émeraude), **LinkedIn** (bleu pro), **X / Twitter** (sombre), **TikTok** (rose/noir).
   - Ajout d'une pilule de statut système en temps réel : `🟢 Moteur CBT Opérationnel (99.9% Uptime)`.
