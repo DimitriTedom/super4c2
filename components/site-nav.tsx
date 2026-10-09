@@ -18,6 +18,7 @@ import {
   Newspaper,
   PhoneCall,
   Zap,
+  ArrowRight,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -201,162 +202,221 @@ export function SiteNav() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 8, scale: 0.98 }}
               transition={{ duration: 0.18 }}
-              className="absolute left-0 top-full mt-2 w-84 rounded-2xl border border-border/80 bg-background/95 p-3 shadow-2xl backdrop-blur-xl z-50 space-y-1"
+              className="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-[590px] lg:w-[620px] rounded-2xl border border-border/80 bg-background/95 p-3.5 shadow-2xl backdrop-blur-xl z-50"
             >
-              <div className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                Simulateurs Par Discipline CBT
+              <div className="grid grid-cols-2 gap-3">
+                {/* Colonne 1 : Les 4 Épreuves CBT */}
+                <div className="space-y-1">
+                  <div className="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-muted-foreground flex items-center justify-between">
+                    <span>Épreuves Officielles CBT</span>
+                    <span className="rounded bg-primary/10 px-1 py-0.2 text-[9px] font-bold text-primary">
+                      FEI Standard
+                    </span>
+                  </div>
+
+                  <Link
+                    href="/examens/demo-101-ce/intro"
+                    className="flex items-start gap-2.5 rounded-xl p-2 hover:bg-muted/70 transition-colors group"
+                  >
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 p-1 group-hover:scale-105 transition-transform">
+                      <Image
+                        src="/brand/icons-3d/comprehension-ecrite-book.png"
+                        alt="CE"
+                        width={32}
+                        height={32}
+                        className="h-6 w-6 object-contain drop-shadow-sm"
+                      />
+                    </div>
+                    <div>
+                      <div className="text-xs font-bold text-foreground flex items-center gap-1.5">
+                        <span>Compréhension Écrite (CE)</span>
+                        <span className="rounded bg-rose-500/10 px-1 py-0.2 text-[9px] font-bold text-rose-500">
+                          39Q
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-muted-foreground leading-snug">
+                        Écran scindé officiel FEI, zoom de police & pièges décodés
+                      </p>
+                    </div>
+                  </Link>
+
+                  <Link
+                    href="/examens/demo-101-ce/co"
+                    className="flex items-start gap-2.5 rounded-xl p-2 hover:bg-muted/70 transition-colors group"
+                  >
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-cyan-500/10 p-1 group-hover:scale-105 transition-transform">
+                      <Image
+                        src="/brand/icons-3d/comprehension-orale-headphones.png"
+                        alt="CO"
+                        width={32}
+                        height={32}
+                        className="h-6 w-6 object-contain drop-shadow-sm"
+                      />
+                    </div>
+                    <div>
+                      <div className="text-xs font-bold text-foreground flex items-center gap-1.5">
+                        <span>Compréhension Orale (CO)</span>
+                        <span className="rounded bg-cyan-500/10 px-1 py-0.2 text-[9px] font-bold text-cyan-600 dark:text-cyan-400">
+                          39Q
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-muted-foreground leading-snug">
+                        Lecteur CBT sans retour arrière & audio studio HD
+                      </p>
+                    </div>
+                  </Link>
+
+                  <Link
+                    href="/examens/demo-101-ce/eo/intro"
+                    className="flex items-start gap-2.5 rounded-xl p-2 hover:bg-muted/70 transition-colors group"
+                  >
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-amber-500/10 p-1 group-hover:scale-105 transition-transform">
+                      <Image
+                        src="/brand/icons-3d/expression-orale-microphone.png"
+                        alt="EO"
+                        width={32}
+                        height={32}
+                        className="h-6 w-6 object-contain drop-shadow-sm"
+                      />
+                    </div>
+                    <div>
+                      <div className="text-xs font-bold text-foreground flex items-center gap-1.5">
+                        <span>Expression Orale IA</span>
+                        <span className="rounded bg-amber-500/15 px-1 py-0.2 text-[9px] font-bold text-amber-600 dark:text-amber-400">
+                          Live
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-muted-foreground leading-snug">
+                        Examinateur IA M. Laurent & studio visio officiel
+                      </p>
+                    </div>
+                  </Link>
+
+                  <Link
+                    href="/examens/demo-101-ee/intro"
+                    className="flex items-start gap-2.5 rounded-xl p-2 hover:bg-muted/70 transition-colors group"
+                  >
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#E51A31]/10 p-1 group-hover:scale-105 transition-transform">
+                      <Image
+                        src="/brand/icons-3d/expression-ecrite-pen.png"
+                        alt="EE"
+                        width={32}
+                        height={32}
+                        className="h-6 w-6 object-contain drop-shadow-sm"
+                      />
+                    </div>
+                    <div>
+                      <div className="text-xs font-bold text-foreground flex items-center gap-1.5">
+                        <span>Expression Écrite FEI</span>
+                        <Sparkles className="h-3 w-3 text-brand-crimson" />
+                      </div>
+                      <p className="text-[11px] text-muted-foreground leading-snug">
+                        3 tâches, notation officielle & Magic Rewrite C1/C2
+                      </p>
+                    </div>
+                  </Link>
+                </div>
+
+                {/* Colonne 2 : Accélérateurs NCLC 7+ & Outils */}
+                <div className="space-y-1 flex flex-col justify-between">
+                  <div className="space-y-1">
+                    <div className="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-muted-foreground flex items-center justify-between">
+                      <span>Accélérateurs & Outils</span>
+                      <span className="rounded bg-emerald-500/10 px-1 py-0.2 text-[9px] font-bold text-emerald-600 dark:text-emerald-400">
+                        +50 Pts
+                      </span>
+                    </div>
+
+                    <Link
+                      href="/nclc-calculator"
+                      className="flex items-start gap-2.5 rounded-xl p-2 hover:bg-muted/70 transition-colors group"
+                    >
+                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-emerald-500/10 p-1 group-hover:scale-105 transition-transform">
+                        <Image
+                          src="/brand/icons-3d/crs-calculator-compass.png"
+                          alt="CRS"
+                          width={32}
+                          height={32}
+                          className="h-6 w-6 object-contain drop-shadow-sm"
+                        />
+                      </div>
+                      <div>
+                        <div className="text-xs font-bold text-foreground flex items-center gap-1.5">
+                          <span>Calculateur NCLC & CRS</span>
+                          <span className="text-[9px] text-emerald-600 dark:text-emerald-400 font-bold">
+                            +50 pts
+                          </span>
+                        </div>
+                        <p className="text-[11px] text-muted-foreground leading-snug">
+                          Simulez vos points bonus Entrée Express Canada
+                        </p>
+                      </div>
+                    </Link>
+
+                    <Link
+                      href="/carnet-erreurs"
+                      className="flex items-start gap-2.5 rounded-xl p-2 hover:bg-muted/70 transition-colors group"
+                    >
+                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-purple-500/10 p-1 group-hover:scale-105 transition-transform">
+                        <Image
+                          src="/brand/icons-3d/srs-memory-vault.png"
+                          alt="SRS"
+                          width={32}
+                          height={32}
+                          className="h-6 w-6 object-contain drop-shadow-sm"
+                        />
+                      </div>
+                      <div>
+                        <div className="text-xs font-bold text-foreground">
+                          Carnet d&apos;Erreurs SRS
+                        </div>
+                        <p className="text-[11px] text-muted-foreground leading-snug">
+                          Répétition espacée scientifique pour ancrer vos pièges
+                        </p>
+                      </div>
+                    </Link>
+
+                    <Link
+                      href="/sujets-recents"
+                      className="flex items-start gap-2.5 rounded-xl p-2 hover:bg-muted/70 transition-colors group"
+                    >
+                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-blue-500/10 p-1 group-hover:scale-105 transition-transform">
+                        <Image
+                          src="/brand/icons-3d/radar-recent-topics.png"
+                          alt="Sujets Récents"
+                          width={32}
+                          height={32}
+                          className="h-6 w-6 object-contain drop-shadow-sm"
+                        />
+                      </div>
+                      <div>
+                        <div className="text-xs font-bold text-foreground flex items-center gap-1.5">
+                          <span>Sujets Récents Examens</span>
+                          <span className="rounded bg-blue-500/10 px-1 py-0.2 text-[9px] font-bold text-blue-600 dark:text-blue-400">
+                            Radar
+                          </span>
+                        </div>
+                        <p className="text-[11px] text-muted-foreground leading-snug">
+                          Questions réelles tombées ces dernières semaines
+                        </p>
+                      </div>
+                    </Link>
+                  </div>
+
+                  <div className="pt-2 border-t border-border/60">
+                    <Link
+                      href="/examens"
+                      className="flex items-center justify-between rounded-xl px-2.5 py-2 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent hover:from-primary/15 hover:via-primary/10 border border-primary/20 text-xs font-bold text-primary transition-all group"
+                    >
+                      <div className="flex items-center gap-1.5">
+                        <Zap className="h-3.5 w-3.5 text-primary shrink-0" />
+                        <span>Simulateur Complet Multidiscipline</span>
+                      </div>
+                      <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+                    </Link>
+                  </div>
+                </div>
               </div>
-
-              <Link
-                href="/examens/demo-101-ce/intro"
-                className="flex items-start gap-3 rounded-xl p-2.5 hover:bg-muted/70 transition-colors group"
-              >
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 p-1 group-hover:scale-105 transition-transform">
-                  <Image
-                    src="/brand/icons-3d/comprehension-ecrite-book.png"
-                    alt="CE"
-                    width={32}
-                    height={32}
-                    className="h-7 w-7 object-contain drop-shadow-sm"
-                  />
-                </div>
-                <div>
-                  <div className="text-xs font-bold text-foreground flex items-center gap-1.5">
-                    <span>Compréhension Écrite (CE)</span>
-                    <span className="rounded bg-rose-500/10 px-1 py-0.2 text-[9px] font-bold text-rose-500">
-                      39Q
-                    </span>
-                  </div>
-                  <p className="text-[11px] text-muted-foreground">
-                    Écran scindé officiel FEI, zoom de police & pièges décodés
-                  </p>
-                </div>
-              </Link>
-
-              <Link
-                href="/examens/demo-101-ce/co"
-                className="flex items-start gap-3 rounded-xl p-2.5 hover:bg-muted/70 transition-colors group"
-              >
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-cyan-500/10 p-1 group-hover:scale-105 transition-transform">
-                  <Image
-                    src="/brand/icons-3d/comprehension-orale-headphones.png"
-                    alt="CO"
-                    width={32}
-                    height={32}
-                    className="h-7 w-7 object-contain drop-shadow-sm"
-                  />
-                </div>
-                <div>
-                  <div className="text-xs font-bold text-foreground flex items-center gap-1.5">
-                    <span>Compréhension Orale (CO)</span>
-                    <span className="rounded bg-cyan-500/10 px-1 py-0.2 text-[9px] font-bold text-cyan-600 dark:text-cyan-400">
-                      39Q
-                    </span>
-                  </div>
-                  <p className="text-[11px] text-muted-foreground">
-                    Lecteur CBT officiel sans retour arrière & 6 paliers CECRL
-                  </p>
-                </div>
-              </Link>
-
-              <Link
-                href="/examens/demo-101-ce/eo/intro"
-                className="flex items-start gap-3 rounded-xl p-2.5 hover:bg-muted/70 transition-colors group"
-              >
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-amber-500/10 p-1 group-hover:scale-105 transition-transform">
-                  <Image
-                    src="/brand/icons-3d/expression-orale-microphone.png"
-                    alt="EO"
-                    width={32}
-                    height={32}
-                    className="h-7 w-7 object-contain drop-shadow-sm"
-                  />
-                </div>
-                <div>
-                  <div className="text-xs font-bold text-foreground flex items-center gap-1.5">
-                    <span>Expression Orale IA</span>
-                    <span className="rounded bg-amber-500/15 px-1 py-0.2 text-[9px] font-bold text-amber-600 dark:text-amber-400">
-                      Live
-                    </span>
-                  </div>
-                  <p className="text-[11px] text-muted-foreground">
-                    Examinateur IA vocal en jeu de rôle & débriefing immédiat
-                  </p>
-                </div>
-              </Link>
-
-              <Link
-                href="/examens/demo-101-ee/intro"
-                className="flex items-start gap-3 rounded-xl p-2.5 hover:bg-muted/70 transition-colors group"
-              >
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#E51A31]/10 p-1 group-hover:scale-105 transition-transform">
-                  <Image
-                    src="/brand/icons-3d/expression-ecrite-pen.png"
-                    alt="EE"
-                    width={32}
-                    height={32}
-                    className="h-7 w-7 object-contain drop-shadow-sm"
-                  />
-                </div>
-                <div>
-                  <div className="text-xs font-bold text-foreground flex items-center gap-1.5">
-                    <span>Expression Écrite FEI</span>
-                    <Sparkles className="h-3 w-3 text-brand-crimson" />
-                  </div>
-                  <p className="text-[11px] text-muted-foreground">
-                    3 tâches, notation officielle & Magic Rewrite C1/C2 en 10s
-                  </p>
-                </div>
-              </Link>
-
-              <Link
-                href="/carnet-erreurs"
-                className="flex items-start gap-3 rounded-xl p-2.5 hover:bg-muted/70 transition-colors group"
-              >
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-purple-500/10 p-1 group-hover:scale-105 transition-transform">
-                  <Image
-                    src="/brand/icons-3d/srs-memory-vault.png"
-                    alt="SRS"
-                    width={32}
-                    height={32}
-                    className="h-7 w-7 object-contain drop-shadow-sm"
-                  />
-                </div>
-                <div>
-                  <div className="text-xs font-bold text-foreground">
-                    Carnet d&apos;Erreurs SRS
-                  </div>
-                  <p className="text-[11px] text-muted-foreground">
-                    Répétition espacée scientifique pour ancrer vos pièges
-                  </p>
-                </div>
-              </Link>
-
-              <Link
-                href="/nclc-calculator"
-                className="flex items-start gap-3 rounded-xl p-2.5 hover:bg-muted/70 transition-colors group"
-              >
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-500/10 p-1 group-hover:scale-105 transition-transform">
-                  <Image
-                    src="/brand/icons-3d/crs-calculator-compass.png"
-                    alt="CRS"
-                    width={32}
-                    height={32}
-                    className="h-7 w-7 object-contain drop-shadow-sm"
-                  />
-                </div>
-                <div>
-                  <div className="text-xs font-bold text-foreground flex items-center gap-1.5">
-                    <span>Calculateur NCLC & CRS</span>
-                    <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold">
-                      +50 pts
-                    </span>
-                  </div>
-                  <p className="text-[11px] text-muted-foreground">
-                    Simulez votre bonus Entrée Express Canada
-                  </p>
-                </div>
-              </Link>
             </motion.div>
           )}
         </AnimatePresence>

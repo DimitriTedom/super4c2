@@ -55,8 +55,8 @@ export default async function HomePage() {
 
         {/* 📝 Contenu textuel et CTAs au premier plan (z-10) — strictement au-dessus du globe sur l'axe Z */}
         <div className="relative z-10 mx-auto max-w-4xl space-y-6 sm:space-y-7 text-center">
-          {/* Halo doux de contraste & lisibilité textuelle au-dessus du globe */}
-          <div className="pointer-events-none absolute -inset-x-8 -inset-y-6 z-[-1] rounded-3xl bg-background/50 dark:bg-background/40 backdrop-blur-[2px] [mask-image:radial-gradient(ellipse_65%_55%_at_50%_50%,black_30%,transparent_80%)]" />
+          {/* 🛡️ Couche satinée de flou et de contraste pour une lisibilité parfaite au-dessus des points du globe */}
+          <div className="pointer-events-none absolute -inset-x-6 sm:-inset-x-14 -inset-y-8 sm:-inset-y-12 z-[-1] rounded-3xl bg-background/80 dark:bg-background/70 backdrop-blur-md sm:backdrop-blur-lg [mask-image:radial-gradient(ellipse_85%_70%_at_50%_48%,black_45%,transparent_92%)]" />
 
           <BlurFade delay={0.05}>
             <div className="group relative inline-flex items-center gap-2 rounded-full border border-border/70 bg-background/85 px-4 py-1.5 shadow-[inset_0_-8px_10px_rgba(229,26,49,0.06)] transition-all duration-300 hover:border-brand-crimson/50 hover:shadow-[inset_0_-8px_14px_rgba(229,26,49,0.15)] backdrop-blur-md">

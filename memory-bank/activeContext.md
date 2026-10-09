@@ -24,6 +24,14 @@
   - **Nouveau Lecteur Audio Officiel CO (Audio Studio Natif HTML5) :** Remplacement de la synthèse vocale artificielle et du faux timer bloqué par un lecteur `<audio>` HTML5 natif branché sur `/audio/co/co-101-q2.mp3` (annonce SNCF officielle). Synchronisation parfaite du temps réel (`00:04 / 00:10`), barre de progression fluide, égaliseur animé 28 barres réactif à l'audio, réglage de vitesse de lecture (`0.8x / 1.0x / 1.2x`), et question/choix alignés sur le document sonore avec réécoute de démonstration.
   - **Voix HD Studio de M. Laurent en EO (`/audio/eo/laurent-step1.mp3` & `step2.mp3`) :** Remplacement de la voix robotique système par de véritables enregistrements haute fidélité ElevenLabs (voix Charlie française masculine), avec lecture native HTML5, synchronisation d'onde faciale et arrêt automatique lors du changement d'étape ou d'onglet.
   - **Cohérence Parfaite Mode Clair / Mode Sombre :** Panneaux blancs nets, bordures douces et typographie contrastée en mode clair, et rendu sombre immersif en mode nuit.
+- **Mega-Menu 2 Colonnes « Simulateurs & IA » (`components/site-nav.tsx`) :**
+  - Remplacement de la colonne étroite et interminable (`w-84`) par un menu étendu à 2 colonnes équilibrées (`w-[620px]`) centré sur la barre de navigation.
+  - Répartition structurée : Colonne 1 « Épreuves Officielles CBT » (CE, CO, EO, EE) et Colonne 2 « Accélérateurs & Outils » (Calculateur NCLC/CRS, Carnet SRS, Sujets Récents Radar) avec bouton de synthèse vers le simulateur complet. Hauteur divisée par deux, évitant tout débordement sur le titre de la page d'accueil.
+- **Voile de Lisibilité Satiné & Flou Arrière-Plan Globe (`app/page.tsx`) :**
+  - Amélioration de la couche de contraste entre le texte héroïque et le globe 3D tournant : passage à un `backdrop-blur-md sm:backdrop-blur-lg` avec masque radial étendu (`ellipse 85% 70% at 50% 48%`) et fond satiné adaptatif `bg-background/80 dark:bg-background/70`.
+  - Élimine le bruit visuel des points noirs et marqueurs rouges directement sous le paragraphe et le titre sans masquer la lévitation 3D du globe.
+- **Audit Fonctionnel Multi-Langue (`LanguageSwitcher`) :**
+  - Clarification : Le sélecteur de langue actuel enregistre la préférence dans `localStorage` et le cookie `super4c2_lang`, mais n'a pas de dictionnaire i18n actif relié. Les épreuves officielles (TCF/TEF) demeurent par définition en français, tandis que l'interface marketing/navigation nécessite un provider i18n (ex: dictionnaire JSON ou next-intl) si une traduction bilingue complète FR/EN est souhaitée.
 - **Section CTA Finale d'Accueil (`app/page.tsx`) :**
   - Remplacement de l'ancien rectangle noir rigide `bg-[#0B132B]` par une carte premium adaptative : dégradé subtil `from-rose-50/80 via-white to-slate-50/90` avec lueur d'aura crimson en mode clair, et préservation du thème nuit profond `#0B132B` en mode sombre.
 - **Mise en Valeur Haut de Gamme des 4 Cartes d'Épreuves (`app/page.tsx`) :**
