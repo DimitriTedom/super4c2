@@ -9,41 +9,16 @@ import { LanguageSwitcher } from "@/components/language-switcher";
 import { NotificationBell } from "@/components/notifications/notification-bell";
 import { SiteNav } from "@/components/site-nav";
 
+import { HeaderMicroBar } from "@/components/header-micro-bar";
+
 export async function SiteHeader() {
   const supabase = await createSupabaseServerClient();
   const user = supabase ? (await supabase.auth.getUser()).data.user : null;
 
   return (
     <div className="sticky top-0 z-50 w-full transition-colors">
-      {/* Top micro-bar informative & élégante */}
-      <div className="hidden border-b border-border/40 bg-muted/60 dark:bg-[#03060C] px-4 py-1.5 text-xs text-muted-foreground sm:block transition-colors">
-        <div className="mx-auto flex max-w-7xl items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className="inline-block h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="font-semibold text-foreground">Simulateur FEI 100% Opérationnel</span>
-            <span className="text-border">|</span>
-            <span>Conforme aux standards officiels France Éducation International (TCF / TEF)</span>
-          </div>
-          <div className="flex items-center gap-3.5 text-[11px]">
-            <Link href="/blog" className="text-foreground/80 hover:text-primary transition-colors font-medium">
-              Blog & Stratégies
-            </Link>
-            <span className="text-border">|</span>
-            <Link href="/communaute" className="text-foreground/80 hover:text-primary transition-colors font-medium">
-              Communauté VIP
-            </Link>
-            <span className="text-border">|</span>
-            <span className="font-bold text-brand-crimson">🇨🇦 Objectif NCLC 7+</span>
-            <span className="text-border">|</span>
-            <Link
-              href="/nclc-calculator"
-              className="text-foreground/80 hover:text-foreground transition-colors"
-            >
-              Calculateur CRS
-            </Link>
-          </div>
-        </div>
-      </div>
+      {/* Top micro-bar informative & bilingue */}
+      <HeaderMicroBar />
 
       {/* Barre de navigation principale avec pilule centrale */}
       <header className="border-b border-border/60 bg-background/95 backdrop-blur-xl transition-colors">

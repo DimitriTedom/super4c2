@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import { Check, ArrowRight, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -65,16 +64,6 @@ export default function TarifsPage() {
   return (
     <div className="space-y-12 py-6">
       <div className="flex flex-col items-center text-center max-w-3xl mx-auto space-y-4">
-        <div className="flex items-center justify-center p-2 rounded-3xl bg-primary/5 border border-primary/20 shadow-sm">
-          <Image
-            src="/brand/icons-3d/vip-pricing-pass.png"
-            alt="Pass VIP 3D"
-            width={90}
-            height={90}
-            className="h-20 w-20 object-contain drop-shadow-md"
-            priority
-          />
-        </div>
         <span className="text-xs font-bold uppercase tracking-wider text-primary">
           Investissez dans votre Résidence Permanente au Canada
         </span>

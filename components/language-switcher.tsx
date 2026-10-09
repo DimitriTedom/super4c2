@@ -3,9 +3,11 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Check, ChevronDown, Globe } from "lucide-react";
 import { toast } from "sonner";
+import { useLanguage } from "@/lib/i18n/language-context";
+import { Locale } from "@/lib/i18n/translations";
 
 export interface LanguageOption {
-  code: string;
+  code: Locale;
   name: string;
   nativeName: string;
   flag: string;
@@ -16,46 +18,23 @@ export const LANGUAGES: LanguageOption[] = [
   {
     code: "fr",
     name: "Français",
-    nativeName: "Français (Canada)",
+    nativeName: "Français",
     flag: "🇨🇦",
-    sub: "Langue officielle TCF & TEF",
+    sub: "Langue officielle TCF & TEF Canada",
   },
   {
     code: "en",
     name: "English",
-    nativeName: "English (Canada)",
-    flag: "🇬🇧",
-    sub: "IRCC Express Entry / CLB",
-  },
-  {
-    code: "es",
-    name: "Español",
-    nativeName: "Español",
-    flag: "🇪🇸",
-    sub: "Candidatos TCF Latinoamérica",
-  },
-  {
-    code: "ar",
-    name: "العربية",
-    nativeName: "العربية",
-    flag: "🇸🇦",
-    sub: "مرشحو الهجرة إلى كندا",
+    nativeName: "English",
+    flag: "🇨🇦",
+    sub: "IRCC Express Entry / CLB Standards",
   },
 ];
 
 export function LanguageSwitcher({ className = "" }: { className?: string }) {
-  const [currentLang, setCurrentLang] = useState<string>("fr");
+  const { locale, setLocale, t } = useLanguage();
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    // Read saved locale or default to fr
-    const saved = localStorage.getItem("super4c2_lang");
-    if (saved && LANGUAGES.some((l) => l.code === saved)) {
-      setCurrentLang(saved);
-      document.documentElement.lang = saved;
-    }
-  }, []);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -71,22 +50,19 @@ export function LanguageSwitcher({ className = "" }: { className?: string }) {
     };
   }, [open]);
 
-  const selectLanguage = (code: string) => {
+  const selectLanguage = (code: Locale) => {
     const selected = LANGUAGES.find((l) => l.code === code);
     if (!selected) return;
 
-    setCurrentLang(code);
-    localStorage.setItem("super4c2_lang", code);
-    document.cookie = `super4c2_lang=${code}; path=/; max-age=31536000; SameSite=Lax`;
-    document.documentElement.lang = code;
+    setLocale(code);
     setOpen(false);
 
-    toast.success(`Langue active : ${selected.nativeName}`, {
-      description: selected.sub,
+    toast.success(`${t("lang_activeToast")} ${selected.nativeName}`, {
+      description: selected.code === "fr" ? t("lang_subFr") : t("lang_subEn"),
     });
   };
 
-  const activeLang = LANGUAGES.find((l) => l.code === currentLang) || LANGUAGES[0];
+  const activeLang = LANGUAGES.find((l) => l.code === locale) || LANGUAGES[0];
 
   return (
     <div className={`relative ${className}`} ref={dropdownRef}>
@@ -95,11 +71,11 @@ export function LanguageSwitcher({ className = "" }: { className?: string }) {
         type="button"
         onClick={() => setOpen(!open)}
         className="flex items-center gap-1.5 rounded-full border border-border/70 bg-muted/50 px-2.5 py-1 text-xs font-semibold text-foreground/80 hover:bg-muted/80 hover:text-foreground transition-all shadow-2xs focus:outline-hidden focus:ring-2 focus:ring-primary/40"
-        aria-label="Changer de langue"
+        aria-label="Changer de langue / Switch language"
         aria-expanded={open}
       >
         <span className="text-sm">{activeLang.flag}</span>
-        <span className="font-mono text-[11px] uppercase tracking-wide">
+        <span className="font-mono text-[11px] uppercase tracking-wide font-bold">
           {activeLang.code.toUpperCase()}
         </span>
         <ChevronDown
@@ -114,12 +90,12 @@ export function LanguageSwitcher({ className = "" }: { className?: string }) {
         <div className="absolute right-0 top-9 z-50 w-64 rounded-2xl border border-border/80 bg-popover/95 p-2 shadow-xl backdrop-blur-xl animate-in fade-in-0 zoom-in-95 duration-150">
           <div className="flex items-center gap-2 px-2.5 py-1.5 border-b border-border/40 text-[11px] text-muted-foreground">
             <Globe className="h-3.5 w-3.5" />
-            <span>Sélectionner la langue</span>
+            <span>{locale === "fr" ? "Sélectionner la langue" : "Select language"}</span>
           </div>
 
           <div className="py-1 space-y-0.5">
             {LANGUAGES.map((lang) => {
-              const isSelected = lang.code === currentLang;
+              const isSelected = lang.code === locale;
               return (
                 <button
                   key={lang.code}
@@ -135,7 +111,9 @@ export function LanguageSwitcher({ className = "" }: { className?: string }) {
                     <span className="text-base">{lang.flag}</span>
                     <div>
                       <p className="font-medium leading-tight">{lang.nativeName}</p>
-                      <p className="text-[10px] text-muted-foreground">{lang.sub}</p>
+                      <p className="text-[10px] text-muted-foreground">
+                        {lang.code === "fr" ? t("lang_subFr") : t("lang_subEn")}
+                      </p>
                     </div>
                   </div>
 
@@ -146,7 +124,11 @@ export function LanguageSwitcher({ className = "" }: { className?: string }) {
           </div>
 
           <div className="border-t border-border/40 px-2.5 pt-2 pb-1 text-[10px] text-muted-foreground leading-tight">
-            <span>Préférence enregistrée pour votre profil candidat.</span>
+            <span>
+              {locale === "fr"
+                ? "Bilingue officiel Canada : TCF / TEF & Express Entry."
+                : "Official Canada bilingual: TCF / TEF & Express Entry."}
+            </span>
           </div>
         </div>
       )}

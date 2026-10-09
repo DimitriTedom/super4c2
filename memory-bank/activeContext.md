@@ -27,11 +27,15 @@
 - **Mega-Menu 2 Colonnes « Simulateurs & IA » (`components/site-nav.tsx`) :**
   - Remplacement de la colonne étroite et interminable (`w-84`) par un menu étendu à 2 colonnes équilibrées (`w-[620px]`) centré sur la barre de navigation.
   - Répartition structurée : Colonne 1 « Épreuves Officielles CBT » (CE, CO, EO, EE) et Colonne 2 « Accélérateurs & Outils » (Calculateur NCLC/CRS, Carnet SRS, Sujets Récents Radar) avec bouton de synthèse vers le simulateur complet. Hauteur divisée par deux, évitant tout débordement sur le titre de la page d'accueil.
-- **Voile de Lisibilité Satiné & Flou Arrière-Plan Globe (`app/page.tsx`) :**
-  - Amélioration de la couche de contraste entre le texte héroïque et le globe 3D tournant : passage à un `backdrop-blur-md sm:backdrop-blur-lg` avec masque radial étendu (`ellipse 85% 70% at 50% 48%`) et fond satiné adaptatif `bg-background/80 dark:bg-background/70`.
-  - Élimine le bruit visuel des points noirs et marqueurs rouges directement sous le paragraphe et le titre sans masquer la lévitation 3D du globe.
-- **Audit Fonctionnel Multi-Langue (`LanguageSwitcher`) :**
-  - Clarification : Le sélecteur de langue actuel enregistre la préférence dans `localStorage` et le cookie `super4c2_lang`, mais n'a pas de dictionnaire i18n actif relié. Les épreuves officielles (TCF/TEF) demeurent par définition en français, tandis que l'interface marketing/navigation nécessite un provider i18n (ex: dictionnaire JSON ou next-intl) si une traduction bilingue complète FR/EN est souhaitée.
+- **Flou Héroïque Ciblé & Respect du Globe 3D (`app/page.tsx`) :**
+  - Ajustement suite au retour utilisateur : suppression du flou global derrière le grand titre H1 (*« Décrochez vos 4 C2 et Débloquez les +50 Points d'Entrée Express »*). Le titre est naturellement très lisible et le globe 3D reste ainsi 100% net, lumineux et spectaculaire.
+  - Le flou satiné doux (`backdrop-blur-md` avec masque radial) est appliqué exclusivement derrière le paragraphe descriptif (*« Fini le scroll interminable... »*), éliminant tout frottement visuel avec les points de la sphère sous les petites lettres.
+- **Épuration de l'En-Tête des Tarifs (`app/tarifs/page.tsx`) :**
+  - Suppression de l'icône 3D du pass VIP qui était peu lisible et encombrait le haut de la page. L'en-tête est désormais épuré, centré sur le message d'investissement d'immigration et la clarté des tarifs sans distraction superflue.
+- **Système Bilingue Français / Anglais Officiel (`lib/i18n/`, `HeaderMicroBar`, `LanguageSwitcher`) :**
+  - Resserrement sur le bilinguisme officiel canadien (FR / EN, standard TCF/TEF & Express Entry, similaire à Objectif Canada).
+  - Création du dictionnaire `lib/i18n/translations.ts` et du contexte réactif `LanguageProvider` (`lib/i18n/language-context.tsx`).
+  - Migration de la micro-barre supérieure vers `<HeaderMicroBar />` et mise à jour de `<LanguageSwitcher />` (drapeau 🇨🇦, mémorisation du choix).
 - **Section CTA Finale d'Accueil (`app/page.tsx`) :**
   - Remplacement de l'ancien rectangle noir rigide `bg-[#0B132B]` par une carte premium adaptative : dégradé subtil `from-rose-50/80 via-white to-slate-50/90` avec lueur d'aura crimson en mode clair, et préservation du thème nuit profond `#0B132B` en mode sombre.
 - **Mise en Valeur Haut de Gamme des 4 Cartes d'Épreuves (`app/page.tsx`) :**

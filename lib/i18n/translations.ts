@@ -1,0 +1,130 @@
+export type Locale = "fr" | "en";
+
+export const translations = {
+  fr: {
+    // Top Micro-bar
+    topBar_simulatorStatus: "Simulateur FEI 100% Opérationnel",
+    topBar_feiCompliance: "Conforme aux standards officiels France Éducation International (TCF / TEF)",
+    topBar_blog: "Blog & Stratégies",
+    topBar_vipCommunity: "Communauté VIP",
+    topBar_targetNclc: "🇨🇦 Objectif NCLC 7+",
+    topBar_crsCalculator: "Calculateur CRS",
+
+    // Navigation & Header
+    nav_home: "Accueil",
+    nav_examSeries: "Séries & Examens",
+    nav_simulatorsAi: "Simulateurs & IA",
+    nav_resources: "Ressources",
+    nav_pricing: "Tarifs",
+    nav_login: "Connexion",
+    nav_mySpace: "Mon Espace",
+    nav_logout: "Déconnexion",
+    nav_freeTrial: "Essai Gratuit",
+    nav_trial: "Essai",
+
+    // Header Mega-Menu
+    menu_cbtExams: "Épreuves Officielles CBT",
+    menu_feiStandard: "FEI Standard",
+    menu_ceTitle: "Compréhension Écrite (CE)",
+    menu_ceDesc: "Écran scindé officiel FEI, zoom de police & pièges décodés",
+    menu_coTitle: "Compréhension Orale (CO)",
+    menu_coDesc: "Lecteur CBT sans retour arrière & audio studio HD",
+    menu_eoTitle: "Expression Orale IA",
+    menu_eoDesc: "Examinateur IA M. Laurent & studio visio officiel",
+    menu_eeTitle: "Expression Écrite FEI",
+    menu_eeDesc: "3 tâches, notation officielle & Magic Rewrite C1/C2",
+    menu_accelerators: "Accélérateurs & Outils",
+    menu_crsTitle: "Calculateur NCLC & CRS",
+    menu_crsDesc: "Simulez vos points bonus Entrée Express Canada",
+    menu_srsTitle: "Carnet d'Erreurs SRS",
+    menu_srsDesc: "Répétition espacée scientifique pour ancrer vos pièges",
+    menu_radarTitle: "Sujets Récents Examens",
+    menu_radarDesc: "Questions réelles tombées ces dernières semaines",
+    menu_fullSimulator: "Simulateur Complet Multidiscipline",
+
+    // Hero Section
+    hero_badge: "Préparation Officielle Canada : TCF • TEF • IELTS",
+    hero_h1_part1: "Décrochez vos",
+    hero_h1_4c2: "4 C2",
+    hero_h1_part2: "et Débloquez les",
+    hero_h1_points: "+50 Points",
+    hero_h1_part3: "d'Entrée Express.",
+    hero_p_part1: "Fini le scroll interminable et les corrections humaines qui tardent 24h. Entraînez-vous dans les",
+    hero_p_bold: "conditions réelles de l'examen officiel CBT",
+    hero_p_part2: "avec un examinateur vocal IA interactif en jeu de rôle.",
+    hero_btn_tcf: "Commencer le TCF",
+    hero_btn_tef: "Commencer le TEF",
+    hero_btn_ielts: "Préparer l'IELTS General",
+    hero_crs_prompt: "Objectif Immigration Canada ?",
+    hero_crs_link: "Calculer mes points CRS (+50 pts NCLC 7) →",
+
+    // Language switcher
+    lang_activeToast: "Langue active :",
+    lang_subFr: "Langue officielle TCF & TEF Canada",
+    lang_subEn: "IRCC Express Entry / CLB Standards",
+  },
+  en: {
+    // Top Micro-bar
+    topBar_simulatorStatus: "FEI Simulator 100% Operational",
+    topBar_feiCompliance: "Compliant with official France Éducation International standards (TCF / TEF)",
+    topBar_blog: "Blog & Strategies",
+    topBar_vipCommunity: "VIP Community",
+    topBar_targetNclc: "🇨🇦 Target NCLC 7+",
+    topBar_crsCalculator: "CRS Calculator",
+
+    // Navigation & Header
+    nav_home: "Home",
+    nav_examSeries: "Series & Exams",
+    nav_simulatorsAi: "Simulators & AI",
+    nav_resources: "Resources",
+    nav_pricing: "Pricing",
+    nav_login: "Login",
+    nav_mySpace: "Dashboard",
+    nav_logout: "Logout",
+    nav_freeTrial: "Free Trial",
+    nav_trial: "Trial",
+
+    // Header Mega-Menu
+    menu_cbtExams: "Official CBT Tests",
+    menu_feiStandard: "FEI Standard",
+    menu_ceTitle: "Reading Comprehension (CE)",
+    menu_ceDesc: "Official FEI split-screen, text zoom & traps decoded",
+    menu_coTitle: "Listening Comprehension (CO)",
+    menu_coDesc: "Official CBT player without rewind & studio HD audio",
+    menu_eoTitle: "Speaking Test (EO) AI",
+    menu_eoDesc: "AI Examiner Mr. Laurent & official video studio",
+    menu_eeTitle: "Writing Test (EE) FEI",
+    menu_eeDesc: "3 tasks, official FEI rubric & Magic Rewrite C1/C2",
+    menu_accelerators: "Accelerators & Tools",
+    menu_crsTitle: "NCLC & CRS Calculator",
+    menu_crsDesc: "Simulate your +50 Express Entry bonus points",
+    menu_srsTitle: "SRS Error Vault",
+    menu_srsDesc: "Scientific spaced repetition to conquer test traps",
+    menu_radarTitle: "Recent Exam Topics",
+    menu_radarDesc: "Real exam topics reported this week",
+    menu_fullSimulator: "Full Multidisciplinary Simulator",
+
+    // Hero Section
+    hero_badge: "Official Canada Test Prep: TCF • TEF • IELTS",
+    hero_h1_part1: "Score Your",
+    hero_h1_4c2: "4 C2s",
+    hero_h1_part2: "and Unlock the",
+    hero_h1_points: "+50 Points",
+    hero_h1_part3: "in Express Entry.",
+    hero_p_part1: "No more endless scrolling and slow 24h manual grading. Practice under",
+    hero_p_bold: "real CBT official exam conditions",
+    hero_p_part2: "with an interactive AI voice examiner in live roleplay.",
+    hero_btn_tcf: "Start TCF Canada",
+    hero_btn_tef: "Start TEF Canada",
+    hero_btn_ielts: "Prepare IELTS General",
+    hero_crs_prompt: "Targeting Canadian Immigration?",
+    hero_crs_link: "Calculate my CRS score (+50 pts NCLC 7) →",
+
+    // Language switcher
+    lang_activeToast: "Active language:",
+    lang_subFr: "Official TCF & TEF Canada language",
+    lang_subEn: "IRCC Express Entry / CLB Standards",
+  },
+} as const;
+
+export type TranslationKey = keyof typeof translations.fr;

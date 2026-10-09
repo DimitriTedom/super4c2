@@ -55,9 +55,6 @@ export default async function HomePage() {
 
         {/* 📝 Contenu textuel et CTAs au premier plan (z-10) — strictement au-dessus du globe sur l'axe Z */}
         <div className="relative z-10 mx-auto max-w-4xl space-y-6 sm:space-y-7 text-center">
-          {/* 🛡️ Couche satinée de flou et de contraste pour une lisibilité parfaite au-dessus des points du globe */}
-          <div className="pointer-events-none absolute -inset-x-6 sm:-inset-x-14 -inset-y-8 sm:-inset-y-12 z-[-1] rounded-3xl bg-background/80 dark:bg-background/70 backdrop-blur-md sm:backdrop-blur-lg [mask-image:radial-gradient(ellipse_85%_70%_at_50%_48%,black_45%,transparent_92%)]" />
-
           <BlurFade delay={0.05}>
             <div className="group relative inline-flex items-center gap-2 rounded-full border border-border/70 bg-background/85 px-4 py-1.5 shadow-[inset_0_-8px_10px_rgba(229,26,49,0.06)] transition-all duration-300 hover:border-brand-crimson/50 hover:shadow-[inset_0_-8px_14px_rgba(229,26,49,0.15)] backdrop-blur-md">
               <span
@@ -94,9 +91,13 @@ export default async function HomePage() {
           </BlurFade>
 
           <BlurFade delay={0.25}>
-            <p className="font-body text-base sm:text-xl text-foreground/90 dark:text-slate-200 font-medium max-w-2xl mx-auto leading-relaxed text-balance">
-              Fini le scroll interminable et les corrections humaines qui tardent 24h. Entraînez-vous dans les <strong className="text-foreground font-bold">conditions réelles de l&apos;examen officiel CBT</strong> avec un examinateur vocal IA interactif en jeu de rôle.
-            </p>
+            <div className="relative max-w-2xl mx-auto">
+              {/* Flou ciblé uniquement derrière le texte de description pour adoucir les points sous les lettres sans voiler le titre ni le globe */}
+              <div className="pointer-events-none absolute -inset-x-6 -inset-y-3 z-[-1] rounded-2xl bg-background/75 dark:bg-background/65 backdrop-blur-md [mask-image:radial-gradient(ellipse_90%_80%_at_50%_50%,black_50%,transparent_100%)]" />
+              <p className="font-body text-base sm:text-xl text-foreground/90 dark:text-slate-200 font-medium leading-relaxed text-balance">
+                Fini le scroll interminable et les corrections humaines qui tardent 24h. Entraînez-vous dans les <strong className="text-foreground font-bold">conditions réelles de l&apos;examen officiel CBT</strong> avec un examinateur vocal IA interactif en jeu de rôle.
+              </p>
+            </div>
           </BlurFade>
 
           <BlurFade delay={0.35}>
