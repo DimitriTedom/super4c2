@@ -1,0 +1,29 @@
+# ==============================================================================
+# SUPER4C2 — BATCH PROMPTS POUR ICÔNES 3D PREMIUM (GOOGLE FLOW / VEO / FLUX)
+# Palette de marque : Érable Écarlate (#E51A31), Bleu Nuit Impérial (#0B132B), Or Poli, Cyan Néon, Verre Dépoli
+# Style : 3D Claymorphism & Glossy Glassmorphism haut de gamme, rendu Octane / Cinema 4D, studio lighting doux
+# ==============================================================================
+
+A high-end 3D glossy icon representing "Reading Comprehension (Compréhension Écrite)", featuring an open futuristic holographic book and a sleek digital tablet displaying French text passages, with a polished magnifying glass and a crimson maple leaf bookmark floating beside it. Materials of frosted glass, glossy porcelain, polished metallic accents in imperial navy (#0B132B) and maple crimson (#E51A31). Studio lighting, soft ambient occlusion, isometric 3D perspective, isolated on a clean neutral background, 8k resolution, octane render, Apple-tier product design.
+
+A premium 3D icon representing "Listening Comprehension (Compréhension Orale)", featuring a sleek pair of studio broadcast headphones resting around a floating holographic audio soundwave and a glowing sound frequency disc. Accents of maple crimson (#E51A31), deep obsidian navy, frosted acrylic, and vibrant cyan neon audio pulse rings. Isometric 3D angle, soft rim lighting, subsurface scattering, smooth glossy finish, isolated on a clean neutral background, ultra-detailed Cinema 4D rendering.
+
+A luxurious 3D icon representing "Written Expression (Expression Écrite)", featuring a sleek digital fountain pen with a golden nib floating mid-air, writing graceful glowing ink lines onto a curved frosted glass document sheet stamped with a Canadian maple leaf seal. Rich materials of brushed metallic titanium, translucent burgundy glass, and gold foil accents. Soft volumetric studio lighting, isometric view, pristine clean background, premium tech EdTech aesthetic.
+
+A high-fidelity 3D icon representing "Oral Expression (Expression Orale)", featuring a professional studio condenser microphone with a glowing red "ON AIR" indicator ring, accompanied by floating translucent dialogue speech bubbles and audio resonance ripples. Color scheme of deep imperial navy (#0B132B), vibrant crimson accents (#E51A31), and glowing holographic waves. Isometric composition, ray-traced reflections, isolated on a neutral background, glossy 3D clay aesthetic.
+
+A futuristic 3D icon representing "Official CBT Dual-Screen Exam Simulator", featuring two sleek ultra-thin monitors side-by-side mounted on a minimalist stand, the left screen showing a source document and the right screen showing an interactive multiple-choice grid with a glowing golden countdown timer at the top. Frosted glass bezel, glowing status LED, deep navy and crimson palette with emerald checkmarks. Premium SaaS product showcase render, octane lighting, isolated on clean background.
+
+A prestigious 3D icon representing "Express Entry CRS Points Calculator (+50 Points)", featuring an embossed Canadian passport with a metallic gold coat of arms, a compass pointing north, and a floating glossy golden badge prominently displaying "+50 CRS". Accents of maple red ribbon, frosted glass, and polished gold. Soft directional shadows, 3D clay and metallic hybrid texture, isolated clean background, immigration authority aesthetic.
+
+A cutting-edge 3D icon representing "SRS Spaced Repetition Memory Vault (Carnet d'Erreurs)", featuring a translucent glowing memory vault chest with floating calendar cards marked "J+1", "J+3", "J+7", and a stylized holographic brain matrix hovering in the center. Frosted acrylic, glowing cyan neural pathways, and deep crimson structural accents. Isometric 3D view, ambient glow, octane render, isolated on clean background.
+
+An exclusive 3D icon representing "Recent Exam Topics 2026 (Veille Sujets Récents)", featuring a confidential sleek dossier folder stamped with "TOP SECRET FEI 2026" and a Canadian maple leaf, paired with a miniature satellite radar dish scanning for incoming live examination data. Matte graphite paper, glossy crimson wax seal, and holographic data glyphs. Isometric perspective, cinematic lighting, isolated on clean neutral background.
+
+A luxury 3D icon representing "VIP Access Pass & Pricing (Pass Intégral)", featuring a floating black titanium credit card with beveled gold edges, an embossed crimson maple leaf crest, and a sparkling diamond badge floating nearby with shimmering light rays. High-end fintech aesthetic, frosted glass overlay, deep obsidian and gold tones, studio softbox illumination, isolated clean background.
+
+An iconic 3D mascot avatar for "Aura C2 Artificial Intelligence Coach", featuring a smooth spherical cybernetic orb in two-tone imperial navy and maple crimson, glowing cyan digital eyes shaped in a friendly curved expression, encircled by floating gyroscopic magnetic rings with soft blue particle trails. Glossy ceramic, brushed aluminium, Pixar/Apple-tier friendly tech aesthetic, isolated on neutral background.
+
+A collaborative 3D icon representing "VIP Candidate Community & Concierge", featuring an ornate heraldic shield with Canadian maple motifs, flanked by three interlocking glossy chat bubbles with avatar silhouette badges and golden celebration stars. Rich textures of polished enamel, frosted glass, and metallic trim in navy, crimson, and gold. Isometric angle, clean isolated background, warm welcoming lighting.
+
+A prestigious 3D icon representing "NCLC 7+ Official Mastery Diploma (Certification FEI)", featuring a rolled parchment diploma tied with a rich crimson silk ribbon and a large gold seal with a maple leaf, flanked by a golden laurel wreath of excellence. Fine paper texture, glossy fabric ribbon, polished 24k gold, soft studio shadows, isolated on clean neutral background, achievement trophy aesthetic.

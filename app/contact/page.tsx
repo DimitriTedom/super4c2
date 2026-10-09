@@ -11,6 +11,7 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { DatePicker } from "@/components/ui/date-picker";
 import { toast } from "sonner";
 import { submitContactLeadAction } from "./actions";
 
@@ -204,11 +205,16 @@ export default function ContactPage() {
                   <label className="text-xs font-semibold text-foreground">
                     Date prévue de votre examen (optionnel)
                   </label>
-                  <input
-                    type="date"
-                    value={formData.examDate}
-                    onChange={(e) => setFormData({ ...formData, examDate: e.target.value })}
-                    className="w-full rounded-xl border bg-muted/30 px-3.5 py-2.5 text-xs focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                  <DatePicker
+                    date={formData.examDate ? new Date(formData.examDate) : null}
+                    onSelect={(d) =>
+                      setFormData({
+                        ...formData,
+                        examDate: d ? d.toISOString().split("T")[0] : "",
+                      })
+                    }
+                    placeholder="Sélectionner la date de votre session..."
+                    className="h-10 text-xs bg-muted/30"
                   />
                 </div>
               </div>
