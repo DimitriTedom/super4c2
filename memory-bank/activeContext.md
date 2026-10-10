@@ -1,25 +1,22 @@
 # Active Context: Super4C2
 
-## 0. Chantier 8 — Tarification Géolocalisée Intelligente, Architecture de Paiement Multi-Gateway & Plan d'Exécution Pérenne
-- **Moteur de Détection Géolocalisée ([lib/pricing/geo-pricing.ts](file:///d:/SnowDev/Documents/super4c2/lib/pricing/geo-pricing.ts)) :**
-  - Éradication de la pollution multi-devises sur les cartes (contrairement à Objectif Canada qui affiche 4 monnaies mélangées).
-  - Détection automatique de la zone géographique (IP / Headers Vercel / Cloudflare ou fuseau horaire du navigateur) affichant une **seule monnaie native** :
-    - *Zone Franc CFA (Afrique Centrale & Ouest)* : `FCFA` (XAF / XOF) avec passerelle Mobile Money (MTN MoMo, Orange Money, Wave).
-    - *France & Union Européenne* : `EUR (€)` avec paiement CB / Apple Pay.
-    - *Canada* : `CAD ($ CAD)` avec paiement CB / Interac.
-    - *Reste du Monde* : `USD ($ USD)`.
-  - Sélecteur discret de changement de monnaie manuel pour les candidats en mobilité.
-- **Composant UI Pricing Premium 21st.dev ([components/pricing/geo-pricing-section.tsx](file:///d:/SnowDev/Documents/super4c2/components/pricing/geo-pricing-section.tsx)) & Page ([app/tarifs/page.tsx](file:///d:/SnowDev/Documents/super4c2/app/tarifs/page.tsx)) :**
-  - Design épuré, animations Framer Motion, badges "Choix N°1" et "Garantie NCLC 7".
-  - Grille des 4 formules : Pass Sprint 7j, Pass Intensif 15j, Pass Succès 30j ⭐, Pass VIP 60j.
-  - Bandeau de rassurance : SSL 256 bits, activation immédiate, sans tacite reconduction cachée.
-- **Document de Spécification Pérenne ([docs/specs/07-payment-and-geo-subscription-architecture.md](file:///d:/SnowDev/Documents/super4c2/docs/specs/07-payment-and-geo-subscription-architecture.md)) :**
-  - Schéma Prisma complet (`Subscription`, `PaymentTransaction`, `SubscriptionTier`, `SubscriptionStatus`, `PaymentGateway`).
-  - Architecture des webhooks idempotents (Stripe & CinetPay) et règles du Paywall Gate (Free Previews vs Séries Payantes).
-- **Feuille de Route Validée :**
-  - *Option 1* : Vérification Live Browser des fonctionnalités interactives (Curseur Feutre, Guide Onboarding, Bouton VIP, Bi-filière IELTS).
-  - *Option 2* : Examen Blanc Complet (simulation CBT 4 épreuves enchaînées avec scorecard agrégé NCLC / CRS +50 pts).
-  - *Option 3* : Carnet d'Erreurs Automatisé SRS (`/carnet-erreurs` avec rappels Ebbinghaus J+1, J+3, J+7).
+## 0. Chantier 8 — Tarification Géolocalisée, SasPay (https://saspay.me) & Pass Annuel Immigrant 1 An (365 Jours)
+- **Intégration Passerelle SasPay ([lib/billing/saspay.ts](file:///d:/SnowDev/Documents/super4c2/lib/billing/saspay.ts)) :**
+  - Passerelle officielle SaaS pour l'Afrique (`https://saspay.me` / Base URL `https://api.saspay.me/api/v1`).
+  - Support natif des checkout sessions hébergées et Softpay direct push USSD (MTN MoMo, Orange Money, Wave, Moov).
+  - Gestion stricte de l'Idempotency-Key UUID, montants en chaînes décimales, et validation cryptographique HMAC des webhooks (`X-Webhook-Signature` & `X-Webhook-Timestamp` avec protection anti-replay 300s).
+- **Pass Immigrant 1 An / 365 Jours (Objectif Canada Long Terme & Assurance Repassage) :**
+  - Répond à la réalité du parcours d'immigration (6 à 12 mois pour passer de B1/B2 à C1/C2).
+  - Couvre les repassages d'examen officiels si le candidat manque le NCLC 7 de quelques points.
+  - Couvre à la fois le TCF/TEF Canada (+50 pts) et l'IELTS (+24 pts).
+  - Prix ultra-attractif : `60 000 FCFA` (revient à 5 000 FCFA/mois — 60% d'économie vs pass mensuel), `89,99 €`, `129 $ CAD`, `95 $ USD`.
+- **UI Pricing 21st.dev Multi-Durées ([components/pricing/geo-pricing-section.tsx](file:///d:/SnowDev/Documents/super4c2/components/pricing/geo-pricing-section.tsx)) :**
+  - Sélecteur de filtres : "Toutes les Formules", "Pass Révision (7j - 60j)" et "Pass Immigrant 1 An 🔥".
+  - Mise en avant royale du Pass Annuel avec calcul d'économie mensuelle et badge "👑 Pack Intégral Immigration Canada".
+  - Détection locale de monnaie et mention "Propulsé par SasPay".
+- **Spécification Technique Validée ([docs/specs/07-payment-and-geo-subscription-architecture.md](file:///d:/SnowDev/Documents/super4c2/docs/specs/07-payment-and-geo-subscription-architecture.md)) :**
+  - Schéma Prisma avec `SubscriptionTier.ANNUEL_365D` et `PaymentGateway.SASPAY`.
+
 
 ## 1. Chantier 7 — États de Chargement, Curseur Feutre Surligneur & Benchmark Concurrentiel (Objectif Canada)
 

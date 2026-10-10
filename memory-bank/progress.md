@@ -1,11 +1,13 @@
 # Progress Tracking: Super4C2
 
 ## Ce qui est Réalisé
-- [x] **Tarification Géolocalisée Intelligente & Architecture Multi-Passerelle (Chantier 9 Réalisé) :**
-  - Moteur de géolocalisation et devises locales (`lib/pricing/geo-pricing.ts`) éliminant le désordre multi-monnaies d'Objectif Canada : affichage d'une monnaie unique propre adaptée au pays du candidat (FCFA pour l'Afrique Centrale et de l'Ouest, EUR pour la France et l'Europe, CAD pour le Canada, USD pour l'international).
-  - Composant de tarification haut de gamme inspiré de 21st.dev (`components/pricing/geo-pricing-section.tsx`) et refonte de `/tarifs` avec support Mobile Money (MTN MoMo, Orange Money, Wave) et Cartes Bancaires/Apple Pay, badges de réassurance et garanties.
-  - Document d'architecture pérenne complet (`docs/specs/07-payment-and-geo-subscription-architecture.md`) définissant le schéma Prisma `Subscription` & `PaymentTransaction`, les webhooks idempotents et les règles de Paywall.
+- [x] **SasPay (`https://saspay.me`), Pass Immigrant Annuel 365 Jours & Tarification Géolocalisée (Chantier 9 Réalisé) :**
+  - Intégration du client SDK SasPay (`lib/billing/saspay.ts`) pour encaisser en Mobile Money (MTN MoMo, Orange Money, Wave, Moov) et Cartes Bancaires en Afrique via l'API REST `https://api.saspay.me/api/v1` avec sessions hébergées et Softpay push.
+  - Ajout du **Pass Immigrant 1 An (365 Jours)** (`annuel_365d`) à 60 000 FCFA / 89,99 € / 129 $ CAD pour accompagner le candidat sur toute la durée de son immigration avec assurance repassage illimitée et accès aux 3 examens (TCF + TEF + IELTS).
+  - Refonte du composant de tarification (`components/pricing/geo-pricing-section.tsx`) avec filtre dynamique par durée (*Toutes les Formules*, *Pass Révision 7j-60j*, *Pass Immigrant 1 An 🔥* avec carte héroïque dorée).
+  - Mise à jour de la spécification technique pérenne (`docs/specs/07-payment-and-geo-subscription-architecture.md`).
 - [x] **États de Chargement UI Globaux & Curseur Feutre Surligneur (Chantier 7 Réalisé) :** Composant `Button` étendu avec `loading` et `loadingText` (spinner `<Loader2 className="animate-spin" />` et `disabled`), fonction utilitaire `triggerGlobalLoading` activant la barre laser de sommet de page sur toutes les actions critiques (soumission écrit, validation fin d'examen CBT, sauvegarde de profil), et curseur SVG haute précision feutre surligneur ambre `.cursor-highlighter` avec mire rouge pour l'outil de surlignage interactif en CE et dans la vitrine produit.
+
 
 - [x] **Guide Tutoriel Newcomers, Bouton Communauté VIP & Architecture IELTS Bi-filière (Chantier 8 Réalisé) :**
   - Guide interactif d'onboarding en 5 étapes (`NewcomerGuideModal`) avec progression laser et icônes 3D, déclenché automatiquement pour les nouveaux arrivants et accessible à la demande.

@@ -2,6 +2,7 @@
 // SUPER4C2 — GEO-PRICING & CURRENCY INTELLIGENCE ENGINE
 // ============================================================================
 // Detects user country & displays localized single currency (FCFA, EUR, CAD, USD).
+// Powered by SasPay (https://saspay.me) for Africa & Stripe for international.
 // Eliminates cluttered multi-currency pricing cards.
 // ============================================================================
 
@@ -14,7 +15,7 @@ export interface CurrencyConfig {
   flag: string;
   locale: string;
   defaultCountry: string;
-  paymentGateway: "cinetpay" | "stripe";
+  paymentGateway: "saspay" | "stripe";
 }
 
 export const SUPPORTED_CURRENCIES: Record<SupportedCurrency, CurrencyConfig> = {
@@ -25,7 +26,7 @@ export const SUPPORTED_CURRENCIES: Record<SupportedCurrency, CurrencyConfig> = {
     flag: "🇨🇲",
     locale: "fr-CM",
     defaultCountry: "Cameroun & Zone Franc",
-    paymentGateway: "cinetpay", // MTN MoMo, Orange Money, Wave
+    paymentGateway: "saspay", // SasPay Mobile Money (MTN MoMo, Orange Money, Wave, Moov)
   },
   EUR: {
     code: "EUR",
@@ -63,12 +64,13 @@ export interface PlanPricing {
 }
 
 export interface PricingPlan {
-  id: "sprint_7d" | "intensif_15d" | "succes_30d" | "vip_60d";
+  id: "sprint_7d" | "intensif_15d" | "succes_30d" | "vip_60d" | "annuel_365d";
   name: string;
   durationDays: number;
   tagline: string;
   popular?: boolean;
   vip?: boolean;
+  annual?: boolean;
   prices: Record<SupportedCurrency, PlanPricing>;
   features: string[];
   limits: {
@@ -148,7 +150,7 @@ export const PRICING_PLANS: PricingPlan[] = [
     },
     features: [
       "Simulateurs CBT illimités (CE & CO, TCF Canada & IELTS)",
-      "3 Examen Blancs Complets chronométrés 4 épreuves avec relevé agrégé",
+      "3 Examens Blancs Complets chronométrés 4 épreuves avec relevé agrégé",
       "25 évaluations d'Expression Écrite avec Magic Rewrite C1/C2",
       "15 entretiens d'Expression Orale IA avec analyse de débit & intonation",
       "Carnet d'Erreurs automatisé & révisions ciblées Ebbinghaus",
@@ -167,7 +169,7 @@ export const PRICING_PLANS: PricingPlan[] = [
     id: "vip_60d",
     name: "Pass VIP 60 Jours Garantie",
     durationDays: 60,
-    tagline: "Préparation d'élite avec accompagnement illimité et garantie résultat.",
+    tagline: "Préparation d'élite avec accompagnement intensif et garantie résultat.",
     vip: true,
     prices: {
       XAF: { amount: 25000, formatted: "25 000 FCFA", periodText: "pour 60 jours" },
@@ -177,7 +179,7 @@ export const PRICING_PLANS: PricingPlan[] = [
     },
     features: [
       "Accès TOTAL & ILLIMITÉ à toute la plateforme pendant 60 jours",
-      "Examen Blancs Complets illimités avec simulations d'audience réelles",
+      "Examens Blancs Complets illimités avec conditions d'audience réelles",
       "Corrections d'Expression Écrite illimitées",
       "Entretiens oraux vocaux illimités (Tâche 1, 2, 3)",
       "Toutes les versions modèles Magic Rewrite C1/C2 débloquées",
@@ -188,6 +190,35 @@ export const PRICING_PLANS: PricingPlan[] = [
       cbtSimulationCount: "Illimité",
       writtenEvalCount: "Illimité",
       oralEvalCount: "Illimité",
+      srsVaultAccess: true,
+      nclcGuarantee: true,
+    },
+  },
+  {
+    id: "annuel_365d",
+    name: "Pass Immigrant 1 An (365 Jours)",
+    durationDays: 365,
+    tagline: "Sérénité absolue pour tout votre parcours d'immigration (TCF + TEF + IELTS).",
+    annual: true,
+    prices: {
+      XAF: { amount: 60000, formatted: "60 000 FCFA", periodText: "pour 1 an (5 000 F/mois)" },
+      EUR: { amount: 89.99, formatted: "89,99 €", periodText: "pour 1 an (7,50 €/mois)" },
+      CAD: { amount: 129, formatted: "129 $ CAD", periodText: "pour 1 an (10,75 $/mois)" },
+      USD: { amount: 95, formatted: "95 $ USD", periodText: "pour 1 an (7,90 $/mois)" },
+    },
+    features: [
+      "Accès TOTAL & ILLIMITÉ 365 jours à TOUS les examens (TCF Canada, TEF Canada, IELTS)",
+      "Toutes les nouvelles séries officielles ajoutées chaque semaine pendant 1 an",
+      "Examens Blancs Complets illimités (repassages sans limite)",
+      "Corrections IA illimitées d'Expression Écrite & simulateur d'audience orale illimité",
+      "Carnet d'Erreurs SRS permanent avec consolidation mémorielle sur 1 an",
+      "Assurance Repassage : Valable pour plusieurs tentatives officielles si nécessaire",
+      "Support VIP direct avec les concepteurs pédagogiques",
+    ],
+    limits: {
+      cbtSimulationCount: "Illimité 365j",
+      writtenEvalCount: "Illimité 365j",
+      oralEvalCount: "Illimité 365j",
       srsVaultAccess: true,
       nclcGuarantee: true,
     },
