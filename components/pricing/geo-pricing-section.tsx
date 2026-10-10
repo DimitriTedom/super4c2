@@ -73,17 +73,8 @@ export function GeoPricingSection({ initialCurrency }: GeoPricingSectionProps) {
 
   const activeCurrencyConfig = SUPPORTED_CURRENCIES[currency];
 
-  const displayedPlans = React.useMemo(() => {
-    if (filterDuration === "sprint") {
-      return PRICING_PLANS.filter((p) => p.durationDays < 365);
-    }
-    if (filterDuration === "annual") {
-      return PRICING_PLANS.filter((p) => p.durationDays === 365);
-    }
-    return PRICING_PLANS;
-  }, [filterDuration]);
-
   const annualPlan = PRICING_PLANS.find((p) => p.id === "annuel_365d")!;
+  const sprintPlans = PRICING_PLANS.filter((p) => p.durationDays < 365);
 
   return (
     <section className="relative overflow-hidden py-12 lg:py-20">
@@ -212,67 +203,67 @@ export function GeoPricingSection({ initialCurrency }: GeoPricingSectionProps) {
           </div>
         </div>
 
-        {/* Heroic Highlight Card for 1-Year Pass when in 'annual' filter */}
-        {filterDuration === "annual" && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.98 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="mt-12 max-w-4xl mx-auto rounded-3xl border-2 border-amber-500/80 bg-gradient-to-b from-card via-card to-amber-500/10 p-8 sm:p-10 shadow-2xl relative"
-          >
-            <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-gradient-to-r from-amber-500 via-orange-500 to-primary px-5 py-1 text-xs font-black uppercase tracking-wider text-white shadow-lg shadow-amber-500/40">
+        {/* ======================================================== */}
+        {/* 1. FLAGSHIP HERO CARD: PASS IMMIGRANT 1 AN (365 JOURS)   */}
+        {/* ======================================================== */}
+        {(filterDuration === "all" || filterDuration === "annual") && (
+          <div className="mt-12 max-w-5xl mx-auto rounded-3xl border-2 border-amber-500/80 bg-gradient-to-b from-card via-card to-amber-500/10 p-7 sm:p-9 shadow-2xl relative transition-all">
+            <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-gradient-to-r from-amber-500 via-orange-500 to-primary px-5 py-1 text-xs font-black uppercase tracking-wider text-white shadow-lg shadow-amber-500/40 whitespace-nowrap z-10">
               👑 Pack Intégral Immigration Canada (Économisez 60%)
             </div>
 
-            <div className="grid gap-8 lg:grid-cols-2 items-center">
-              <div className="space-y-5 text-center lg:text-left flex flex-col items-center lg:items-start">
-                {/* 3D Icon Stage Top Center */}
-                <div className="relative mx-auto lg:mx-0 flex items-center justify-center">
-                  <div className="absolute inset-0 rounded-full blur-3xl bg-amber-500/35 scale-125 pointer-events-none" />
-                  <div className="relative h-32 w-32 sm:h-40 sm:w-40 shrink-0 flex items-center justify-center drop-shadow-2xl transition-transform hover:scale-105 duration-300">
-                    <Image
-                      src={PLAN_3D_ASSETS.annuel_365d.src}
-                      alt={PLAN_3D_ASSETS.annuel_365d.alt}
-                      width={160}
-                      height={160}
-                      className="h-full w-full object-contain"
-                      priority
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).src = "/brand/icons-3d/vip-pricing-pass.png";
-                      }}
-                    />
+            <div className="grid gap-8 lg:grid-cols-12 items-center">
+              {/* Left Column: 3D Golden Passport + Title + Price + CTA (7 cols) */}
+              <div className="lg:col-span-7 space-y-5 text-center lg:text-left flex flex-col items-center lg:items-start">
+                <div className="flex flex-col sm:flex-row items-center gap-5">
+                  {/* 3D Icon Stage */}
+                  <div className="relative shrink-0 flex items-center justify-center">
+                    <div className="absolute inset-0 rounded-full blur-3xl bg-amber-500/35 scale-125 pointer-events-none" />
+                    <div className="relative h-28 w-28 sm:h-36 sm:w-36 shrink-0 flex items-center justify-center drop-shadow-2xl transition-transform hover:scale-105 duration-300">
+                      <Image
+                        src={PLAN_3D_ASSETS.annuel_365d.src}
+                        alt={PLAN_3D_ASSETS.annuel_365d.alt}
+                        width={144}
+                        height={144}
+                        className="h-full w-full object-contain"
+                        priority
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src = "/brand/icons-3d/vip-pricing-pass.png";
+                        }}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-1.5 text-center sm:text-left">
+                    <div className="inline-flex items-center gap-2 rounded-full bg-amber-500/10 px-3 py-1 text-xs font-bold text-amber-500 border border-amber-500/20">
+                      <Calendar className="h-3.5 w-3.5" />
+                      <span>Accès Illimité 365 Jours (12 Mois)</span>
+                    </div>
+                    <h3 className="font-display text-2xl sm:text-3xl font-black text-foreground">
+                      {annualPlan.name}
+                    </h3>
+                    <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed max-w-sm">
+                      L&apos;assurance tout-en-un pour votre parcours RP Canada. Idéal pour progresser de B1/B2 vers C1/C2 ou préparer à la fois le TCF Canada et l&apos;IELTS.
+                    </p>
                   </div>
                 </div>
 
-                <div className="space-y-1.5">
-                  <div className="inline-flex items-center gap-2 rounded-full bg-amber-500/10 px-3.5 py-1 text-xs font-bold text-amber-500 border border-amber-500/20">
-                    <Calendar className="h-3.5 w-3.5" />
-                    <span>Accès Illimité 365 Jours (12 Mois Complets)</span>
-                  </div>
-                  <h3 className="font-display text-2xl sm:text-3xl font-black text-foreground">
-                    {annualPlan.name}
-                  </h3>
-                </div>
-
-                <p className="text-sm text-muted-foreground leading-relaxed max-w-md">
-                  L&apos;assurance tout-en-un pour votre démarche de Résidence Permanente. Idéal si vous progressez de B1/B2 vers C1/C2 ou préparez à la fois le TCF Canada et l&apos;IELTS.
-                </p>
-
-                <div className="pt-2">
-                  <div className="flex items-baseline justify-center lg:justify-start gap-2">
-                    <span className="font-display text-5xl font-black tracking-tight text-foreground font-mono">
+                <div className="pt-2 flex flex-col sm:flex-row items-center sm:items-baseline gap-3">
+                  <div className="flex items-baseline gap-2">
+                    <span className="font-display text-4xl sm:text-5xl font-black tracking-tight text-foreground font-mono">
                       {annualPlan.prices[currency].formatted}
                     </span>
                   </div>
-                  <div className="text-xs text-emerald-600 dark:text-emerald-400 font-semibold mt-1">
-                    ✨ Revient à seulement {currency === "XAF" ? "5 000 FCFA" : currency === "EUR" ? "7,50 €" : currency === "CAD" ? "10,75 $ CAD" : "7,90 $ USD"} par mois !
+                  <div className="text-xs text-emerald-600 dark:text-emerald-400 font-bold px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20">
+                    ✨ Revient à seulement {currency === "XAF" ? "5 000 FCFA" : currency === "EUR" ? "7,50 €" : currency === "CAD" ? "10,75 $ CAD" : "7,90 $ USD"}/mois !
                   </div>
                 </div>
 
-                <div className="pt-2 w-full sm:w-auto">
+                <div className="pt-1 w-full sm:w-auto">
                   <Button
                     asChild
                     size="lg"
-                    className="w-full sm:w-auto px-8 font-black bg-gradient-to-r from-amber-500 via-orange-500 to-primary hover:opacity-95 text-white shadow-lg shadow-amber-500/25"
+                    className="w-full sm:w-auto px-8 font-black bg-gradient-to-r from-amber-500 via-orange-500 to-primary hover:opacity-95 text-white shadow-lg shadow-amber-500/25 h-12 text-sm"
                   >
                     <Link href={`/checkout?plan=annuel_365d&currency=${currency}`}>
                       <span>Activer Mon Pass Annuel 1 An</span>
@@ -282,9 +273,11 @@ export function GeoPricingSection({ initialCurrency }: GeoPricingSectionProps) {
                 </div>
               </div>
 
-              <div className="rounded-2xl border border-border/80 bg-background/60 p-6 space-y-3">
-                <div className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                  Ce qui est inclus dans le Pass Annuel :
+              {/* Right Column: Inclusions & Guarantees (5 cols) */}
+              <div className="lg:col-span-5 rounded-2xl border border-border/80 bg-background/60 p-5 space-y-3">
+                <div className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                  <Crown className="h-3.5 w-3.5 text-amber-500" />
+                  <span>Privilèges Immigrant Inclus :</span>
                 </div>
                 <ul className="space-y-2.5 text-xs text-foreground/90">
                   {annualPlan.features.map((feat, idx) => (
@@ -298,66 +291,67 @@ export function GeoPricingSection({ initialCurrency }: GeoPricingSectionProps) {
                 </ul>
               </div>
             </div>
-          </motion.div>
+          </div>
         )}
 
-        {/* Pricing Cards Grid (All or Sprint) */}
-        {filterDuration !== "annual" && (
-          <div className={`mt-12 grid gap-6 sm:grid-cols-2 ${
-            filterDuration === "all" ? "lg:grid-cols-3 xl:grid-cols-5" : "lg:grid-cols-4"
-          } max-w-7xl mx-auto items-stretch`}>
-            {displayedPlans.map((plan: PricingPlan) => {
-              const price = plan.prices[currency];
-              const isPopular = plan.popular;
-              const isVip = plan.vip;
-              const isAnnual = plan.annual;
+        {/* ======================================================== */}
+        {/* 2. 4 PASS RÉVISION CIBLÉS (7j, 15j, 30j, 60j) EN 4 COLS  */}
+        {/* ======================================================== */}
+        {(filterDuration === "all" || filterDuration === "sprint") && (
+          <div className="mt-14 space-y-6">
+            {filterDuration === "all" && (
+              <div className="text-center space-y-1.5 max-w-xl mx-auto">
+                <h3 className="font-display text-xl sm:text-2xl font-black text-foreground">
+                  Ou Choisissez un Pass Révision Ciblé (7 à 60 Jours)
+                </h3>
+                <p className="text-xs sm:text-sm text-muted-foreground">
+                  Des formules intensives pour valider votre NCLC 7 avant votre date d&apos;examen officiel.
+                </p>
+              </div>
+            )}
 
-              return (
-                <motion.div
-                  key={plan.id}
-                  whileHover={{ y: -6 }}
-                  transition={{ duration: 0.2 }}
-                  onClick={() => setSelectedPlanId(plan.id)}
-                  className={`group relative flex flex-col justify-between rounded-3xl border p-6 sm:p-7 shadow-sm transition-all cursor-pointer ${
-                    isAnnual
-                      ? "border-amber-500/80 bg-gradient-to-b from-card via-card to-amber-500/10 ring-2 ring-amber-500/40 shadow-xl"
-                      : isPopular
-                      ? "border-primary bg-card ring-2 ring-primary/80 shadow-2xl shadow-primary/10"
-                      : isVip
-                      ? "border-purple-500/50 bg-gradient-to-b from-card via-card to-purple-500/5 ring-1 ring-purple-500/30"
-                      : "border-border/80 bg-card hover:border-border"
-                  }`}
-                >
-                  {/* Badges */}
-                  {isAnnual && (
-                    <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 px-4 py-1 text-[11px] font-black uppercase tracking-wider text-white shadow-lg shadow-amber-500/30 whitespace-nowrap z-10">
-                      👑 1 An • Sérénité Totale
-                    </div>
-                  )}
+            {/* Balanced 4-Column Grid */}
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4 max-w-7xl mx-auto items-stretch">
+              {sprintPlans.map((plan: PricingPlan) => {
+                const price = plan.prices[currency];
+                const isPopular = plan.popular;
+                const isVip = plan.vip;
 
-                  {isPopular && (
-                    <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-gradient-to-r from-primary to-indigo-600 px-4 py-1 text-[11px] font-black uppercase tracking-wider text-white shadow-lg shadow-primary/30 whitespace-nowrap z-10">
-                      ⭐ Choix N°1 des Candidats
-                    </div>
-                  )}
+                return (
+                  <motion.div
+                    key={plan.id}
+                    whileHover={{ y: -6 }}
+                    transition={{ duration: 0.2 }}
+                    onClick={() => setSelectedPlanId(plan.id)}
+                    className={`group relative flex flex-col justify-between rounded-3xl border p-6 shadow-sm transition-all cursor-pointer ${
+                      isPopular
+                        ? "border-primary bg-card ring-2 ring-primary/80 shadow-2xl shadow-primary/10"
+                        : isVip
+                        ? "border-purple-500/50 bg-gradient-to-b from-card via-card to-purple-500/5 ring-1 ring-purple-500/30"
+                        : "border-border/80 bg-card hover:border-border"
+                    }`}
+                  >
+                    {/* Top Badges */}
+                    {isPopular && (
+                      <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-gradient-to-r from-primary to-indigo-600 px-4 py-1 text-[11px] font-black uppercase tracking-wider text-white shadow-lg shadow-primary/30 whitespace-nowrap z-10">
+                        ⭐ Choix N°1 des Candidats
+                      </div>
+                    )}
 
-                  {isVip && (
-                    <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-gradient-to-r from-purple-500 to-indigo-500 px-4 py-1 text-[11px] font-black uppercase tracking-wider text-white shadow-lg shadow-purple-500/30 whitespace-nowrap z-10">
-                      🏆 Garantie NCLC 7
-                    </div>
-                  )}
+                    {isVip && (
+                      <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-gradient-to-r from-purple-500 to-indigo-500 px-4 py-1 text-[11px] font-black uppercase tracking-wider text-white shadow-lg shadow-purple-500/30 whitespace-nowrap z-10">
+                        🏆 Garantie NCLC 7
+                      </div>
+                    )}
 
-                  <div>
-                    {/* TOP CENTER 3D ICON & TIER SHOWCASE */}
-                    <div className="relative pt-2 pb-4 flex flex-col items-center text-center">
-                      {/* Ambient Halo & Large 3D Icon */}
-                      <div className="relative mx-auto flex items-center justify-center">
+                    <div>
+                      {/* 3D Showcase Glass Podium Header */}
+                      <div className="relative w-full h-36 rounded-2xl bg-gradient-to-b from-muted/60 via-muted/20 to-transparent border border-border/50 flex items-center justify-center p-3 mb-3 overflow-hidden shadow-xs group-hover:border-primary/40 transition-all">
+                        {/* Ambient Aura */}
                         <div
                           className={cn(
-                            "absolute inset-0 rounded-full blur-2xl transition-opacity duration-300 pointer-events-none scale-125 opacity-70 group-hover:opacity-100",
-                            isAnnual
-                              ? "bg-amber-500/35"
-                              : isPopular
+                            "absolute inset-0 rounded-full blur-2xl transition-opacity duration-300 pointer-events-none scale-125 opacity-60 group-hover:opacity-100",
+                            isPopular
                               ? "bg-primary/30"
                               : isVip
                               ? "bg-purple-500/30"
@@ -366,12 +360,14 @@ export function GeoPricingSection({ initialCurrency }: GeoPricingSectionProps) {
                               : "bg-sky-500/20"
                           )}
                         />
-                        <div className="relative h-28 w-28 sm:h-32 sm:w-32 shrink-0 flex items-center justify-center drop-shadow-xl transition-all duration-300 group-hover:scale-110 group-hover:-translate-y-1.5">
+
+                        {/* 3D Icon */}
+                        <div className="relative h-28 w-28 shrink-0 flex items-center justify-center drop-shadow-2xl transition-all duration-300 group-hover:scale-110 group-hover:-translate-y-1">
                           <Image
                             src={PLAN_3D_ASSETS[plan.id]?.src || "/brand/icons-3d/vip-pricing-pass.png"}
                             alt={PLAN_3D_ASSETS[plan.id]?.alt || plan.name}
-                            width={128}
-                            height={128}
+                            width={112}
+                            height={112}
                             className="h-full w-full object-contain"
                             priority
                             onError={(e) => {
@@ -381,117 +377,113 @@ export function GeoPricingSection({ initialCurrency }: GeoPricingSectionProps) {
                         </div>
                       </div>
 
-                      {/* Mini-Badge under 3D icon */}
-                      <div className="mt-3 mb-2 flex items-center justify-center">
+                      {/* Tier Pill Badge Centered under Podium */}
+                      <div className="flex justify-center mb-3">
                         {isPopular ? (
-                          <span className="flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-0.5 text-[10px] font-black text-primary border border-primary/25 shadow-xs">
-                            <Zap className="h-3 w-3 fill-primary" /> Palier Idéal NCLC 7
-                          </span>
-                        ) : isAnnual ? (
-                          <span className="flex items-center gap-1.5 rounded-full bg-amber-500/10 px-3 py-0.5 text-[10px] font-black text-amber-500 border border-amber-500/25 shadow-xs">
-                            <Crown className="h-3 w-3 fill-amber-500" /> Pack Immigrant 1 An
+                          <span className="flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-0.5 text-[11px] font-black text-primary border border-primary/25 shadow-xs whitespace-nowrap">
+                            <Zap className="h-3.5 w-3.5 fill-primary" /> Palier Idéal NCLC 7
                           </span>
                         ) : isVip ? (
-                          <span className="flex items-center gap-1.5 rounded-full bg-purple-500/10 px-3 py-0.5 text-[10px] font-black text-purple-500 border border-purple-500/25 shadow-xs">
-                            <ShieldCheck className="h-3 w-3" /> Suivi VIP Garanti
+                          <span className="flex items-center gap-1.5 rounded-full bg-purple-500/10 px-3 py-0.5 text-[11px] font-black text-purple-500 border border-purple-500/25 shadow-xs whitespace-nowrap">
+                            <ShieldCheck className="h-3.5 w-3.5" /> Suivi VIP Garanti
                           </span>
                         ) : plan.id === "intensif_15d" ? (
-                          <span className="flex items-center gap-1.5 rounded-full bg-amber-500/10 px-3 py-0.5 text-[10px] font-black text-amber-600 dark:text-amber-400 border border-amber-500/20 shadow-xs">
-                            ⚡ Boost Sprint 15 Jours
+                          <span className="flex items-center gap-1.5 rounded-full bg-amber-500/10 px-3 py-0.5 text-[11px] font-black text-amber-600 dark:text-amber-400 border border-amber-500/25 shadow-xs whitespace-nowrap">
+                            ⚡ Boost Sprint 15J
                           </span>
                         ) : (
-                          <span className="flex items-center gap-1.5 rounded-full bg-muted px-3 py-0.5 text-[10px] font-black text-muted-foreground border border-border/80 shadow-xs">
-                            🚀 Diagnostic 7 Jours
+                          <span className="flex items-center gap-1.5 rounded-full bg-muted px-3 py-0.5 text-[11px] font-black text-muted-foreground border border-border/80 shadow-xs whitespace-nowrap">
+                            🚀 Diagnostic Express
                           </span>
                         )}
                       </div>
 
                       {/* Plan Title & Tagline */}
-                      <h3 className="font-display text-lg sm:text-xl font-black text-foreground">
-                        {plan.name}
-                      </h3>
-                      <p className="text-xs text-muted-foreground mt-1 leading-relaxed min-h-[34px] max-w-xs">
-                        {plan.tagline}
-                      </p>
-                    </div>
-
-                    {/* Price Block */}
-                    <div className="mt-4 mb-6 pb-6 border-b border-border/60 text-center">
-                      <div className="flex items-baseline justify-center gap-1.5">
-                        <span className="font-display text-4xl sm:text-5xl font-black tracking-tight text-foreground font-mono">
-                          {price.formatted.replace(` ${activeCurrencyConfig.symbol}`, "").replace(activeCurrencyConfig.symbol, "")}
-                        </span>
-                        <span className="text-lg font-bold text-foreground">
-                          {activeCurrencyConfig.symbol}
-                        </span>
+                      <div className="space-y-1 text-center mb-4">
+                        <h3 className="font-display text-lg font-black text-foreground">
+                          {plan.name}
+                        </h3>
+                        <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2 min-h-[34px]">
+                          {plan.tagline}
+                        </p>
                       </div>
-                      <div className="text-xs text-muted-foreground font-medium mt-1">
-                        Paiement unique {price.periodText} • Sans tacite reconduction
+
+                      {/* Price Block */}
+                      <div className="mt-2 mb-5 pb-5 border-b border-border/60 text-center">
+                        <div className="flex items-baseline justify-center gap-1.5">
+                          <span className="font-display text-4xl sm:text-5xl font-black tracking-tight text-foreground font-mono">
+                            {price.formatted.replace(` ${activeCurrencyConfig.symbol}`, "").replace(activeCurrencyConfig.symbol, "")}
+                          </span>
+                          <span className="text-lg font-bold text-foreground">
+                            {activeCurrencyConfig.symbol}
+                          </span>
+                        </div>
+                        <div className="text-[11px] text-muted-foreground font-medium mt-1">
+                          Paiement unique {price.periodText} • Sans tacite reconduction
+                        </div>
+                      </div>
+
+                      {/* Core Features */}
+                      <ul className="space-y-2.5 text-xs text-foreground/90">
+                        {plan.features.map((feature, i) => (
+                          <li key={i} className="flex items-start gap-2.5">
+                            <div
+                              className={cn(
+                                "mt-0.5 rounded-full p-0.5 shrink-0",
+                                isPopular
+                                  ? "bg-primary/20 text-primary"
+                                  : isVip
+                                  ? "bg-purple-500/20 text-purple-500"
+                                  : "bg-emerald-500/20 text-emerald-600"
+                              )}
+                            >
+                              <Check className="h-3 w-3 stroke-[3]" />
+                            </div>
+                            <span className="leading-snug">{feature}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    {/* Bottom CTA & Payment Method hints */}
+                    <div className="mt-6 pt-5 border-t border-border/60 space-y-2.5">
+                      <Button
+                        asChild
+                        size="lg"
+                        className={cn(
+                          "w-full font-bold shadow-md transition-all h-11 text-xs sm:text-sm",
+                          isPopular
+                            ? "bg-primary hover:bg-primary/90 text-primary-foreground shadow-primary/25"
+                            : isVip
+                            ? "bg-purple-600 hover:bg-purple-700 text-white shadow-purple-500/25"
+                            : "bg-muted hover:bg-muted/80 text-foreground"
+                        )}
+                      >
+                        <Link href={`/checkout?plan=${plan.id}&currency=${currency}`}>
+                          <span>Commencer Maintenant</span>
+                          <ArrowRight className="h-4 w-4 ml-2" />
+                        </Link>
+                      </Button>
+
+                      {/* Payment Gateway local badge */}
+                      <div className="flex items-center justify-center gap-2 text-[10px] text-muted-foreground">
+                        {currency === "XAF" ? (
+                          <>
+                            <Smartphone className="h-3 w-3 text-emerald-500" />
+                            <span>SasPay : MTN MoMo, Orange Money, Wave</span>
+                          </>
+                        ) : (
+                          <>
+                            <CreditCard className="h-3 w-3 text-sky-500" />
+                            <span>CB, Visa, Mastercard, Apple Pay</span>
+                          </>
+                        )}
                       </div>
                     </div>
-
-                    {/* Core Features */}
-                    <ul className="space-y-3 text-xs text-foreground/90">
-                      {plan.features.map((feature, i) => (
-                        <li key={i} className="flex items-start gap-2.5">
-                          <div
-                            className={`mt-0.5 rounded-full p-0.5 shrink-0 ${
-                              isAnnual
-                                ? "bg-amber-500/20 text-amber-500"
-                                : isPopular
-                                ? "bg-primary/20 text-primary"
-                                : isVip
-                                ? "bg-purple-500/20 text-purple-500"
-                                : "bg-emerald-500/20 text-emerald-600"
-                            }`}
-                          >
-                            <Check className="h-3 w-3 stroke-[3]" />
-                          </div>
-                          <span className="leading-snug">{feature}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  {/* Bottom CTA & Payment Method hints */}
-                  <div className="mt-8 pt-6 border-t border-border/60 space-y-3">
-                    <Button
-                      asChild
-                      size="lg"
-                      className={`w-full font-bold shadow-md transition-all ${
-                        isAnnual
-                          ? "bg-gradient-to-r from-amber-500 to-orange-500 hover:opacity-90 text-white shadow-amber-500/25"
-                          : isPopular
-                          ? "bg-primary hover:bg-primary/90 text-primary-foreground shadow-primary/25"
-                          : isVip
-                          ? "bg-purple-600 hover:bg-purple-700 text-white shadow-purple-500/25"
-                          : "bg-muted hover:bg-muted/80 text-foreground"
-                      }`}
-                    >
-                      <Link href={`/checkout?plan=${plan.id}&currency=${currency}`}>
-                        <span>Commencer Maintenant</span>
-                        <ArrowRight className="h-4 w-4 ml-2" />
-                      </Link>
-                    </Button>
-
-                    {/* Payment Gateway local badge */}
-                    <div className="flex items-center justify-center gap-2 text-[10px] text-muted-foreground">
-                      {currency === "XAF" ? (
-                        <>
-                          <Smartphone className="h-3 w-3 text-emerald-500" />
-                          <span>SasPay : MTN MoMo, Orange Money, Wave</span>
-                        </>
-                      ) : (
-                        <>
-                          <CreditCard className="h-3 w-3 text-sky-500" />
-                          <span>CB, Visa, Mastercard, Apple Pay</span>
-                        </>
-                      )}
-                    </div>
-                  </div>
-                </motion.div>
-              );
-            })}
+                  </motion.div>
+                );
+              })}
+            </div>
           </div>
         )}
 
