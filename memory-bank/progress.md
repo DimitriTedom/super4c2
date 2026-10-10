@@ -1,5 +1,16 @@
 # Progress Tracking: Super4C2
 
+- [x] **Conformité Réglementaire, Approbation des Cookies & Résilience Auth :**
+  - Brand Canvas ([docs/brand/cookie-consent-canvas.md](file:///d:/SnowDev/Documents/super4c2/docs/brand/cookie-consent-canvas.md)) & Document de Spécification ([docs/specs/11-cookie-consent-and-auth-resilience.md](file:///d:/SnowDev/Documents/super4c2/docs/specs/11-cookie-consent-and-auth-resilience.md)).
+  - Bannière de consentement (`components/legal/cookie-consent-banner.tsx`) conforme RGPD, ePrivacy et Loi 25 (Québec) avec options *Tout accepter*, *Refuser non-essentiels* et *Personnaliser mes choix* (Essentiels, Fonctionnels SRS, Performance IA).
+  - Page dédiée `/cookies` ([app/cookies/page.tsx](file:///d:/SnowDev/Documents/super4c2/app/cookies/page.tsx)) et bouton de réouverture dynamique (`ManageCookiesButton`) via événement client `super4c2:open_cookie_preferences`.
+  - Liens d'accès direct dans le Footer (`components/site-footer.tsx`) et déclaration dans `app/sitemap.ts`.
+  - **Durcissement de l'Authentification :**
+    - Remplacement des identifiants non-UUID par des UUIDs standards RFC 4122 (`00000000-0000-0000-0000-000000000001` et `crypto.randomUUID()`) éliminant toute erreur PostgreSQL `22P02`.
+    - Sécurisation de `lib/supabase/server.ts` avec validation regex UUID avant requêtes Prisma.
+    - Câblage de la route `app/auth/callback/route.ts` avec échange de code PKCE `exchangeCodeForSession` et synchronisation automatique des profils Prisma.
+    - Ajout de la mention d'acceptation des CGU et Confidentialité dans le formulaire d'inscription (`components/auth/register-form.tsx`).
+    - Déploiement Vercel réussi et validé en production sur [https://super4c2.vercel.app](https://super4c2.vercel.app).
 - [x] **Déploiement Cloud Production — Vercel & Supabase Cloud via MCP :**
   - **Base de Données Cloud Supabase (`mjsnrdjdazghksvpsbgm`) :**
     - Application intégrale du schéma Prisma PostgreSQL via `supabase.apply_migration` (13 tables relationnelles : `users`, `profiles`, `exam_series`, `questions`, `written_series`, `written_tasks`, `user_attempts`, `blog_posts`, `faqs`, `testimonials`, `newsletter_subscribers`, `contact_leads`, `notifications`).

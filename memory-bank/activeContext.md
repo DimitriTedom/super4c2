@@ -1,6 +1,25 @@
 # Active Context: Super4C2
 
-## 0. Chantiers Majeurs Récents : Déploiement Cloud Production Vercel & Supabase via MCP, Infrastructure SEO & OpenGraph (Option 4), Série Complète IELTS 18 (Option 3), Audio Studio 100% CO 39Q, Icônes 3D, Tarification SasPay, Examen Blanc 4 Épreuves & Carnet d'Erreurs SRS
+## 0. Chantiers Majeurs Récents : Consentement des Cookies & Résilience Auth, Déploiement Cloud Production Vercel & Supabase via MCP, Infrastructure SEO & OpenGraph (Option 4), Série Complète IELTS 18 (Option 3), Audio Studio 100% CO 39Q
+
+### 0.000000. Approbation des Cookies, Conformité Réglementaire & Durcissement de l'Authentification
+- **Respect Intégral de la Règle d'Or en 3 Étapes (AGENTS.md) :**
+  1. **Brand & Design Canvas :** [docs/brand/cookie-consent-canvas.md](file:///d:/SnowDev/Documents/super4c2/docs/brand/cookie-consent-canvas.md) (Design glassmorphism épuré, bouton Crimson, conformité RGPD, Loi 25 Québec et PIPEDA Canada).
+  2. **Document de Spécification :** [docs/specs/11-cookie-consent-and-auth-resilience.md](file:///d:/SnowDev/Documents/super4c2/docs/specs/11-cookie-consent-and-auth-resilience.md) (Architecture du consentement local + cookie HTTP, bus d'événements, typage strict des identifiants PostgreSQL UUID).
+  3. **Implémentation & Tests :**
+     - **Composant Bannière (`components/legal/cookie-consent-banner.tsx`) :**
+       - Choix tripartite (*Tout accepter*, *Refuser non-essentiels*, *Personnaliser mes choix*).
+       - Granularité en 3 catégories : Strictement nécessaires (Session Supabase, chronomètre officiel CBT, consentement), Fonctionnels (Carnet SRS SM-2, préférences vitesse audio 0.8x-1.2x, thème), Télémétrie anonyme de performance IA.
+       - Bus d'événements réactif : réouverture instantanée des préférences via `super4c2:open_cookie_preferences`.
+     - **Page Dédiée & Bouton Déclencheur (`app/cookies/page.tsx` & `components/legal/manage-cookies-button.tsx`) :**
+       - Inventaire exhaustif des traceurs (`sb-*-auth-token`, `super4c2_cookie_consent_v1`, `super4c2:srs_cards`, etc.).
+       - Lien direct dans le Footer (`components/site-footer.tsx`) et intégration sitemap (`app/sitemap.ts`).
+     - **Résilience de l'Authentification :**
+       - Élimination des identifiants textuels invalides dans Postgres : `DEMO_USER_ID = "00000000-0000-0000-0000-000000000001"` et `crypto.randomUUID()`.
+       - Validation regex UUID dans `lib/supabase/server.ts` avant requêtes Prisma pour éviter l'erreur `22P02`.
+       - Câblage de l'échange de code PKCE `exchangeCodeForSession` dans `app/auth/callback/route.ts` avec auto-création du profil Prisma.
+       - Ajout de la mention légale d'acceptation des CGU et Politique de Confidentialité dans `components/auth/register-form.tsx`.
+       - Déploiement Vercel `dpl_8mrnhMazh8JtzW3n7cxQfPmVAJRy` en production sur [https://super4c2.vercel.app](https://super4c2.vercel.app).
 
 ### 0.00000. Déploiement Cloud Production — Vercel & Supabase Cloud
 - **Supabase Cloud (`mjsnrdjdazghksvpsbgm`) :**
