@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import {
   Award,
   BookOpen,
@@ -213,26 +214,35 @@ export function ExamResultSummary({
         {/* Express Entry Immigration Callout */}
         <div
           className={cn(
-            "mt-6 rounded-2xl border p-5 transition-colors",
+            "mt-6 rounded-2xl border p-5 transition-colors flex flex-col sm:flex-row items-start sm:items-center gap-4",
             crs > 0
               ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-950 dark:text-emerald-200"
               : "border-amber-500/40 bg-amber-500/10 text-amber-950 dark:text-amber-200",
           )}
         >
-          <div className="flex items-start gap-3">
-            <Sparkles className={cn("mt-0.5 h-5 w-5 shrink-0", crs > 0 ? "text-emerald-600 dark:text-emerald-400" : "text-amber-600 dark:text-amber-400")} />
-            <div className="space-y-1">
-              <p className="font-display font-bold text-base">
+          <div className="relative h-16 w-16 shrink-0 rounded-2xl bg-background/60 border border-border/80 p-1 flex items-center justify-center shadow-xs">
+            <Image
+              src={crs > 0 ? "/brand/icons-3d/state-nclc7-unlocked.png" : "/brand/icons-3d/state-trap-warning.png"}
+              alt={crs > 0 ? "NCLC 7 Validé 3D" : "Attention Seuil NCLC 7 3D"}
+              width={60}
+              height={60}
+              className="h-full w-full object-contain drop-shadow-sm"
+            />
+          </div>
+          <div className="space-y-1">
+            <p className="font-display font-bold text-base flex items-center gap-2">
+              <Sparkles className={cn("h-4 w-4 shrink-0", crs > 0 ? "text-emerald-600 dark:text-emerald-400" : "text-amber-600 dark:text-amber-400")} />
+              <span>
                 {crs > 0
                   ? "🎉 Objectif Entrée Express Atteint : +50 Points CRS Débloqués !"
                   : "Attention : Niveau NCLC 7 Non Validé pour le Bonus Entrée Express"}
-              </p>
-              <p className="text-sm opacity-90 leading-relaxed">
-                {crs > 0
-                  ? "Avec un niveau NCLC 7 ou supérieur en Compréhension Écrite, vous maximisez votre capital de points pour le tirage des candidats francophones d'IRCC."
-                  : "Pour maximiser vos chances d'extraction dans le bassin Entrée Express Canada (+50 à +62 points CRS), il est indispensable d'obtenir au minimum NCLC 7 (score TCF ≥ 453). Concentrez vos révisions sur les questions 19 à 28 (palier B2)."}
-              </p>
-            </div>
+              </span>
+            </p>
+            <p className="text-sm opacity-90 leading-relaxed">
+              {crs > 0
+                ? "Avec un niveau NCLC 7 ou supérieur en Compréhension Écrite, vous maximisez votre capital de points pour le tirage des candidats francophones d'IRCC."
+                : "Pour maximiser vos chances d'extraction dans le bassin Entrée Express Canada (+50 à +62 points CRS), il est indispensable d'obtenir au minimum NCLC 7 (score TCF ≥ 453). Concentrez vos révisions sur les questions 19 à 28 (palier B2)."}
+            </p>
           </div>
         </div>
       </div>
@@ -474,11 +484,22 @@ export function ExamResultSummary({
 
                 {/* Trap Analysis */}
                 {q.trapAnalysis && (
-                  <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-3.5 text-sm text-amber-900 dark:text-amber-200">
-                    <span className="font-bold flex items-center gap-1.5 mb-1 text-amber-800 dark:text-amber-300">
-                      ⚡ Décodage des Pièges FEI :
-                    </span>
-                    <p className="leading-relaxed">{q.trapAnalysis}</p>
+                  <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-3.5 text-sm text-amber-900 dark:text-amber-200 flex items-start gap-3">
+                    <div className="relative h-10 w-10 shrink-0 rounded-xl bg-amber-500/20 p-1 flex items-center justify-center">
+                      <Image
+                        src="/brand/icons-3d/state-trap-warning.png"
+                        alt="Piège FEI 3D"
+                        width={36}
+                        height={36}
+                        className="h-full w-full object-contain drop-shadow-xs"
+                      />
+                    </div>
+                    <div className="space-y-0.5">
+                      <span className="font-bold flex items-center gap-1.5 text-amber-800 dark:text-amber-300">
+                        ⚡ Décodage des Pièges FEI :
+                      </span>
+                      <p className="leading-relaxed">{q.trapAnalysis}</p>
+                    </div>
                   </div>
                 )}
 

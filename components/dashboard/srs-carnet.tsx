@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Image from "next/image";
 import {
   CheckCircle2,
   Filter,
@@ -276,22 +277,32 @@ export function SrsCarnet() {
       </div>
 
       {/* Hero Action CTA Banner */}
-      <div className="rounded-3xl border bg-gradient-to-r from-card via-card to-primary/5 p-6 sm:p-7 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5">
-        <div className="space-y-1.5 max-w-xl">
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-primary/10 text-primary border border-primary/20">
-            <Flame className="h-3 w-3 text-primary" />
-            Entraînement Actif par Répétition Espacée
+      <div className="rounded-3xl border bg-gradient-to-r from-card via-card to-primary/5 p-6 sm:p-7 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+        <div className="flex items-start sm:items-center gap-5 max-w-xl">
+          <div className="relative shrink-0 w-16 h-16 sm:w-20 sm:h-20 drop-shadow-md">
+            <Image
+              src={stats.due === 0 ? "/brand/icons-3d/state-empty-mastery.png" : "/brand/srs-memory-vault.png"}
+              alt="SRS Statut 3D"
+              fill
+              className="object-contain"
+            />
           </div>
-          <h2 className="font-display text-xl sm:text-2xl font-black text-foreground">
-            {stats.due > 0
-              ? `Vous avez ${stats.due} carte(s) à réviser aujourd'hui !`
-              : "Toutes vos cartes sont à jour pour aujourd'hui !"}
-          </h2>
-          <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
-            {stats.due > 0
-              ? "Passez votre session de 3 minutes pour consolider les pièges avant qu'ils ne s'effacent de votre mémoire de travail."
-              : "Votre mémoire est parfaitement consolidée selon l'algorithme SuperMemo-2. Vous pouvez réviser l'ensemble du deck ou lancer un examen CBT."}
-          </p>
+          <div className="space-y-1.5">
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-primary/10 text-primary border border-primary/20">
+              <Flame className="h-3 w-3 text-primary" />
+              Entraînement Actif par Répétition Espacée
+            </div>
+            <h2 className="font-display text-xl sm:text-2xl font-black text-foreground">
+              {stats.due > 0
+                ? `Vous avez ${stats.due} carte(s) à réviser aujourd'hui !`
+                : "Toutes vos cartes sont à jour pour aujourd'hui !"}
+            </h2>
+            <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+              {stats.due > 0
+                ? "Passez votre session de 3 minutes pour consolider les pièges avant qu'ils ne s'effacent de votre mémoire de travail."
+                : "Votre mémoire est parfaitement consolidée selon l'algorithme SuperMemo-2. Vous pouvez réviser l'ensemble du deck ou lancer un examen CBT."}
+            </p>
+          </div>
         </div>
 
         <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">

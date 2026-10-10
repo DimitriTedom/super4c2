@@ -504,8 +504,13 @@ export function MockExamOrchestrator({
       {/* ======================================================== */}
       {stage === "PAUSE_1" && (
         <div className="max-w-2xl mx-auto py-12 text-center space-y-6">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-500">
-            <CheckCircle2 className="h-8 w-8 stroke-[2.5]" />
+          <div className="relative mx-auto h-20 w-20 drop-shadow-md">
+            <Image
+              src="/brand/icons-3d/state-time-up.png"
+              alt="Pause Réglementaire 3D"
+              fill
+              className="object-contain"
+            />
           </div>
 
           <div className="space-y-2">
@@ -686,8 +691,13 @@ export function MockExamOrchestrator({
       {/* ======================================================== */}
       {stage === "PAUSE_2" && (
         <div className="max-w-2xl mx-auto py-12 text-center space-y-6">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-sky-500/10 text-sky-500">
-            <CheckCircle2 className="h-8 w-8 stroke-[2.5]" />
+          <div className="relative mx-auto h-20 w-20 drop-shadow-md">
+            <Image
+              src="/brand/icons-3d/state-time-up.png"
+              alt="Pause Réglementaire 3D"
+              fill
+              className="object-contain"
+            />
           </div>
 
           <div className="space-y-2">
@@ -816,8 +826,13 @@ export function MockExamOrchestrator({
       {/* ======================================================== */}
       {stage === "PAUSE_3" && (
         <div className="max-w-2xl mx-auto py-12 text-center space-y-6">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-purple-500/10 text-purple-500">
-            <Mic className="h-8 w-8 stroke-[2.5]" />
+          <div className="relative mx-auto h-20 w-20 drop-shadow-md">
+            <Image
+              src="/brand/icons-3d/state-time-up.png"
+              alt="Pause Réglementaire 3D"
+              fill
+              className="object-contain"
+            />
           </div>
 
           <div className="space-y-2">
