@@ -14,7 +14,9 @@ export default async function CoPage({
   const series =
     requested && requested.discipline === "CO"
       ? requested
-      : getMockSeries(seriesId.replace(/-ce$/, "-co")) || FULL_SERIES_CO_101;
+      : getMockSeries(`${seriesId}-co`) ||
+        getMockSeries(seriesId.replace(/-ce$/, "-co")) ||
+        FULL_SERIES_CO_101;
 
   if (!series) notFound();
   return <CbtExam series={series} />;

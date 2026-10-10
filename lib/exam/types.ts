@@ -12,7 +12,7 @@ export interface ExamQuestion {
   audioUrl?: string;
   audioTranscript?: string;
   prompt: string;
-  options: Record<OptionKey, string>;
+  options: Partial<Record<OptionKey, string>>;
   correctOption: OptionKey;
   explanation: string;
   trapAnalysis?: string;
@@ -42,4 +42,7 @@ export interface ExamResult {
   total: number;
   tcfScaledScore: number;
   nclcLevel: number;
+  ieltsBandScore?: number;
+  ieltsClbLevel?: number;
 }
+

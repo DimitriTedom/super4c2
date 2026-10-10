@@ -150,8 +150,18 @@ export const MOCK_SERIES_CO_101: ExamSeriesData = {
 
 import { FULL_SERIES_CE_101 } from "./series-ce-101";
 import { FULL_SERIES_CO_101 } from "./series-co-101";
+import {
+  FULL_SERIES_IELTS_GEN_18_1,
+  FULL_SERIES_IELTS_GEN_18_1_READING,
+  FULL_SERIES_IELTS_GEN_18_1_LISTENING,
+} from "./series-ielts-18-1";
 
-export { FULL_SERIES_CO_101 };
+export {
+  FULL_SERIES_CO_101,
+  FULL_SERIES_IELTS_GEN_18_1,
+  FULL_SERIES_IELTS_GEN_18_1_READING,
+  FULL_SERIES_IELTS_GEN_18_1_LISTENING,
+};
 
 const SERIES: Record<string, ExamSeriesData> = {
   [FULL_SERIES_CE_101.id]: FULL_SERIES_CE_101,
@@ -161,6 +171,12 @@ const SERIES: Record<string, ExamSeriesData> = {
   [FULL_SERIES_CO_101.id]: FULL_SERIES_CO_101,
   "demo-101-co": FULL_SERIES_CO_101,
   "demo-101-ce": FULL_SERIES_CE_101,
+  // IELTS General 18 Test 1
+  [FULL_SERIES_IELTS_GEN_18_1.id]: FULL_SERIES_IELTS_GEN_18_1,
+  [FULL_SERIES_IELTS_GEN_18_1_READING.id]: FULL_SERIES_IELTS_GEN_18_1_READING,
+  [FULL_SERIES_IELTS_GEN_18_1_LISTENING.id]: FULL_SERIES_IELTS_GEN_18_1_LISTENING,
+  "ielts-18-1": FULL_SERIES_IELTS_GEN_18_1,
+  "301": FULL_SERIES_IELTS_GEN_18_1,
 };
 
 export function getMockSeries(id: string): ExamSeriesData | undefined {
@@ -168,5 +184,11 @@ export function getMockSeries(id: string): ExamSeriesData | undefined {
 }
 
 export function listMockSeries(): ExamSeriesData[] {
-  return [FULL_SERIES_CE_101, FULL_SERIES_CO_101];
+  return [
+    FULL_SERIES_CE_101,
+    FULL_SERIES_CO_101,
+    FULL_SERIES_IELTS_GEN_18_1_READING,
+    FULL_SERIES_IELTS_GEN_18_1_LISTENING,
+  ];
 }
+

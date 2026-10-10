@@ -79,7 +79,7 @@ export function ExamResultSummary({
   // Calculate Breakdown by CEFR Tiers
   const tierA = questions.slice(0, 12);
   const tierB = questions.slice(12, 28);
-  const tierC = questions.slice(28, 39);
+  const tierC = questions.slice(28);
 
   const scoreA = tierA.reduce((acc, q) => acc + (answers[q.id]?.selected === q.correctOption ? 1 : 0), 0);
   const scoreB = tierB.reduce((acc, q) => acc + (answers[q.id]?.selected === q.correctOption ? 1 : 0), 0);
@@ -145,6 +145,9 @@ export function ExamResultSummary({
     setSavedSrsIds(updatedMap);
   };
 
+  const isIelts = !!result.ieltsBandScore || seriesId.includes("ielts");
+  const clb = result.ieltsClbLevel || result.nclcLevel || 0;
+
   return (
     <div className="mx-auto w-full max-w-4xl space-y-8 p-4 sm:p-8">
       {/* Official Score Banner */}
@@ -152,13 +155,15 @@ export function ExamResultSummary({
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 border-b pb-6">
           <div className="space-y-1">
             <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-bold uppercase tracking-wider text-primary">
-              <Award className="h-3.5 w-3.5" /> Bilan Officiel Simulé TCF Canada
+              <Award className="h-3.5 w-3.5" /> {isIelts ? "🇬🇧 Bilan Officiel Simulé IELTS General Training" : "🇨🇦 Bilan Officiel Simulé TCF Canada"}
             </span>
             <h1 className="font-display text-2xl sm:text-3xl font-extrabold tracking-tight">
-              Résultat : {discipline === "CO" ? "Compréhension Orale" : "Compréhension Écrite"}
+              Résultat : {isIelts ? (discipline === "CO" ? "Listening Test" : "Reading Test (General Training)") : (discipline === "CO" ? "Compréhension Orale" : "Compréhension Écrite")}
             </h1>
             <p className="text-sm text-muted-foreground">
-              Simulation conforme à la matrice de pondération France Éducation International (FEI).
+              {isIelts
+                ? "Simulation standardisée Cambridge Assessment English & British Council / IDP."
+                : "Simulation conforme à la matrice de pondération France Éducation International (FEI)."}
             </p>
           </div>
 
@@ -188,25 +193,30 @@ export function ExamResultSummary({
 
           <div className="rounded-2xl border bg-card p-5 shadow-2xs">
             <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-              Score TCF Échelonné
+              {isIelts ? "IELTS Band Score" : "Score TCF Échelonné"}
             </p>
             <p className="mt-2 font-display text-3xl sm:text-4xl font-black tabular-nums text-primary">
-              {result.tcfScaledScore} <span className="text-xl font-normal text-muted-foreground">/ 699</span>
+              {isIelts ? `Band ${result.ieltsBandScore?.toFixed(1) || "7.0"}` : result.tcfScaledScore}{" "}
+              <span className="text-xl font-normal text-muted-foreground">/ {isIelts ? "9.0" : "699"}</span>
             </p>
             <p className="mt-1 text-xs text-muted-foreground">
-              Barème officiel FEI (100–699 pts)
+              {isIelts ? "Échelle officielle IDP / British Council" : "Barème officiel FEI (100–699 pts)"}
             </p>
           </div>
 
           <div className="rounded-2xl border bg-card p-5 shadow-2xs">
             <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-              Équivalence NCLC
+              {isIelts ? "Équivalence CLB Canadien" : "Équivalence NCLC"}
             </p>
             <p className="mt-2 font-display text-3xl sm:text-4xl font-black tabular-nums text-foreground">
-              {result.nclcLevel ? `NCLC ${result.nclcLevel}` : "< NCLC 4"}
+              {isIelts
+                ? `CLB ${clb || 7}`
+                : (result.nclcLevel ? `NCLC ${result.nclcLevel}` : "< NCLC 4")}
             </p>
             <p className="mt-1 text-xs text-muted-foreground">
-              {result.nclcLevel >= 7 ? "Seuil NCLC 7 atteint ✓" : "Sous le seuil NCLC 7"}
+              {isIelts
+                ? (clb >= 9 ? "Palier royal CLB 9 (8777) ✓" : clb >= 7 ? "Seuil CLB 7 atteint ✓" : "Sous le seuil CLB 7")
+                : (result.nclcLevel >= 7 ? "Seuil NCLC 7 atteint ✓" : "Sous le seuil NCLC 7")}
             </p>
           </div>
         </div>
@@ -215,15 +225,15 @@ export function ExamResultSummary({
         <div
           className={cn(
             "mt-6 rounded-2xl border p-5 transition-colors flex flex-col sm:flex-row items-start sm:items-center gap-4",
-            crs > 0
+            (isIelts ? clb >= 7 : crs > 0)
               ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-950 dark:text-emerald-200"
               : "border-amber-500/40 bg-amber-500/10 text-amber-950 dark:text-amber-200",
           )}
         >
           <div className="relative h-16 w-16 shrink-0 rounded-2xl bg-background/60 border border-border/80 p-1 flex items-center justify-center shadow-xs">
             <Image
-              src={crs > 0 ? "/brand/icons-3d/state-nclc7-unlocked.png" : "/brand/icons-3d/state-trap-warning.png"}
-              alt={crs > 0 ? "NCLC 7 Validé 3D" : "Attention Seuil NCLC 7 3D"}
+              src={(isIelts ? clb >= 7 : crs > 0) ? "/brand/icons-3d/state-nclc7-unlocked.png" : "/brand/icons-3d/state-trap-warning.png"}
+              alt={(isIelts ? clb >= 7 : crs > 0) ? "NCLC 7 / CLB 7 Validé 3D" : "Attention Seuil 3D"}
               width={60}
               height={60}
               className="h-full w-full object-contain drop-shadow-sm"
@@ -231,17 +241,29 @@ export function ExamResultSummary({
           </div>
           <div className="space-y-1">
             <p className="font-display font-bold text-base flex items-center gap-2">
-              <Sparkles className={cn("h-4 w-4 shrink-0", crs > 0 ? "text-emerald-600 dark:text-emerald-400" : "text-amber-600 dark:text-amber-400")} />
+              <Sparkles className={cn("h-4 w-4 shrink-0", (isIelts ? clb >= 7 : crs > 0) ? "text-emerald-600 dark:text-emerald-400" : "text-amber-600 dark:text-amber-400")} />
               <span>
-                {crs > 0
-                  ? "🎉 Objectif Entrée Express Atteint : +50 Points CRS Débloqués !"
-                  : "Attention : Niveau NCLC 7 Non Validé pour le Bonus Entrée Express"}
+                {isIelts
+                  ? (clb >= 9
+                      ? "🎉 Palier Royal CLB 9 Atteint : +24 à +50 Points CRS Maximisés !"
+                      : clb >= 7
+                      ? "✓ Seuil d'Admissibilité CLB 7 Atteint pour Entrée Express"
+                      : "Attention : Seuil CLB 7 Non Validé pour Entrée Express")
+                  : (crs > 0
+                      ? "🎉 Objectif Entrée Express Atteint : +50 Points CRS Débloqués !"
+                      : "Attention : Niveau NCLC 7 Non Validé pour le Bonus Entrée Express")}
               </span>
             </p>
             <p className="text-sm opacity-90 leading-relaxed">
-              {crs > 0
-                ? "Avec un niveau NCLC 7 ou supérieur en Compréhension Écrite, vous maximisez votre capital de points pour le tirage des candidats francophones d'IRCC."
-                : "Pour maximiser vos chances d'extraction dans le bassin Entrée Express Canada (+50 à +62 points CRS), il est indispensable d'obtenir au minimum NCLC 7 (score TCF ≥ 453). Concentrez vos révisions sur les questions 19 à 28 (palier B2)."}
+              {isIelts
+                ? (clb >= 9
+                    ? "Avec un niveau CLB 9 ou supérieur, vous débloquez le bonus maximal de transfert de compétences (Skill Transferability Factors) pour l'Entrée Express Canada."
+                    : clb >= 7
+                    ? "Votre score valide le niveau minimum requis pour les programmes FSWP (Federal Skilled Worker) sous Entrée Express. Visez CLB 9 pour +24 à +50 points bonus CRS."
+                    : "Pour être éligible au programme fédéral des travailleurs qualifiés (FSWP), vous devez atteindre au minimum CLB 7 (Reading Band 6.0, Listening Band 6.0).")
+                : (crs > 0
+                    ? "Avec un niveau NCLC 7 ou supérieur en Compréhension Écrite, vous maximisez votre capital de points pour le tirage des candidats francophones d'IRCC."
+                    : "Pour maximiser vos chances d'extraction dans le bassin Entrée Express Canada (+50 à +62 points CRS), il est indispensable d'obtenir au minimum NCLC 7 (score TCF ≥ 453). Concentrez vos révisions sur les questions 19 à 28 (palier B2).")}
             </p>
           </div>
         </div>

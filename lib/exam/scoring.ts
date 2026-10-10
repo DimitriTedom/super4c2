@@ -39,16 +39,40 @@ export function scaledToNclc(scaled: number, discipline: ExamDiscipline): number
   return 0;
 }
 
+import { convertIeltsRawScoreToBand, convertBandScoreToClb } from "./ielts-types";
+
 export function computeResult(
   questions: ExamQuestion[],
   answers: AnswersMap,
   discipline: ExamDiscipline,
+  testType?: "tcf" | "tef" | "ielts"
 ): ExamResult {
   const rawScore = questions.reduce(
     (acc, q) => acc + (answers[q.id]?.selected === q.correctOption ? 1 : 0),
     0,
   );
   const tcfScaledScore = rawToScaled(rawScore, questions.length);
+
+  // If IELTS exam or 40-question series
+  if (testType === "ielts" || questions.length === 40) {
+    const band = convertIeltsRawScoreToBand(
+      rawScore,
+      discipline === "CO" ? "listening" : "reading_general"
+    );
+    const clb = convertBandScoreToClb(
+      band,
+      discipline === "CO" ? "listening" : "reading_general"
+    );
+    return {
+      rawScore,
+      total: questions.length,
+      tcfScaledScore,
+      nclcLevel: clb,
+      ieltsBandScore: band,
+      ieltsClbLevel: clb,
+    };
+  }
+
   return {
     rawScore,
     total: questions.length,

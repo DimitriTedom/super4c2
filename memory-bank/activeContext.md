@@ -1,6 +1,27 @@
 # Active Context: Super4C2
 
-## 0. Chantiers Majeurs Récents : Audio Studio 100% CO 39Q, Icones 3D Premium, Tarification SasPay, Examen Blanc 4 Épreuves & Carnet d'Erreurs SRS
+## 0. Chantiers Majeurs Récents : Intégration Complète Cambridge IELTS 18 General Training (Série `ielts-gen-18-1`), Audio Studio 100% CO 39Q, Icones 3D Premium, Tarification SasPay, Examen Blanc 4 Épreuves & Carnet d'Erreurs SRS
+
+### 0.000. Option 3 — Intégration d'une Série Complète IELTS General Training (`ielts-gen-18-1`)
+- **Respect Intégral de la Règle d'Or en 3 Étapes (AGENTS.md) :**
+  1. **Brand & Design Canvas :** [docs/brand/ielts-design-canvas.md](file:///d:/SnowDev/Documents/super4c2/docs/brand/ielts-design-canvas.md) (Palette Cambridge Crimson/Navy, typographie, badges Band 0-9.0 & CLB 9, respect des directives visuelles officielles).
+  2. **Document de Spécification :** [docs/specs/09-ielts-general-complete-series.md](file:///d:/SnowDev/Documents/super4c2/docs/specs/09-ielts-general-complete-series.md) (Modélisation des 4 compétences, table de conversion raw 0-40 vers Band 0-9.0 et Canadian CLB 4-10+).
+  3. **Implémentation & Tests :**
+     - **Typage & Algorithmes Officiels (`lib/exam/ielts-types.ts`) :**
+       - `convertIeltsRawScoreToBand(rawScore, discipline)` : conversion score brut 0–40 vers Band Scores 0 à 9.0 selon les tables officielles Cambridge General Training.
+       - `convertBandScoreToClb(bandScore, discipline)` : conversion Band Score vers CLB Canadien (CLB 4 à 10+) avec mise en valeur du seuil royal CLB 9 (8777).
+     - **Dataset Authentique Cambridge IELTS 18 Test 1 (`lib/exam/series-ielts-18-1.ts`) :**
+       - **Reading (40 questions complètes) :** Section 1 (Q1-14, vie quotidienne/avis locaux, True/False/Not Given), Section 2 (Q15-27, milieu professionnel/santé au travail), Section 3 (Q28-40, texte long d'intérêt général).
+       - **Listening (40 questions complètes) :** Section 1 (Q1-10, dialogue de service), Section 2 (Q11-20, monologue visite guidée), Section 3 (Q21-30, discussion projet de recherche), Section 4 (Q31-40, conférence académique sur la transition énergétique) avec audio transcripts intégraux.
+       - **Writing :** Task 1 (Lettre formelle réclamation, 150 mots) + Task 2 (Essai argumenté intelligence artificielle au travail, 250 mots).
+       - **Speaking :** Part 1 (Interview & Hometown), Part 2 (Cue Card 60s prep, 120s speech), Part 3 (Discussion approfondie sur les traditions et la mondialisation).
+     - **Intégration Moteur CBT & Routing :**
+       - `lib/exam/mock-series.ts` : Enregistrement de `ielts-gen-18-1`, `ielts-gen-18-1-ce`, `ielts-gen-18-1-co`, alias `ielts-18-1` et `301`.
+       - `lib/exam/scoring.ts` & `hooks/use-exam-session.ts` : Prise en charge automatique des examens 40 questions et calcul immédiat des Band Scores + CLB Canadien.
+       - `components/exam/question-panel.tsx` : Rendu dynamique adapté aux questions à 3 options (True / False / Not Given) sans résidu d'option vide.
+       - `components/exam/exam-result-summary.tsx` : Bilan officiel Cambridge/IELTS avec Band Score /9.0, équivalence CLB, et encart Entrée Express adapté (CLB 7 seuil, CLB 9 palier royal).
+       - `app/examens/[seriesId]/page.tsx` : Bannière, présentation et 4 cartes de compétences modulées dynamiquement lorsque `isIelts = true`.
+       - `app/examens/[seriesId]/ce/page.tsx` & `co/page.tsx` : Résolution robuste des séries IELTS et TCF (200 OK).
 
 ### 0.00. Option 2 — Couverture Audio Studio Complète 100% Compréhension Orale (Série 101, Q1 à Q39)
 - **Génération Intégrale Haute Fidélité ElevenLabs (`public/audio/co/co-101-q1.mp3` à `co-101-q39.mp3`) :**

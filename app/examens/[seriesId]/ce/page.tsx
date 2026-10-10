@@ -10,7 +10,13 @@ export default async function CePage({
   params: Promise<{ seriesId: string }>;
 }) {
   const { seriesId } = await params;
-  const series = getMockSeries(seriesId);
+  const requested = getMockSeries(seriesId);
+  const series =
+    requested && requested.discipline === "CE"
+      ? requested
+      : getMockSeries(`${seriesId}-ce`) ||
+        getMockSeries(seriesId.replace(/-co$/, "-ce"));
+
   if (!series || series.discipline !== "CE") notFound();
   return <CbtExam series={series} />;
 }

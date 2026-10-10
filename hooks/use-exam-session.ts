@@ -129,7 +129,8 @@ export function useExamSession(series: ExamSeriesData) {
     finishedRef.current = true;
     setFinished(true);
     triggerGlobalLoading(true);
-    const res = computeResult(series.questions, answers, series.discipline);
+    const testType = series.id.includes("ielts") ? "ielts" : undefined;
+    const res = computeResult(series.questions, answers, series.discipline, testType);
 
     // Auto-archivage des questions ratées dans le Carnet d'Erreurs SRS (SM-2)
     const missedCards: SrsCard[] = [];
@@ -294,9 +295,10 @@ export function useExamSession(series: ExamSeriesData) {
     };
   }, [answers, series.questions]);
 
+  const isIelts = series.id.includes("ielts");
   const result: ExamResult | null = useMemo(
-    () => (finished ? computeResult(series.questions, answers, series.discipline) : null),
-    [finished, series.questions, series.discipline, answers],
+    () => (finished ? computeResult(series.questions, answers, series.discipline, isIelts ? "ielts" : undefined) : null),
+    [finished, series.questions, series.discipline, answers, isIelts],
   );
 
   const restart = useCallback(() => {

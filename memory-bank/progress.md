@@ -1,5 +1,11 @@
 # Progress Tracking: Super4C2
 
+- [x] **Option 3 — Intégration d'une Série Complète IELTS General Training (`ielts-gen-18-1`) :**
+  - Respect scrupuleux de la règle d'or en 3 étapes : Brand Canvas ([docs/brand/ielts-design-canvas.md](file:///d:/SnowDev/Documents/super4c2/docs/brand/ielts-design-canvas.md)), Spécification technique ([docs/specs/09-ielts-general-complete-series.md](file:///d:/SnowDev/Documents/super4c2/docs/specs/09-ielts-general-complete-series.md)), Implémentation & Tests.
+  - Modélisation typée et algorithmes de conversion officielle Cambridge & IRCC Canada (`lib/exam/ielts-types.ts`) : conversion raw 0-40 vers Band 0-9.0 et Band vers CLB canadien (CLB 4 à 10+ avec seuil royal CLB 9).
+  - Dataset authentique complet Cambridge IELTS 18 Test 1 (`lib/exam/series-ielts-18-1.ts`) : 40 questions Reading (T/F/NG et QCM), 40 questions Listening (transcripts intégraux), 2 tâches Writing (Lettre + Essai), 3 parties Speaking (Cue Card + Discussion).
+  - Intégration runner CBT, gestion dynamique des options A-C pour True/False/Not Given, calcul des scores et bilan officiel de performance (`ExamResultSummary`) avec scorecard Band/CLB.
+  - Validation complète TypeScript (`npx tsc --noEmit` : 0 erreur) et HTTP 200 OK sur toutes les routes de passation.
 - [x] **Option 2 — Couverture Audio Studio 100% Compréhension Orale (Série 101, Q1 à Q39) :**
   - Génération intégrale des 39 fichiers audio studio haute fidélité ElevenLabs dans `public/audio/co/co-101-q1.mp3` à `co-101-q39.mp3` avec alternance de voix Sarah (officielle/posée) et Charlie (conversationnelle/dynamique).
   - Câblage complet dans `lib/exam/series-co-101.ts` (`audioUrl: "/audio/co/co-101-q${n}.mp3"` pour l'intégralité des 39 questions A1 à C2).

@@ -602,7 +602,7 @@ export const IELTS_PROGRESSION_SERIES: ProgressionSeries[] = [
         badge: "40 Questions",
         questionsOrTasks: "Sections 1, 2 & 3 (Workplace & General)",
         duration: "60 min",
-        url: "/examens/demo-101-ce",
+        url: "/examens/ielts-gen-18-1-ce/ce",
       },
       {
         type: "co",
@@ -610,7 +610,7 @@ export const IELTS_PROGRESSION_SERIES: ProgressionSeries[] = [
         badge: "4 Sections",
         questionsOrTasks: "40 questions (Écoute unique officielle)",
         duration: "30 min",
-        url: "/examens/demo-101-co/co",
+        url: "/examens/ielts-gen-18-1-co/co",
       },
       {
         type: "ee",
@@ -618,7 +618,7 @@ export const IELTS_PROGRESSION_SERIES: ProgressionSeries[] = [
         badge: "Task 1 & 2",
         questionsOrTasks: "Formal Letter (150w) + Argumentative Essay (250w)",
         duration: "60 min",
-        url: "/examens/demo-101-ee/ee",
+        url: "/examens/ielts-gen-18-1/ee",
       },
       {
         type: "eo",
@@ -626,7 +626,7 @@ export const IELTS_PROGRESSION_SERIES: ProgressionSeries[] = [
         badge: "3 Parties",
         questionsOrTasks: "Entretien, Cue Card 2 min, Discussion abstraite",
         duration: "14 min",
-        url: "/examens/demo-101-eo/eo",
+        url: "/examens/ielts-gen-18-1/eo",
       },
     ],
     description:

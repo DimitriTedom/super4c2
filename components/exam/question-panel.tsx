@@ -142,6 +142,7 @@ export function QuestionPanel({
       {/* Options A / B / C / D */}
       <div role="radiogroup" aria-label="Propositions de réponse" className="space-y-3">
         {OPTION_KEYS.map((key) => {
+          if (!question.options || !question.options[key]) return null;
           const active = selected === key;
           const isCorrect = key === question.correctOption;
           const isSelectedWrong = active && !isCorrect && revealed;
