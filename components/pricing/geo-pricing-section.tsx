@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import {
   PRICING_PLANS,
   SUPPORTED_CURRENCIES,
@@ -223,36 +224,41 @@ export function GeoPricingSection({ initialCurrency }: GeoPricingSectionProps) {
             </div>
 
             <div className="grid gap-8 lg:grid-cols-2 items-center">
-              <div className="space-y-4">
-                <div className="flex items-center gap-4">
-                  <div className="relative h-16 w-16 sm:h-20 sm:w-20 shrink-0 rounded-3xl bg-amber-500/10 border-2 border-amber-500/30 p-2 flex items-center justify-center shadow-lg">
+              <div className="space-y-5 text-center lg:text-left flex flex-col items-center lg:items-start">
+                {/* 3D Icon Stage Top Center */}
+                <div className="relative mx-auto lg:mx-0 flex items-center justify-center">
+                  <div className="absolute inset-0 rounded-full blur-3xl bg-amber-500/35 scale-125 pointer-events-none" />
+                  <div className="relative h-32 w-32 sm:h-40 sm:w-40 shrink-0 flex items-center justify-center drop-shadow-2xl transition-transform hover:scale-105 duration-300">
                     <Image
                       src={PLAN_3D_ASSETS.annuel_365d.src}
                       alt={PLAN_3D_ASSETS.annuel_365d.alt}
-                      width={80}
-                      height={80}
-                      className="h-full w-full object-contain drop-shadow-md transition-transform hover:scale-105"
+                      width={160}
+                      height={160}
+                      className="h-full w-full object-contain"
+                      priority
                       onError={(e) => {
                         (e.target as HTMLImageElement).src = "/brand/icons-3d/vip-pricing-pass.png";
                       }}
                     />
                   </div>
-                  <div className="space-y-1">
-                    <div className="inline-flex items-center gap-2 rounded-full bg-amber-500/10 px-3 py-1 text-xs font-bold text-amber-500">
-                      <Calendar className="h-3.5 w-3.5" />
-                      <span>Accès Illimité 365 Jours (12 Mois Complets)</span>
-                    </div>
-                    <h3 className="font-display text-2xl sm:text-3xl font-black text-foreground">
-                      {annualPlan.name}
-                    </h3>
-                  </div>
                 </div>
-                <p className="text-sm text-muted-foreground leading-relaxed">
+
+                <div className="space-y-1.5">
+                  <div className="inline-flex items-center gap-2 rounded-full bg-amber-500/10 px-3.5 py-1 text-xs font-bold text-amber-500 border border-amber-500/20">
+                    <Calendar className="h-3.5 w-3.5" />
+                    <span>Accès Illimité 365 Jours (12 Mois Complets)</span>
+                  </div>
+                  <h3 className="font-display text-2xl sm:text-3xl font-black text-foreground">
+                    {annualPlan.name}
+                  </h3>
+                </div>
+
+                <p className="text-sm text-muted-foreground leading-relaxed max-w-md">
                   L&apos;assurance tout-en-un pour votre démarche de Résidence Permanente. Idéal si vous progressez de B1/B2 vers C1/C2 ou préparez à la fois le TCF Canada et l&apos;IELTS.
                 </p>
 
                 <div className="pt-2">
-                  <div className="flex items-baseline gap-2">
+                  <div className="flex items-baseline justify-center lg:justify-start gap-2">
                     <span className="font-display text-5xl font-black tracking-tight text-foreground font-mono">
                       {annualPlan.prices[currency].formatted}
                     </span>
@@ -262,7 +268,7 @@ export function GeoPricingSection({ initialCurrency }: GeoPricingSectionProps) {
                   </div>
                 </div>
 
-                <div className="pt-4">
+                <div className="pt-2 w-full sm:w-auto">
                   <Button
                     asChild
                     size="lg"
@@ -297,7 +303,9 @@ export function GeoPricingSection({ initialCurrency }: GeoPricingSectionProps) {
 
         {/* Pricing Cards Grid (All or Sprint) */}
         {filterDuration !== "annual" && (
-          <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-4 max-w-7xl mx-auto items-stretch">
+          <div className={`mt-12 grid gap-6 sm:grid-cols-2 ${
+            filterDuration === "all" ? "lg:grid-cols-3 xl:grid-cols-5" : "lg:grid-cols-4"
+          } max-w-7xl mx-auto items-stretch`}>
             {displayedPlans.map((plan: PricingPlan) => {
               const price = plan.prices[currency];
               const isPopular = plan.popular;
@@ -310,7 +318,7 @@ export function GeoPricingSection({ initialCurrency }: GeoPricingSectionProps) {
                   whileHover={{ y: -6 }}
                   transition={{ duration: 0.2 }}
                   onClick={() => setSelectedPlanId(plan.id)}
-                  className={`relative flex flex-col justify-between rounded-3xl border p-6 sm:p-7 shadow-sm transition-all cursor-pointer ${
+                  className={`group relative flex flex-col justify-between rounded-3xl border p-6 sm:p-7 shadow-sm transition-all cursor-pointer ${
                     isAnnual
                       ? "border-amber-500/80 bg-gradient-to-b from-card via-card to-amber-500/10 ring-2 ring-amber-500/40 shadow-xl"
                       : isPopular
@@ -322,68 +330,94 @@ export function GeoPricingSection({ initialCurrency }: GeoPricingSectionProps) {
                 >
                   {/* Badges */}
                   {isAnnual && (
-                    <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 px-4 py-1 text-[11px] font-black uppercase tracking-wider text-white shadow-lg shadow-amber-500/30 whitespace-nowrap">
+                    <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 px-4 py-1 text-[11px] font-black uppercase tracking-wider text-white shadow-lg shadow-amber-500/30 whitespace-nowrap z-10">
                       👑 1 An • Sérénité Totale
                     </div>
                   )}
 
                   {isPopular && (
-                    <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-gradient-to-r from-primary to-indigo-600 px-4 py-1 text-[11px] font-black uppercase tracking-wider text-white shadow-lg shadow-primary/30 whitespace-nowrap">
+                    <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-gradient-to-r from-primary to-indigo-600 px-4 py-1 text-[11px] font-black uppercase tracking-wider text-white shadow-lg shadow-primary/30 whitespace-nowrap z-10">
                       ⭐ Choix N°1 des Candidats
                     </div>
                   )}
 
                   {isVip && (
-                    <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-gradient-to-r from-purple-500 to-indigo-500 px-4 py-1 text-[11px] font-black uppercase tracking-wider text-white shadow-lg shadow-purple-500/30 whitespace-nowrap">
+                    <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-gradient-to-r from-purple-500 to-indigo-500 px-4 py-1 text-[11px] font-black uppercase tracking-wider text-white shadow-lg shadow-purple-500/30 whitespace-nowrap z-10">
                       🏆 Garantie NCLC 7
                     </div>
                   )}
 
                   <div>
-                    {/* 3D Icon & Plan Identity */}
-                    <div className="flex items-center justify-between gap-3 mb-3">
-                      <div className="relative h-14 w-14 shrink-0 rounded-2xl bg-primary/5 dark:bg-card/80 border border-primary/15 p-1.5 flex items-center justify-center shadow-xs">
-                        <Image
-                          src={PLAN_3D_ASSETS[plan.id]?.src || "/brand/icons-3d/vip-pricing-pass.png"}
-                          alt={PLAN_3D_ASSETS[plan.id]?.alt || plan.name}
-                          width={56}
-                          height={56}
-                          className="h-full w-full object-contain drop-shadow-sm transition-transform hover:scale-110"
-                          onError={(e) => {
-                            (e.target as HTMLImageElement).src = "/brand/icons-3d/vip-pricing-pass.png";
-                          }}
+                    {/* TOP CENTER 3D ICON & TIER SHOWCASE */}
+                    <div className="relative pt-2 pb-4 flex flex-col items-center text-center">
+                      {/* Ambient Halo & Large 3D Icon */}
+                      <div className="relative mx-auto flex items-center justify-center">
+                        <div
+                          className={cn(
+                            "absolute inset-0 rounded-full blur-2xl transition-opacity duration-300 pointer-events-none scale-125 opacity-70 group-hover:opacity-100",
+                            isAnnual
+                              ? "bg-amber-500/35"
+                              : isPopular
+                              ? "bg-primary/30"
+                              : isVip
+                              ? "bg-purple-500/30"
+                              : plan.id === "intensif_15d"
+                              ? "bg-amber-500/25"
+                              : "bg-sky-500/20"
+                          )}
                         />
+                        <div className="relative h-28 w-28 sm:h-32 sm:w-32 shrink-0 flex items-center justify-center drop-shadow-xl transition-all duration-300 group-hover:scale-110 group-hover:-translate-y-1.5">
+                          <Image
+                            src={PLAN_3D_ASSETS[plan.id]?.src || "/brand/icons-3d/vip-pricing-pass.png"}
+                            alt={PLAN_3D_ASSETS[plan.id]?.alt || plan.name}
+                            width={128}
+                            height={128}
+                            className="h-full w-full object-contain"
+                            priority
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).src = "/brand/icons-3d/vip-pricing-pass.png";
+                            }}
+                          />
+                        </div>
                       </div>
-                      <div className="flex items-center gap-1.5">
+
+                      {/* Mini-Badge under 3D icon */}
+                      <div className="mt-3 mb-2 flex items-center justify-center">
                         {isPopular ? (
-                          <span className="flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-bold text-primary border border-primary/20">
-                            <Zap className="h-3 w-3 fill-primary" /> Star
+                          <span className="flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-0.5 text-[10px] font-black text-primary border border-primary/25 shadow-xs">
+                            <Zap className="h-3 w-3 fill-primary" /> Palier Idéal NCLC 7
                           </span>
                         ) : isAnnual ? (
-                          <span className="flex items-center gap-1 rounded-full bg-amber-500/10 px-2 py-0.5 text-[10px] font-bold text-amber-500 border border-amber-500/20">
-                            <Crown className="h-3 w-3 fill-amber-500" /> 1 An
+                          <span className="flex items-center gap-1.5 rounded-full bg-amber-500/10 px-3 py-0.5 text-[10px] font-black text-amber-500 border border-amber-500/25 shadow-xs">
+                            <Crown className="h-3 w-3 fill-amber-500" /> Pack Immigrant 1 An
                           </span>
                         ) : isVip ? (
-                          <span className="flex items-center gap-1 rounded-full bg-purple-500/10 px-2 py-0.5 text-[10px] font-bold text-purple-500 border border-purple-500/20">
-                            <ShieldCheck className="h-3 w-3" /> VIP
+                          <span className="flex items-center gap-1.5 rounded-full bg-purple-500/10 px-3 py-0.5 text-[10px] font-black text-purple-500 border border-purple-500/25 shadow-xs">
+                            <ShieldCheck className="h-3 w-3" /> Suivi VIP Garanti
                           </span>
-                        ) : null}
+                        ) : plan.id === "intensif_15d" ? (
+                          <span className="flex items-center gap-1.5 rounded-full bg-amber-500/10 px-3 py-0.5 text-[10px] font-black text-amber-600 dark:text-amber-400 border border-amber-500/20 shadow-xs">
+                            ⚡ Boost Sprint 15 Jours
+                          </span>
+                        ) : (
+                          <span className="flex items-center gap-1.5 rounded-full bg-muted px-3 py-0.5 text-[10px] font-black text-muted-foreground border border-border/80 shadow-xs">
+                            🚀 Diagnostic 7 Jours
+                          </span>
+                        )}
                       </div>
-                    </div>
 
-                    {/* Plan Title & Tagline */}
-                    <div className="space-y-1">
-                      <h3 className="font-display text-lg font-bold text-foreground">
+                      {/* Plan Title & Tagline */}
+                      <h3 className="font-display text-lg sm:text-xl font-black text-foreground">
                         {plan.name}
                       </h3>
-                      <p className="text-xs text-muted-foreground min-h-[34px] leading-relaxed">
+                      <p className="text-xs text-muted-foreground mt-1 leading-relaxed min-h-[34px] max-w-xs">
                         {plan.tagline}
                       </p>
                     </div>
 
                     {/* Price Block */}
-                    <div className="mt-6 mb-6 pb-6 border-b border-border/60">
-                      <div className="flex items-baseline gap-1.5">
+                    <div className="mt-4 mb-6 pb-6 border-b border-border/60 text-center">
+                      <div className="flex items-baseline justify-center gap-1.5">
                         <span className="font-display text-4xl sm:text-5xl font-black tracking-tight text-foreground font-mono">
                           {price.formatted.replace(` ${activeCurrencyConfig.symbol}`, "").replace(activeCurrencyConfig.symbol, "")}
                         </span>
