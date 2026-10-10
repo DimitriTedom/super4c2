@@ -1,5 +1,10 @@
 # Progress Tracking: Super4C2
 
+- [x] **Déploiement & Câblage Global des 13 Icônes 3D Premium (Chantier 12 Réalisé) :**
+  - Traitement, découpe transparente et intégration des 13 icônes 3D officielles dans `public/brand/icons-3d/` :
+    - 5 passes d'abonnement : Sprint 7j (`pass-sprint-7d.png`), Intensif 15j (`pass-intensif-15d.png`), Succès 30j (`pass-succes-30d.png`), VIP 60j (`pass-vip-60d.png`), Annuel 365j Immigrant (`pass-annuel-365d.png`, `pass-annuel-365d-badge.png`).
+    - 8 états plateforme & immersion : Victoire Checkout (`state-success-victory.png`), Attestation Certifiée FEI (`state-attestation-certified.png`), NCLC 7 Validé +50 CRS (`state-nclc7-unlocked.png`), Alerte Pièges FEI (`state-trap-warning.png`), Sablier Pause Réglementaire (`state-time-up.png`), Coffre Zéro Erreur (`state-empty-mastery.png`), Alerte Critique/404 (`state-error-critical.png`).
+  - Câblage dans `components/pricing/geo-pricing-section.tsx`, `app/checkout/success/page.tsx`, `components/exam/mock-exam-orchestrator.tsx`, `components/exam/exam-result-summary.tsx`, `components/dashboard/srs-carnet.tsx`, et `app/not-found.tsx`.
 - [x] **Moteur d'Examen Blanc Complet CBT 4 Épreuves Chênées (Chantier 10 Réalisé) :**
   - Chaîne complète des 4 épreuves sous conditions officielles France Éducation International (FEI) : Compréhension Orale (35 min, 39Q) ➔ Pause 1 (2 min) ➔ Compréhension Écrite (60 min, 39Q, surligneur interactif) ➔ Pause 2 (3 min) ➔ Expression Écrite (60 min, 3 tâches, compteur de mots officiel) ➔ Pause 3 (2 min, test micro) ➔ Expression Orale (12 min, entretien dirigé M. Laurent).
   - Calcul et délivrance de l'Attestation Provisoire Officielle avec scorecard agrégée NCLC, calcul d'impact Entrée Express (+50 pts CRS), et impression PDF FEI.

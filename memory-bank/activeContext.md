@@ -1,6 +1,23 @@
 # Active Context: Super4C2
 
-## 0. Chantiers Majeurs Récents : Tarification SasPay, Examen Blanc 4 Épreuves & Carnet d'Erreurs SRS
+## 0. Chantiers Majeurs Récents : Icones 3D Premium, Tarification SasPay, Examen Blanc 4 Épreuves & Carnet d'Erreurs SRS
+
+### 0.0. Déploiement & Intégration Complète des Icones 3D Premium (`public/brand/icons-3d/`)
+- **13 Icones 3D Haute Fidélité Intégrées (Design System Super4C2 : Érable Pourpre `#E51A31`, Or 24k, Bleu Impérial `#0B132B`, Verre Dépoli) :**
+  - **Pass d'Abonnement Tarifs :**
+    - `pass-sprint-7d.png` : Fusée aérodynamique or/verre dépoli avec chrono digital 7D ([components/pricing/geo-pricing-section.tsx](file:///d:/SnowDev/Documents/super4c2/components/pricing/geo-pricing-section.tsx)).
+    - `pass-intensif-15d.png` : Batterie cristalline chargée à 100% avec éclairs dorés et plaque 15-Day.
+    - `pass-succes-30d.png` : Trophée d'or 24k avec feuille d'érable en rubis taillé.
+    - `pass-vip-60d.png` : Couronne impériale avec bouclier royal et sceau VIP 60D.
+    - `pass-annuel-365d.png` & `pass-annuel-365d-badge.png` : Passeport canadien doré sur coussin velours avec clé d'or, flambeau et sceau millésimé 365 Jours.
+  - **États Plateforme & Victoire :**
+    - `state-success-victory.png` : Checkmark émeraude facetté avec couronne de lauriers or et ruban ([app/checkout/success/page.tsx](file:///d:/SnowDev/Documents/super4c2/app/checkout/success/page.tsx)).
+    - `state-attestation-certified.png` : Diplôme parchemin roulé avec sceau de cire FEI et médaille d'or ([components/exam/mock-exam-orchestrator.tsx](file:///d:/SnowDev/Documents/super4c2/components/exam/mock-exam-orchestrator.tsx)).
+    - `state-nclc7-unlocked.png` : Bouclier chevaleresque portant le chiffre 7 doré et bannière +50 CRS ([components/exam/exam-result-summary.tsx](file:///d:/SnowDev/Documents/super4c2/components/exam/exam-result-summary.tsx)).
+    - `state-trap-warning.png` : Prisme ambre déviant les pièges FEI ([components/exam/exam-result-summary.tsx](file:///d:/SnowDev/Documents/super4c2/components/exam/exam-result-summary.tsx)).
+    - `state-time-up.png` : Sablier verre et or avec display 00:00 sur les intermèdes de pause réglementaire ([components/exam/mock-exam-orchestrator.tsx](file:///d:/SnowDev/Documents/super4c2/components/exam/mock-exam-orchestrator.tsx)).
+    - `state-empty-mastery.png` : Coffre-fort ouvert rayonnant zéro erreur ([components/dashboard/srs-carnet.tsx](file:///d:/SnowDev/Documents/super4c2/components/dashboard/srs-carnet.tsx)).
+    - `state-error-critical.png` : Bouclier danger cramoisi avec croix lumineuse ([app/not-found.tsx](file:///d:/SnowDev/Documents/super4c2/app/not-found.tsx)).
 
 ### 0.1. Tarification Géolocalisée, SasPay & Pass Annuel Immigrant 1 An (365 Jours)
 - **Intégration Passerelle SasPay ([lib/billing/saspay.ts](file:///d:/SnowDev/Documents/super4c2/lib/billing/saspay.ts)) :**
