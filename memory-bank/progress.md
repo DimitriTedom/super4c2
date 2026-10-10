@@ -1,3 +1,15 @@
+- [x] **Accès Super Admin & Profil Initial Déployé :**
+  - **Création du Compte Super Admin dans Supabase Cloud (`mjsnrdjdazghksvpsbgm`) :**
+    - Email : `admin@super4c2.com`, Mot de passe chiffré BCrypt (`Super4C2!Admin2026#`).
+    - Statut : Email confirmé, `role: "SUPER_ADMIN"` dans `raw_app_meta_data` et `raw_user_meta_data`, identité email liée dans `auth.identities`.
+    - Synchronisation dans la base PostgreSQL : enregistrement dans `public.users` (`id: 808f6c0f-cd4d-468f-8ba8-d459eaf79c14`) et profil exécutif dans `public.profiles` (`displayName: "Directeur Exécutif (Super Admin)"`).
+  - **Flux d'Authentification Hybride & Accès Back-Office :**
+    - Connexion via `/auth/login` : détection du rôle `SUPER_ADMIN`, génération automatique du cookie sécurisé `super4c2_admin_token` (validité 24h) et redirection directe vers `/admin`.
+    - Portail dédié `/admin/login` :
+      - *Option 1 :* Bouton 1-clic **"Accès Direct Démo"** pour accès immédiat sans saisie.
+      - *Option 2 :* Saisie Email/Mot de passe ou Clé Maître.
+      - *Option 3 :* Code PIN à 6 chiffres.
+    - Ajout d'un lien discret et sécurisé vers la console Direction sur le formulaire public `/auth/login`.
 - [x] **Visuels OpenGraph & Cartes de Prévisualisation Social Media (1200x630) :**
   - Génération de 2 visuels officiels ultra haute fidélité (`1200x630` aspect ratio 16:9 recommandé) :
     - `public/brand/og-image-super4c2.jpg` (Carte sociale principale : logo 3D Super4C2, typographie soignée, badges "+50 Pts CRS Entrée Express", "TCF Canada • TEF • IELTS", sceau officiel doré FEI, tablette CBT 3D flottante).

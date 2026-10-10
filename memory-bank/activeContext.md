@@ -2,6 +2,24 @@
 
 ## 0. Chantiers Majeurs Récents : Consentement des Cookies & Résilience Auth, Déploiement Cloud Production Vercel & Supabase via MCP, Infrastructure SEO & OpenGraph (Option 4), Série Complète IELTS 18 (Option 3), Audio Studio 100% CO 39Q
 
+### 0.00000000. Accès Super Admin, Profil Exécutif & Authentification Multi-Voies
+- **Création du Super Admin dans Supabase Cloud (`mjsnrdjdazghksvpsbgm`) :**
+  - Identifiant UUID : `808f6c0f-cd4d-468f-8ba8-d459eaf79c14`.
+  - Email : `admin@super4c2.com`.
+  - Mot de passe de référence : `Super4C2!Admin2026#`.
+  - Métadonnées : `raw_app_meta_data.role = 'SUPER_ADMIN'`, `raw_user_meta_data.role = 'SUPER_ADMIN'`, `is_super_admin = true`.
+  - Identité GoTrue insérée dans `auth.identities`.
+  - Synchronisation PostgreSQL : entrée créée dans `public.users` et profil exécutif initial dans `public.profiles` (`displayName: "Directeur Exécutif (Super Admin)"`).
+- **Modalités d'Accès & Connexion :**
+  - **Parcours 1 — Formulaire Principal (`/auth/login`) :** Connexion avec `admin@super4c2.com` / `Super4C2!Admin2026#` ➔ Détection automatique du statut `SUPER_ADMIN` dans `signInAction`, émission du cookie `super4c2_admin_token` (24h) et redirection transparente vers `/admin`.
+  - **Parcours 2 — Console Direction Dédiée (`/admin/login`) :**
+    - ⚡ *Bouton "Accès Direct Démo"* : connexion instantanée 1-clic pour tester et superviser immédiatement.
+    - 🔑 *Onglet Clé Maître / SSO* : saisie Email + mot de passe ou clé maître.
+    - 🔢 *Onglet Code PIN* : saisie code à 6 chiffres.
+- **Routage & Sécurité :**
+  - `middleware.ts` vérifie `super4c2_admin_token` sur toute l'arborescence `/admin/*`.
+  - Lien d'accès discret ajouté sur `/auth/login` ("Accès Espace Direction & Super Admin").
+
 ### 0.0000000. Génération & Déploiement des Visuels OpenGraph (1200x630) Social Media
 - **Visuels générés & intégrés (`public/brand/`) :**
   - `public/brand/og-image-super4c2.jpg` (Carte principale 1200x630 format 16:9 : branding Super4C2, typographie DM Sans/Bricolage Grotesque, badges NCLC 7 / C2, +50 points CRS Entrée Express, sceau doré officiel France Éducation International, tablette 3D du simulateur).
