@@ -5,10 +5,39 @@ import { Clock, ListChecks, Sparkles, ArrowRight, ShieldCheck, Trophy } from "lu
 import { Button } from "@/components/ui/button";
 import { getMockSeries } from "@/lib/exam/mock-series";
 
-export const metadata = {
-  title: "Choisir une épreuve — TCF Canada | Super4C2",
-  description: "Sélectionnez votre discipline pour débuter la série TCF Canada en conditions réelles CBT.",
-};
+import type { Metadata } from "next";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ seriesId: string }>;
+}): Promise<Metadata> {
+  const { seriesId } = await params;
+  const series = getMockSeries(seriesId);
+  const isIelts = seriesId.includes("ielts");
+
+  if (isIelts) {
+    return {
+      title: `${series?.title || "Cambridge IELTS 18 General Training"} — Simulateur CBT`,
+      description:
+        "Entraînement officiel Cambridge IELTS General Training : 40 questions Reading, 40 questions Listening, Writing Task 1-2 et Speaking. Barème Band 0-9.0 et équivalence CLB Canada.",
+      openGraph: {
+        title: `${series?.title || "Cambridge IELTS 18 General Training"} | Super4C2`,
+        description:
+          "Simulation officielle Cambridge English avec conversion automatique en Band Scores (0-9.0) et CLB Canada.",
+      },
+    };
+  }
+
+  return {
+    title: `Série ${series?.seriesNumber || 101} — TCF & TEF Canada CBT`,
+    description: `Simulation officielle de la Série ${series?.seriesNumber || 101} TCF Canada : Compréhension Écrite, Compréhension Orale, Expression Écrite et Orale. Objectif NCLC 7+ (+50 pts CRS).`,
+    openGraph: {
+      title: `Série ${series?.seriesNumber || 101} TCF Canada — Super4C2`,
+      description: `Entraînez-vous sur la Série ${series?.seriesNumber || 101} en conditions officielles d'examen CBT.`,
+    },
+  };
+}
 
 export default async function SeriesDisciplineSelectorPage({
   params,

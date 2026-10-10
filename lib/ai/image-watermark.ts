@@ -12,7 +12,7 @@ export async function watermarkExamImage(
 ): Promise<Buffer> {
   const logoPath = path.join(process.cwd(), "public", "brand", "Le Logomark.png");
 
-  let baseImage = sharp(inputBuffer);
+  const baseImage = sharp(inputBuffer);
   const metadata = await baseImage.metadata();
 
   const width = options?.targetWidth || metadata.width || 1280;

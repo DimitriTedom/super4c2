@@ -81,8 +81,9 @@ function CheckoutContent() {
           router.push(data.checkoutUrl);
         }
       }
-    } catch (err: any) {
-      setErrorMessage(err.message || "Erreur de paiement. Veuillez réessayer.");
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Erreur de paiement. Veuillez réessayer.";
+      setErrorMessage(message);
       setIsLoading(false);
     }
   };

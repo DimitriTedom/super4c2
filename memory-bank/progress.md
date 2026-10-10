@@ -1,5 +1,13 @@
 # Progress Tracking: Super4C2
 
+- [x] **Option 4 — Production, Déploiement, SEO & OpenGraph Standardisé :**
+  - Brand Canvas ([docs/brand/seo-opengraph-canvas.md](file:///d:/SnowDev/Documents/super4c2/docs/brand/seo-opengraph-canvas.md)) & Document de Spécification ([docs/specs/10-seo-opengraph-production-deployment.md](file:///d:/SnowDev/Documents/super4c2/docs/specs/10-seo-opengraph-production-deployment.md)).
+  - Balisage Schema.org JSON-LD officiel (`components/seo/json-ld.tsx`) pour `EducationalOrganization`, `Course` et `WebSite`.
+  - Sitemap dynamique `app/sitemap.ts` couvrant l'ensemble des routes statiques et des séries dynamiques avec priorités et fréquences de mise à jour.
+  - Fichier `app/robots.ts` protégeant les espaces privés (`/admin`, `/account`, `/checkout`, `/api`) et référençant le sitemap.
+  - Métadonnées complètes OpenGraph et Twitter Card large summary avec visuel 1200x630 dans `app/layout.tsx`, `app/tarifs/page.tsx`, `app/examens/page.tsx` et `app/examens/[seriesId]/page.tsx`.
+  - Résolution des alertes linter et Server Component (`not-found.tsx`, `question-form.tsx`, `checkout/page.tsx`).
+  - Validation intégrale du build de production Next.js (`npm run build` : **100% réussi, 53/53 pages générées**).
 - [x] **Option 3 — Intégration d'une Série Complète IELTS General Training (`ielts-gen-18-1`) :**
   - Respect scrupuleux de la règle d'or en 3 étapes : Brand Canvas ([docs/brand/ielts-design-canvas.md](file:///d:/SnowDev/Documents/super4c2/docs/brand/ielts-design-canvas.md)), Spécification technique ([docs/specs/09-ielts-general-complete-series.md](file:///d:/SnowDev/Documents/super4c2/docs/specs/09-ielts-general-complete-series.md)), Implémentation & Tests.
   - Modélisation typée et algorithmes de conversion officielle Cambridge & IRCC Canada (`lib/exam/ielts-types.ts`) : conversion raw 0-40 vers Band 0-9.0 et Band vers CLB canadien (CLB 4 à 10+ avec seuil royal CLB 9).

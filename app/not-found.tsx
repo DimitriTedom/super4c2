@@ -20,9 +20,6 @@ export default function NotFoundPage() {
           height={88}
           className="h-full w-full object-contain drop-shadow-md"
           priority
-          onError={(e) => {
-            (e.target as HTMLImageElement).src = "/brand/icons-3d/radar-recent-topics.png";
-          }}
         />
       </div>
 

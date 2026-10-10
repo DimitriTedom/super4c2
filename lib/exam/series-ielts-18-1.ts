@@ -1,4 +1,4 @@
-import type { ExamQuestion, ExamSeriesData } from "./types";
+import type { ExamSeriesData } from "./types";
 import type { IeltsQuestion, IeltsSeriesData } from "./ielts-types";
 
 // ============================================================================

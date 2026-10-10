@@ -107,8 +107,9 @@ export function QuestionForm({
       toast.success(
         `Illustration 16:9 générée et filigranée ! (${isCloud ? "Stockée sur Supabase Storage" : "Stockée en CDN local"})`
       );
-    } catch (err: any) {
-      toast.error(err.message || "Erreur lors de la génération de l'illustration");
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Erreur lors de la génération de l'illustration";
+      toast.error(message);
     } finally {
       setIsGeneratingImage(false);
     }

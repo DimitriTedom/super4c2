@@ -2,9 +2,18 @@ import { GeoPricingSection } from "@/components/pricing/geo-pricing-section";
 import { CrsCalculator } from "@/components/nclc/crs-calculator";
 import { FaqSection } from "@/components/faq-section";
 
-export const metadata = {
-  title: "Tarifs & Formules NCLC 7 — Super4C2 Préparation TCF Canada",
-  description: "Des formules claires adaptées à votre région pour réussir votre TCF Canada et décrocher le palier NCLC 7 (+50 points Entrée Express). Franc CFA, EUR, CAD, USD.",
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Tarifs & Formules NCLC 7 / CLB 9 — Super4C2 Préparation TCF & IELTS",
+  description:
+    "Formules d'entraînement officielles TCF Canada, TEF et IELTS avec tarification géolocalisée (FCFA, EUR, CAD, USD) et paiement Mobile Money sécurisé SasPay.",
+  openGraph: {
+    title: "Tarifs & Formules NCLC 7 / CLB 9 | Super4C2",
+    description:
+      "Des formules claires pour réussir votre TCF Canada et décrocher le palier NCLC 7 (+50 points Entrée Express) et CLB 9. Accès illimité aux simulateurs CBT officiels.",
+    images: ["/brand/cbt-platform-preview.jpg"],
+  },
 };
 
 export default function TarifsPage() {

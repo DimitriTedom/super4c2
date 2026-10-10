@@ -49,10 +49,11 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({
       checkoutUrl: `/checkout/success?plan=${plan.id}&gateway=stripe&simulated=true`,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("[Checkout API Error]:", error);
+    const message = error instanceof Error ? error.message : "Erreur lors de l'initialisation du paiement.";
     return NextResponse.json(
-      { error: error?.message || "Erreur lors de l'initialisation du paiement." },
+      { error: message },
       { status: 500 }
     );
   }

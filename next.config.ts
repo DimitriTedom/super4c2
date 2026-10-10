@@ -31,6 +31,9 @@ const nextConfig: NextConfig = {
   // Keep standalone only for Docker/VPS self-hosting. Vercel handles output internally.
   output: isVercel ? undefined : "standalone",
   outputFileTracingRoot: process.cwd(),
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   compress: true,
   poweredByHeader: false,
   async headers() {

@@ -85,7 +85,9 @@ export async function POST(req: NextRequest) {
         if (geminiRes.ok) {
           const geminiData = await geminiRes.json();
           const candidate = geminiData.candidates?.[0];
-          const part = candidate?.content?.parts?.find((p: any) => p.inlineData);
+          const part = candidate?.content?.parts?.find(
+            (p: { inlineData?: { data?: string } }) => p.inlineData
+          );
           if (part?.inlineData?.data) {
             imageBuffer = Buffer.from(part.inlineData.data, "base64");
           }
@@ -127,10 +129,11 @@ export async function POST(req: NextRequest) {
       provider: uploadResult.provider,
       filename,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Asset generation error:", error);
+    const message = error instanceof Error ? error.message : "Erreur de génération d'image";
     return NextResponse.json(
-      { success: false, error: error.message || "Erreur de génération d'image" },
+      { success: false, error: message },
       { status: 500 }
     );
   }
