@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import {
@@ -30,9 +31,19 @@ function CheckoutSuccessContent() {
         initial={{ scale: 0.8, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ type: "spring", stiffness: 200, damping: 15 }}
-        className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-500 ring-8 ring-emerald-500/5 shadow-xl"
+        className="mx-auto flex h-24 w-24 items-center justify-center rounded-3xl bg-emerald-500/10 border-2 border-emerald-500/20 p-2 shadow-2xl"
       >
-        <CheckCircle2 className="h-10 w-10 stroke-[2.5]" />
+        <Image
+          src="/brand/icons-3d/state-success-victory.png"
+          alt="Victoire & Validation Réussie 3D"
+          width={88}
+          height={88}
+          className="h-full w-full object-contain drop-shadow-md"
+          priority
+          onError={(e) => {
+            (e.target as HTMLImageElement).src = "/brand/icons-3d/diploma-achievement.png";
+          }}
+        />
       </motion.div>
 
       <div className="space-y-3">

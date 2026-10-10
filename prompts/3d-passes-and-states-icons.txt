@@ -1,0 +1,80 @@
+# ==============================================================================
+# SUPER4C2 — BATCH 2 : PROMPTS ICÔNES 3D PREMIUM POUR LES PASSES & LES ÉTATS UI
+# Formules Tarifaires (5 Passes) + États de Succès, Échecs & Alertes (7 États)
+# Outils recommandés : Google Flow (Veo/Imagen 3), Flux.1, Midjourney v6, DALL-E 3
+# Post-production : Suppression de fond en 1 clic dans Canva Pro -> Export PNG transparent
+# Dossier de destination : public/brand/icons-3d/<nom-du-fichier>.png
+# ==============================================================================
+
+# DIRECTIVES GÉNÉRALES DE STYLE & MATÉRIAUX :
+# - Palette officielle : Érable Écarlate (#E51A31), Bleu Nuit Impérial (#0B132B), Or Poli 24k (#F59E0B / #D97706), Cyan Holographique (#06B6D4), Blanc Porcelaine & Verre Dépoli.
+# - Rendu : Rendu Octane / Cinema 4D, studio lighting doux à double softbox, ombres de contact légères, perspective isométrique 3D ou 3/4 face dynamique.
+# - Cadrage : Objet centré, net, isolé sur fond blanc/neutre propre pour détourage parfait sans bavure.
+
+# ==============================================================================
+# GROUPE A : LES 5 PASSES TARIFAIRES (PREMIUM PRICING PASSES)
+# ==============================================================================
+
+### 1. Pass Sprint 7 Jours (Turbo Boost Révision Express)
+# Nom de fichier : pass-sprint-7d.png
+# Rôle UI : Carte du Pass 7 Jours sur /tarifs et dans le sélecteur de souscription.
+A high-end 3D glossy icon representing "7-Day Sprint Pass (Turbo Review)", featuring a sleek aerodynamic miniature space rocket with chrome metallic body and maple crimson (#E51A31) fins, paired with a glowing high-speed digital chronometer displaying "7D" on a curved holographic glass dial. Cyan plasma exhaust thruster glow, brushed titanium details, polished gold lightning accents. Isometric 3D angle, luxury tech toy aesthetic, frosted glass elements, studio lighting, isolated on clean neutral white background, 8k octane render.
+
+### 2. Pass Intensif 15 Jours (Haute Énergie & Entraînement Concentré)
+# Nom de fichier : pass-intensif-15d.png
+# Rôle UI : Carte du Pass 15 Jours sur /tarifs et checkout.
+A luxury 3D icon representing "15-Day Intensive Pass (High Energy Bootcamp)", featuring a dynamic floating crystalline energy battery core and a stylized metallic lightning bolt in polished 24k gold, wrapped in a pulsing flame vortex of maple crimson and neon orange. Accents of frosted acrylic, imperial obsidian navy bevels, and glowing battery power indicator cells showing 100% capacity. Isometric composition, subsurface scattering, glossy reflection, isolated on clean white background, Cinema 4D Apple-tier finish.
+
+### 3. Pass Succès 30 Jours ⭐ (Best-Seller — Objectif C2 / NCLC 7+)
+# Nom de fichier : pass-succes-30d.png
+# Rôle UI : Carte héroïque du Pass 30 Jours sur /tarifs (Choix N°1 des Candidats).
+A prestigious 3D icon representing "30-Day Guaranteed Success Pass (Best-Seller NCLC 7+)", featuring a multi-layered royal star trophy in polished 24k gold, inset with a sparkling faceted crimson ruby maple leaf at its center, surrounded by an emerald green orbital ring and miniature glowing laurel leaves. High-gloss porcelain, liquid gold edges, luxurious imperial navy pedestal. Isometric 3D view, ambient studio softbox lighting, octane render, pristine isolated neutral background.
+
+### 4. Pass VIP 60 Jours + Garantie Réussite (Prestige & Sérénité)
+# Nom de fichier : pass-vip-60d.png
+# Rôle UI : Carte du Pass VIP 60 Jours sur /tarifs et garanties de repassage.
+An ultra-luxurious 3D icon representing "60-Day VIP Pass + Pass Guarantee", featuring a royal imperial crown forged from black titanium and polished platinum, perched atop a solid geometric diamond crystal with prismatic rainbow reflections. Flanked by a gold-trimmed heraldic shield stamped with a Canadian maple leaf seal. Deep obsidian navy, royal gold trim, frosted crystal glass. Isometric 3D perspective, ray-traced reflections, isolated on clean white background, pinnacle fintech luxury aesthetic.
+
+### 5. Pass Immigrant 1 An 🔥 (Pack Sérénité Totale 365 Jours)
+# Nom de fichier : pass-annuel-365d.png
+# Rôle UI : Carte majeure du Pass 1 An sur /tarifs (Pack Intégral Immigration Canada).
+A masterwork 3D icon representing "1-Year Canada Immigrant Pass (Total Peace of Mind 365 Days)", featuring a prestigious golden Canadian passport with an embossed maple leaf coat of arms, partially opened to reveal holographic visa stamps, paired with an ornate master golden key with a maple-leaf shaped bow and an eternal glowing crimson flame torch resting beside it. Floating 365 calendar milestone glyphs, rich 24k gold leaf, frosted acrylic, velvet crimson textures. Cinematic isometric 3D composition, warm royal lighting, isolated on neutral clean background.
+
+# ==============================================================================
+# GROUPE B : LES 7 ÉTATS DE SUCCÈS, D'ÉCHEC ET D'ALERTES UI (PLATFORM STATES)
+# ==============================================================================
+
+### 6. État Succès / Victoire / Validation Réussie
+# Nom de fichier : state-success-victory.png
+# Rôle UI : Écran de confirmation de commande (/checkout/success), validation d'épreuve et notifications de succès.
+A triumphant 3D icon representing "Victory & Successful Completion", featuring a large glossy 3D checkmark sculpted from emerald green crystal and polished gold trim, resting inside an open circular laurel wreath of golden leaves, with subtle floating golden celebration sparkles and a soft crimson silk ribbon base. Glassmorphism reflections, vibrant emerald luminosity, soft ambient shadows, isolated on clean neutral background, 8k resolution octane render.
+
+### 7. État Seuil NCLC 7 Validé (+50 Points CRS Entrée Express)
+# Nom de fichier : state-nclc7-unlocked.png
+# Rôle UI : Bannières de scoring officiel, relevé d'attestation et simulateur NCLC/CRS.
+A prestigious 3D badge icon representing "NCLC 7 Milestone Unlocked (+50 CRS Express Entry Points)", featuring an ornate heraldic Canadian shield in deep imperial navy with gold filigree, bearing a glowing holographic numeral "7" faceted like a diamond, wrapped with a golden ribbon stamped with "+50 CRS", and topped with a radiant red maple leaf crest. Polished gold, frosted glass, vibrant cyan and crimson edge lighting, isometric angle, isolated on clean white background.
+
+### 8. État Attestation Provisoire Officielle FEI Délivrée
+# Nom de fichier : state-attestation-certified.png
+# Rôle UI : Écran d'attestation officielle provisoire de l'Examen Blanc Complet.
+An authentic high-prestige 3D icon representing "Official FEI Certified Attestation Delivered", featuring a thick rolled certificate document of cream parchment tied with a rich crimson silk ribbon, stamped with a heavy 3D wax seal depicting the official France Éducation International crest in deep red, flanked by a gold medallion of excellence. Tactile paper texture, glossy wax, fine metallic accents, studio lighting, isolated on clean neutral background.
+
+### 9. État Alerte Erreur Critique / Échec / Danger
+# Nom de fichier : state-error-critical.png
+# Rôle UI : Modales d'erreur fatale, échec de transaction ou refus de validation.
+A modern high-tech 3D icon representing "Critical Error & Alert State", featuring a faceted translucent crimson crystal danger shield with an embossed frosted glass "X" cross mark at the center, glowing with a soft pulsing red warning aura. Edges of dark gunmetal titanium and deep burgundy acrylic, warning micro-indicator diodes. Isometric 3D composition, smooth glossy finish, premium alert aesthetic (not cheap or flat), isolated on clean neutral background.
+
+### 10. État Détection & Neutralisation de Piège FEI
+# Nom de fichier : state-trap-warning.png
+# Rôle UI : Encadrés « Décodage des Pièges FEI » dans le bilan d'examen et les flashcards SRS.
+A clever 3D icon representing "FEI Distractor Trap Neutralizer", featuring an amber and ruby crystal triangular prism capturing and deflecting a distorted acoustic signal wave, transforming the chaotic red beam into a pure focused cyan insight laser. Brushed metallic frame in imperial navy with gold hazard stripes, frosted glass facets. Isometric 3D angle, cinematic optical refraction, isolated on clean neutral background.
+
+### 11. État Temps Écoulé / Fin du Chronomètre CBT
+# Nom de fichier : state-time-up.png
+# Rôle UI : Modale d'alerte 00:00, soumission forcée et alertes de fin de temps.
+A dramatic 3D icon representing "Time Expired / Official Exam Stopwatch Zero", featuring a futuristic luxury hourglass encased in a frosted glass cylinder with gold and crimson metallic caps, with the upper chamber empty and glowing golden sand settled at the bottom. A miniature floating digital holographic timer displaying "00:00" in glowing amber numerals beside it. Frosted acrylic, polished brass, isometric view, isolated on clean white background.
+
+### 12. État Coffre Zéro Erreur / Maîtrise Totale du Carnet SRS
+# Nom de fichier : state-empty-mastery.png
+# Rôle UI : Écran du Carnet d'Erreurs quand toutes les cartes sont maîtrisées (0 carte due).
+An uplifting 3D icon representing "Zero Errors Vault / Total Language Mastery", featuring a futuristic sleek memory chest sculpted from pristine white ceramic and polished gold trim, wide open to reveal a radiant burst of ethereal cyan and golden light rays, with floating golden stars and spotless holographic shelves. Clean, immaculate, victory celebration aura, frosted glass panels, isometric 3D perspective, isolated on neutral clean background.

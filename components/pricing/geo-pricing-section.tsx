@@ -17,6 +17,7 @@ import {
   Calendar,
   Layers,
 } from "lucide-react";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import {
   PRICING_PLANS,
@@ -25,6 +26,29 @@ import {
   detectClientCurrency,
   PricingPlan,
 } from "@/lib/pricing/geo-pricing";
+
+export const PLAN_3D_ASSETS: Record<string, { src: string; alt: string }> = {
+  sprint_7d: {
+    src: "/brand/icons-3d/pass-sprint-7d.png",
+    alt: "Pass Sprint 7 Jours 3D Turbo",
+  },
+  intensif_15d: {
+    src: "/brand/icons-3d/pass-intensif-15d.png",
+    alt: "Pass Intensif 15 Jours 3D Énergie",
+  },
+  succes_30d: {
+    src: "/brand/icons-3d/pass-succes-30d.png",
+    alt: "Pass Succès 30 Jours 3D Étoile NCLC 7",
+  },
+  vip_60d: {
+    src: "/brand/icons-3d/pass-vip-60d.png",
+    alt: "Pass VIP 60 Jours 3D Diamant & Garantie",
+  },
+  annuel_365d: {
+    src: "/brand/icons-3d/pass-annuel-365d.png",
+    alt: "Pass Immigrant 1 An 3D Passeport & Clé d'Or",
+  },
+};
 
 interface GeoPricingSectionProps {
   initialCurrency?: SupportedCurrency;
@@ -200,13 +224,29 @@ export function GeoPricingSection({ initialCurrency }: GeoPricingSectionProps) {
 
             <div className="grid gap-8 lg:grid-cols-2 items-center">
               <div className="space-y-4">
-                <div className="inline-flex items-center gap-2 rounded-full bg-amber-500/10 px-3 py-1 text-xs font-bold text-amber-500">
-                  <Calendar className="h-3.5 w-3.5" />
-                  <span>Accès Illimité 365 Jours (12 Mois Complets)</span>
+                <div className="flex items-center gap-4">
+                  <div className="relative h-16 w-16 sm:h-20 sm:w-20 shrink-0 rounded-3xl bg-amber-500/10 border-2 border-amber-500/30 p-2 flex items-center justify-center shadow-lg">
+                    <Image
+                      src={PLAN_3D_ASSETS.annuel_365d.src}
+                      alt={PLAN_3D_ASSETS.annuel_365d.alt}
+                      width={80}
+                      height={80}
+                      className="h-full w-full object-contain drop-shadow-md transition-transform hover:scale-105"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = "/brand/icons-3d/vip-pricing-pass.png";
+                      }}
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <div className="inline-flex items-center gap-2 rounded-full bg-amber-500/10 px-3 py-1 text-xs font-bold text-amber-500">
+                      <Calendar className="h-3.5 w-3.5" />
+                      <span>Accès Illimité 365 Jours (12 Mois Complets)</span>
+                    </div>
+                    <h3 className="font-display text-2xl sm:text-3xl font-black text-foreground">
+                      {annualPlan.name}
+                    </h3>
+                  </div>
                 </div>
-                <h3 className="font-display text-2xl sm:text-3xl font-black text-foreground">
-                  {annualPlan.name}
-                </h3>
                 <p className="text-sm text-muted-foreground leading-relaxed">
                   L&apos;assurance tout-en-un pour votre démarche de Résidence Permanente. Idéal si vous progressez de B1/B2 vers C1/C2 ou préparez à la fois le TCF Canada et l&apos;IELTS.
                 </p>
@@ -300,15 +340,41 @@ export function GeoPricingSection({ initialCurrency }: GeoPricingSectionProps) {
                   )}
 
                   <div>
+                    {/* 3D Icon & Plan Identity */}
+                    <div className="flex items-center justify-between gap-3 mb-3">
+                      <div className="relative h-14 w-14 shrink-0 rounded-2xl bg-primary/5 dark:bg-card/80 border border-primary/15 p-1.5 flex items-center justify-center shadow-xs">
+                        <Image
+                          src={PLAN_3D_ASSETS[plan.id]?.src || "/brand/icons-3d/vip-pricing-pass.png"}
+                          alt={PLAN_3D_ASSETS[plan.id]?.alt || plan.name}
+                          width={56}
+                          height={56}
+                          className="h-full w-full object-contain drop-shadow-sm transition-transform hover:scale-110"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).src = "/brand/icons-3d/vip-pricing-pass.png";
+                          }}
+                        />
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        {isPopular ? (
+                          <span className="flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-bold text-primary border border-primary/20">
+                            <Zap className="h-3 w-3 fill-primary" /> Star
+                          </span>
+                        ) : isAnnual ? (
+                          <span className="flex items-center gap-1 rounded-full bg-amber-500/10 px-2 py-0.5 text-[10px] font-bold text-amber-500 border border-amber-500/20">
+                            <Crown className="h-3 w-3 fill-amber-500" /> 1 An
+                          </span>
+                        ) : isVip ? (
+                          <span className="flex items-center gap-1 rounded-full bg-purple-500/10 px-2 py-0.5 text-[10px] font-bold text-purple-500 border border-purple-500/20">
+                            <ShieldCheck className="h-3 w-3" /> VIP
+                          </span>
+                        ) : null}
+                      </div>
+                    </div>
+
                     {/* Plan Title & Tagline */}
                     <div className="space-y-1">
-                      <h3 className="font-display text-lg font-bold text-foreground flex items-center justify-between">
-                        <span>{plan.name}</span>
-                        {isPopular ? (
-                          <Zap className="h-4 w-4 text-primary fill-primary" />
-                        ) : isAnnual ? (
-                          <Crown className="h-4 w-4 text-amber-500 fill-amber-500" />
-                        ) : null}
+                      <h3 className="font-display text-lg font-bold text-foreground">
+                        {plan.name}
                       </h3>
                       <p className="text-xs text-muted-foreground min-h-[34px] leading-relaxed">
                         {plan.tagline}

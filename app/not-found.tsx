@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { BookOpen, Calculator, FileQuestion, Home, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -10,8 +11,23 @@ export const metadata = {
 export default function NotFoundPage() {
   return (
     <div className="flex min-h-[calc(100vh-14rem)] flex-col items-center justify-center px-4 py-16 text-center">
+      {/* 3D Critical Error Icon */}
+      <div className="mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-3xl bg-red-500/10 border-2 border-red-500/20 p-2 shadow-xl">
+        <Image
+          src="/brand/icons-3d/state-error-critical.png"
+          alt="Page introuvable ou Erreur 404 3D"
+          width={88}
+          height={88}
+          className="h-full w-full object-contain drop-shadow-md"
+          priority
+          onError={(e) => {
+            (e.target as HTMLImageElement).src = "/brand/icons-3d/radar-recent-topics.png";
+          }}
+        />
+      </div>
+
       {/* 404 Badge */}
-      <div className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-primary mb-6">
+      <div className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-primary mb-4">
         <FileQuestion className="h-4 w-4" /> Erreur 404 · Document introuvable
       </div>
 

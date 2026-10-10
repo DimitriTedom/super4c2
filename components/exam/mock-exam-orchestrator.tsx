@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Trophy,
@@ -939,8 +940,18 @@ export function MockExamOrchestrator({
               animate={{ scale: 1, opacity: 1 }}
               className="relative overflow-hidden rounded-3xl border-2 border-emerald-500/80 bg-gradient-to-b from-card via-card to-emerald-500/10 p-8 sm:p-10 shadow-2xl text-center space-y-6"
             >
-              <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-500 ring-8 ring-emerald-500/10 shadow-xl">
-                <Trophy className="h-10 w-10 stroke-[2.5]" />
+              <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-3xl bg-emerald-500/10 border-2 border-emerald-500/20 p-2 shadow-2xl">
+                <Image
+                  src="/brand/icons-3d/state-attestation-certified.png"
+                  alt="Attestation Officielle Provisoire 3D"
+                  width={88}
+                  height={88}
+                  className="h-full w-full object-contain drop-shadow-md"
+                  priority
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = "/brand/icons-3d/diploma-achievement.png";
+                  }}
+                />
               </div>
 
               <div className="space-y-2 max-w-xl mx-auto">
