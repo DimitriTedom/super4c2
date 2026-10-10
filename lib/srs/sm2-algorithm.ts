@@ -211,3 +211,113 @@ export function calculateDeckStats(cards: SrsCard[]) {
     mastered,
   };
 }
+
+/**
+ * Crée une SrsCard standardisée pour une erreur commise lors d'un entraînement ou d'un examen blanc.
+ * Initialisée avec l'intervalle J+1 d'Ebbinghaus.
+ */
+export function createSrsCardFromMistake(params: {
+  id?: string;
+  discipline: "CE" | "CO" | "EE" | "EO";
+  questionNumber: number;
+  questionPrompt: string;
+  documentSnippet?: string;
+  candidateMistake: string;
+  correctAnswer: string;
+  ruleExplanation?: string;
+  trapType?: string;
+  sourceExamId?: string;
+}): SrsCard {
+  const nextDate = new Date();
+  nextDate.setDate(nextDate.getDate() + 1); // Intervalle initial J+1
+
+  return {
+    id:
+      params.id ||
+      `err-${params.discipline.toLowerCase()}-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+    discipline: params.discipline,
+    questionNumber: params.questionNumber,
+    questionPrompt: params.questionPrompt,
+    documentSnippet: params.documentSnippet,
+    candidateMistake: params.candidateMistake,
+    correctAnswer: params.correctAnswer,
+    ruleExplanation:
+      params.ruleExplanation ||
+      "Consolidation recommandée : analysez attentivement la structure et les distracteurs FEI.",
+    trapType: params.trapType || "Distracteur d'ambiguïté lexicale ou syntaxique",
+    repetitions: 0,
+    intervalDays: 1,
+    easinessFactor: 2.5,
+    nextReviewDate: nextDate.toISOString(),
+    createdAt: new Date().toISOString(),
+    sourceExamId: params.sourceExamId,
+  };
+}
+
+/**
+ * Charge les cartes depuis le stockage local (localStorage) en fusionnant avec le deck par défaut si vide.
+ */
+export function getSrsCardsFromVault(): SrsCard[] {
+  if (typeof window === "undefined") return INITIAL_SRS_CARDS;
+  try {
+    const stored = localStorage.getItem("super4c2:srs_cards");
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed as SrsCard[];
+      }
+    }
+    // Si rien en cache, initialiser
+    localStorage.setItem("super4c2:srs_cards", JSON.stringify(INITIAL_SRS_CARDS));
+    return INITIAL_SRS_CARDS;
+  } catch {
+    return INITIAL_SRS_CARDS;
+  }
+}
+
+/**
+ * Ajoute un lot de cartes au coffre SRS dans le localStorage sans doublon.
+ * Déclenche un événement personnalisé `srs:vault_updated` pour synchroniser les composants ouverts.
+ */
+export function addCardsToSrsVault(newCards: SrsCard[]): { addedCount: number; totalCount: number } {
+  if (typeof window === "undefined" || newCards.length === 0) {
+    return { addedCount: 0, totalCount: 0 };
+  }
+
+  try {
+    const existing = getSrsCardsFromVault();
+    let addedCount = 0;
+    const updated = [...existing];
+
+    for (const card of newCards) {
+      // Vérifier si la carte existe déjà par ID ou par discipline + numéro + énoncé
+      const exists = updated.some(
+        (c) =>
+          c.id === card.id ||
+          (c.discipline === card.discipline &&
+            c.questionNumber === card.questionNumber &&
+            c.questionPrompt === card.questionPrompt)
+      );
+
+      if (!exists) {
+        updated.push(card);
+        addedCount++;
+      }
+    }
+
+    if (addedCount > 0) {
+      localStorage.setItem("super4c2:srs_cards", JSON.stringify(updated));
+      window.dispatchEvent(
+        new CustomEvent("srs:vault_updated", {
+          detail: { addedCount, totalCount: updated.length },
+        })
+      );
+    }
+
+    return { addedCount, totalCount: updated.length };
+  } catch (error) {
+    console.error("Erreur lors de l'enregistrement dans le carnet SRS :", error);
+    return { addedCount: 0, totalCount: 0 };
+  }
+}
+

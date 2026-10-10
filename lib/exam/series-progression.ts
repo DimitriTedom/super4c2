@@ -30,6 +30,7 @@ export interface ProgressionSeries {
   description: string;
   focusTopics: string[];
   ieltsTrack?: "general" | "academic";
+  isMockExam?: boolean;
 }
 
 export const TEST_CATALOG: Record<
@@ -78,8 +79,67 @@ export const TEST_CATALOG: Record<
 
 export const TCF_PROGRESSION_SERIES: ProgressionSeries[] = [
   {
+    id: "tcf-blanc-1",
+    seriesNumber: 1,
+    testType: "tcf",
+    title: "Examen Blanc Officiel N°1 — Simulation Complète 4 Épreuves",
+    subtitle: "Conditions réelles FEI : CO (35 min) ➔ CE (60 min) ➔ EE (60 min) ➔ EO (12 min)",
+    levelBadge: "Simulation Certifiante NCLC 7+",
+    targetNclc: "NCLC 7 à 10 (+50 pts CRS)",
+    status: "UNLOCKED",
+    progressPercent: 0,
+    isMockExam: true,
+    recommended: true,
+    xpReward: 1000,
+    crsBonusPoints: 50,
+    disciplines: [
+      {
+        type: "co",
+        name: "Compréhension Orale",
+        badge: "Épreuve 1/4 (35 min)",
+        questionsOrTasks: "39 questions officielles",
+        duration: "35 min",
+        url: "/examens/tcf-blanc-1/examen-blanc",
+      },
+      {
+        type: "ce",
+        name: "Compréhension Écrite",
+        badge: "Épreuve 2/4 (60 min)",
+        questionsOrTasks: "39 questions documents FEI",
+        duration: "60 min",
+        url: "/examens/tcf-blanc-1/examen-blanc",
+      },
+      {
+        type: "ee",
+        name: "Expression Écrite",
+        badge: "Épreuve 3/4 (60 min)",
+        questionsOrTasks: "3 tâches rédactionnelles",
+        duration: "60 min",
+        url: "/examens/tcf-blanc-1/examen-blanc",
+      },
+      {
+        type: "eo",
+        name: "Expression Orale",
+        badge: "Épreuve 4/4 (12 min)",
+        questionsOrTasks: "3 tâches avec M. Laurent",
+        duration: "12 min",
+        url: "/examens/tcf-blanc-1/examen-blanc",
+      },
+    ],
+    description:
+      "La grande simulation officielle certifiante de Super4C2. Vous enchaînez les 4 compétences dans l'ordre exact du jour J sous chronomètre strict, avec pauses réglementaires et relevé d'attestation globale FEI.",
+    focusTopics: [
+      "Endurance cognitive sur 2h47min de session continue",
+      "Épreuve reine CO & CE sous chronomètre officiel",
+      "Rédaction des 3 tâches EE avec critères FEI",
+      "Grand entretien d'Expression Orale avec examinateur IA",
+      "Calcul immédiat de l'admissibilité Entrée Express (+50 pts CRS)",
+    ],
+  },
+  {
     id: "demo-101-ce",
     seriesNumber: 101,
+
     testType: "tcf",
     title: "Série 101 — Diagnostic & Seuil Initial",
     subtitle: "Étalonnage initial du niveau A1 à C2 en conditions réelles FEI",
@@ -918,3 +978,13 @@ export function getSeriesForTest(testType: TestType = "tcf"): ProgressionSeries[
   if (testType === "ielts") return IELTS_PROGRESSION_SERIES;
   return TCF_PROGRESSION_SERIES;
 }
+
+export function getSeriesById(id: string): ProgressionSeries | undefined {
+  const allSeries = [
+    ...TCF_PROGRESSION_SERIES,
+    ...TEF_PROGRESSION_SERIES,
+    ...IELTS_PROGRESSION_SERIES,
+  ];
+  return allSeries.find((s) => s.id === id);
+}
+

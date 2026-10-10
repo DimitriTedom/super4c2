@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import { Clock, ListChecks, Sparkles, ArrowRight, ShieldCheck } from "lucide-react";
+import { Clock, ListChecks, Sparkles, ArrowRight, ShieldCheck, Trophy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { getMockSeries } from "@/lib/exam/mock-series";
 
@@ -45,6 +45,35 @@ export default async function SeriesDisciplineSelectorPage({
           />
         </div>
       </div>
+
+      {/* Flagship: Examen Blanc Complet (4 Épreuves enchaînées) */}
+      <div className="relative overflow-hidden rounded-3xl border-2 border-amber-500/80 bg-gradient-to-r from-amber-500/15 via-card to-primary/10 p-6 sm:p-8 shadow-xl">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+          <div className="space-y-2 max-w-xl">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-500/20 px-3 py-1 text-xs font-black uppercase tracking-wider text-amber-600 dark:text-amber-400">
+              <Trophy className="h-3.5 w-3.5" /> Simulation Reine NCLC 7+
+            </span>
+            <h2 className="font-display text-xl sm:text-2xl font-black text-foreground">
+              Passer l&apos;Examen Blanc Complet (4 Épreuves)
+            </h2>
+            <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+              Enchaînez les 4 compétences dans l&apos;ordre officiel (CO ➔ CE ➔ EE ➔ EO) sur 2h47min avec pauses réglementaires et relevé d&apos;attestation FEI officiel (+50 pts CRS).
+            </p>
+          </div>
+
+          <Button
+            asChild
+            size="lg"
+            className="shrink-0 font-black px-6 h-12 bg-gradient-to-r from-amber-500 via-orange-500 to-primary hover:opacity-95 text-white shadow-lg shadow-amber-500/30"
+          >
+            <Link href={`/examens/${seriesId}/examen-blanc`}>
+              <span>Lancer l&apos;Examen Blanc</span>
+              <ArrowRight className="h-4 w-4 ml-2" />
+            </Link>
+          </Button>
+        </div>
+      </div>
+
 
       {/* 4 Disciplines Grid */}
       <div className="grid gap-6 sm:grid-cols-2">

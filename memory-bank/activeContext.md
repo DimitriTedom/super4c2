@@ -1,6 +1,8 @@
 # Active Context: Super4C2
 
-## 0. Chantier 8 — Tarification Géolocalisée, SasPay (https://saspay.me) & Pass Annuel Immigrant 1 An (365 Jours)
+## 0. Chantiers Majeurs Récents : Tarification SasPay, Examen Blanc 4 Épreuves & Carnet d'Erreurs SRS
+
+### 0.1. Tarification Géolocalisée, SasPay & Pass Annuel Immigrant 1 An (365 Jours)
 - **Intégration Passerelle SasPay ([lib/billing/saspay.ts](file:///d:/SnowDev/Documents/super4c2/lib/billing/saspay.ts)) :**
   - Passerelle officielle SaaS pour l'Afrique (`https://saspay.me` / Base URL `https://api.saspay.me/api/v1`).
   - Support natif des checkout sessions hébergées et Softpay direct push USSD (MTN MoMo, Orange Money, Wave, Moov).
@@ -14,8 +16,34 @@
   - Sélecteur de filtres : "Toutes les Formules", "Pass Révision (7j - 60j)" et "Pass Immigrant 1 An 🔥".
   - Mise en avant royale du Pass Annuel avec calcul d'économie mensuelle et badge "👑 Pack Intégral Immigration Canada".
   - Détection locale de monnaie et mention "Propulsé par SasPay".
-- **Spécification Technique Validée ([docs/specs/07-payment-and-geo-subscription-architecture.md](file:///d:/SnowDev/Documents/super4c2/docs/specs/07-payment-and-geo-subscription-architecture.md)) :**
-  - Schéma Prisma avec `SubscriptionTier.ANNUEL_365D` et `PaymentGateway.SASPAY`.
+- **Flux Checkout & Activation Instantanée ([app/checkout/page.tsx](file:///d:/SnowDev/Documents/super4c2/app/checkout/page.tsx), [app/checkout/success/page.tsx](file:///d:/SnowDev/Documents/super4c2/app/checkout/success/page.tsx)) :**
+  - Fin du 404 lors du clic sur les boutons d'abonnement.
+  - Routage vers SasPay / Stripe avec fallback sandbox sécurisé en environnement de dev et écran de victoire 3D Victory checkmark.
+
+### 0.2. Simulation Complète « Examen Blanc Officiel CBT » (4 Épreuves Chênées)
+- **Document de Spécification :** [docs/specs/08-full-mock-exam-cbt-simulation.md](file:///d:/SnowDev/Documents/super4c2/docs/specs/08-full-mock-exam-cbt-simulation.md)
+- **Orchestrateur & Simulateur 4 Épreuves ([components/exam/mock-exam-orchestrator.tsx](file:///d:/SnowDev/Documents/super4c2/components/exam/mock-exam-orchestrator.tsx)) :**
+  - Enchaînement strict respectant le cahier des charges de France Éducation International (FEI) :
+    1. Compréhension Orale (35 min, 39Q, audio continu)
+    2. Pause réglementaire 1 (2 min)
+    3. Compréhension Écrite (60 min, 39Q, surligneur interactif)
+    4. Pause réglementaire 2 (3 min)
+    5. Expression Écrite (60 min, 3 tâches FEI, compteur de mots officiel)
+    6. Pause réglementaire 3 (2 min, test micro)
+    7. Expression Orale (12 min, 3 tâches d'entretien dirigé avec l'examinateur IA M. Laurent)
+    8. Attestation Officielle Provisoire & Scorecard agrégée NCLC avec validation +50 points CRS Entrée Express et impression PDF FEI.
+- **Accès Direct :** Accessible via `/examens/[seriesId]/examen-blanc` et par carte dorée dédiée sur les pages de séries.
+
+### 0.3. Automatisation du Carnet d'Erreurs SRS SM-2 ([lib/srs/sm2-algorithm.ts](file:///d:/SnowDev/Documents/super4c2/lib/srs/sm2-algorithm.ts), [hooks/use-exam-session.ts](file:///d:/SnowDev/Documents/super4c2/hooks/use-exam-session.ts))
+- **Capture Automatique des Pièges :**
+  - Lors de la finalisation d'un examen QCM (`use-exam-session.ts`) ou d'un examen blanc (`mock-exam-orchestrator.tsx`), toute question manquée (`chosen !== correctOption`) est automatiquement transformée en `SrsCard` avec intervalle initial J+1 d'Ebbinghaus et enregistrée dans le coffre `super4c2:srs_cards`.
+  - Événement personnalisé `srs:vault_updated` dispatché pour synchroniser instantanément les onglets et composants ouverts sans rechargement.
+- **Bannière d'Ancrage Mémoriel & Synchronisation ([components/exam/exam-result-summary.tsx](file:///d:/SnowDev/Documents/super4c2/components/exam/exam-result-summary.tsx)) :**
+  - Notification élégante dans le bilan d'examen : *"X erreurs archivées dans votre Carnet d'Erreurs SRS pour révision à J+1"* avec boutons de synchronisation et lien direct vers `/carnet-erreurs`.
+- **Lecteur de Flashcards SM-2 & Dashboard ([app/carnet-erreurs/page.tsx](file:///d:/SnowDev/Documents/super4c2/app/carnet-erreurs/page.tsx), [components/dashboard/srs-carnet.tsx](file:///d:/SnowDev/Documents/super4c2/components/dashboard/srs-carnet.tsx)) :**
+  - 4 métriques en temps réel (*Dues aujourd'hui*, *En consolidation*, *Maîtrisées NCLC 7+*, *Total Pièges*).
+  - Lecteur plein écran avec révélation des pièges et 4 boutons de notation SM-2 (*À revoir, Difficile, Bon, Facile*).
+  - Validé de bout en bout en navigateur direct.
 
 
 ## 1. Chantier 7 — États de Chargement, Curseur Feutre Surligneur & Benchmark Concurrentiel (Objectif Canada)

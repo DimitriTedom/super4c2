@@ -1,10 +1,19 @@
 # Progress Tracking: Super4C2
 
-## Ce qui est Réalisé
+- [x] **Moteur d'Examen Blanc Complet CBT 4 Épreuves Chênées (Chantier 10 Réalisé) :**
+  - Chaîne complète des 4 épreuves sous conditions officielles France Éducation International (FEI) : Compréhension Orale (35 min, 39Q) ➔ Pause 1 (2 min) ➔ Compréhension Écrite (60 min, 39Q, surligneur interactif) ➔ Pause 2 (3 min) ➔ Expression Écrite (60 min, 3 tâches, compteur de mots officiel) ➔ Pause 3 (2 min, test micro) ➔ Expression Orale (12 min, entretien dirigé M. Laurent).
+  - Calcul et délivrance de l'Attestation Provisoire Officielle avec scorecard agrégée NCLC, calcul d'impact Entrée Express (+50 pts CRS), et impression PDF FEI.
+  - Spécification formelle consignée dans `docs/specs/08-full-mock-exam-cbt-simulation.md`.
+- [x] **Capture & Ancrage Automatique dans le Carnet d'Erreurs SRS SM-2 (Chantier 11 Réalisé) :**
+  - Détection automatique et archivage instantané des questions ratées depuis `use-exam-session.ts` et `mock-exam-orchestrator.tsx` vers le coffre local `super4c2:srs_cards` avec intervalle initial J+1 d'Ebbinghaus et algorithme SuperMemo-2 (`lib/srs/sm2-algorithm.ts`).
+  - Déclenchement de l'événement réactif `srs:vault_updated` pour synchronisation temps réel inter-onglets et rafraîchissement dynamique du composant `SrsCarnet` sans rechargement de page.
+  - Bannière de synchronisation mémorielle dans `ExamResultSummary` informant le candidat de l'archivage de ses erreurs et permettant la synchronisation en un clic.
+  - Validé de bout en bout en navigateur direct sur `/carnet-erreurs` avec lecteur de flashcards interactif et boutons SM-2 (*À revoir, Difficile, Bon, Facile*).
 - [x] **SasPay (`https://saspay.me`), Pass Immigrant Annuel 365 Jours & Tarification Géolocalisée (Chantier 9 Réalisé) :**
   - Intégration du client SDK SasPay (`lib/billing/saspay.ts`) pour encaisser en Mobile Money (MTN MoMo, Orange Money, Wave, Moov) et Cartes Bancaires en Afrique via l'API REST `https://api.saspay.me/api/v1` avec sessions hébergées et Softpay push.
   - Ajout du **Pass Immigrant 1 An (365 Jours)** (`annuel_365d`) à 60 000 FCFA / 89,99 € / 129 $ CAD pour accompagner le candidat sur toute la durée de son immigration avec assurance repassage illimitée et accès aux 3 examens (TCF + TEF + IELTS).
   - Refonte du composant de tarification (`components/pricing/geo-pricing-section.tsx`) avec filtre dynamique par durée (*Toutes les Formules*, *Pass Révision 7j-60j*, *Pass Immigrant 1 An 🔥* avec carte héroïque dorée).
+  - Flux de checkout complet (`/checkout` et `/checkout/success`) avec détection automatique de monnaie unique (FCFA en Afrique, EUR en Europe, CAD au Canada, USD à l'international) et fallback sandbox sécurisé.
   - Mise à jour de la spécification technique pérenne (`docs/specs/07-payment-and-geo-subscription-architecture.md`).
 - [x] **États de Chargement UI Globaux & Curseur Feutre Surligneur (Chantier 7 Réalisé) :** Composant `Button` étendu avec `loading` et `loadingText` (spinner `<Loader2 className="animate-spin" />` et `disabled`), fonction utilitaire `triggerGlobalLoading` activant la barre laser de sommet de page sur toutes les actions critiques (soumission écrit, validation fin d'examen CBT, sauvegarde de profil), et curseur SVG haute précision feutre surligneur ambre `.cursor-highlighter` avec mire rouge pour l'outil de surlignage interactif en CE et dans la vitrine produit.
 

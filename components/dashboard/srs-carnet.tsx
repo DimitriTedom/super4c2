@@ -52,28 +52,44 @@ export function SrsCarnet() {
   const [newExplanation, setNewExplanation] = useState("");
   const [newTrapType, setNewTrapType] = useState("");
 
-  // Synchronisation avec localStorage
+  // Synchronisation avec localStorage & événement personnalisé srs:vault_updated
   useEffect(() => {
-    try {
-      const stored = localStorage.getItem("super4c2:srs_cards");
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          // Fusionner avec les cartes initiales pour toujours avoir un deck riche
-          const merged: SrsCard[] = [...parsed];
-          INITIAL_SRS_CARDS.forEach((init) => {
-            if (!merged.some((m) => m.id === init.id)) {
-              merged.push(init);
-            }
-          });
-          setCards(merged);
+    const loadCards = () => {
+      try {
+        const stored = localStorage.getItem("super4c2:srs_cards");
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            // Fusionner avec les cartes initiales pour toujours avoir un deck riche
+            const merged: SrsCard[] = [...parsed];
+            INITIAL_SRS_CARDS.forEach((init) => {
+              if (!merged.some((m) => m.id === init.id)) {
+                merged.push(init);
+              }
+            });
+            setCards(merged);
+            return;
+          }
         }
-      } else {
         localStorage.setItem("super4c2:srs_cards", JSON.stringify(INITIAL_SRS_CARDS));
+        setCards(INITIAL_SRS_CARDS);
+      } catch {
+        // ignore storage error
       }
-    } catch {
-      // ignore storage error
-    }
+    };
+
+    loadCards();
+
+    const handleVaultUpdated = () => {
+      loadCards();
+    };
+
+    window.addEventListener("srs:vault_updated", handleVaultUpdated);
+    window.addEventListener("storage", handleVaultUpdated);
+    return () => {
+      window.removeEventListener("srs:vault_updated", handleVaultUpdated);
+      window.removeEventListener("storage", handleVaultUpdated);
+    };
   }, []);
 
   const saveCards = (updated: SrsCard[]) => {

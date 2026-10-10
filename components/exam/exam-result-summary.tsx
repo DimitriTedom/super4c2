@@ -23,40 +23,31 @@ import {
   type ExamResult,
 } from "@/lib/exam/types";
 import { cn } from "@/lib/utils";
+import {
+  createSrsCardFromMistake,
+  addCardsToSrsVault,
+  getSrsCardsFromVault,
+  type SrsCard,
+} from "@/lib/srs/sm2-algorithm";
 
 interface ExamResultSummaryProps {
   result: ExamResult;
   questions: ExamQuestion[];
   answers: AnswersMap;
   onRestart: () => void;
+  discipline?: "CE" | "CO";
+  seriesId?: string;
 }
 
 type ReviewFilter = "all" | "errors" | "correct" | "flagged";
-
-interface SrsStorageItem {
-  id: string;
-  discipline: "CE" | "CO" | "EE" | "EO";
-  questionNumber: number;
-  questionPrompt: string;
-  documentSnippet?: string;
-  candidateMistake: string;
-  correctAnswer: string;
-  ruleExplanation: string;
-  trapType: string;
-  nextReviewDays: number;
-  masteryLevel: 1 | 2 | 3;
-  repetitions?: number;
-  intervalDays?: number;
-  easinessFactor?: number;
-  nextReviewDate?: string;
-  createdAt?: string;
-}
 
 export function ExamResultSummary({
   result,
   questions,
   answers,
   onRestart,
+  discipline = "CE",
+  seriesId = "series-101",
 }: ExamResultSummaryProps) {
   const crs = crsBonusForNclc(result.nclcLevel);
   const [filter, setFilter] = useState<ReviewFilter>("all");
@@ -64,15 +55,20 @@ export function ExamResultSummary({
   const [savedSrsIds, setSavedSrsIds] = useState<Record<string, boolean>>(() => {
     if (typeof window === "undefined") return {};
     try {
-      const existing = localStorage.getItem("super4c2:srs_cards");
-      if (existing) {
-        const parsed = JSON.parse(existing) as SrsStorageItem[];
-        const map: Record<string, boolean> = {};
-        parsed.forEach((item) => {
-          map[item.id] = true;
-        });
-        return map;
-      }
+      const existing = getSrsCardsFromVault();
+      const map: Record<string, boolean> = {};
+      existing.forEach((item) => {
+        // Associer par ID complet ou par ID de question
+        map[item.id] = true;
+        if (item.sourceExamId === seriesId || item.id.includes(seriesId)) {
+          questions.forEach((q) => {
+            if (item.id.includes(q.id) || item.questionPrompt === q.prompt) {
+              map[q.id] = true;
+            }
+          });
+        }
+      });
+      return map;
     } catch {
       // fallback
     }
@@ -105,36 +101,47 @@ export function ExamResultSummary({
 
   const handleSaveToSrs = (q: ExamQuestion) => {
     const picked = answers[q.id]?.selected;
-    const srsItem: SrsStorageItem = {
-      id: `srs-ce-${q.id}`,
-      discipline: "CE",
+    const card = createSrsCardFromMistake({
+      id: `err-${discipline.toLowerCase()}-${seriesId}-${q.id}`,
+      discipline: discipline,
       questionNumber: q.questionNumber,
       questionPrompt: q.prompt,
-      documentSnippet: q.documentText ? q.documentText.slice(0, 180) : undefined,
-      candidateMistake: picked ? `${picked}. ${q.options[picked]}` : "Aucune réponse sélectionnée",
+      documentSnippet: q.documentText ? q.documentText.slice(0, 200) : (q.audioTranscript ? q.audioTranscript.slice(0, 200) : undefined),
+      candidateMistake: picked ? `${picked}. ${q.options[picked]}` : "Aucune réponse sélectionnée (Omis)",
       correctAnswer: `${q.correctOption}. ${q.options[q.correctOption]}`,
       ruleExplanation: q.explanation,
-      trapType: q.trapAnalysis || "Distracteur d'ambiguïté lexicale",
-      nextReviewDays: 1,
-      masteryLevel: 1,
-      repetitions: 0,
-      intervalDays: 1,
-      easinessFactor: 2.5,
-      nextReviewDate: new Date().toISOString(),
-      createdAt: new Date().toISOString(),
-    };
+      trapType: q.trapAnalysis || "Distracteur officiel FEI",
+      sourceExamId: seriesId,
+    });
 
-    try {
-      const existing = localStorage.getItem("super4c2:srs_cards");
-      const list: SrsStorageItem[] = existing ? JSON.parse(existing) : [];
-      if (!list.some((item) => item.id === srsItem.id)) {
-        list.push(srsItem);
-        localStorage.setItem("super4c2:srs_cards", JSON.stringify(list));
-      }
-      setSavedSrsIds((prev) => ({ ...prev, [q.id]: true }));
-    } catch {
-      // storage unavailable
-    }
+    addCardsToSrsVault([card]);
+    setSavedSrsIds((prev) => ({ ...prev, [q.id]: true, [card.id]: true }));
+  };
+
+  const handleSyncAllErrorsToSrs = () => {
+    const cardsToSave: SrsCard[] = errors.map((q) => {
+      const picked = answers[q.id]?.selected;
+      return createSrsCardFromMistake({
+        id: `err-${discipline.toLowerCase()}-${seriesId}-${q.id}`,
+        discipline: discipline,
+        questionNumber: q.questionNumber,
+        questionPrompt: q.prompt,
+        documentSnippet: q.documentText ? q.documentText.slice(0, 200) : (q.audioTranscript ? q.audioTranscript.slice(0, 200) : undefined),
+        candidateMistake: picked ? `${picked}. ${q.options[picked]}` : "Aucune réponse sélectionnée (Omis)",
+        correctAnswer: `${q.correctOption}. ${q.options[q.correctOption]}`,
+        ruleExplanation: q.explanation,
+        trapType: q.trapAnalysis || "Distracteur officiel FEI",
+        sourceExamId: seriesId,
+      });
+    });
+
+    addCardsToSrsVault(cardsToSave);
+    const updatedMap: Record<string, boolean> = { ...savedSrsIds };
+    errors.forEach((q) => {
+      updatedMap[q.id] = true;
+      updatedMap[`err-${discipline.toLowerCase()}-${seriesId}-${q.id}`] = true;
+    });
+    setSavedSrsIds(updatedMap);
   };
 
   return (
@@ -147,7 +154,7 @@ export function ExamResultSummary({
               <Award className="h-3.5 w-3.5" /> Bilan Officiel Simulé TCF Canada
             </span>
             <h1 className="font-display text-2xl sm:text-3xl font-extrabold tracking-tight">
-              Résultat : Compréhension Écrite
+              Résultat : {discipline === "CO" ? "Compréhension Orale" : "Compréhension Écrite"}
             </h1>
             <p className="text-sm text-muted-foreground">
               Simulation conforme à la matrice de pondération France Éducation International (FEI).
@@ -277,6 +284,47 @@ export function ExamResultSummary({
           </div>
         </div>
       </div>
+
+      {/* SRS Sync & Error Vault Banner */}
+      {errors.length > 0 && (
+        <div className="rounded-3xl border border-primary/30 bg-gradient-to-r from-card via-card to-primary/10 p-5 sm:p-6 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="space-y-1.5 max-w-xl">
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-primary/15 text-primary border border-primary/20">
+              <Sparkles className="h-3 w-3 text-primary" />
+              <span>Ancrage Mémoriel Automatique (Ebbinghaus SM-2)</span>
+            </div>
+            <h3 className="font-display text-base sm:text-lg font-black text-foreground">
+              {errors.length} erreur(s) archivée(s) dans votre Carnet d&apos;Erreurs SRS
+            </h3>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Chaque piège manqué est programmé pour votre première session de révision à <strong>J+1</strong>, puis <strong>J+3</strong> et <strong>J+7</strong> jusqu&apos;à ancrage définitif.
+            </p>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2.5 w-full sm:w-auto">
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={handleSyncAllErrorsToSrs}
+              className="text-xs font-semibold gap-1.5"
+            >
+              <RotateCcw className="h-3.5 w-3.5 text-primary" />
+              <span>Synchroniser tout</span>
+            </Button>
+
+            <Button
+              size="sm"
+              asChild
+              className="font-bold text-xs bg-primary hover:bg-primary/90 text-white gap-1.5 shadow-xs"
+            >
+              <Link href="/carnet-erreurs">
+                <BookOpen className="h-3.5 w-3.5" />
+                <span>Ouvrir le Carnet SRS</span>
+              </Link>
+            </Button>
+          </div>
+        </div>
+      )}
 
       {/* Review Section */}
       <div className="space-y-5">

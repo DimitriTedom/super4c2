@@ -10,6 +10,11 @@ import type {
   NavFilter,
   OptionKey,
 } from "@/lib/exam/types";
+import {
+  createSrsCardFromMistake,
+  addCardsToSrsVault,
+  type SrsCard,
+} from "@/lib/srs/sm2-algorithm";
 
 export type ExamMode = "exam" | "practice";
 
@@ -51,6 +56,7 @@ export function useExamSession(series: ExamSeriesData) {
   const [isTimerPaused, setIsTimerPaused] = useState(false);
   const [revealed, setRevealed] = useState<Record<string, boolean>>({});
   const [highlights, setHighlights] = useState<Record<string, string[]>>({});
+  const [autoArchivedCount, setAutoArchivedCount] = useState<number>(0);
 
   // Hydrate from localStorage (or start a fresh session).
   useEffect(() => {
@@ -124,6 +130,39 @@ export function useExamSession(series: ExamSeriesData) {
     setFinished(true);
     triggerGlobalLoading(true);
     const res = computeResult(series.questions, answers, series.discipline);
+
+    // Auto-archivage des questions ratées dans le Carnet d'Erreurs SRS (SM-2)
+    const missedCards: SrsCard[] = [];
+    series.questions.forEach((q) => {
+      const chosen = answers[q.id]?.selected;
+      if (chosen !== q.correctOption) {
+        const card = createSrsCardFromMistake({
+          id: `err-${series.discipline.toLowerCase()}-${series.id}-${q.id}`,
+          discipline: series.discipline as "CE" | "CO",
+          questionNumber: q.questionNumber,
+          questionPrompt: q.prompt,
+          documentSnippet: q.documentText
+            ? q.documentText.slice(0, 200)
+            : q.audioTranscript
+            ? q.audioTranscript.slice(0, 200)
+            : undefined,
+          candidateMistake: chosen
+            ? `${chosen}. ${q.options[chosen]}`
+            : "Aucune réponse sélectionnée (Omis)",
+          correctAnswer: `${q.correctOption}. ${q.options[q.correctOption]}`,
+          ruleExplanation: q.explanation,
+          trapType: q.trapAnalysis || "Distracteur officiel FEI",
+          sourceExamId: series.id,
+        });
+        missedCards.push(card);
+      }
+    });
+
+    if (missedCards.length > 0) {
+      addCardsToSrsVault(missedCards);
+      setAutoArchivedCount(missedCards.length);
+    }
+
     void fetch("/api/exam/attempt", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -306,5 +345,6 @@ export function useExamSession(series: ExamSeriesData) {
     addHighlight: (text: string) => addHighlight(question.id, text),
     removeHighlight: (text: string) => removeHighlight(question.id, text),
     clearHighlights: () => clearHighlights(question.id),
+    autoArchivedCount,
   };
 }

@@ -80,6 +80,8 @@ export function CbtExam({ series }: { series: ExamSeriesData }) {
             questions={series.questions}
             answers={s.answers}
             onRestart={s.restart}
+            discipline={series.discipline}
+            seriesId={series.id}
           />
         </main>
       </div>
