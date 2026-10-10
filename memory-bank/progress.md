@@ -1,5 +1,9 @@
-# Progress Tracking: Super4C2
-
+- [x] **Visuels OpenGraph & Cartes de Prévisualisation Social Media (1200x630) :**
+  - Génération de 2 visuels officiels ultra haute fidélité (`1200x630` aspect ratio 16:9 recommandé) :
+    - `public/brand/og-image-super4c2.jpg` (Carte sociale principale : logo 3D Super4C2, typographie soignée, badges "+50 Pts CRS Entrée Express", "TCF Canada • TEF • IELTS", sceau officiel doré FEI, tablette CBT 3D flottante).
+    - `public/brand/og-image-simulator.jpg` (Carte simulateur CBT dédiée aux parcours d'examen : interface interactive d'examen, compte à rebours officiel, audio player, grille de questions).
+  - Câblage dans les balises meta de `app/layout.tsx`, `app/examens/page.tsx` et `app/tarifs/page.tsx`.
+  - Déploiement automatique sur Vercel avec persistance sur la branche `main` de GitHub.
 - [x] **Conformité Réglementaire, Approbation des Cookies & Résilience Auth :**
   - Brand Canvas ([docs/brand/cookie-consent-canvas.md](file:///d:/SnowDev/Documents/super4c2/docs/brand/cookie-consent-canvas.md)) & Document de Spécification ([docs/specs/11-cookie-consent-and-auth-resilience.md](file:///d:/SnowDev/Documents/super4c2/docs/specs/11-cookie-consent-and-auth-resilience.md)).
   - Bannière de consentement (`components/legal/cookie-consent-banner.tsx`) conforme RGPD, ePrivacy et Loi 25 (Québec) avec options *Tout accepter*, *Refuser non-essentiels* et *Personnaliser mes choix* (Essentiels, Fonctionnels SRS, Performance IA).

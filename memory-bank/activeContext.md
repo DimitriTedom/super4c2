@@ -2,6 +2,18 @@
 
 ## 0. Chantiers Majeurs Récents : Consentement des Cookies & Résilience Auth, Déploiement Cloud Production Vercel & Supabase via MCP, Infrastructure SEO & OpenGraph (Option 4), Série Complète IELTS 18 (Option 3), Audio Studio 100% CO 39Q
 
+### 0.0000000. Génération & Déploiement des Visuels OpenGraph (1200x630) Social Media
+- **Visuels générés & intégrés (`public/brand/`) :**
+  - `public/brand/og-image-super4c2.jpg` (Carte principale 1200x630 format 16:9 : branding Super4C2, typographie DM Sans/Bricolage Grotesque, badges NCLC 7 / C2, +50 points CRS Entrée Express, sceau doré officiel France Éducation International, tablette 3D du simulateur).
+  - `public/brand/og-image-simulator.jpg` (Carte dédiée au simulateur CBT et aux examens : interface chronométrée, lecteur audio et grille FEI).
+  - `public/brand/cbt-platform-preview.jpg` (Mise à niveau avec la nouvelle carte haute fidélité pour rétrocompatibilité totale).
+- **Mise à jour des Métadonnées :**
+  - `app/layout.tsx` : OpenGraph racine et Twitter Card pointant vers `/brand/og-image-super4c2.jpg`.
+  - `app/examens/page.tsx` : OpenGraph ciblé sur `/brand/og-image-simulator.jpg`.
+  - `app/tarifs/page.tsx` : OpenGraph ciblé sur `/brand/og-image-super4c2.jpg`.
+- **Statut Git & Déploiement :**
+  - Commit `b54b289` poussé sur `origin/main` et en cours de déploiement automatique sur Vercel.
+
 ### 0.000000. Approbation des Cookies, Conformité Réglementaire & Durcissement de l'Authentification
 - **Respect Intégral de la Règle d'Or en 3 Étapes (AGENTS.md) :**
   1. **Brand & Design Canvas :** [docs/brand/cookie-consent-canvas.md](file:///d:/SnowDev/Documents/super4c2/docs/brand/cookie-consent-canvas.md) (Design glassmorphism épuré, bouton Crimson, conformité RGPD, Loi 25 Québec et PIPEDA Canada).
