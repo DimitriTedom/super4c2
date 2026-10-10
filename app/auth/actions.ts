@@ -82,6 +82,25 @@ export async function signInAction(input: z.infer<typeof signInSchema> & { next?
           },
         },
       });
+
+      // Si l'utilisateur est Super Admin, initialiser la session d'administration
+      const isSuperAdmin =
+        user.user_metadata?.role === "SUPER_ADMIN" ||
+        user.app_metadata?.role === "SUPER_ADMIN" ||
+        user.email === "admin@super4c2.com";
+
+      if (isSuperAdmin) {
+        const cookieStore = await cookies();
+        cookieStore.set("super4c2_admin_token", `admin-exec-session-${Date.now()}`, {
+          path: "/",
+          httpOnly: false,
+          sameSite: "lax",
+          maxAge: 60 * 60 * 24,
+        });
+
+        const target = input.next && input.next !== "/dashboard" ? input.next : "/admin";
+        return { ok: true as const, redirectTo: target };
+      }
     }
 
     return { ok: true as const, redirectTo: input.next ?? "/dashboard" };

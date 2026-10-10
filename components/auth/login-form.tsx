@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
-import { Eye, EyeOff, Lock, Mail, ArrowRight } from "lucide-react";
+import { Eye, EyeOff, Lock, Mail, ArrowRight, ShieldAlert } from "lucide-react";
 
 import { signInSchema } from "@/lib/validations";
 import { signInAction, signInDemoCandidateAction } from "@/app/auth/actions";
@@ -157,13 +157,22 @@ export function LoginForm() {
         </div>
 
         {/* Create Account Link */}
-        <div className="text-center pt-1">
+        <div className="text-center pt-1 space-y-2">
           <p className="text-sm text-muted-foreground">
             Pas encore de compte ?{" "}
             <Link href="/auth/register" className="font-semibold text-primary hover:underline">
               Créer mon compte gratuitement
             </Link>
           </p>
+          <div className="pt-2 border-t border-border/50">
+            <Link
+              href="/admin/login"
+              className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors font-medium"
+            >
+              <ShieldAlert className="h-3.5 w-3.5 text-primary" />
+              <span>Accès Espace Direction & Super Admin</span>
+            </Link>
+          </div>
         </div>
       </form>
     </Form>
