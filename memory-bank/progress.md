@@ -1,5 +1,10 @@
 # Progress Tracking: Super4C2
 
+- [x] **Option 2 — Couverture Audio Studio 100% Compréhension Orale (Série 101, Q1 à Q39) :**
+  - Génération intégrale des 39 fichiers audio studio haute fidélité ElevenLabs dans `public/audio/co/co-101-q1.mp3` à `co-101-q39.mp3` avec alternance de voix Sarah (officielle/posée) et Charlie (conversationnelle/dynamique).
+  - Câblage complet dans `lib/exam/series-co-101.ts` (`audioUrl: "/audio/co/co-101-q${n}.mp3"` pour l'intégralité des 39 questions A1 à C2).
+  - Script réutilisable `scripts/generate-co-audio.ts` enrichi avec support d'intervalles `--from/--to`, conservation des fichiers existants et espacement anti-rate-limit.
+  - Vérification intégrale : 39/39 fichiers présents sur disque, servis avec HTTP 200 OK `audio/mpeg` et 0 erreur TypeScript (`npx tsc --noEmit`).
 - [x] **Déploiement & Câblage Global des 13 Icônes 3D Premium (Chantier 12 Réalisé) :**
   - Traitement, découpe transparente et intégration des 13 icônes 3D officielles dans `public/brand/icons-3d/` :
     - 5 passes d'abonnement : Sprint 7j (`pass-sprint-7d.png`), Intensif 15j (`pass-intensif-15d.png`), Succès 30j (`pass-succes-30d.png`), VIP 60j (`pass-vip-60d.png`), Annuel 365j Immigrant (`pass-annuel-365d.png`, `pass-annuel-365d-badge.png`).

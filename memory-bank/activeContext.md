@@ -1,6 +1,22 @@
 # Active Context: Super4C2
 
-## 0. Chantiers Majeurs Récents : Icones 3D Premium, Tarification SasPay, Examen Blanc 4 Épreuves & Carnet d'Erreurs SRS
+## 0. Chantiers Majeurs Récents : Audio Studio 100% CO 39Q, Icones 3D Premium, Tarification SasPay, Examen Blanc 4 Épreuves & Carnet d'Erreurs SRS
+
+### 0.00. Option 2 — Couverture Audio Studio Complète 100% Compréhension Orale (Série 101, Q1 à Q39)
+- **Génération Intégrale Haute Fidélité ElevenLabs (`public/audio/co/co-101-q1.mp3` à `co-101-q39.mp3`) :**
+  - **39 Fichiers MP3 Studio Natifs Déployés (100% de la banque CO 101 couverte) :**
+    - Q1 à Q6 : Niveau A1 (Situations quotidiennes, annonces SNCF, réservations, météo).
+    - Q7 à Q12 : Niveau A2 (Cabinet médical, consignes, vélos libre-service, fermetures).
+    - Q13 à Q18 : Niveau B1 (Biodéchets, aménagement de bureaux, obligations vertes, artisanat).
+    - Q19 à Q28 : Niveau B2 — Seuil NCLC 7 (Cobotique industrielle québécoise, télétravail, recyclage enzymatique, mobilité multimodale vélo/train, zones humides côtières, évaluation managériale, alimentation ultra-transformée, sobriété énergétique).
+    - Q29 à Q35 : Niveau C1 (Délibération démocratique vs algorithmes, montage syncopé du cinéma contemporain, souveraineté industrielle et composants amont, plasticité neuronale adulte, critique sociologique des « smart cities », diplomatie des semi-conducteurs et lithographie EUV, construction narrative québécoise).
+    - Q36 à Q39 : Niveau C2 — Élite (Colloque de linguistique et vitalité des langues vivantes, paradoxe de l'hyper-communication et bruit de l'opinion, épistémologie des sciences et contresens corrélation/causalité dans les mégadonnées, méditation sur l'obsolescence esthétique et perte du dialogue avec la postérité).
+  - **Alternance de Voix Directoriale Naturelle :** Voix féminine officielle et posée Sarah (`EXAVITQu4vr4xnSDxMaL`) pour les annonces/chroniques et voix masculine dynamique Charlie (`IKne3meq5aSn9XLyUdCD`) pour les interventions/débats.
+  - **Câblage Intégral du Dataset (`lib/exam/series-co-101.ts`) :**
+    - Attribution de `audioUrl: "/audio/co/co-101-q${n}.mp3"` pour l'ensemble des 39 questions.
+    - Synchronisation native avec le lecteur officiel `<AudioPlayerCBT />` (écoute unique et verrouillage en mode Examen, réglage de vitesse `0.8x / 1.0x / 1.2x`, réécoute et transcription en mode Entraînement).
+  - **Script Réutilisable Haute Disponibilité (`scripts/generate-co-audio.ts`) :**
+    - Gestion d'intervalles `--from [X] --to [Y]`, détection et conservation des fichiers déjà existants, pauses de courtoisie anti-rate-limit.
 
 ### 0.0. Déploiement & Intégration Complète des Icones 3D Premium (`public/brand/icons-3d/`)
 - **13 Icones 3D Haute Fidélité Intégrées (Design System Super4C2 : Érable Pourpre `#E51A31`, Or 24k, Bleu Impérial `#0B132B`, Verre Dépoli) :**
