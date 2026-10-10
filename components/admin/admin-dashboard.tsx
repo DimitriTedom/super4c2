@@ -26,6 +26,8 @@ import {
   BookOpen,
   FolderKanban,
   CircleHelp,
+  MessageSquareQuote,
+  Loader2,
 } from "lucide-react";
 import { BrandLogo } from "@/components/brand-logo";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -100,6 +102,7 @@ export function AdminDashboard({
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(null);
+  const [pendingHref, setPendingHref] = useState<string | null>(null);
 
   // Vérification de la session Super Admin côté client
   useEffect(() => {
@@ -495,30 +498,62 @@ export function AdminDashboard({
         <div className="mt-1.5 space-y-1">
           <Link
             href="/admin/series-ce"
+            onClick={() => setPendingHref("/admin/series-ce")}
             className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-semibold text-muted-foreground hover:bg-muted hover:text-foreground transition-all"
           >
-            <BookOpen className="h-4 w-4 shrink-0 text-primary" />
+            {pendingHref === "/admin/series-ce" ? (
+              <Loader2 className="h-4 w-4 shrink-0 animate-spin text-brand-crimson" />
+            ) : (
+              <BookOpen className="h-4 w-4 shrink-0 text-primary" />
+            )}
             {!sidebarCollapsed && <span>Séries CBT (CE &amp; EE)</span>}
           </Link>
           <Link
             href="/admin/blog"
+            onClick={() => setPendingHref("/admin/blog")}
             className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-semibold text-muted-foreground hover:bg-muted hover:text-foreground transition-all"
           >
-            <FolderKanban className="h-4 w-4 shrink-0 text-primary" />
+            {pendingHref === "/admin/blog" ? (
+              <Loader2 className="h-4 w-4 shrink-0 animate-spin text-brand-crimson" />
+            ) : (
+              <FolderKanban className="h-4 w-4 shrink-0 text-primary" />
+            )}
             {!sidebarCollapsed && <span>Blog &amp; Guides SEO</span>}
           </Link>
           <Link
             href="/admin/faqs"
+            onClick={() => setPendingHref("/admin/faqs")}
             className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-semibold text-muted-foreground hover:bg-muted hover:text-foreground transition-all"
           >
-            <CircleHelp className="h-4 w-4 shrink-0 text-primary" />
+            {pendingHref === "/admin/faqs" ? (
+              <Loader2 className="h-4 w-4 shrink-0 animate-spin text-brand-crimson" />
+            ) : (
+              <CircleHelp className="h-4 w-4 shrink-0 text-primary" />
+            )}
             {!sidebarCollapsed && <span>Questions Fréquentes (FAQs)</span>}
           </Link>
           <Link
-            href="/admin/leads"
+            href="/admin/temoignages"
+            onClick={() => setPendingHref("/admin/temoignages")}
             className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-semibold text-muted-foreground hover:bg-muted hover:text-foreground transition-all"
           >
-            <Users className="h-4 w-4 shrink-0 text-primary" />
+            {pendingHref === "/admin/temoignages" ? (
+              <Loader2 className="h-4 w-4 shrink-0 animate-spin text-brand-crimson" />
+            ) : (
+              <MessageSquareQuote className="h-4 w-4 shrink-0 text-primary" />
+            )}
+            {!sidebarCollapsed && <span>Témoignages Candidats</span>}
+          </Link>
+          <Link
+            href="/admin/leads"
+            onClick={() => setPendingHref("/admin/leads")}
+            className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-semibold text-muted-foreground hover:bg-muted hover:text-foreground transition-all"
+          >
+            {pendingHref === "/admin/leads" ? (
+              <Loader2 className="h-4 w-4 shrink-0 animate-spin text-brand-crimson" />
+            ) : (
+              <Users className="h-4 w-4 shrink-0 text-primary" />
+            )}
             {!sidebarCollapsed && <span>Demandes &amp; Conciergerie</span>}
           </Link>
         </div>

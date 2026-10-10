@@ -17,6 +17,7 @@ import {
   LogOut,
   ExternalLink,
   ArrowUpRight,
+  Loader2,
 } from "lucide-react";
 import { BrandLogo } from "@/components/brand-logo";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -89,6 +90,11 @@ export function AdminShell({ children }: AdminShellProps) {
   const pathname = usePathname();
   const router = useRouter();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [pendingHref, setPendingHref] = useState<string | null>(null);
+
+  useEffect(() => {
+    setPendingHref(null);
+  }, [pathname]);
 
   const handleAdminLogout = () => {
     document.cookie = "super4c2_admin_token=; path=/; max-age=0; expires=Thu, 01 Jan 1970 00:00:00 GMT";
@@ -166,19 +172,39 @@ export function AdminShell({ children }: AdminShellProps) {
                     link.href === "/admin"
                       ? pathname === "/admin"
                       : pathname.startsWith(link.href);
+                  const isPending = pendingHref === link.href;
+
                   return (
                     <Link
                       key={link.href}
                       href={link.href}
+                      onClick={() => {
+                        if (pathname !== link.href) {
+                          setPendingHref(link.href);
+                        }
+                      }}
                       className={`flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-semibold transition-all ${
                         isActive
                           ? "bg-primary text-primary-foreground shadow-xs font-bold"
+                          : isPending
+                          ? "bg-muted text-foreground font-bold"
                           : "text-muted-foreground hover:bg-muted hover:text-foreground"
                       } ${sidebarCollapsed ? "justify-center px-2" : ""}`}
                       title={sidebarCollapsed ? link.label : undefined}
                     >
-                      <Icon className="h-4 w-4 shrink-0" />
-                      {!sidebarCollapsed && <span className="truncate">{link.label}</span>}
+                      {isPending ? (
+                        <Loader2 className="h-4 w-4 shrink-0 animate-spin text-brand-crimson" />
+                      ) : (
+                        <Icon className="h-4 w-4 shrink-0" />
+                      )}
+                      {!sidebarCollapsed && (
+                        <span className="truncate flex-1">{link.label}</span>
+                      )}
+                      {!sidebarCollapsed && isPending && (
+                        <span className="text-[10px] font-normal text-brand-crimson animate-pulse">
+                          ...
+                        </span>
+                      )}
                     </Link>
                   );
                 })}
@@ -296,55 +322,80 @@ export function AdminShell({ children }: AdminShellProps) {
       <nav className="lg:hidden fixed bottom-3 left-4 right-4 z-50 rounded-2xl border bg-card/95 backdrop-blur-xl p-1.5 shadow-2xl flex items-center justify-around">
         <Link
           href="/admin"
+          onClick={() => { if (pathname !== "/admin") setPendingHref("/admin"); }}
           className={`flex flex-col items-center gap-0.5 py-1 px-2.5 rounded-xl text-[10px] font-bold transition-all ${
             pathname === "/admin" ? "bg-primary text-primary-foreground shadow-xs" : "text-muted-foreground"
           }`}
         >
-          <LayoutDashboard className="h-4 w-4" />
+          {pendingHref === "/admin" ? (
+            <Loader2 className="h-4 w-4 animate-spin text-brand-crimson" />
+          ) : (
+            <LayoutDashboard className="h-4 w-4" />
+          )}
           <span>Aperçu</span>
         </Link>
         <Link
           href="/admin/series-ce"
+          onClick={() => { if (!pathname.startsWith("/admin/series-ce")) setPendingHref("/admin/series-ce"); }}
           className={`flex flex-col items-center gap-0.5 py-1 px-2.5 rounded-xl text-[10px] font-bold transition-all ${
             pathname.startsWith("/admin/series-ce")
               ? "bg-primary text-primary-foreground shadow-xs"
               : "text-muted-foreground"
           }`}
         >
-          <BookOpen className="h-4 w-4" />
+          {pendingHref === "/admin/series-ce" ? (
+            <Loader2 className="h-4 w-4 animate-spin text-brand-crimson" />
+          ) : (
+            <BookOpen className="h-4 w-4" />
+          )}
           <span>Séries CE</span>
         </Link>
         <Link
           href="/admin/series-ee"
+          onClick={() => { if (!pathname.startsWith("/admin/series-ee")) setPendingHref("/admin/series-ee"); }}
           className={`flex flex-col items-center gap-0.5 py-1 px-2.5 rounded-xl text-[10px] font-bold transition-all ${
             pathname.startsWith("/admin/series-ee")
               ? "bg-primary text-primary-foreground shadow-xs"
               : "text-muted-foreground"
           }`}
         >
-          <PenTool className="h-4 w-4" />
+          {pendingHref === "/admin/series-ee" ? (
+            <Loader2 className="h-4 w-4 animate-spin text-brand-crimson" />
+          ) : (
+            <PenTool className="h-4 w-4" />
+          )}
           <span>Séries EE</span>
         </Link>
         <Link
           href="/admin/blog"
+          onClick={() => { if (!pathname.startsWith("/admin/blog")) setPendingHref("/admin/blog"); }}
           className={`flex flex-col items-center gap-0.5 py-1 px-2.5 rounded-xl text-[10px] font-bold transition-all ${
             pathname.startsWith("/admin/blog")
               ? "bg-primary text-primary-foreground shadow-xs"
               : "text-muted-foreground"
           }`}
         >
-          <FolderKanban className="h-4 w-4" />
+          {pendingHref === "/admin/blog" ? (
+            <Loader2 className="h-4 w-4 animate-spin text-brand-crimson" />
+          ) : (
+            <FolderKanban className="h-4 w-4" />
+          )}
           <span>Blog</span>
         </Link>
         <Link
           href="/admin/faqs"
+          onClick={() => { if (!pathname.startsWith("/admin/faqs")) setPendingHref("/admin/faqs"); }}
           className={`flex flex-col items-center gap-0.5 py-1 px-2.5 rounded-xl text-[10px] font-bold transition-all ${
             pathname.startsWith("/admin/faqs")
               ? "bg-primary text-primary-foreground shadow-xs"
               : "text-muted-foreground"
           }`}
         >
-          <CircleHelp className="h-4 w-4" />
+          {pendingHref === "/admin/faqs" ? (
+            <Loader2 className="h-4 w-4 animate-spin text-brand-crimson" />
+          ) : (
+            <CircleHelp className="h-4 w-4" />
+          )}
           <span>FAQs</span>
         </Link>
       </nav>

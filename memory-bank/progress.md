@@ -1,3 +1,26 @@
+- [x] **Système Global de Loaders & Feedback Visuel Instantané de Navigation (Next.js 15 App Router) :**
+  - **Résolution du Gel Visuel au Clic sur les Menus & Liens Internes :**
+    - Suppression de l'effet d'attente aveugle lors des requêtes serveur et transitions de routes.
+  - **Barre de Progression Supérieure Laser (`components/navigation/navigation-progress-bar.tsx`) :**
+    - Barre ultra-réactive montant à 25% en 150ms dès le premier `mousedown`/`click` sur tout lien interne.
+    - Progression continue jusqu'à 85%, complétion à 100% avec fondu élégant à l'arrivée (détection `pathname`/`searchParams`).
+    - Gradient signature rouge cramoisi (`#E51A31`) vers ambre doré (`#FFB703`) avec étincelle laser pulsée.
+    - Événements personnalisés de déclenchement `super4c2:navigation-start` et `super4c2:navigation-finish`.
+    - Sécurité timeout 10 secondes anti-blocage.
+  - **Micro-spinners Réactifs sur Menus Cliqués :**
+    - `components/admin/admin-shell.tsx` : Remplacement immédiat de l'icône de navigation par un `<Loader2 className="animate-spin text-brand-crimson" />` dès le clic sur un élément de menu d'administration.
+    - `components/admin/admin-dashboard.tsx` : Remplacement réactif de l'icône latérale par `<Loader2>` lors du clic sur les sections de gestion de contenu.
+  - **Squelettes de Chargement Granulaires (`loading.tsx`) :**
+    - `app/loading.tsx` : Loader racine avec marque Super4C2 3D pulsante.
+    - `app/admin/loading.tsx` : Squelette exécutif (KPIs, grille d'activité).
+    - `app/admin/faqs/loading.tsx` : Squelette de la table FAQs.
+    - `app/admin/leads/loading.tsx` : Squelette de la conciergerie de leads.
+    - `app/admin/temoignages/loading.tsx` : Squelette de la table des avis.
+    - `app/admin/blog/loading.tsx` : Squelette de la table des articles.
+    - `app/examens/loading.tsx` : Loader de calibration de salle d'examen CBT (France Éducation International).
+  - **Documentation Normée (AGENTS.md) :**
+    - Brand canvas : `docs/brand/navigation-loaders-and-feedback-canvas.md`
+    - Spécification technique : `docs/specs/13-navigation-loaders-and-feedback.md`
 - [x] **Synchronisation Temps Réel Base de Données Cloud & Batch Actions Back-Office :**
   - **Correction de la Divergence Données Visiteurs vs Admin :**
     - Résolution de la déconnexion causée par un `.env` local sur `localhost:5434` (Docker éteint).

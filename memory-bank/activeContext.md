@@ -1,8 +1,32 @@
 # Active Context: Super4C2
 
-## 0. Chantiers Majeurs Récents : Synchronisation Temps Réel Base de Données Cloud & Batch Actions Back-Office, Consentement Cookies & Résilience Auth, Déploiement Cloud Production Vercel & Supabase
+## 0. Chantiers Majeurs Récents : Système Global de Loaders & Feedback de Navigation, Synchronisation Temps Réel Base Cloud & Batch Actions Back-Office, Déploiement Cloud Production Vercel & Supabase
 
-### 0.000000000. Synchronisation Temps Réel Visiteurs/Admin & Actions en Lot (Batch Actions)
+### 0.0000000000. Système Global de Loaders & Feedback de Navigation Instantané (Next.js 15 App Router)
+- **Problématique résolue :** Absence totale de feedback visuel lors des clics sur les menus d'administration et les liens internes. Sous Next.js 15 App Router, lorsqu'un composant serveur interroge la base de données, la page actuelle restait statique sans indicateur de chargement, donnant l'impression que le site était bloqué ou insensible au clic.
+- **Architecture de Feedback Tri-Niveaux Implémentée :**
+  1. **Niveau 1 — Barre de progression supérieure globale (`components/navigation/navigation-progress-bar.tsx`) :**
+     - Montée au sommet du layout racine (`app/layout.tsx`).
+     - Interception immédiate de tout clic sur des liens internes avec détection intelligente (ignore `target="_blank"`, `download`, touches de modification `Ctrl`/`Cmd`, hash `#`, et même route).
+     - Déclenchement d'une barre de chargement ultra-fluide aux couleurs de la marque (`#E51A31` crimson vers `#FFB703` ambre chaud) avec tête laser pulsée (`box-shadow: 0 0 12px rgba(229, 26, 49, 0.9)`).
+     - Écoute automatique de `usePathname()` et `useSearchParams()` pour terminer immédiatement la progression à l'arrivée (flash à 100% puis fondu élégant de 200ms).
+     - Écoute d'événements personnalisés `super4c2:navigation-start` et `super4c2:navigation-finish` pour les navigations programmatiques.
+     - Sécurité de timeout à 10 secondes pour éviter toute barre résiduelle.
+  2. **Niveau 2 — Micro-spinners contextuels sur les éléments de menu cliqués :**
+     - `components/admin/admin-shell.tsx` : Suivi de `pendingHref` réactif au clic. Lorsqu'un administrateur clique sur un lien de navigation (Vue d'ensemble, Gestion Séries, Banque de Questions, FAQs & Contenus, etc.), l'icône de navigation est instantanément remplacée par un `<Loader2 className="animate-spin text-brand-crimson" />` et le texte passe en opacité intermédiaire. Réinitialisation automatique dès que l'URL change.
+     - `components/admin/admin-dashboard.tsx` : Même comportement sur les raccourcis de navigation de la barre latérale du dashboard (Séries CE, Articles Blog, FAQs, Témoignages, Conciergerie Leads).
+  3. **Niveau 3 — Squelettes de chargement granulaires (`loading.tsx`) :**
+     - `app/loading.tsx` : Loader Suspense racine haute fidélité avec badge 3D Super4C2 pulsant.
+     - `app/admin/loading.tsx` : Squelette de tableau de bord exécutif (en-tête, 4 cartes KPI shimmer, grille de cohortes et raccourcis).
+     - `app/admin/faqs/loading.tsx` : Squelette shimmer pour la table FAQs (barre de recherche, boutons de filtres, lignes de tableau avec badges).
+     - `app/admin/leads/loading.tsx` : Squelette shimmer pour la conciergerie de leads (cartes de prospects, statuts, actions).
+     - `app/admin/temoignages/loading.tsx` : Squelette shimmer pour la gestion des témoignages (avatars, citations, notes étoiles).
+     - `app/admin/blog/loading.tsx` : Squelette shimmer pour la gestion des articles SEO (miniatures, dates de parution, actions).
+     - `app/examens/loading.tsx` : Écran d'attente officiel pour les salles d'examen CBT avec badge de calibration France Éducation International.
+- **Documents de Brand et Spécification (Règle d'or AGENTS.md) :**
+  - Brand canvas rédigé dans `docs/brand/navigation-loaders-and-feedback-canvas.md`.
+  - Spécification technique complète rédigée dans `docs/specs/13-navigation-loaders-and-feedback.md`.
+
 - **Résolution de la Désynchronisation Visiteurs vs Back-Office :**
   - **Origine du problème :** Les pages publiques utilisaient des tableaux de secours statiques (`DEFAULT_FAQS`, `DEFAULT_TESTIMONIALS`) en cas de base vide ou d'erreur locale, alors que les pages d'administration (`/admin/faqs`, `/admin/temoignages`, `/admin/leads`, `/admin`) interrogeaient directement Prisma. De plus, le fichier `.env` local pointait vers `localhost:5434` (Docker inactif) au lieu de Supabase Cloud.
   - **Correction des Connexions :** `.env` local et production mis à jour avec les identifiants Supabase Cloud (`mjsnrdjdazghksvpsbgm`), pointant vers le pooler PostgreSQL AWS eu-west-1.

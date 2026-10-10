@@ -13,6 +13,7 @@ import { FloatingCommunityButton } from "@/components/community/floating-communi
 
 import { JsonLd } from "@/components/seo/json-ld";
 import { CookieConsentBanner } from "@/components/legal/cookie-consent-banner";
+import { NavigationProgressBar } from "@/components/navigation/navigation-progress-bar";
 
 const bricolage = Bricolage_Grotesque({
   subsets: ["latin"],
@@ -125,6 +126,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       className={`${bricolage.variable} ${dmSans.variable} ${spaceMono.variable}`}
     >
       <body className="font-body antialiased bg-background text-foreground min-h-screen">
+        <NavigationProgressBar />
         <JsonLd />
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
           <LanguageProvider>
