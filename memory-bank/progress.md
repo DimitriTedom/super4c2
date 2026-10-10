@@ -1,3 +1,18 @@
+- [x] **Synchronisation Temps Réel Base de Données Cloud & Batch Actions Back-Office :**
+  - **Correction de la Divergence Données Visiteurs vs Admin :**
+    - Résolution de la déconnexion causée par un `.env` local sur `localhost:5434` (Docker éteint).
+    - Câblage du fichier `.env` sur le cluster PostgreSQL Supabase Cloud (`mjsnrdjdazghksvpsbgm`) via pooler AWS eu-west-1.
+    - Base de données Cloud peuplée avec l'intégralité des données réelles (8 FAQs, 8 témoignages, 4 articles, 5 leads, 2 séries CBT / 78 questions, 6 profils candidats avec scores réels).
+  - **Actions en Lot Flottantes (Batch Actions) :**
+    - Composant `AdminBatchActionBar` réutilisable avec animation spring Framer Motion et dialogue de confirmation sécurisé.
+    - Export CSV côté client encodé avec BOM UTF-8 (`\uFEFF`) préservant les accents français sous Excel.
+    - Intégration sur la table FAQs (`/admin/faqs` & `FaqTableClient`) : suppression en lot et activation/masquage en lot.
+    - Intégration sur la boîte de réception des Leads (`/admin/leads` & `LeadListClient`) : suppression en lot et bascule de statut en lot (NOUVEAU, EN_COURS, RESOLU, ARCHIVE).
+    - Intégration sur la table Témoignages (`/admin/temoignages` & `TestimonialTableClient`) : suppression en lot et mise en ligne en lot.
+  - **Suppression Intégrale des Mock Data sur le Tableau de Bord Admin (`/admin`) :**
+    - `app/admin/page.tsx` interroge directement Prisma (`user.findMany`, `userAttempt.findMany`, décomptes de toutes les tables).
+    - Calcul en direct des taux de réussite NCLC 7+, nombre de simulations CBT et scores moyens.
+    - Bandeau de synchronisation en direct au sommet de la vue d'ensemble avec liens vers toutes les sections back-office.
 - [x] **Accès Super Admin & Profil Initial Déployé :**
   - **Création du Compte Super Admin dans Supabase Cloud (`mjsnrdjdazghksvpsbgm`) :**
     - Email : `admin@super4c2.com`, Mot de passe chiffré BCrypt (`Super4C2!Admin2026#`).

@@ -35,6 +35,7 @@ export async function createFaqAction(formData: FormData) {
 
   revalidatePath("/admin/faqs");
   revalidatePath("/");
+  revalidatePath("/faq");
   redirect(
     withToastQuery("/admin/faqs", {
       title: "FAQ créée",
@@ -57,6 +58,7 @@ export async function updateFaqAction(formData: FormData) {
 
   revalidatePath("/admin/faqs");
   revalidatePath("/");
+  revalidatePath("/faq");
   redirect(
     withToastQuery("/admin/faqs", {
       title: "FAQ mise à jour",
@@ -76,6 +78,7 @@ export async function deleteFaqAction(formData: FormData) {
 
   revalidatePath("/admin/faqs");
   revalidatePath("/");
+  revalidatePath("/faq");
   redirect(
     withToastQuery("/admin/faqs", {
       title: "FAQ supprimée",
@@ -103,6 +106,7 @@ export async function toggleFaqActiveAction(formData: FormData) {
 
   revalidatePath("/admin/faqs");
   revalidatePath("/");
+  revalidatePath("/faq");
   redirect(
     withToastQuery("/admin/faqs", {
       title: current.isActive ? "FAQ masquée" : "FAQ activée",
@@ -113,3 +117,31 @@ export async function toggleFaqActiveAction(formData: FormData) {
     })
   );
 }
+
+export async function batchDeleteFaqsAction(ids: string[]) {
+  if (!ids || ids.length === 0) return { count: 0 };
+
+  const result = await prisma.faq.deleteMany({
+    where: { id: { in: ids } },
+  });
+
+  revalidatePath("/admin/faqs");
+  revalidatePath("/");
+  revalidatePath("/faq");
+  return { count: result.count };
+}
+
+export async function batchToggleFaqsActiveAction(ids: string[], isActive: boolean) {
+  if (!ids || ids.length === 0) return { count: 0 };
+
+  const result = await prisma.faq.updateMany({
+    where: { id: { in: ids } },
+    data: { isActive },
+  });
+
+  revalidatePath("/admin/faqs");
+  revalidatePath("/");
+  revalidatePath("/faq");
+  return { count: result.count };
+}
+

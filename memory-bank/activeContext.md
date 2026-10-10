@@ -1,6 +1,37 @@
 # Active Context: Super4C2
 
-## 0. Chantiers Majeurs Récents : Consentement des Cookies & Résilience Auth, Déploiement Cloud Production Vercel & Supabase via MCP, Infrastructure SEO & OpenGraph (Option 4), Série Complète IELTS 18 (Option 3), Audio Studio 100% CO 39Q
+## 0. Chantiers Majeurs Récents : Synchronisation Temps Réel Base de Données Cloud & Batch Actions Back-Office, Consentement Cookies & Résilience Auth, Déploiement Cloud Production Vercel & Supabase
+
+### 0.000000000. Synchronisation Temps Réel Visiteurs/Admin & Actions en Lot (Batch Actions)
+- **Résolution de la Désynchronisation Visiteurs vs Back-Office :**
+  - **Origine du problème :** Les pages publiques utilisaient des tableaux de secours statiques (`DEFAULT_FAQS`, `DEFAULT_TESTIMONIALS`) en cas de base vide ou d'erreur locale, alors que les pages d'administration (`/admin/faqs`, `/admin/temoignages`, `/admin/leads`, `/admin`) interrogeaient directement Prisma. De plus, le fichier `.env` local pointait vers `localhost:5434` (Docker inactif) au lieu de Supabase Cloud.
+  - **Correction des Connexions :** `.env` local et production mis à jour avec les identifiants Supabase Cloud (`mjsnrdjdazghksvpsbgm`), pointant vers le pooler PostgreSQL AWS eu-west-1.
+  - **Peuplement Production Supabase Cloud :** 8 FAQs authentiques, 8 témoignages NCLC 7+, 4 articles de blog SEO, 5 leads de conciergerie, 5 abonnés newsletter, 2 séries d'examens (78 questions officielles TCF avec URLs audio ElevenLabs), 6 utilisateurs (1 Super Admin + 5 candidats) et 8 tentatives CBT notées.
+- **Actions en Lot (Batch Actions) sur les Tables Back-Office :**
+  - **Barre d'Action Flottante (`components/admin/admin-batch-action-bar.tsx`) :**
+    - Composant réutilisable glassmorphic avec animation Framer Motion.
+    - Compteur d'éléments sélectionnés, bouton de désélection, confirmation de suppression sécurisée.
+    - Bouton d'export CSV instantané utilisant un BOM UTF-8 (`\uFEFF`) pour préserver les accents français.
+  - **Table FAQs (`app/admin/faqs/page.tsx` & `components/admin/faq-table-client.tsx`) :**
+    - Multi-sélection par cases à cocher avec case "Tout sélectionner" (gestion de l'état indéterminé).
+    - Server actions : `batchDeleteFaqsAction` et `batchToggleFaqsActiveAction`.
+    - Export CSV des questions, réponses, catégories et statuts.
+    - Revalidation automatique des chemins `/admin/faqs`, `/` et `/faq`.
+  - **Table Conciergerie Leads (`app/admin/leads/page.tsx`, `components/admin/lead-list-client.tsx` & `lead-row-card.tsx`) :**
+    - Multi-sélection de cartes leads, mise en surbrillance dynamique.
+    - Server actions : `batchDeleteLeadsAction` et `batchUpdateLeadStatusAction` (NOUVEAU, EN_COURS, RESOLU, ARCHIVE).
+    - Export CSV des prospects (nom, email, téléphone, intent, statut, notes, date).
+  - **Table Témoignages (`app/admin/temoignages/page.tsx` & `components/admin/testimonial-table-client.tsx`) :**
+    - Multi-sélection, `batchDeleteTestimonialsAction`, `batchToggleTestimonialsActiveAction`.
+    - Export CSV des retours d'expérience et notes.
+- **Suppression des Mock Data dans le Tableau de Bord Principal (`app/admin/page.tsx` & `components/admin/admin-dashboard.tsx`) :**
+  - `AdminPage` interroge désormais les vraies métriques Prisma :
+    - Candidats réels : `users` (hors super admin) mappés dynamiquement avec leurs scores de tentatives.
+    - Total de simulations : `attempts.length` réelles.
+    - Taux de réussite NCLC 7+ : calculé sur les tentatives avec score >= 453 pts ou NCLC >= 7.
+    - Score moyen CE : moyenne des scores réels.
+    - Décomptes en direct des tables : FAQs, Témoignages, Leads, Blog, Séries.
+  - Bandeau d'information live en haut du tableau de bord confirmant la synchronisation 100% temps réel avec Supabase Cloud (0 donnée fictive).
 
 ### 0.00000000. Accès Super Admin, Profil Exécutif & Authentification Multi-Voies
 - **Création du Super Admin dans Supabase Cloud (`mjsnrdjdazghksvpsbgm`) :**

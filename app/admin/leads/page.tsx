@@ -10,9 +10,7 @@ import {
 import { AdminShell } from "@/components/admin/admin-shell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { AdminTablePagination } from "@/components/admin/AdminTablePagination";
-import { AdminListEmptyState } from "@/components/admin/AdminListEmptyState";
-import { LeadRowCard } from "@/components/admin/lead-row-card";
+import { LeadListClient } from "@/components/admin/lead-list-client";
 import { prisma } from "@/lib/prisma";
 import { getAdminPagination } from "@/lib/admin-pagination";
 import { toOptionalString } from "@/lib/admin-crud-utils";
@@ -243,32 +241,14 @@ export default async function AdminLeadsPage({ searchParams }: LeadsPageProps) {
           </div>
         </div>
 
-        {/* Liste des Demandes */}
-        {leads.length === 0 ? (
-          <AdminListEmptyState
-            kind="leads"
-            title="Aucune demande de contact"
-            description={
-              searchQuery || intentFilter || statusFilter
-                ? "Aucune demande ne correspond à vos filtres actuels."
-                : "La boîte de réception de la conciergerie est vide. Les messages envoyés depuis le formulaire de contact apparaîtront ici."
-            }
-          />
-        ) : (
-          <div className="space-y-4">
-            {leads.map((lead) => (
-              <LeadRowCard key={lead.id} lead={lead} />
-            ))}
-
-            {/* Pagination */}
-            <AdminTablePagination
-              currentPage={pagination.currentPage}
-              totalPages={pagination.totalPages}
-              basePath="/admin/leads"
-              search={searchQuery ?? undefined}
-            />
-          </div>
-        )}
+        {/* Liste des Demandes avec Batch Actions */}
+        <LeadListClient
+          leads={leads}
+          pagination={pagination}
+          searchQuery={searchQuery ?? undefined}
+          intentFilter={intentFilter}
+          statusFilter={statusFilter}
+        />
       </div>
     </AdminShell>
   );

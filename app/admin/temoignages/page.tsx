@@ -14,17 +14,10 @@ import {
 import { AdminShell } from "@/components/admin/admin-shell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ConfirmActionDialog } from "@/components/admin/ConfirmActionDialog";
-import { AdminTablePagination } from "@/components/admin/AdminTablePagination";
-import { AdminListEmptyState } from "@/components/admin/AdminListEmptyState";
+import { TestimonialTableClient } from "@/components/admin/testimonial-table-client";
 import { prisma } from "@/lib/prisma";
 import { getAdminPagination } from "@/lib/admin-pagination";
 import { toOptionalString } from "@/lib/admin-crud-utils";
-import {
-  deleteTestimonialAction,
-  toggleTestimonialActiveAction,
-  toggleTestimonialFeaturedAction,
-} from "./actions";
 
 export const metadata = {
   title: "Témoignages Candidats — Back-Office | Super4C2",
@@ -169,213 +162,14 @@ export default async function AdminTestimonialsPage({
           </div>
         </div>
 
-        {/* Table des Témoignages */}
-        {testimonials.length === 0 ? (
-          <AdminListEmptyState
-            kind="testimonials"
-            title="Aucun témoignage trouvé"
-            description={
-              searchQuery || countryFilter || status
-                ? "Aucun résultat ne correspond à vos critères de recherche actuels."
-                : "Commencez par ajouter le premier témoignage d'un candidat ayant obtenu son NCLC 7+."
-            }
-            actionHref="/admin/temoignages/ajouter"
-            actionLabel="Ajouter un Témoignage"
-          />
-        ) : (
-          <div className="rounded-xl border bg-card shadow-sm overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm text-left">
-                <thead className="bg-muted/40 text-xs uppercase text-muted-foreground font-semibold border-b">
-                  <tr>
-                    <th className="px-4 py-3 w-12 text-center">Ordre</th>
-                    <th className="px-4 py-3">Candidat</th>
-                    <th className="px-4 py-3">Pays & Score</th>
-                    <th className="px-4 py-3">Citation (Aperçu)</th>
-                    <th className="px-4 py-3 text-center">Étoiles</th>
-                    <th className="px-4 py-3 text-center">Statut</th>
-                    <th className="px-4 py-3 text-right">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y">
-                  {testimonials.map((t) => (
-                    <tr
-                      key={t.id}
-                      className="hover:bg-muted/30 transition-colors"
-                    >
-                      <td className="px-4 py-3 text-center font-mono text-xs text-muted-foreground">
-                        #{t.order}
-                      </td>
-
-                      <td className="px-4 py-3">
-                        <div className="flex items-center gap-3">
-                          {t.avatar ? (
-                            /* eslint-disable-next-line @next/next/no-img-element */
-                            <img
-                              src={t.avatar}
-                              alt={t.candidateName}
-                              className="h-9 w-9 rounded-full object-cover border"
-                            />
-                          ) : (
-                            <div className="h-9 w-9 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center font-bold text-xs text-primary shrink-0">
-                              {t.candidateName.slice(0, 2).toUpperCase()}
-                            </div>
-                          )}
-                          <div>
-                            <div className="flex items-center gap-1.5 font-semibold text-foreground">
-                              {t.candidateName}
-                              {t.isFeatured && (
-                                <Star className="h-3.5 w-3.5 fill-amber-500 text-amber-500" />
-                              )}
-                            </div>
-                            <span className="text-xs text-muted-foreground">
-                              Cible: {t.targetScore}
-                            </span>
-                          </div>
-                        </div>
-                      </td>
-
-                      <td className="px-4 py-3">
-                        <div className="space-y-1">
-                          <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
-                            <Globe className="h-3 w-3" />
-                            {t.country}
-                          </span>
-                          <div className="flex items-center gap-1.5">
-                            <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
-                              {t.achievedNclc}
-                            </span>
-                            {t.crsPointsGained > 0 && (
-                              <span className="text-[11px] text-muted-foreground font-mono">
-                                +{t.crsPointsGained} CRS
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                      </td>
-
-                      <td className="px-4 py-3 max-w-xs md:max-w-md">
-                        <p className="text-xs text-muted-foreground line-clamp-2 italic">
-                          &ldquo;{t.quote}&rdquo;
-                        </p>
-                      </td>
-
-                      <td className="px-4 py-3 text-center">
-                        <div className="inline-flex items-center gap-0.5 text-amber-500">
-                          {Array.from({ length: t.rating }).map((_, i) => (
-                            <Star key={i} className="h-3 w-3 fill-amber-500" />
-                          ))}
-                        </div>
-                      </td>
-
-                      <td className="px-4 py-3 text-center">
-                        <span
-                          className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold ${
-                            t.isActive
-                              ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
-                              : "bg-zinc-500/10 text-zinc-600 dark:text-zinc-400"
-                          }`}
-                        >
-                          {t.isActive ? "En ligne" : "Masqué"}
-                        </span>
-                      </td>
-
-                      <td className="px-4 py-3 text-right">
-                        <div className="flex items-center justify-end gap-1">
-                          {/* Toggle Featured */}
-                          <form action={toggleTestimonialFeaturedAction}>
-                            <input type="hidden" name="id" value={t.id} />
-                            <Button
-                              type="submit"
-                              variant="ghost"
-                              size="icon"
-                              className={`h-8 w-8 ${
-                                t.isFeatured
-                                  ? "text-amber-500 hover:text-amber-600"
-                                  : "text-muted-foreground hover:text-foreground"
-                              }`}
-                              title={
-                                t.isFeatured
-                                  ? "Retirer de la une"
-                                  : "Mettre en avant"
-                              }
-                            >
-                              <Star
-                                className={`h-4 w-4 ${
-                                  t.isFeatured ? "fill-amber-500" : ""
-                                }`}
-                              />
-                            </Button>
-                          </form>
-
-                          {/* Toggle Active */}
-                          <form action={toggleTestimonialActiveAction}>
-                            <input type="hidden" name="id" value={t.id} />
-                            <Button
-                              type="submit"
-                              variant="ghost"
-                              size="icon"
-                              className="h-8 w-8 text-muted-foreground hover:text-foreground"
-                              title={t.isActive ? "Masquer" : "Activer"}
-                            >
-                              {t.isActive ? (
-                                <EyeOff className="h-4 w-4" />
-                              ) : (
-                                <Eye className="h-4 w-4" />
-                              )}
-                            </Button>
-                          </form>
-
-                          {/* Modifier */}
-                          <Link href={`/admin/temoignages/${t.id}`}>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="h-8 w-8 text-muted-foreground hover:text-foreground"
-                              title="Modifier"
-                            >
-                              <Pencil className="h-4 w-4" />
-                            </Button>
-                          </Link>
-
-                          <form id={`del-testimonial-${t.id}`} action={deleteTestimonialAction}>
-                            <input type="hidden" name="id" value={t.id} />
-                          </form>
-
-                          {/* Supprimer Dialog */}
-                          <ConfirmActionDialog
-                            trigger={
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive"
-                                title="Supprimer le témoignage"
-                              >
-                                <Trash2 className="h-3.5 w-3.5" />
-                              </Button>
-                            }
-                            title="Supprimer ce témoignage ?"
-                            description={`Êtes-vous sûr de vouloir supprimer définitivement le témoignage de ${t.candidateName} ? Cette action est irréversible.`}
-                            confirmLabel="Supprimer définitivement"
-                            formId={`del-testimonial-${t.id}`}
-                          />
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
-            {/* Pagination */}
-            <AdminTablePagination
-              currentPage={pagination.currentPage}
-              totalPages={pagination.totalPages}
-              basePath="/admin/temoignages"
-              search={searchQuery ?? undefined}
-            />
-          </div>
-        )}
+        {/* Table des Témoignages avec Batch Actions */}
+        <TestimonialTableClient
+          testimonials={testimonials}
+          pagination={pagination}
+          searchQuery={searchQuery ?? undefined}
+          countryFilter={countryFilter ?? undefined}
+          statusFilter={status ?? undefined}
+        />
       </div>
     </AdminShell>
   );

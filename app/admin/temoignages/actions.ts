@@ -154,3 +154,29 @@ export async function toggleTestimonialFeaturedAction(formData: FormData) {
     })
   );
 }
+
+export async function batchDeleteTestimonialsAction(ids: string[]) {
+  if (!ids || ids.length === 0) return { count: 0 };
+
+  const result = await prisma.testimonial.deleteMany({
+    where: { id: { in: ids } },
+  });
+
+  revalidatePath("/admin/temoignages");
+  revalidatePath("/");
+  return { count: result.count };
+}
+
+export async function batchToggleTestimonialsActiveAction(ids: string[], isActive: boolean) {
+  if (!ids || ids.length === 0) return { count: 0 };
+
+  const result = await prisma.testimonial.updateMany({
+    where: { id: { in: ids } },
+    data: { isActive },
+  });
+
+  revalidatePath("/admin/temoignages");
+  revalidatePath("/");
+  return { count: result.count };
+}
+

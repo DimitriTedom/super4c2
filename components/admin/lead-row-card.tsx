@@ -46,6 +46,8 @@ interface LeadData {
 
 interface LeadRowCardProps {
   lead: LeadData;
+  isSelected?: boolean;
+  onToggleSelect?: () => void;
 }
 
 const INTENT_LABELS: Record<string, { label: string; color: string }> = {
@@ -93,7 +95,7 @@ const STATUS_CONFIG: Record<
   },
 };
 
-export function LeadRowCard({ lead }: LeadRowCardProps) {
+export function LeadRowCard({ lead, isSelected, onToggleSelect }: LeadRowCardProps) {
   const [showNotesForm, setShowNotesForm] = useState(false);
   const [notes, setNotes] = useState(lead.adminNotes || "");
 
@@ -105,10 +107,25 @@ export function LeadRowCard({ lead }: LeadRowCardProps) {
   const statusMeta = STATUS_CONFIG[lead.status];
 
   return (
-    <div className="rounded-xl border bg-card p-5 shadow-xs hover:border-primary/30 transition-all space-y-4">
+    <div
+      className={`rounded-xl border bg-card p-5 shadow-xs transition-all space-y-4 ${
+        isSelected
+          ? "border-primary/60 bg-primary/5 dark:bg-primary/10 ring-1 ring-primary/40"
+          : "hover:border-primary/30"
+      }`}
+    >
       {/* Top Header: Identity + Intent + Status Select */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b pb-3">
         <div className="flex items-center gap-3">
+          {onToggleSelect && (
+            <input
+              type="checkbox"
+              checked={isSelected || false}
+              onChange={onToggleSelect}
+              aria-label={`Sélectionner la demande de ${lead.name}`}
+              className="h-4 w-4 rounded border-border text-primary focus:ring-primary/40 cursor-pointer"
+            />
+          )}
           <div className="h-10 w-10 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center font-bold text-sm text-primary shrink-0">
             {lead.name.slice(0, 2).toUpperCase()}
           </div>

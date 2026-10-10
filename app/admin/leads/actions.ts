@@ -73,3 +73,27 @@ export async function deleteLeadAction(formData: FormData) {
     })
   );
 }
+
+export async function batchDeleteLeadsAction(ids: string[]) {
+  if (!ids || ids.length === 0) return { count: 0 };
+
+  const result = await prisma.contactLead.deleteMany({
+    where: { id: { in: ids } },
+  });
+
+  revalidatePath("/admin/leads");
+  return { count: result.count };
+}
+
+export async function batchUpdateLeadStatusAction(ids: string[], status: LeadStatus) {
+  if (!ids || ids.length === 0) return { count: 0 };
+
+  const result = await prisma.contactLead.updateMany({
+    where: { id: { in: ids } },
+    data: { status },
+  });
+
+  revalidatePath("/admin/leads");
+  return { count: result.count };
+}
+
