@@ -12,7 +12,7 @@ export const metadata: Metadata = {
     title: "Tarifs & Formules NCLC 7 / CLB 9 | Super4C2",
     description:
       "Des formules claires pour réussir votre TCF Canada et décrocher le palier NCLC 7 (+50 points Entrée Express) et CLB 9. Accès illimité aux simulateurs CBT officiels.",
-    images: ["/brand/cbt-platform-preview.jpg"],
+    images: ["/brand/og-image-super4c2.jpg"],
   },
 };
 

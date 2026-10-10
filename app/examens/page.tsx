@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     title: "Séries d'Examens & Parcours CBT | Super4C2",
     description:
       "Roadmap d'entraînement officiel TCF Canada & IELTS : simulateur CBT officiel, 4 épreuves chronométrées et correction IA immédiate.",
-    images: ["/brand/cbt-platform-preview.jpg"],
+    images: ["/brand/og-image-simulator.jpg"],
   },
 };
 

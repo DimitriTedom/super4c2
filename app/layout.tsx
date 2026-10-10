@@ -83,10 +83,10 @@ export const metadata: Metadata = {
       "Simulateur CBT officiel, 4 épreuves chronométrées, correction IA instantanée et examinateur vocal IA pour décrocher le NCLC 7+ (+50 pts CRS) et CLB 9.",
     images: [
       {
-        url: "/brand/cbt-platform-preview.jpg",
+        url: "/brand/og-image-super4c2.jpg",
         width: 1200,
         height: 630,
-        alt: "Super4C2 — Simulateur d'Examen CBT Officiel TCF Canada & IELTS",
+        alt: "Super4C2 — Plateforme d'Examen CBT Officiel TCF Canada, TEF & IELTS",
       },
     ],
   },
@@ -95,7 +95,7 @@ export const metadata: Metadata = {
     title: "Super4C2 | Préparation TCF, TEF Canada & IELTS — Objectif C2 / CLB 9",
     description:
       "Simulateur CBT officiel, 4 épreuves chronométrées et examinateur vocal IA pour maximiser vos points Entrée Express Canada.",
-    images: ["/brand/cbt-platform-preview.jpg"],
+    images: ["/brand/og-image-super4c2.jpg"],
     creator: "@super4c2",
   },
   robots: {
