@@ -1,7 +1,12 @@
 # Progress Tracking: Super4C2
 
 ## Ce qui est Réalisé
+- [x] **Tarification Géolocalisée Intelligente & Architecture Multi-Passerelle (Chantier 9 Réalisé) :**
+  - Moteur de géolocalisation et devises locales (`lib/pricing/geo-pricing.ts`) éliminant le désordre multi-monnaies d'Objectif Canada : affichage d'une monnaie unique propre adaptée au pays du candidat (FCFA pour l'Afrique Centrale et de l'Ouest, EUR pour la France et l'Europe, CAD pour le Canada, USD pour l'international).
+  - Composant de tarification haut de gamme inspiré de 21st.dev (`components/pricing/geo-pricing-section.tsx`) et refonte de `/tarifs` avec support Mobile Money (MTN MoMo, Orange Money, Wave) et Cartes Bancaires/Apple Pay, badges de réassurance et garanties.
+  - Document d'architecture pérenne complet (`docs/specs/07-payment-and-geo-subscription-architecture.md`) définissant le schéma Prisma `Subscription` & `PaymentTransaction`, les webhooks idempotents et les règles de Paywall.
 - [x] **États de Chargement UI Globaux & Curseur Feutre Surligneur (Chantier 7 Réalisé) :** Composant `Button` étendu avec `loading` et `loadingText` (spinner `<Loader2 className="animate-spin" />` et `disabled`), fonction utilitaire `triggerGlobalLoading` activant la barre laser de sommet de page sur toutes les actions critiques (soumission écrit, validation fin d'examen CBT, sauvegarde de profil), et curseur SVG haute précision feutre surligneur ambre `.cursor-highlighter` avec mire rouge pour l'outil de surlignage interactif en CE et dans la vitrine produit.
+
 - [x] **Guide Tutoriel Newcomers, Bouton Communauté VIP & Architecture IELTS Bi-filière (Chantier 8 Réalisé) :**
   - Guide interactif d'onboarding en 5 étapes (`NewcomerGuideModal`) avec progression laser et icônes 3D, déclenché automatiquement pour les nouveaux arrivants et accessible à la demande.
   - Bouton flottant officiel avec bouclier 3D VIP Shield menant directement à `/communaute`, et suppression des widgets WhatsApp tiers.
