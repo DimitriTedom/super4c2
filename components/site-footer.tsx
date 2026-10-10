@@ -281,6 +281,11 @@ export function SiteFooter() {
                   Confidentialité des Données
                 </Link>
               </li>
+              <li>
+                <Link href="/cookies" className="transition-colors hover:text-primary">
+                  Cookies &amp; Traceurs
+                </Link>
+              </li>
               <li className="pt-2 border-t border-border/40">
                 <Link
                   href="/admin"
@@ -315,6 +320,9 @@ export function SiteFooter() {
               </Link>
               <Link href="/confidentialite" className="hover:text-primary transition-colors text-[11px]">
                 Protection des Données
+              </Link>
+              <Link href="/cookies" className="hover:text-primary transition-colors text-[11px]">
+                Gestion des Cookies
               </Link>
               <a
                 href="mailto:contact@super4c2.com"

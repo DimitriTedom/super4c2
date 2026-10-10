@@ -7,9 +7,11 @@ import { prisma } from "@/lib/prisma";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { signInSchema, signUpSchema } from "@/lib/validations";
 
+const DEMO_USER_ID = "00000000-0000-0000-0000-000000000001";
+
 export async function signInDemoCandidateAction(next?: string) {
   const cookieStore = await cookies();
-  cookieStore.set("sb-super4c2-demo-candidate", "super4c2_demo_candidate_token", {
+  cookieStore.set("sb-super4c2-demo-candidate", DEMO_USER_ID, {
     path: "/",
     httpOnly: true,
     sameSite: "lax",
@@ -17,14 +19,15 @@ export async function signInDemoCandidateAction(next?: string) {
   });
 
   await prisma.user.upsert({
-    where: { id: "demo-candidate-c4c2" },
+    where: { id: DEMO_USER_ID },
     update: { email: "candidat.demo@super4c2.com" },
     create: {
-      id: "demo-candidate-c4c2",
+      id: DEMO_USER_ID,
       email: "candidat.demo@super4c2.com",
       profile: {
         create: {
           displayName: "Dimitri (Candidat Test)",
+          targetNclc: 7,
         },
       },
     },
@@ -53,7 +56,7 @@ export async function signInAction(input: z.infer<typeof signInSchema> & { next?
   }
 
   try {
-    const { error } = await supabase.auth.signInWithPassword({
+    const { data, error } = await supabase.auth.signInWithPassword({
       email: parsed.data.email,
       password: parsed.data.password,
     });
@@ -62,9 +65,28 @@ export async function signInAction(input: z.infer<typeof signInSchema> & { next?
       return { ok: false as const, error: error.message };
     }
 
+    if (data?.user) {
+      const user = data.user;
+      // Synchronisation de sécurité avec la base PostgreSQL
+      await prisma.user.upsert({
+        where: { id: user.id },
+        update: { email: user.email ?? parsed.data.email },
+        create: {
+          id: user.id,
+          email: user.email ?? parsed.data.email,
+          profile: {
+            create: {
+              displayName: user.user_metadata?.displayName || user.email?.split("@")[0] || "Candidat",
+              targetNclc: 7,
+            },
+          },
+        },
+      });
+    }
+
     return { ok: true as const, redirectTo: input.next ?? "/dashboard" };
   } catch {
-    // If local dev without Supabase GoTrue daemon, provide informative guidance
+    // If Supabase GoTrue daemon is temporarily unreachable, offer demo fallback
     return {
       ok: false as const,
       error: "Serveur d'authentification Supabase injoignable. Utilisez le bouton 'Accès Démo Candidat'.",
@@ -84,6 +106,11 @@ export async function signUpAction(input: z.infer<typeof signUpSchema>) {
       const { data, error } = await supabase.auth.signUp({
         email: parsed.data.email,
         password: parsed.data.password,
+        options: {
+          data: {
+            displayName: parsed.data.displayName?.trim() || null,
+          },
+        },
       });
 
       if (!error && data?.user) {
@@ -97,25 +124,40 @@ export async function signUpAction(input: z.infer<typeof signUpSchema>) {
             profile: {
               create: {
                 displayName: parsed.data.displayName?.trim() || null,
+                targetNclc: 7,
               },
             },
           },
         });
+
+        // Si la session n'est pas établie immédiatement (confirmation par e-mail requise par Supabase)
+        if (!data.session) {
+          return {
+            ok: true as const,
+            redirectTo: "/auth/login?registered=pending_confirmation",
+            message: "Votre compte a été créé. Si vous avez reçu un e-mail de confirmation, veuillez valider votre lien avant de vous connecter.",
+          };
+        }
+
         return { ok: true as const, redirectTo: "/dashboard" };
+      }
+
+      if (error) {
+        return { ok: false as const, error: error.message };
       }
     } catch {
       // In local dev without Supabase auth GoTrue daemon, continue to local registration below
     }
   }
 
-  // Local candidate registration fallback
-  const candidateId = `candidat-${Date.now()}`;
+  // Local candidate registration fallback with valid RFC 4122 UUID
+  const candidateId = crypto.randomUUID();
   await prisma.user.upsert({
     where: { email: parsed.data.email.toLowerCase() },
     update: {
       profile: {
         upsert: {
-          create: { displayName: parsed.data.displayName?.trim() || null },
+          create: { displayName: parsed.data.displayName?.trim() || null, targetNclc: 7 },
           update: { displayName: parsed.data.displayName?.trim() || null },
         },
       },
@@ -126,6 +168,7 @@ export async function signUpAction(input: z.infer<typeof signUpSchema>) {
       profile: {
         create: {
           displayName: parsed.data.displayName?.trim() || null,
+          targetNclc: 7,
         },
       },
     },

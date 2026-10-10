@@ -42,7 +42,11 @@ export function RegisterForm() {
         toast.error(res.error || "Impossible de créer le compte. Veuillez vérifier vos informations.");
         return;
       }
-      toast.success("Compte créé avec succès ! Bienvenue sur Super4C2.");
+      if ("message" in res && res.message) {
+        toast.info(res.message);
+      } else {
+        toast.success("Compte créé avec succès ! Bienvenue sur Super4C2.");
+      }
       router.push(res.redirectTo);
       router.refresh();
     });
@@ -156,6 +160,19 @@ export function RegisterForm() {
             </span>
           )}
         </Button>
+
+        {/* Legal Consent Notice */}
+        <p className="text-[11px] text-muted-foreground text-center leading-relaxed px-2">
+          En créant un compte, vous acceptez nos{" "}
+          <Link href="/mentions-legales" className="underline hover:text-foreground">
+            Conditions d&apos;Utilisation
+          </Link>{" "}
+          et notre{" "}
+          <Link href="/confidentialite" className="underline hover:text-foreground">
+            Politique de Confidentialité
+          </Link>
+          .
+        </p>
 
         {/* Already have account */}
         <div className="text-center pt-2">

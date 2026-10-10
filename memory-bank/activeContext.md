@@ -1,6 +1,18 @@
 # Active Context: Super4C2
 
-## 0. Chantiers Majeurs Récents : Production & Déploiement SEO/OpenGraph/Sitemap (Option 4), Intégration Complète Cambridge IELTS 18 General Training (Série `ielts-gen-18-1`), Audio Studio 100% CO 39Q, Icones 3D Premium, Tarification SasPay, Examen Blanc 4 Épreuves & Carnet d'Erreurs SRS
+## 0. Chantiers Majeurs Récents : Déploiement Cloud Production Vercel & Supabase via MCP, Infrastructure SEO & OpenGraph (Option 4), Série Complète IELTS 18 (Option 3), Audio Studio 100% CO 39Q, Icônes 3D, Tarification SasPay, Examen Blanc 4 Épreuves & Carnet d'Erreurs SRS
+
+### 0.00000. Déploiement Cloud Production — Vercel & Supabase Cloud
+- **Supabase Cloud (`mjsnrdjdazghksvpsbgm`) :**
+  - Migration DDL Prisma appliquée avec succès via `supabase.apply_migration`.
+  - 13 tables créées et opérationnelles dans le schéma `public` (`users`, `profiles`, `exam_series`, `questions`, `written_series`, `written_tasks`, `user_attempts`, `blog_posts`, `faqs`, `testimonials`, `newsletter_subscribers`, `contact_leads`, `notifications`).
+  - Avis de sécurité de l'advisor Supabase notifié pour activation progressive du Row Level Security (RLS).
+- **Projet Vercel Production (`prj_pkvMOSv4rwBg6JgmQtkGX8P1vq29`) :**
+  - Nom : `super4c2`, Framework : `nextjs`.
+  - Dépôt Git : connecté à `DimitriTedom/super4c2` (branche `main`).
+  - Variables d'environnement de production injectées (`DATABASE_URL`, `DIRECT_URL`, `NEXT_PUBLIC_APP_URL`, `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `ELEVENLABS_API_KEY`, `DEEPSEEK_API_KEY`).
+  - Déploiement `dpl_7yYuU93X3RPT8ERSHse4zGzYqhHM` compilé avec succès (`READY`).
+  - **URL officielle en ligne :** [https://super4c2.vercel.app](https://super4c2.vercel.app).
 
 ### 0.0000. Option 4 — Infrastructure SEO, OpenGraph, Sitemap Dynamique & Build de Production Validé
 - **Respect Intégral de la Règle d'Or en 3 Étapes (AGENTS.md) :**

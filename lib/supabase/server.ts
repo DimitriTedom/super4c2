@@ -10,10 +10,15 @@ export async function createSupabaseServerClient() {
   const demoCookie = cookieStore.get("sb-super4c2-demo-candidate")?.value;
 
   if (demoCookie) {
-    const dbUser = await prisma.user.findFirst({
-      where: { OR: [{ id: demoCookie }, { id: "demo-candidate-c4c2" }] },
-      include: { profile: true },
-    });
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(demoCookie);
+    const dbUser = isUuid
+      ? await prisma.user.findFirst({
+          where: { id: demoCookie },
+          include: { profile: true },
+        })
+      : null;
+
+    const fallbackId = "00000000-0000-0000-0000-000000000001";
 
     return {
       auth: {
@@ -21,7 +26,7 @@ export async function createSupabaseServerClient() {
           return {
             data: {
               user: {
-                id: dbUser?.id || "demo-candidate-c4c2",
+                id: dbUser?.id || fallbackId,
                 email: dbUser?.email || "candidat.demo@super4c2.com",
                 app_metadata: {},
                 user_metadata: { displayName: dbUser?.profile?.displayName || "Dimitri (Candidat Test)" },

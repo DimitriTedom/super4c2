@@ -18,12 +18,16 @@ export const metadata = {
 };
 
 export default async function AddWrittenSeriesPage() {
-  // Suggest next seriesNumber
-  const lastSeries = await prisma.writtenSeries.findFirst({
-    orderBy: { seriesNumber: "desc" },
-    select: { seriesNumber: true },
-  });
-  const suggestedNumber = (lastSeries?.seriesNumber ?? 100) + 1;
+  let suggestedNumber = 101;
+  try {
+    const lastSeries = await prisma.writtenSeries.findFirst({
+      orderBy: { seriesNumber: "desc" },
+      select: { seriesNumber: true },
+    });
+    suggestedNumber = (lastSeries?.seriesNumber ?? 100) + 1;
+  } catch {
+    suggestedNumber = 101;
+  }
 
   return (
     <AdminShell>

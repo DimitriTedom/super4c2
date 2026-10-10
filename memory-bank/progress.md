@@ -1,5 +1,13 @@
 # Progress Tracking: Super4C2
 
+- [x] **Déploiement Cloud Production — Vercel & Supabase Cloud via MCP :**
+  - **Base de Données Cloud Supabase (`mjsnrdjdazghksvpsbgm`) :**
+    - Application intégrale du schéma Prisma PostgreSQL via `supabase.apply_migration` (13 tables relationnelles : `users`, `profiles`, `exam_series`, `questions`, `written_series`, `written_tasks`, `user_attempts`, `blog_posts`, `faqs`, `testimonials`, `newsletter_subscribers`, `contact_leads`, `notifications`).
+    - Audit de sécurité : identification des recommandations RLS (Row Level Security).
+  - **Projet de Production Vercel (`prj_pkvMOSv4rwBg6JgmQtkGX8P1vq29` / `super4c2`) :**
+    - Configuration automatique de l'ensemble des variables d'environnement de production via `vercel.create_project_env` (`DATABASE_URL`, `DIRECT_URL`, `NEXT_PUBLIC_APP_URL`, `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `ELEVENLABS_API_KEY`, `DEEPSEEK_API_KEY`).
+    - Déclenchement du build de production Next.js (`dpl_7yYuU93X3RPT8ERSHse4zGzYqhHM`) directement depuis la branche `main` du dépôt GitHub `DimitriTedom/super4c2`.
+    - Déploiement réussi avec `readyState: READY` et assignation du domaine de production : **`https://super4c2.vercel.app`** (200 OK en direct).
 - [x] **Option 4 — Production, Déploiement, SEO & OpenGraph Standardisé :**
   - Brand Canvas ([docs/brand/seo-opengraph-canvas.md](file:///d:/SnowDev/Documents/super4c2/docs/brand/seo-opengraph-canvas.md)) & Document de Spécification ([docs/specs/10-seo-opengraph-production-deployment.md](file:///d:/SnowDev/Documents/super4c2/docs/specs/10-seo-opengraph-production-deployment.md)).
   - Balisage Schema.org JSON-LD officiel (`components/seo/json-ld.tsx`) pour `EducationalOrganization`, `Course` et `WebSite`.

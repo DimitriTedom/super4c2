@@ -12,6 +12,7 @@ import { NewcomerGuideModal } from "@/components/onboarding/newcomer-guide-modal
 import { FloatingCommunityButton } from "@/components/community/floating-community-button";
 
 import { JsonLd } from "@/components/seo/json-ld";
+import { CookieConsentBanner } from "@/components/legal/cookie-consent-banner";
 
 const bricolage = Bricolage_Grotesque({
   subsets: ["latin"],
@@ -130,6 +131,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <AppShell header={<SiteHeader />}>{children}</AppShell>
             <FloatingCommunityButton />
             <NewcomerGuideModal />
+            <CookieConsentBanner />
             <Toaster />
             <ToastifyContainer />
           </LanguageProvider>
