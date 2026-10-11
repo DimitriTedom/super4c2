@@ -55,8 +55,28 @@ export async function POST(req: Request) {
       }
     }
 
+    // Associer l'utilisateur authentifié s'il est connecté
+    let userId: string | null = null;
+    try {
+      const { createSupabaseServerClient } = await import("@/lib/supabase/server");
+      const supabase = await createSupabaseServerClient();
+      const authUser = supabase ? (await supabase.auth.getUser()).data.user : null;
+      if (authUser?.id) {
+        const dbUser = await prisma.user.findUnique({
+          where: { id: authUser.id },
+          select: { id: true },
+        });
+        if (dbUser) {
+          userId = dbUser.id;
+        }
+      }
+    } catch (e) {
+      console.warn("Échec de récupération de l'utilisateur pour userAttempt:", e);
+    }
+
     const attempt = await prisma.userAttempt.create({
       data: {
+        userId,
         discipline,
         seriesId: validSeriesId,
         rawScore,

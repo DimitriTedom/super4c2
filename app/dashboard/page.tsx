@@ -43,8 +43,9 @@ export default async function DashboardPage() {
     redirect("/auth/login?next=/dashboard");
   }
 
-  // Récupération des dernières tentatives d'examen en base
+  // Récupération des dernières tentatives d'examen du candidat connecté
   const recentAttempts: AttemptSummary[] = await prisma.userAttempt.findMany({
+    where: { userId: user.id },
     orderBy: { createdAt: "desc" },
     take: 5,
   });
@@ -497,68 +498,87 @@ export default async function DashboardPage() {
 
             <div className="rounded-2xl border bg-card overflow-hidden shadow-xs">
               <div className="divide-y">
-                {recentAttempts.map((attempt) => {
-                  const disciplineName =
-                    attempt.discipline === "COMPREHENSION_ECRITE"
-                      ? "Compréhension Écrite"
-                      : attempt.discipline === "COMPREHENSION_ORALE"
-                      ? "Compréhension Orale"
-                      : attempt.discipline === "EXPRESSION_ECRITE"
-                      ? "Expression Écrite"
-                      : "Expression Orale";
-
-                  const isNclc7 = attempt.nclcLevel >= 7;
-
-                  return (
-                    <div
-                      key={attempt.id}
-                      className="flex flex-col sm:flex-row sm:items-center justify-between p-4 sm:px-6 hover:bg-muted/40 transition-colors gap-3"
-                    >
-                      <div className="space-y-1">
-                        <div className="flex items-center gap-2">
-                          <span className="font-bold text-sm text-foreground">
-                            {disciplineName}
-                          </span>
-                          <span
-                            className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
-                              isNclc7
-                                ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/30"
-                                : "bg-amber-500/10 text-amber-600 border-amber-500/30"
-                            }`}
-                          >
-                            NCLC {attempt.nclcLevel}
-                          </span>
-                        </div>
-                        <p className="text-xs text-muted-foreground">
-                          {new Date(attempt.createdAt).toLocaleDateString("fr-FR", {
-                            day: "numeric",
-                            month: "long",
-                            year: "numeric",
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })}
-                        </p>
-                      </div>
-
-                      <div className="flex items-center gap-4">
-                        <div className="text-right">
-                          <span className="font-mono text-sm font-bold text-foreground">
-                            {attempt.tcfScaledScore} / 699
-                          </span>
-                          <span className="block text-[10px] text-muted-foreground">
-                            Score échelonné TCF
-                          </span>
-                        </div>
-
-                        {attempt.crsPointsUnlocked > 0 && (
-                          <span className="rounded-lg bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 text-xs font-bold text-emerald-600 dark:text-emerald-400">
-                            +50 pts CRS
-                          </span>
-                        )}
-                      </div>
+                {recentAttempts.length === 0 ? (
+                  <div className="p-8 text-center space-y-3">
+                    <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                      <Play className="h-6 w-6 ml-0.5" />
                     </div>
-                  );
-                })}
+                    <div className="space-y-1">
+                      <p className="text-sm font-bold text-foreground">
+                        Aucune simulation officielle enregistrée
+                      </p>
+                      <p className="text-xs text-muted-foreground max-w-md mx-auto">
+                        Lancez votre première simulation officielle CBT pour mesurer votre niveau initial et débloquer vos points CRS Entrée Express.
+                      </p>
+                    </div>
+                    <Button asChild size="sm" className="mt-2 font-semibold">
+                      <Link href="/examens">Lancer ma première épreuve CBT</Link>
+                    </Button>
+                  </div>
+                ) : (
+                  recentAttempts.map((attempt) => {
+                    const disciplineName =
+                      attempt.discipline === "COMPREHENSION_ECRITE"
+                        ? "Compréhension Écrite"
+                        : attempt.discipline === "COMPREHENSION_ORALE"
+                        ? "Compréhension Orale"
+                        : attempt.discipline === "EXPRESSION_ECRITE"
+                        ? "Expression Écrite"
+                        : "Expression Orale";
+
+                    const isNclc7 = attempt.nclcLevel >= 7;
+
+                    return (
+                      <div
+                        key={attempt.id}
+                        className="flex flex-col sm:flex-row sm:items-center justify-between p-4 sm:px-6 hover:bg-muted/40 transition-colors gap-3"
+                      >
+                        <div className="space-y-1">
+                          <div className="flex items-center gap-2">
+                            <span className="font-bold text-sm text-foreground">
+                              {disciplineName}
+                            </span>
+                            <span
+                              className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
+                                isNclc7
+                                  ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/30"
+                                  : "bg-amber-500/10 text-amber-600 border-amber-500/30"
+                              }`}
+                            >
+                              NCLC {attempt.nclcLevel}
+                            </span>
+                          </div>
+                          <p className="text-xs text-muted-foreground">
+                            {new Date(attempt.createdAt).toLocaleDateString("fr-FR", {
+                              day: "numeric",
+                              month: "long",
+                              year: "numeric",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })}
+                          </p>
+                        </div>
+
+                        <div className="flex items-center gap-4">
+                          <div className="text-right">
+                            <span className="font-mono text-sm font-bold text-foreground">
+                              {attempt.tcfScaledScore} / 699
+                            </span>
+                            <span className="block text-[10px] text-muted-foreground">
+                              Score échelonné TCF
+                            </span>
+                          </div>
+
+                          {attempt.crsPointsUnlocked > 0 && (
+                            <span className="rounded-lg bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 text-xs font-bold text-emerald-600 dark:text-emerald-400">
+                              +50 pts CRS
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })
+                )}
               </div>
             </div>
           </div>

@@ -1,3 +1,28 @@
+- [x] **Audit & Résolution des Erreurs UI et Logiques Côté Utilisateur :**
+  - **Support Multimédia & Transcription CO dans le Bilan d'Examen (`components/exam/exam-result-summary.tsx`) :**
+    - Ajout du bouton d'écoute audio d'extrait sonorisé (gestion fallback Web Speech Synthesis).
+    - Ajout du tiroir de transcription de dialogue audio officiel.
+    - Ajout de l'aperçu du support visuel 16:9 officiel pour les questions avec document image.
+  - **Matrice d'Évaluation Rapide & Navigation Anti-Scroll Infini (`components/exam/exam-result-summary.tsx`) :**
+    - Grille de pastilles 1 à N colorées (vert réussite, rouge erreur, ambre signalée).
+    - Clic permettant un saut fluide instantané vers la question avec surbrillance (`ring-2 ring-primary`).
+  - **Résilience du Lecteur Audio CBT (`components/exam/audio-player-cbt.tsx`) :**
+    - `whitespace-nowrap` sur les sélecteurs de vitesse `0.8x`, `1.0x`, `1.2x` empêchant les retours à la ligne indésirables.
+    - Catch de la promesse `.play()` et gestionnaire `onError` sur `<audio>` avec bascule automatique vers SpeechSynthesis en cas de blocage autoplay ou panne réseau.
+  - **Maintien du Format Officiel FEI sur la Grille de Questions (`components/exam/question-nav-grid.tsx`) :**
+    - Calibrage des boutons et paddings (`gap-1 sm:gap-1.5`, `h-8 w-8 sm:h-8 sm:w-8 lg:h-8.5 lg:w-8.5 xl:h-9 xl:w-9`) pour tenir sur une seule ligne continue sur écrans 1366px+.
+  - **Élimination de la Double Barre de Progression (`components/app-shell.tsx`) :**
+    - Retrait de `TopBodyLoader` redondant avec `NavigationProgressBar`.
+  - **Synchronisation Base de Données Temps Réel sur Tarifs (`app/tarifs/page.tsx`) :**
+    - Câblage de `prisma.faq.findMany()` et transmission de `initialFaqs={faqs}` à `<FaqSection />`.
+  - **Sécurisation & Isolation des Données Candidat (`app/dashboard/page.tsx`, `app/api/exam/attempt/route.ts`, `app/api/ai/evaluate-written/route.ts`) :**
+    - Récupération de `user.id` depuis Supabase Auth et persistance dans `userAttempt`.
+    - Filtrage strict `where: { userId: user.id }` sur le dashboard évitant l'affichage des tentatives d'autrui.
+    - État vide accueillant avec bouton direct de lancement pour les nouveaux inscrits.
+  - **Précision des Drapeaux Témoignages (`components/testimonials-section.tsx`) :**
+    - Remplacement de l'indexation modulo par détection textuelle du pays (`getCountryFlag`).
+  - **Nettoyage Cookie Admin lors du Logout (`app/logout/route.ts`) :**
+    - Suppression explicite de `super4c2_admin_token` lors de la déconnexion.
 - [x] **Système Global de Loaders & Feedback Visuel Instantané de Navigation (Next.js 15 App Router) :**
   - **Résolution du Gel Visuel au Clic sur les Menus & Liens Internes :**
     - Suppression de l'effet d'attente aveugle lors des requêtes serveur et transitions de routes.

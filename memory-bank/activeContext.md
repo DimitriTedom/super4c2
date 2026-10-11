@@ -1,8 +1,33 @@
 # Active Context: Super4C2
 
-## 0. Chantiers Majeurs Récents : Système Global de Loaders & Feedback de Navigation, Synchronisation Temps Réel Base Cloud & Batch Actions Back-Office, Déploiement Cloud Production Vercel & Supabase
+## 0. Chantiers Majeurs Récents : Audit & Résolution des Erreurs UI et Logiques Côté Utilisateur, Système Global de Loaders & Feedback de Navigation, Synchronisation Temps Réel Base Cloud & Batch Actions Back-Office, Déploiement Cloud Production Vercel & Supabase
 
-### 0.0000000000. Système Global de Loaders & Feedback de Navigation Instantané (Next.js 15 App Router)
+### 0.00000000000. Audit & Résolution des Erreurs UI et Logiques Côté Utilisateur
+- **Problématiques identifiées et résolues :**
+  1. **Bilan d'Examen & Révision CO Incomplète (`components/exam/exam-result-summary.tsx`) :**
+     - *Problème :* Dans le récapitulatif des résultats, seules les épreuves de CE disposaient d'un aperçu du document source (`q.documentText`). Pour la Compréhension Orale (CO), les transcriptions audio (`q.audioTranscript`), les extraits sonores (`q.audioUrl`) et les illustrations de situation (`q.documentImageUrl`) étaient totalement absents de la vue de correction.
+     - *Correction :* Intégration d'un lecteur d'écoute d'extrait audio dédié, d'un tiroir de transcription du dialogue sonore et d'un affichage du support visuel officiel 16:9 pour chaque question CO.
+  2. **Page Height Excessive & Absence de Matrice de Saut Rapide (`components/exam/exam-result-summary.tsx`) :**
+     - *Problème :* 39 questions affichées consécutivement créaient un défilement vertical démesuré (plus de 18 000 px) sans repère visuel.
+     - *Correction :* Création d'une **Matrice d'Évaluation Rapide** (grille compacte des questions 1 à N avec pastilles colorées vert/rouge/ambre). Clic sur n'importe quel numéro scrollant de manière fluide jusqu'à la question avec surbrillance d'accentuation temporaire (`ring-2 ring-primary`).
+  3. **Lecteur Audio CBT & Rétablissement d'Erreur (`components/exam/audio-player-cbt.tsx`) :**
+     - *Problème 1 :* Les boutons de sélection de vitesse (`0.8x`, `1.0x`, `1.2x`) retournaient à la ligne sur le 'x' faute de `whitespace-nowrap`.
+     - *Problème 2 :* En cas d'échec de lecture ou de blocage autoplay sur la balise `<audio>`, la promesse `.play()` rejetait sans rappel, bloquant indéfiniment le lecteur en état "Écoute en cours…".
+     - *Correction :* Ajout de `whitespace-nowrap`, gestion des erreurs sur `.play().catch(...)` et gestionnaire `onError` sur `<audio>` avec bascule automatique et transparente vers l'API Web Speech Synthesis (`fallbackText`).
+  4. **Grille de Navigation CBT (`components/exam/question-nav-grid.tsx`) :**
+     - *Problème :* Sur les écrans portables standards (1366–1500px), 39 boutons de 36px avec un espacement de 6px provoquaient un saut de 4 boutons sur une deuxième ligne disgracieuse.
+     - *Correction :* Ajustement fluide (`gap-1 sm:gap-1.5`, `h-8 w-8 sm:h-8 sm:w-8 lg:h-8.5 lg:w-8.5 xl:h-9 xl:w-9`) garantissant un alignement strict sur une seule ligne conforme aux standards FEI.
+  5. **Barre de Chargement Doublon (`components/app-shell.tsx`) :**
+     - Suppression de `TopBodyLoader` redondant avec la nouvelle barre de progression supérieure `NavigationProgressBar`.
+  6. **Désynchronisation FAQs sur la Page Tarifs (`app/tarifs/page.tsx`) :**
+     - `<FaqSection />` n'avait pas de `initialFaqs`, utilisant les FAQs statiques plutôt que la base PostgreSQL en direct. Câblage direct de `prisma.faq.findMany()`.
+  7. **Fuite de Données & Association Candidat dans le Dashboard (`app/dashboard/page.tsx`, `app/api/exam/attempt/route.ts`, `app/api/ai/evaluate-written/route.ts`) :**
+     - *Problème :* Les routes API enregistraient les tentatives sans extraire l'utilisateur Supabase connecté (`userId: null`), et le dashboard candidat affichait les tentatives globales sans clause `where: { userId: user.id }`.
+     - *Correction :* Extraction de `user.id` et persistance dans `userAttempt`. Filtrage strict dans le dashboard et affichage d'un état d'accueil engageant si aucune tentative n'a encore été réalisée.
+  8. **Association des Drapeaux Témoignages (`components/testimonials-section.tsx`) :**
+     - Remplacement de l'indexation modulo arbitraire par une fonction dédiée `getCountryFlag(country)` reflétant le vrai pays d'origine du candidat.
+  9. **Nettoyage Cookie Admin à la Déconnexion (`app/logout/route.ts`) :**
+     - Suppression du cookie `super4c2_admin_token` lors du logout.
 - **Problématique résolue :** Absence totale de feedback visuel lors des clics sur les menus d'administration et les liens internes. Sous Next.js 15 App Router, lorsqu'un composant serveur interroge la base de données, la page actuelle restait statique sans indicateur de chargement, donnant l'impression que le site était bloqué ou insensible au clic.
 - **Architecture de Feedback Tri-Niveaux Implémentée :**
   1. **Niveau 1 — Barre de progression supérieure globale (`components/navigation/navigation-progress-bar.tsx`) :**

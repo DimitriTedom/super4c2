@@ -84,7 +84,7 @@ export function QuestionNavGrid({
       </div>
 
       {/* 39-Pill Grid */}
-      <ol className="flex flex-wrap gap-1.5 max-h-24 sm:max-h-none overflow-y-auto sm:overflow-visible pr-1 sm:pr-0">
+      <ol className="flex flex-wrap items-center gap-1 sm:gap-1.5 max-h-24 sm:max-h-none overflow-y-auto sm:overflow-visible pr-1 sm:pr-0">
         {questions.map((q, i) => {
           if (!visible(q)) return null;
           const a = answers[q.id];
@@ -100,7 +100,7 @@ export function QuestionNavGrid({
                 aria-label={`Question ${q.questionNumber}${isAnswered ? `, répondue (${a.selected})` : ""}${isFlagged ? ", signalée" : ""}`}
                 aria-current={isCurrent ? "step" : undefined}
                 className={cn(
-                  "relative flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-lg border font-mono text-xs sm:text-sm font-semibold tabular-nums transition-all cursor-pointer",
+                  "relative flex h-8 w-8 sm:h-8 sm:w-8 lg:h-8.5 lg:w-8.5 xl:h-9 xl:w-9 items-center justify-center rounded-lg border font-mono text-xs sm:text-xs xl:text-sm font-semibold tabular-nums transition-all cursor-pointer",
                   isAnswered
                     ? "border-emerald-600 bg-emerald-600 text-white shadow-xs font-bold"
                     : "border-border/80 bg-background text-muted-foreground hover:border-emerald-500/50 hover:text-foreground",

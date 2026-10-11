@@ -10,7 +10,6 @@ import { SiteFooter } from "@/components/site-footer";
 import { MobileNavBar } from "@/components/mobile-nav";
 import { AiChatWidget } from "@/components/ai/ai-chat-widget";
 import { ScrollProgress } from "@/components/ui/scroll-progress";
-import { TopBodyLoader } from "@/components/ui/top-body-loader";
 import { ScrollToTop } from "@/components/ui/scroll-to-top";
 
 interface AppShellProps {
@@ -30,7 +29,6 @@ export function AppShell({ header, children }: AppShellProps) {
   if (isAdmin) {
     return (
       <>
-        <TopBodyLoader />
         <ScrollProgress />
         {children}
         <AiChatWidget />
@@ -44,8 +42,7 @@ export function AppShell({ header, children }: AppShellProps) {
 
   return (
     <div className="flex min-h-screen flex-col justify-between pb-16 lg:pb-0 relative">
-      {/* Barre de chargement d'état & de défilement en haut du body */}
-      <TopBodyLoader />
+      {/* Barre de défilement en haut du body */}
       <ScrollProgress />
 
       <div>

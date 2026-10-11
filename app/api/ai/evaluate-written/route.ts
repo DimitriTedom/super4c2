@@ -273,8 +273,27 @@ export async function POST(req: Request) {
 
     // Sauvegarde de la tentative dans PostgreSQL
     try {
+      let userId: string | null = null;
+      try {
+        const { createSupabaseServerClient } = await import("@/lib/supabase/server");
+        const supabase = await createSupabaseServerClient();
+        const authUser = supabase ? (await supabase.auth.getUser()).data.user : null;
+        if (authUser?.id) {
+          const dbUser = await prisma.user.findUnique({
+            where: { id: authUser.id },
+            select: { id: true },
+          });
+          if (dbUser) {
+            userId = dbUser.id;
+          }
+        }
+      } catch {
+        // Fallback anonyme
+      }
+
       await prisma.userAttempt.create({
         data: {
+          userId,
           discipline: "EXPRESSION_ECRITE",
           seriesId: null,
           rawScore: Math.round(result.totalScore),

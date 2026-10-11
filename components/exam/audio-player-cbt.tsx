@@ -60,17 +60,7 @@ export function AudioPlayerCBT({
     };
   }, []);
 
-  const start = () => {
-    if ((played && mode === "exam") || playing || disabled) return;
-    setPlaying(true);
-    setProgress(0);
-
-    if (src && audioRef.current) {
-      audioRef.current.playbackRate = playbackRate;
-      void audioRef.current.play();
-      return;
-    }
-
+  const playSpeechFallback = useCallback(() => {
     if (fallbackText && "speechSynthesis" in window) {
       const u = new SpeechSynthesisUtterance(fallbackText);
       u.lang = "fr-FR";
@@ -82,11 +72,31 @@ export function AudioPlayerCBT({
         clearInterval(iv);
         finish();
       };
-      u.onerror = u.onend;
+      u.onerror = () => {
+        clearInterval(iv);
+        finish();
+      };
       window.speechSynthesis.speak(u);
     } else {
       finish();
     }
+  }, [fallbackText, playbackRate, finish]);
+
+  const start = () => {
+    if ((played && mode === "exam") || playing || disabled) return;
+    setPlaying(true);
+    setProgress(0);
+
+    if (src && audioRef.current) {
+      audioRef.current.playbackRate = playbackRate;
+      audioRef.current.play().catch((err) => {
+        console.warn("Audio playback error, falling back to speech synthesis:", err);
+        playSpeechFallback();
+      });
+      return;
+    }
+
+    playSpeechFallback();
   };
 
   const handleReplay = () => {
@@ -120,7 +130,7 @@ export function AudioPlayerCBT({
               onClick={() => setPlaybackRate(rate)}
               disabled={playing && mode === "exam"}
               className={cn(
-                "px-2 py-0.5 text-[10px] font-bold rounded-full transition-all",
+                "px-2.5 py-0.5 text-[10px] font-bold rounded-full transition-all whitespace-nowrap",
                 playbackRate === rate
                   ? "bg-cyan-500 text-white shadow-xs"
                   : "text-muted-foreground hover:text-foreground"
@@ -232,6 +242,10 @@ export function AudioPlayerCBT({
           ref={audioRef}
           src={src}
           preload="auto"
+          onError={() => {
+            console.warn("Audio element failed to load source, triggering speech fallback");
+            playSpeechFallback();
+          }}
           onTimeUpdate={(e) => {
             const a = e.currentTarget;
             if (a.duration) setProgress(a.currentTime / a.duration);

@@ -173,6 +173,25 @@ function TestimonialCard({ t }: { t: TestimonialItem }) {
   );
 }
 
+function getCountryFlag(country: string, fallbackIndex: number): string {
+  const c = country.toLowerCase().trim();
+  if (c.includes("algér") || c.includes("alger")) return "🇩🇿";
+  if (c.includes("maroc")) return "🇲🇦";
+  if (c.includes("camer")) return "🇨🇲";
+  if (c.includes("sénég") || c.includes("seneg")) return "🇸🇳";
+  if (c.includes("ivoir")) return "🇨🇮";
+  if (c.includes("tunis")) return "🇹🇳";
+  if (c.includes("franc")) return "🇫🇷";
+  if (c.includes("canad")) return "🇨🇦";
+  if (c.includes("bénin") || c.includes("benin")) return "🇧🇯";
+  if (c.includes("togo")) return "🇹🇬";
+  if (c.includes("cong")) return "🇨🇩";
+  if (c.includes("mali")) return "🇲🇱";
+  if (c.includes("guiné") || c.includes("guine")) return "🇬🇳";
+  if (c.includes("gabon")) return "🇬🇦";
+  return DEFAULT_TESTIMONIALS[fallbackIndex % DEFAULT_TESTIMONIALS.length]?.flag || "🇨🇦";
+}
+
 export async function TestimonialsSection() {
   let testimonials = DEFAULT_TESTIMONIALS;
 
@@ -188,7 +207,7 @@ export async function TestimonialsSection() {
         id: d.id,
         candidateName: d.candidateName,
         country: d.country,
-        flag: DEFAULT_TESTIMONIALS[idx % DEFAULT_TESTIMONIALS.length].flag,
+        flag: getCountryFlag(d.country, idx),
         targetScore: d.targetScore,
         achievedNclc: d.achievedNclc,
         crsPointsGained: d.crsPointsGained,

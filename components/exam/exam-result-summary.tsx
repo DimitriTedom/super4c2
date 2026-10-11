@@ -10,9 +10,11 @@ import {
   ChevronDown,
   ChevronUp,
   FileText,
+  Headphones,
   Printer,
   RotateCcw,
   Sparkles,
+  Volume2,
   XCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -96,8 +98,67 @@ export function ExamResultSummary({
     return true;
   });
 
+  const [playingAudioId, setPlayingAudioId] = useState<string | null>(null);
+
   const toggleDoc = (id: string) => {
     setExpandedDocs((prev) => ({ ...prev, [id]: !prev[id] }));
+  };
+
+  const handlePlayReviewAudio = (q: ExamQuestion) => {
+    if (typeof window === "undefined") return;
+    if (playingAudioId === q.id) {
+      window.speechSynthesis?.cancel();
+      setPlayingAudioId(null);
+      return;
+    }
+
+    window.speechSynthesis?.cancel();
+
+    if (q.audioUrl) {
+      const audio = new Audio(q.audioUrl);
+      setPlayingAudioId(q.id);
+      audio.onended = () => setPlayingAudioId(null);
+      audio.onerror = () => {
+        if (q.audioTranscript && "speechSynthesis" in window) {
+          const u = new SpeechSynthesisUtterance(q.audioTranscript);
+          u.lang = "fr-FR";
+          u.onend = () => setPlayingAudioId(null);
+          u.onerror = () => setPlayingAudioId(null);
+          window.speechSynthesis.speak(u);
+        } else {
+          setPlayingAudioId(null);
+        }
+      };
+      audio.play().catch(() => {
+        if (q.audioTranscript && "speechSynthesis" in window) {
+          const u = new SpeechSynthesisUtterance(q.audioTranscript);
+          u.lang = "fr-FR";
+          u.onend = () => setPlayingAudioId(null);
+          u.onerror = () => setPlayingAudioId(null);
+          window.speechSynthesis.speak(u);
+        } else {
+          setPlayingAudioId(null);
+        }
+      });
+    } else if (q.audioTranscript && "speechSynthesis" in window) {
+      setPlayingAudioId(q.id);
+      const u = new SpeechSynthesisUtterance(q.audioTranscript);
+      u.lang = "fr-FR";
+      u.onend = () => setPlayingAudioId(null);
+      u.onerror = () => setPlayingAudioId(null);
+      window.speechSynthesis.speak(u);
+    }
+  };
+
+  const scrollToQuestion = (questionNumber: number) => {
+    const el = document.getElementById(`question-review-${questionNumber}`);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "center" });
+      el.classList.add("ring-2", "ring-primary", "ring-offset-2");
+      setTimeout(() => {
+        el.classList.remove("ring-2", "ring-primary", "ring-offset-2");
+      }, 2000);
+    }
   };
 
   const handleSaveToSrs = (q: ExamQuestion) => {
@@ -415,6 +476,55 @@ export function ExamResultSummary({
           </div>
         </div>
 
+        {/* Grille Matrice de Saut Rapide (Question Navigation Matrix) */}
+        <div className="rounded-2xl border bg-muted/40 p-4 space-y-2.5 shadow-2xs">
+          <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground">
+            <span className="font-semibold uppercase tracking-wider text-[11px] flex items-center gap-1.5">
+              <span>Matrice d&apos;Évaluation Rapide</span>
+              <span className="text-muted-foreground/70">({questions.length} questions)</span>
+            </span>
+            <div className="flex items-center gap-3 text-[11px]">
+              <span className="flex items-center gap-1">
+                <span className="h-2.5 w-2.5 rounded-full bg-emerald-500" /> Réussie ({correct.length})
+              </span>
+              <span className="flex items-center gap-1">
+                <span className="h-2.5 w-2.5 rounded-full bg-red-500" /> Erreur ({errors.length})
+              </span>
+              {flagged.length > 0 && (
+                <span className="flex items-center gap-1">
+                  <span className="h-2.5 w-2.5 rounded-full bg-amber-500" /> Signalée ({flagged.length})
+                </span>
+              )}
+            </div>
+          </div>
+          <div className="flex flex-wrap gap-1 sm:gap-1.5">
+            {questions.map((q) => {
+              const picked = answers[q.id]?.selected;
+              const ok = picked === q.correctOption;
+              const isFlagged = !!answers[q.id]?.flagged;
+              return (
+                <button
+                  key={q.id}
+                  type="button"
+                  onClick={() => scrollToQuestion(q.questionNumber)}
+                  title={`Question ${q.questionNumber} : ${ok ? "Réussie" : "Erreur"}`}
+                  className={cn(
+                    "relative flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-lg font-mono text-[11px] sm:text-xs font-bold tabular-nums transition-all hover:scale-105 cursor-pointer",
+                    ok
+                      ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/25"
+                      : "bg-red-500/15 text-red-700 dark:text-red-400 border border-red-500/30 hover:bg-red-500/25",
+                  )}
+                >
+                  {q.questionNumber}
+                  {isFlagged && (
+                    <span className="absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full bg-amber-500 ring-2 ring-background" />
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
         {/* Questions List */}
         <div className="space-y-4">
           {filteredQuestions.map((q) => {
@@ -426,12 +536,13 @@ export function ExamResultSummary({
             return (
               <article
                 key={q.id}
+                id={`question-review-${q.questionNumber}`}
                 className={cn(
-                  "space-y-4 rounded-2xl border bg-card p-5 sm:p-6 transition-all shadow-2xs",
+                  "scroll-mt-24 space-y-4 rounded-2xl border bg-card p-5 sm:p-6 transition-all shadow-2xs",
                   ok ? "border-border/80" : "border-red-500/30 bg-red-500/[0.02]",
                 )}
               >
-                <div className="flex items-start justify-between gap-4">
+                <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
                   <div className="flex items-start gap-3">
                     {ok ? (
                       <CheckCircle2 className="mt-1 h-5 w-5 shrink-0 text-emerald-500" aria-hidden />
@@ -455,22 +566,80 @@ export function ExamResultSummary({
                     </div>
                   </div>
 
-                  {/* Toggle Source Document Button */}
-                  {q.documentText && (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => toggleDoc(q.id)}
-                      className="shrink-0 text-xs text-muted-foreground hover:text-foreground"
-                    >
-                      <FileText className="mr-1 h-3.5 w-3.5" />
-                      {isExpanded ? "Masquer document" : "Voir document"}
-                      {isExpanded ? <ChevronUp className="ml-1 h-3 w-3" /> : <ChevronDown className="ml-1 h-3 w-3" />}
-                    </Button>
-                  )}
+                  {/* Actions & Toggles for Documents / Audio */}
+                  <div className="flex flex-wrap items-center gap-2 self-start sm:self-auto shrink-0">
+                    {/* Audio Listen for CO */}
+                    {(q.audioUrl || q.audioTranscript) && (
+                      <Button
+                        variant={playingAudioId === q.id ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => handlePlayReviewAudio(q)}
+                        className={cn(
+                          "text-xs font-semibold gap-1.5 shadow-2xs",
+                          playingAudioId === q.id
+                            ? "bg-cyan-600 hover:bg-cyan-700 text-white"
+                            : "border-cyan-500/30 text-cyan-600 dark:text-cyan-400 hover:bg-cyan-500/10",
+                        )}
+                      >
+                        <Headphones className="h-3.5 w-3.5" />
+                        <span>{playingAudioId === q.id ? "Arrêter audio" : "Écouter l'extrait"}</span>
+                      </Button>
+                    )}
+
+                    {/* Audio Transcript Toggle for CO */}
+                    {q.audioTranscript && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => toggleDoc(q.id)}
+                        className="text-xs text-muted-foreground hover:text-foreground"
+                      >
+                        <FileText className="mr-1 h-3.5 w-3.5" />
+                        {isExpanded ? "Masquer transcription" : "Voir transcription"}
+                        {isExpanded ? <ChevronUp className="ml-1 h-3 w-3" /> : <ChevronDown className="ml-1 h-3 w-3" />}
+                      </Button>
+                    )}
+
+                    {/* Toggle Source Document Button for CE */}
+                    {q.documentText && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => toggleDoc(q.id)}
+                        className="text-xs text-muted-foreground hover:text-foreground"
+                      >
+                        <FileText className="mr-1 h-3.5 w-3.5" />
+                        {isExpanded ? "Masquer document" : "Voir document"}
+                        {isExpanded ? <ChevronUp className="ml-1 h-3 w-3" /> : <ChevronDown className="ml-1 h-3 w-3" />}
+                      </Button>
+                    )}
+                  </div>
                 </div>
 
-                {/* Collapsible Document Preview */}
+                {/* Visual Image Support for CO */}
+                {q.documentImageUrl && (
+                  <div className="relative aspect-video max-w-sm mx-auto overflow-hidden rounded-xl border border-border/80 bg-white dark:bg-card shadow-inner">
+                    <Image
+                      src={q.documentImageUrl}
+                      alt={`Support visuel officiel Question ${q.questionNumber}`}
+                      fill
+                      className="object-contain"
+                      unoptimized
+                    />
+                  </div>
+                )}
+
+                {/* Collapsible Transcript for CO */}
+                {isExpanded && q.audioTranscript && (
+                  <div className="rounded-xl border border-cyan-500/20 bg-cyan-500/5 p-4 text-sm font-sans whitespace-pre-line leading-relaxed text-foreground">
+                    <p className="font-bold text-xs uppercase tracking-wider text-cyan-700 dark:text-cyan-400 mb-1.5 flex items-center gap-1.5">
+                      <Headphones className="h-3.5 w-3.5" /> Transcription Officielle de l&apos;Extrait Sonore :
+                    </p>
+                    <p className="italic text-foreground/90">« {q.audioTranscript} »</p>
+                  </div>
+                )}
+
+                {/* Collapsible Document Preview for CE */}
                 {isExpanded && q.documentText && (
                   <div className="rounded-xl border bg-muted/40 p-4 text-sm font-sans whitespace-pre-line leading-relaxed text-foreground">
                     <p className="font-bold text-xs uppercase tracking-wider text-muted-foreground mb-2">

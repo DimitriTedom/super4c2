@@ -7,8 +7,9 @@ async function handleSignOut(request: Request) {
   const url = new URL(request.url);
   const cookieStore = await cookies();
 
-  // Clear demo candidate cookie
+  // Clear session and admin cookies
   cookieStore.delete("sb-super4c2-demo-candidate");
+  cookieStore.delete("super4c2_admin_token");
 
   const supabase = await createSupabaseServerClient();
   if (supabase) {
