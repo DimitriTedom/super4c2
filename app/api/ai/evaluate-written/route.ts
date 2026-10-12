@@ -72,10 +72,12 @@ export async function POST(req: Request) {
         );
         const connectorCount = connectorsFound ? connectorsFound.length : 0;
 
-        let coherenceScore = 3.0;
-        let coherenceFeedback = "Structure présente mais les transitions méritent plus de fluidité.";
+        let coherenceScore = wordCount === 0 ? 0 : 3.0;
+        let coherenceFeedback = wordCount === 0 ? "Non évaluable (texte absent)." : "Structure présente mais les transitions méritent plus de fluidité.";
 
-        if (wordCount < 30) {
+        if (wordCount === 0) {
+          // Déjà géré à 0
+        } else if (wordCount < 30) {
           coherenceScore = 1.5;
           coherenceFeedback = "Production trop courte pour établir une progression logique.";
         } else if (paragraphs >= 2 && connectorCount >= 2) {
@@ -93,10 +95,12 @@ export async function POST(req: Request) {
         const uniqueWords = new Set(candidateText.toLowerCase().split(/\s+/).filter(Boolean)).size;
         const lexicalRatio = wordCount > 0 ? uniqueWords / wordCount : 0;
 
-        let lexiqueScore = 3.5;
-        let lexiqueFeedback = "Vocabulaire courant et compréhensible.";
+        let lexiqueScore = wordCount === 0 ? 0 : 3.5;
+        let lexiqueFeedback = wordCount === 0 ? "Non évaluable (texte absent)." : "Vocabulaire courant et compréhensible.";
 
-        if (wordCount < 35) {
+        if (wordCount === 0) {
+          // Déjà géré à 0
+        } else if (wordCount < 35) {
           lexiqueScore = 2.0;
           lexiqueFeedback = "Étendue lexicale restreinte.";
         } else if (lexicalRatio > 0.65 && wordCount >= min) {
@@ -108,10 +112,12 @@ export async function POST(req: Request) {
         }
 
         // 4. Compétence morphosyntaxique (sur 5)
-        let morphoScore = 3.5;
-        let morphoFeedback = "Structures grammaticales simples bien maîtrisées.";
+        let morphoScore = wordCount === 0 ? 0 : 3.5;
+        let morphoFeedback = wordCount === 0 ? "Non évaluable (texte absent)." : "Structures grammaticales simples bien maîtrisées.";
 
-        if (wordCount < 35) {
+        if (wordCount === 0) {
+          // Déjà géré à 0
+        } else if (wordCount < 35) {
           morphoScore = 2.0;
           morphoFeedback = "Trop peu de phrases complètes pour évaluer la maîtrise syntaxique.";
         } else if (candidateText.includes("que ") || candidateText.includes("qui ") || candidateText.includes("dont ") || candidateText.includes("bien que")) {

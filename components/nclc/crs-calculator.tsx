@@ -1,9 +1,11 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useTransition } from "react";
 import Link from "next/link";
-import { ArrowRight, CheckCircle2, Flame } from "lucide-react";
+import { ArrowRight, CheckCircle2, Flame, Mail, Loader2, Sparkles } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { subscribePublicNewsletterAction } from "@/app/admin/newsletter/actions";
 import { cn } from "@/lib/utils";
 
 // Points officiels Entrée Express IRCC (sans conjoint)
@@ -24,6 +26,11 @@ export function CrsCalculator() {
   const [eoLevel, setEoLevel] = useState<number>(7);
   const [hasPostSecondary, setHasPostSecondary] = useState<boolean>(true);
   const [clbEnglish, setClbEnglish] = useState<"clb5_plus" | "clb4_minus">("clb5_plus");
+
+  // État capture lead rapport email
+  const [email, setEmail] = useState<string>("");
+  const [reportSent, setReportSent] = useState<boolean>(false);
+  const [isPending, startTransition] = useTransition();
 
   // Calculs
   const { basePoints, bonusFrancophone, bonusTransferability, totalCrsPoints, allNclc7Plus } = useMemo(() => {
@@ -55,6 +62,25 @@ export function CrsCalculator() {
       allNclc7Plus: all7,
     };
   }, [ceLevel, coLevel, eeLevel, eoLevel, hasPostSecondary, clbEnglish]);
+
+  const handleSendReport = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email || !email.includes("@")) {
+      toast.error("Veuillez saisir une adresse e-mail valide.");
+      return;
+    }
+
+    startTransition(async () => {
+      const source = `crs_calculator_${totalCrsPoints}pts_${allNclc7Plus ? "nclc7_atteint" : "seuil_incomplet"}`;
+      const res = await subscribePublicNewsletterAction(email, source);
+      if (res.ok) {
+        setReportSent(true);
+        toast.success("Votre bilan d'admissibilité Entrée Express vous a été envoyé !");
+      } else {
+        toast.error(res.error || "Une erreur est survenue lors de l'envoi.");
+      }
+    });
+  };
 
   return (
     <div className="grid gap-8 lg:grid-cols-12 max-w-6xl mx-auto items-start">
@@ -220,8 +246,78 @@ export function CrsCalculator() {
             </p>
           </div>
 
-          {/* CTA de conversion */}
-          <div className="pt-2">
+          {/* 📩 Boîte de Capture Lead — Rapport & Plan d'Action par Email */}
+          <div className="rounded-xl border border-primary/25 bg-gradient-to-b from-primary/[0.04] to-card p-4 sm:p-5 space-y-3">
+            <div className="flex items-start gap-2.5">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary shrink-0 mt-0.5">
+                <Mail className="h-4 w-4" />
+              </div>
+              <div className="space-y-0.5">
+                <h3 className="font-display text-xs sm:text-sm font-bold text-foreground">
+                  Recevoir mon Bilan d&apos;Admissibilité par Email
+                </h3>
+                <p className="text-[11px] text-muted-foreground leading-relaxed">
+                  Recevez gratuitement la synthèse de vos <strong>+{totalCrsPoints} points CRS</strong>, l&apos;analyse de vos seuils et la feuille de route NCLC 7.
+                </p>
+              </div>
+            </div>
+
+            {reportSent ? (
+              <div className="rounded-lg border border-emerald-500/30 bg-emerald-500/10 p-3 text-xs text-emerald-800 dark:text-emerald-300 space-y-1">
+                <div className="flex items-center gap-1.5 font-bold">
+                  <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
+                  <span>Rapport d&apos;admissibilité programmé !</span>
+                </div>
+                <p className="text-[11px] text-muted-foreground">
+                  Un email récapitulatif a été adressé à <strong>{email}</strong>. Vérifiez vos spams si besoin.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setReportSent(false)}
+                  className="text-[10px] text-primary hover:underline font-semibold block pt-1"
+                >
+                  Envoyer à une autre adresse email →
+                </button>
+              </div>
+            ) : (
+              <form onSubmit={handleSendReport} className="space-y-2">
+                <div className="relative">
+                  <input
+                    type="email"
+                    required
+                    placeholder="votre.email@gmail.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="h-10 w-full rounded-xl border bg-background px-3.5 text-xs text-foreground placeholder:text-muted-foreground/70 focus:outline-none focus:ring-2 focus:ring-primary shadow-2xs"
+                  />
+                </div>
+                <Button
+                  type="submit"
+                  size="sm"
+                  disabled={isPending}
+                  className="w-full bg-primary hover:bg-primary-dark text-white font-bold text-xs h-9 shadow-xs gap-1.5"
+                >
+                  {isPending ? (
+                    <>
+                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                      <span>Envoi du rapport en cours...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="h-3.5 w-3.5" />
+                      <span>Envoyer mon Rapport &amp; Guide NCLC 7 Gratuit</span>
+                    </>
+                  )}
+                </Button>
+                <p className="text-[10px] text-muted-foreground text-center">
+                  Garanti sans spam. Vos données restent strictement confidentielles.
+                </p>
+              </form>
+            )}
+          </div>
+
+          {/* CTA de conversion vers les séries */}
+          <div className="pt-1">
             <Button
               asChild
               size="lg"

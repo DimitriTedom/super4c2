@@ -19,9 +19,61 @@ export function evaluateWrittenTask(input: EvaluateInput): TaskEvaluation {
   else if (wordCount > max) wordCountStatus = "over";
 
   // Score de base selon respect de consigne de volume (sur 5)
+  if (wordCount === 0) {
+    return {
+      taskNumber: task.taskNumber,
+      wordCount: 0,
+      wordCountStatus: "under",
+      taskScore: 0,
+      nclcEstimatedLevel: 3,
+      criteria: [
+        {
+          criterion: "adequation",
+          label: "Adéquation à la situation & Consignes",
+          score: 0,
+          feedback: "Aucune production fournie. Cette tâche n'a pas été rédigée.",
+          strengths: [],
+          improvements: ["Rédiger la tâche demandée dans le temps imparti"],
+        },
+        {
+          criterion: "coherence",
+          label: "Cohérence textuelle & Connecteurs",
+          score: 0,
+          feedback: "Non évaluable (texte absent).",
+          strengths: [],
+          improvements: ["Structurer le texte en paragraphes avec connecteurs logiques"],
+        },
+        {
+          criterion: "lexique",
+          label: "Compétence lexicale & Vocabulaire",
+          score: 0,
+          feedback: "Non évaluable (texte absent).",
+          strengths: [],
+          improvements: ["Employer un vocabulaire varié adapté au thème"],
+        },
+        {
+          criterion: "morphosyntaxe",
+          label: "Morphosyntaxe & Grammaire",
+          score: 0,
+          feedback: "Non évaluable (texte absent).",
+          strengths: [],
+          improvements: ["Formuler des phrases complètes et correctes"],
+        },
+      ],
+      generalFeedback: "Tâche non traitée (0/20). Vous devez rédiger cette tâche pour obtenir les points nécessaires au palier NCLC 7.",
+      magicRewriteC2: task.taskNumber === 1
+        ? "Salut Julien,\n\nJe t'écris tout juste installé dans mon nouvel appartement, un charmant deux-pièces baigné de lumière situé au cœur du quartier Saint-Roch. Entre les grandes baies vitrées et le calme environnant, le cadre est idéal pour se ressourcer.\n\nJe serais ravi de te faire découvrir les lieux ce samedi vers dix-sept heures, avant de partager un dîner convivial. Fais-moi signe si ce créneau te convient !\n\nÀ très vite,\nAlexandre"
+        : task.taskNumber === 2
+        ? "Samedi dernier, j’ai pris part à la journée écocitoyenne de réaménagement de notre parc de quartier, une initiative qui a rassemblé plus d'une cinquantaine de résidents de toutes générations.\n\nAu-delà de la métamorphose paysagère indéniable, cette expérience a révélé la force du tissu associatif local : elle permet de rompre l'isolement urbain et de retisser du lien social authentique. À mon sens, de telles actions participatives devraient être pérennisées par la municipalité, car elles éveillent une véritable conscience collective."
+        : "La question de l'omniprésence du smartphone en milieu scolaire suscite un débat passionné. D'un côté, certains pédagogues prônent une interdiction absolue, arguant qu'elle garantit une concentration optimale et préserve la convivialité spontanée entre pairs. D'un autre côté, plusieurs spécialistes considèrent cet appareil comme un vecteur d'apprentissage moderne qu'il conviendrait plutôt d'apprivoiser.\n\nPour ma part, bien que l'impératif d'attention soit légitime, je demeure convaincu qu'un bannissement radical s'avère contre-productif. Il apparaît bien plus judicieux d'instaurer une éducation rigoureuse aux usages numériques.",
+      rewriteHighlights: [
+        "Consultez ce modèle C1/C2 pour assimiler la structure et le lexique attendus par France Éducation International."
+      ],
+    };
+  }
+
   let adequationScore = 4.5;
-  if (wordCount === 0) adequationScore = 0;
-  else if (wordCount < min * 0.7) adequationScore = 2.0;
+  if (wordCount < min * 0.7) adequationScore = 2.0;
   else if (wordCount < min) adequationScore = 3.5;
   else if (wordCount > max * 1.3) adequationScore = 3.8;
 

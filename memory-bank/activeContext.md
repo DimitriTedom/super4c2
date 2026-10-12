@@ -1,6 +1,59 @@
 # Active Context: Super4C2
 
-## 0. Chantiers Majeurs Récents : Audit & Résolution des Erreurs UI et Logiques Côté Utilisateur, Système Global de Loaders & Feedback de Navigation, Synchronisation Temps Réel Base Cloud & Batch Actions Back-Office, Déploiement Cloud Production Vercel & Supabase
+## 0. Chantiers Majeurs Récents : Compagnons 3D (Kodiak, Aura, Barnabé), Hub Méthodologique en 3 Paliers d'Expression Écrite, Barre du Temps & Clavier FEI
+
+### 0.0000000000000. Compagnons de Formation 3D & Hub Méthodologique d'Expression Écrite (TCF Canada)
+- **Choix des 3 Compagnons Charismatiques (Option C) :**
+  1. **Kodiak (L'Ours / Grizzly Canadien)** : Le Coach Protecteur & Rassurant, veste polaire, écharpe rouge feuille d'érable (`/brand/companions/kodiak.jpg`).
+  2. **Aura (Le Mentor Stratège IA)** : Entité holographique 3D aux reflets cyan/crimson, précis et analytique sur le barème FEI (`/brand/companions/aura.jpg`).
+  3. **Barnabé (Le Bâtisseur Canadien)** : Castor ingénieur 3D aux lunettes rondes et chemise à carreaux rouge/noire, orienté structures et plans (`/brand/companions/barnabe.jpg`).
+- **Composants d'Interaction Vocale & Visuelle :**
+  - **`CompanionSelectorDialog` (`components/companions/companion-selector-dialog.tsx`) :** Boîte de dialogue de sélection 3D avec prévisualisation vocale (Web Speech API), citation, rôle et bouton de contournement rapide ("Passer l'introduction").
+  - **`CompanionPod` (`components/companions/companion-pod.tsx`) :** Bulle de dialogue interactive avec avatar 3D animé, contrôle audio écoute/arrêt, et bouton pour changer de mentor.
+- **Hub Méthodologique en 3 Paliers (`components/exam/writing-methodology-hub.tsx`) :**
+  - Monté sur la route d'entrée de l'Expression Écrite (`/examens/[seriesId]/ee/intro`).
+  - **Palier 1 — Décryptage FEI & Barème :** Décomposition des 4 critères de 5 points (Adéquation, Cohérence, Lexique, Morphosyntaxe = 20/20) et analyse des 3 pièges éliminatoires.
+  - **Palier 2 — Ateliers Tâche par Tâche :**
+    - Tâche 1 (Courriel • 15 min, 60–120 mots) : Plan en 3 blocs, formules de politesse, et CTA direct vers la session d'entraînement chronométrée.
+    - Tâche 2 (Récit • 20 min, 120–150 mots) : Articulateurs temporels, sentiments et portée citoyenne.
+    - Tâche 3 (Débat • 25 min, 120–180 mots) : Double argumentation contradictoire, formules de concession C1/C2 et synthèse personnelle.
+  - **Palier 3 — Salle d'Examen Blanc Chronométré (60 min) :** Lancement direct du simulateur CBT avec barre de temps, clavier d'accents et autosave.
+- **Intégration du Compagnon au Débriefing des Résultats (`components/exam/written-exam-editor.tsx`) :**
+  - Présence du compagnon sélectionné lors du bilan d'évaluation (Tâche unique ou Examen 3 tâches) pour délivrer un débriefing vocal personnalisé sur les points NCLC acquis et les améliorations Magic Rewrite.
+
+### 0.000000000000. Expression Écrite : Barre du Temps, Clavier Complet FEI & Mode Entraînement Tâche par Tâche
+- **Problématiques adressées & résolutions :**
+  1. **Barre du Temps Visuelle Haute Fidélité (`components/exam/written-exam-editor.tsx`) :**
+     - Intégration d'une jauge supérieure d'écoulement du temps avec transition fluide CSS et 3 états colorimétriques :
+       - Vert Émeraude / Bleu institutionnel (> 25% du temps restant).
+       - Ambre doré (<= 25% du temps restant).
+       - Rouge Érable pulsant lors des dernières minutes.
+     - Bandeau de télémétrie précis affichant : temps restant (`formatClock(remaining)`), temps écoulé vs durée totale, pourcentage restant et badge contextuel.
+  2. **Clavier de Caractères Accentués Conforme FEI & Objectif Canada (`components/exam/written-exam-editor.tsx`) :**
+     - Ajout des minuscules ET des majuscules accentuées (`é, è, ê, ë, à, â, ç, ô, î, ï, ù, û, œ, æ` vs `É, È, Ê, Ë, À, Â, Ç, Ô, Î, Ï, Ù, Û, Œ, Æ`).
+     - Bouton bascule ergonomique `[ a / A ]` (Maj) permettant aux candidats sur claviers QWERTY d'insérer instantanément des capitales accentuées indispensables pour débuter un paragraphe ou un titre.
+     - Symboles typographiques officiels : `«`, `»`, `’`, `€`, `–`, `…`.
+     - Insertion au curseur avec repositionnement dynamique et conservation du focus pour une frappe fluide sans ressaisie.
+  3. **Soumission Manuelle & Soumission Automatique à Expiration :**
+     - Soumission sans blocage à tout moment (permettant la notation du travail partiel si certaines tâches sont incomplètes ou non rédigées, sans exception serveur).
+     - Si le chrono arrive à expiration (`remaining <= 0`) : déclenchement immédiat et automatique de `handleSubmit()`, fermeture des modales et affichage d'un bandeau explicatif : *"Temps écoulé ! Votre travail a été automatiquement soumis et évalué par l'IA selon la grille officielle de France Éducation International."*
+  4. **Mode Entraînement Tâche par Tâche (`app/examens/[seriesId]/ee/page.tsx` & `intro/page.tsx`) :**
+     - Découpage didactique permettant de s'entraîner spécifiquement sur une tâche :
+       - Tâche 1 : 15 min requises (60 à 120 mots).
+       - Tâche 2 : 20 min requises (120 à 150 mots).
+       - Tâche 3 : 25 min requises (120 à 180 mots).
+     - Calibrage automatique du chronomètre et de la barre de temps sur la durée requise de la tâche.
+     - Bouton Pause / Reprise du chronomètre en mode entraînement.
+     - Évaluation ciblée de la tâche sélectionnée sans obligation de renseigner les autres tâches, avec score /20, palier NCLC, critères FEI et Magic Rewrite C1/C2 dédié.
+  5. **Calculateur CRS & Capture Lead Newsletter (`components/nclc/crs-calculator.tsx`) :**
+     - Encart de conversion marketing à fort impact sous le score CRS : *"Recevoir mon Bilan d'Admissibilité par Email"*.
+     - Champ de saisie d'adresse email (Gmail / Email) avec action serveur `subscribePublicNewsletterAction(email, "crs_calculator_...")`.
+     - Sauvegarde en base PostgreSQL (`newsletterSubscriber`), notification Super Admin en temps réel, et accusé de réception visuel.
+  6. **Skill Copywriting & Section Choc 4C2 (`app/page.tsx`, `.agents/skills/copywriting/SKILL.md`) :**
+     - Installation du skill de copywriting SaaS haute conversion (Framework PAS, Rule of One, suppression du superflu).
+     - Section percutante sur la page d'accueil : *"Pourquoi 78% des candidats n'obtiennent pas le 4C2 ? À cause de l'Expression Écrite."*
+     - Explication concise : en CE/CO le QCM permet de deviner, alors qu'à l'écrit 60 minutes pour 3 tâches sans correcteur éliminent les +50 points CRS.
+     - Présentation claire de la solution Super4C2 : structures types FEI, Magic Rewrite C1/C2 et correction IA instantanée.
 
 ### 0.00000000000. Audit & Résolution des Erreurs UI et Logiques Côté Utilisateur
 - **Problématiques identifiées et résolues :**

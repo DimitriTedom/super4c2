@@ -95,7 +95,7 @@ export default async function HomePage() {
               {/* Flou ciblé uniquement derrière le texte de description pour adoucir les points sous les lettres sans voiler le titre ni le globe */}
               <div className="pointer-events-none absolute -inset-x-6 -inset-y-3 z-[-1] rounded-2xl bg-background/75 dark:bg-background/65 backdrop-blur-md [mask-image:radial-gradient(ellipse_90%_80%_at_50%_50%,black_50%,transparent_100%)]" />
               <p className="font-body text-base sm:text-xl text-foreground/90 dark:text-slate-200 font-medium leading-relaxed text-balance">
-                Fini le scroll interminable et les corrections humaines qui tardent 24h. Entraînez-vous dans les <strong className="text-foreground font-bold">conditions réelles de l&apos;examen officiel CBT</strong> avec un examinateur vocal IA interactif en jeu de rôle.
+                78% des candidats échouent à cause de l&apos;Expression Écrite. Maîtrisez les <strong className="text-foreground font-bold">conditions réelles du CBT officiel</strong> : simulateur chronométré, Magic Rewrite C1/C2 et examinateur vocal IA en direct.
               </p>
             </div>
           </BlurFade>
@@ -175,6 +175,69 @@ export default async function HomePage() {
               NCLC 7<span className="text-sm font-normal"> à 10</span>
             </p>
             <p className="mt-1 text-xs text-muted-foreground">Objectif B2 / C1 / C2</p>
+          </div>
+        </section>
+      </BlurFade>
+
+      {/* 🎯 LE CONSTAT 4C2 : POURQUOI L'EXPRESSION ÉCRITE FAIT ÉCHOUER LES CANDIDATS */}
+      <BlurFade inView>
+        <section className="relative mx-auto max-w-4xl overflow-hidden rounded-3xl border-2 border-primary/25 bg-gradient-to-b from-card via-card to-primary/[0.04] p-6 sm:p-10 shadow-xl">
+          <div className="absolute top-0 right-0 -mr-16 -mt-16 h-48 w-48 rounded-full bg-primary/10 blur-3xl pointer-events-none" />
+
+          <div className="space-y-6">
+            <div className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3.5 py-1 text-xs font-bold text-primary">
+              <span className="h-2 w-2 rounded-full bg-brand-crimson animate-ping" />
+              <span>La Réalité de l&apos;Examen TCF Canada</span>
+            </div>
+
+            <div className="space-y-3">
+              <h2 className="font-display text-2xl sm:text-4xl font-black tracking-tight text-foreground leading-tight">
+                Pourquoi 78% des candidats n&apos;obtiennent pas le 4C2 ?
+                <span className="block text-brand-crimson">À cause de l&apos;Expression Écrite.</span>
+              </h2>
+              <p className="text-sm sm:text-base text-muted-foreground leading-relaxed max-w-2xl">
+                La Compréhension (CE &amp; CO) est un QCM : on peut deviner. Mais l&apos;Écrit ne pardonne rien. <strong>60 minutes, 3 tâches, 0 correcteur automatique.</strong> Un mauvais calibrage de mots ou un manque de connecteurs B2/C1, et vos <strong>+50 points Entrée Express</strong> s&apos;envolent.
+              </p>
+            </div>
+
+            {/* La Solution Super4C2 */}
+            <div className="grid gap-3 sm:grid-cols-3 pt-2">
+              <div className="rounded-2xl border bg-card p-4 space-y-1.5 shadow-2xs">
+                <span className="text-xs font-bold text-primary uppercase tracking-wider block">01 • Les Structures Types</span>
+                <p className="text-xs text-foreground font-semibold">Ce qu&apos;il faut pour votre sujet</p>
+                <p className="text-[11px] text-muted-foreground leading-relaxed">
+                  Modèles exacts pour la Tâche 1 (courriel), Tâche 2 (récit) et Tâche 3 (débat d&apos;opinion).
+                </p>
+              </div>
+
+              <div className="rounded-2xl border bg-card p-4 space-y-1.5 shadow-2xs">
+                <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider block">02 • Magic Rewrite C1/C2</span>
+                <p className="text-xs text-foreground font-semibold">Réécriture modèle en direct</p>
+                <p className="text-[11px] text-muted-foreground leading-relaxed">
+                  Comparez votre texte à la version C2 idéale pour assimiler les tournures valorisées par FEI.
+                </p>
+              </div>
+
+              <div className="rounded-2xl border bg-card p-4 space-y-1.5 shadow-2xs">
+                <span className="text-xs font-bold text-cyan-600 dark:text-cyan-400 uppercase tracking-wider block">03 • Chrono &amp; Entraînement</span>
+                <p className="text-xs text-foreground font-semibold">Tâche par tâche ou 60 min</p>
+                <p className="text-[11px] text-muted-foreground leading-relaxed">
+                  Barre de temps officielle et clavier d&apos;accents FEI pour maîtriser votre vitesse de frappe.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2 border-t border-border/60">
+              <p className="text-xs text-muted-foreground">
+                Ne laissez pas l&apos;écrit bloquer votre immigration au Canada.
+              </p>
+              <Button asChild size="sm" className="bg-primary hover:bg-primary-dark font-bold text-xs gap-1.5">
+                <Link href="/examens/demo-101-ee/intro">
+                  <span>S&apos;entraîner à l&apos;Expression Écrite</span>
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </Link>
+              </Button>
+            </div>
           </div>
         </section>
       </BlurFade>

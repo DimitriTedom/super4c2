@@ -1,3 +1,43 @@
+- [x] **Compagnons de Formation 3D & Hub Méthodologique d'Expression Écrite (TCF Canada) :**
+  - **Génération & Intégration des 3 Avatars 3D Haute Fidélité (`public/brand/companions/`) :**
+    - `kodiak.jpg` : Ours Grizzly Canadien protecteur et rassurant, écharpe rouge feuille d'érable.
+    - `aura.jpg` : Guide holographique IA 3D futuriste et analytique, accents cyan/crimson.
+    - `barnabe.jpg` : Castor ingénieur canadien, lunettes rondes et chemise à carreaux rouge/noire.
+  - **Dialogue de Sélection Interactive (`CompanionSelectorDialog`) :**
+    - 3 cartes 3D avec citations, rôles, badges et boutons d'écoute vocale Web Speech API.
+    - Bouton discret "Passer l'introduction / Continuer directement" éliminant toute friction (Time-to-Value).
+    - Sauvegarde du choix dans `localStorage` (`super4c2:user_companion`).
+  - **Pod Compagnon Réactif & Vocal (`CompanionPod`) :**
+    - Avatar animé avec effet visuel d'élocution, bulle textuelle élégante, bouton de lecture/pause vocale et bouton pour changer de mentor à la volée.
+  - **Hub Méthodologique en 3 Paliers (`WritingMethodologyHub` sur `app/examens/[seriesId]/ee/intro/page.tsx`) :**
+    - **Palier 1 :** Décryptage FEI, barème 20/20, grille des 4 critères (5 pts chacun) et 3 pièges éliminatoires.
+    - **Palier 2 :** Ateliers Tâche 1 (courriel • 15 min), Tâche 2 (récit • 20 min) et Tâche 3 (débat • 25 min) avec phrases d'amorce C1/C2 et accès direct à l'entraînement chronométré.
+    - **Palier 3 :** Carte d'accès direct à l'Examen Blanc officiel (60 min) avec simulateur complet.
+  - **Débriefing Vocal Post-Évaluation (`WrittenExamEditor`) :**
+    - Le compagnon réapparaît sur le rapport de score (Tâche unique ou Examen 3 tâches) pour commenter la note obtenue et encourager le candidat avec le Magic Rewrite C1/C2.
+- [x] **Barre du Temps & Clavier FEI en Expression Écrite, Mode Entraînement Tâche par Tâche, Soumission Automatique à Expiration, Capture Lead Calculateur CRS & Copywriting 4C2 :**
+  - **Barre du Temps Visuelle Haute Fidélité (`components/exam/written-exam-editor.tsx`) :**
+    - Jauge dynamique en haut de l'épreuve avec changement de couleur (vert/bleu > 25%, ambre <= 25%, rouge écarlate pulsant <= 1 min).
+    - Télémétrie en direct : temps restant, temps écoulé, durée totale, pourcentage et badge de tâche.
+  - **Clavier Virtuel Complet Conforme FEI & Objectif Canada (`components/exam/written-exam-editor.tsx`) :**
+    - Intégration des minuscules et majuscules accentuées (`é, è, ê, ë, à, â, ç, ô, î, ï, ù, û, œ, æ` et `É, È, Ê, Ë, À, Â, Ç, Ô, Î, Ï, Ù, Û, Œ, Æ`).
+    - Commutateur `[ a / A ]` (Maj) rapide pour insérer instantanément des capitales accentuées indispensables aux débuts de phrases et titres.
+    - Symboles officiels indispensables : `«`, `»`, `’`, `€`, `–`, `…`.
+    - Insertion précise au curseur avec maintien du focus.
+  - **Soumission Manuelle & Soumission Automatique à Expiration :**
+    - Possibilité de soumettre le travail effectué à tout moment (tâches vides notées 0 sans plantage serveur).
+    - Soumission automatique transparente dès que le chronomètre atteint `00:00`, fermeture de toute modale ouverte, notification bandeau de réassurance et évaluation immédiate FEI.
+  - **Mode Entraînement Tâche par Tâche (`app/examens/[seriesId]/ee/page.tsx` & `intro/page.tsx`) :**
+    - Découpage en 3 tâches avec temps requis officiel : Tâche 1 (15 min, 60–120 mots), Tâche 2 (20 min, 120–150 mots), Tâche 3 (25 min, 120–180 mots).
+    - Chronomètre et barre de temps calibrés sur le temps requis avec bouton Pause/Play.
+    - Évaluation isolée de la tâche travaillée avec note /20, palier NCLC, grille 4 critères FEI et Magic Rewrite C1/C2.
+  - **Capture Lead & Envoi de Rapport par Email dans le Calculateur CRS (`components/nclc/crs-calculator.tsx`) :**
+    - Encart d'impact sous la jauge CRS pour recevoir le bilan d'admissibilité complet par email.
+    - Connexion à `subscribePublicNewsletterAction(email, "crs_calculator_...")` avec persistance PostgreSQL et notification Super Admin.
+  - **Installation du Skill Copywriting & Section Choc 4C2 (`app/page.tsx`) :**
+    - Création du skill `.agents/skills/copywriting/SKILL.md` (Framework PAS, Rule of One, suppression du blabla).
+    - Accroche percutante sur la page d'accueil : *"Pourquoi 78% des candidats n'obtiennent pas le 4C2 ? À cause de l'Expression Écrite."*
+    - Présentation concise et impactante de la solution Super4C2 (structures types, Magic Rewrite, entraînement chronométré).
 - [x] **Audit & Résolution des Erreurs UI et Logiques Côté Utilisateur :**
   - **Support Multimédia & Transcription CO dans le Bilan d'Examen (`components/exam/exam-result-summary.tsx`) :**
     - Ajout du bouton d'écoute audio d'extrait sonorisé (gestion fallback Web Speech Synthesis).
