@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Cookie, ShieldCheck, Check, Settings2, X, ChevronDown, ChevronUp, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -96,7 +97,13 @@ export function CookieConsentBanner() {
     });
   };
 
-  if (!mounted || !isOpen) return null;
+  const pathname = usePathname();
+  const isExcluded =
+    /^\/examens\/[^/]+\/(ce|co|ee|eo|examen-blanc)\/?$/.test(pathname || "") ||
+    pathname?.startsWith("/auth") ||
+    pathname === "/admin/login";
+
+  if (!mounted || !isOpen || isExcluded) return null;
 
   return (
     <aside

@@ -24,12 +24,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "weekly",
       priority: 0.9,
     },
-    {
-      url: `${baseUrl}/tarifs`,
-      lastModified: now,
-      changeFrequency: "weekly",
-      priority: 0.9,
-    },
+
     {
       url: `${baseUrl}/calculateur-crs`,
       lastModified: now,

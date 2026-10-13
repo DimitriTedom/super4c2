@@ -20,8 +20,22 @@ export async function middleware(request: NextRequest) {
     return response;
   }
 
-  // 2. Candidate Dashboard & Account Protection
-  const isProtected = pathname.startsWith("/dashboard") || pathname.startsWith("/account");
+  // 2. Tarifs & Checkout -> Redirection vers l'accès 100% gratuit
+  if (pathname === "/tarifs" || pathname.startsWith("/checkout")) {
+    const targetUrl = request.nextUrl.clone();
+    targetUrl.pathname = "/dashboard";
+    targetUrl.search = "";
+    return NextResponse.redirect(targetUrl);
+  }
+
+  // 3. Verrouillage du Système : Simulateurs & Outils Candidats Protégés
+  const isProtected =
+    pathname.startsWith("/dashboard") ||
+    pathname.startsWith("/account") ||
+    pathname.startsWith("/examens") ||
+    pathname.startsWith("/carnet-erreurs") ||
+    pathname.startsWith("/sujets-recents") ||
+    pathname.startsWith("/communaute");
 
   if (!isProtected) return response;
 

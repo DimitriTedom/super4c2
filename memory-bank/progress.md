@@ -1,3 +1,11 @@
+- [x] **Lancement 100% Gratuit, Gating d'Authentification, Isolation CBT & Épuration des Layouts Auth :**
+  - Épuration totale des pages `/auth/login` et `/auth/register` : suppression du `SiteHeader` (navbar marketing) et du `SiteFooter` (4 colonnes de liens), remplacés par une coque d'authentification minimale, centrée et sans distraction.
+  - Suppression de `FloatingCommunityButton` et `NewcomerGuideModal` des pages d'authentification, de l'espace administration et des salles d'examen CBT.
+  - Préservation intégrale du paramètre de redirection `next` à travers tout le cycle (`login`, `register`, `demo candidate`, `callback`).
+  - Suppression des popups `CookieConsentBanner` durant la session active d'examen pour préserver la concentration et le chronomètre de 60 minutes.
+  - Masquage intégral du système tarifaire et redirection automatique `/tarifs` et `/checkout` ➔ `/dashboard`.
+  - Désactivation explicite et informative de la Compréhension Écrite (CE) et Compréhension Orale (CO) avec modale de calibrage FEI et redirection vers EE et EO.
+  - Refonte complète du Dashboard candidat avec bannière de lancement gratuit, accueil interactif du Compagnon 3D et accès direct aux épreuves actives.
 - [x] **Compagnons de Formation 3D & Hub Méthodologique d'Expression Écrite (TCF Canada) :**
   - **Génération & Intégration des 3 Avatars 3D Haute Fidélité (`public/brand/companions/`) :**
     - `kodiak.jpg` : Ours Grizzly Canadien protecteur et rassurant, écharpe rouge feuille d'érable.

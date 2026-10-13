@@ -215,10 +215,10 @@ export function SiteNav() {
                   </div>
 
                   <Link
-                    href="/examens/demo-101-ce/intro"
-                    className="flex items-start gap-2.5 rounded-xl p-2 hover:bg-muted/70 transition-colors group"
+                    href="/examens"
+                    className="flex items-start gap-2.5 rounded-xl p-2 hover:bg-muted/70 transition-colors group opacity-85"
                   >
-                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 p-1 group-hover:scale-105 transition-transform">
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-amber-500/10 p-1 group-hover:scale-105 transition-transform">
                       <Image
                         src="/brand/icons-3d/comprehension-ecrite-book.png"
                         alt="CE"
@@ -230,21 +230,21 @@ export function SiteNav() {
                     <div>
                       <div className="text-xs font-bold text-foreground flex items-center gap-1.5">
                         <span>Compréhension Écrite (CE)</span>
-                        <span className="rounded bg-rose-500/10 px-1 py-0.2 text-[9px] font-bold text-rose-500">
-                          39Q
+                        <span className="rounded bg-amber-500/15 border border-amber-500/30 px-1 py-0.2 text-[9px] font-bold text-amber-600 dark:text-amber-400">
+                          Bientôt
                         </span>
                       </div>
                       <p className="text-[11px] text-muted-foreground leading-snug">
-                        Écran scindé officiel FEI, zoom de police & pièges décodés
+                        Calibrage officiel FEI 39Q en cours de finalisation
                       </p>
                     </div>
                   </Link>
 
                   <Link
-                    href="/examens/demo-101-ce/co"
-                    className="flex items-start gap-2.5 rounded-xl p-2 hover:bg-muted/70 transition-colors group"
+                    href="/examens"
+                    className="flex items-start gap-2.5 rounded-xl p-2 hover:bg-muted/70 transition-colors group opacity-85"
                   >
-                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-cyan-500/10 p-1 group-hover:scale-105 transition-transform">
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-amber-500/10 p-1 group-hover:scale-105 transition-transform">
                       <Image
                         src="/brand/icons-3d/comprehension-orale-headphones.png"
                         alt="CO"
@@ -256,21 +256,21 @@ export function SiteNav() {
                     <div>
                       <div className="text-xs font-bold text-foreground flex items-center gap-1.5">
                         <span>Compréhension Orale (CO)</span>
-                        <span className="rounded bg-cyan-500/10 px-1 py-0.2 text-[9px] font-bold text-cyan-600 dark:text-cyan-400">
-                          39Q
+                        <span className="rounded bg-amber-500/15 border border-amber-500/30 px-1 py-0.2 text-[9px] font-bold text-amber-600 dark:text-amber-400">
+                          Bientôt
                         </span>
                       </div>
                       <p className="text-[11px] text-muted-foreground leading-snug">
-                        Lecteur CBT sans retour arrière & audio studio HD
+                        Lecteur CBT audio studio en calibrage final
                       </p>
                     </div>
                   </Link>
 
                   <Link
                     href="/examens/demo-101-ce/eo/intro"
-                    className="flex items-start gap-2.5 rounded-xl p-2 hover:bg-muted/70 transition-colors group"
+                    className="flex items-start gap-2.5 rounded-xl p-2 hover:bg-muted/70 transition-colors group bg-emerald-500/[0.04] border border-emerald-500/20"
                   >
-                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-amber-500/10 p-1 group-hover:scale-105 transition-transform">
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-emerald-500/10 p-1 group-hover:scale-105 transition-transform">
                       <Image
                         src="/brand/icons-3d/expression-orale-microphone.png"
                         alt="EO"
@@ -282,8 +282,8 @@ export function SiteNav() {
                     <div>
                       <div className="text-xs font-bold text-foreground flex items-center gap-1.5">
                         <span>Expression Orale IA</span>
-                        <span className="rounded bg-amber-500/15 px-1 py-0.2 text-[9px] font-bold text-amber-600 dark:text-amber-400">
-                          Live
+                        <span className="rounded bg-emerald-500/15 border border-emerald-500/30 px-1 py-0.2 text-[9px] font-bold text-emerald-600 dark:text-emerald-400">
+                          Disponible
                         </span>
                       </div>
                       <p className="text-[11px] text-muted-foreground leading-snug">
@@ -294,7 +294,7 @@ export function SiteNav() {
 
                   <Link
                     href="/examens/demo-101-ee/intro"
-                    className="flex items-start gap-2.5 rounded-xl p-2 hover:bg-muted/70 transition-colors group"
+                    className="flex items-start gap-2.5 rounded-xl p-2 hover:bg-muted/70 transition-colors group bg-emerald-500/[0.04] border border-emerald-500/20"
                   >
                     <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#E51A31]/10 p-1 group-hover:scale-105 transition-transform">
                       <Image
@@ -308,7 +308,9 @@ export function SiteNav() {
                     <div>
                       <div className="text-xs font-bold text-foreground flex items-center gap-1.5">
                         <span>Expression Écrite FEI</span>
-                        <Sparkles className="h-3 w-3 text-brand-crimson" />
+                        <span className="rounded bg-emerald-500/15 border border-emerald-500/30 px-1 py-0.2 text-[9px] font-bold text-emerald-600 dark:text-emerald-400">
+                          Disponible
+                        </span>
                       </div>
                       <p className="text-[11px] text-muted-foreground leading-snug">
                         3 tâches, notation officielle & Magic Rewrite C1/C2
@@ -519,17 +521,19 @@ export function SiteNav() {
         </AnimatePresence>
       </div>
 
-      {/* 5. Tarifs */}
+      {/* 5. Accès 100% Gratuit */}
       <Link
-        href="/tarifs"
+        href="/dashboard"
         className={cn(
-          "rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all",
-          isPricingActive
-            ? "text-foreground bg-background shadow-xs font-bold"
-            : "text-muted-foreground hover:text-foreground hover:bg-background/60"
+          "rounded-full px-3 py-1.5 text-xs font-bold transition-all flex items-center gap-1.5",
+          "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20 border border-emerald-500/30"
         )}
       >
-        Tarifs
+        <span className="relative flex h-2 w-2">
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+          <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+        </span>
+        <span>Accès 100% Gratuit</span>
       </Link>
     </nav>
   );

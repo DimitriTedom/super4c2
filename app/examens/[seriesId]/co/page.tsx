@@ -1,8 +1,8 @@
-import { notFound } from "next/navigation";
-import { CbtExam } from "@/components/exam/cbt-exam";
-import { getMockSeries, FULL_SERIES_CO_101 } from "@/lib/exam/mock-series";
+import { DisciplineComingSoon } from "@/components/exam/discipline-coming-soon";
 
-export const metadata = { title: "Compréhension orale — Simulateur CBT" };
+export const metadata = {
+  title: "Compréhension Orale — Bientôt disponible | Super4C2",
+};
 
 export default async function CoPage({
   params,
@@ -10,14 +10,5 @@ export default async function CoPage({
   params: Promise<{ seriesId: string }>;
 }) {
   const { seriesId } = await params;
-  const requested = getMockSeries(seriesId);
-  const series =
-    requested && requested.discipline === "CO"
-      ? requested
-      : getMockSeries(`${seriesId}-co`) ||
-        getMockSeries(seriesId.replace(/-ce$/, "-co")) ||
-        FULL_SERIES_CO_101;
-
-  if (!series) notFound();
-  return <CbtExam series={series} />;
+  return <DisciplineComingSoon discipline="CO" seriesId={seriesId} />;
 }

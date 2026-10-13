@@ -8,6 +8,7 @@ import {
   CreditCard,
   LogOut,
   Mail,
+  PenTool,
   ShieldCheck,
   Sparkles,
   Target,
@@ -173,12 +174,14 @@ export default async function AccountPage() {
           </div>
 
           <div className="pt-2">
-            <Button variant="outline" size="sm" asChild className="w-full">
-              <Link href="/tarifs">
-                <Award className="mr-1.5 h-3.5 w-3.5" />
-                Voir les formules d&apos;abonnement
-              </Link>
-            </Button>
+            <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-3 text-center">
+              <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 block">
+                🎉 Pass Lancement 100% Gratuit Actif
+              </span>
+              <span className="text-[11px] text-muted-foreground mt-0.5 block">
+                Accès illimité aux épreuves d&apos;Écrit et d&apos;Oral
+              </span>
+            </div>
           </div>
         </div>
       </div>
@@ -188,9 +191,9 @@ export default async function AccountPage() {
         <h3 className="font-display text-base font-bold">Raccourcis Pratiques</h3>
         <div className="grid gap-3 sm:grid-cols-3">
           <Button variant="secondary" asChild className="justify-start">
-            <Link href="/examens/demo-101-ce/ce">
-              <Clock className="mr-2 h-4 w-4 text-primary" />
-              Simulateur CE Série 101
+            <Link href="/examens/demo-101-ee/intro">
+              <PenTool className="mr-2 h-4 w-4 text-brand-crimson" />
+              Expression Écrite (3 Tâches)
             </Link>
           </Button>
           <Button variant="secondary" asChild className="justify-start">

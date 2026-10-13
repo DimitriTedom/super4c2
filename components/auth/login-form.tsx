@@ -160,7 +160,10 @@ export function LoginForm() {
         <div className="text-center pt-1 space-y-2">
           <p className="text-sm text-muted-foreground">
             Pas encore de compte ?{" "}
-            <Link href="/auth/register" className="font-semibold text-primary hover:underline">
+            <Link
+              href={next && next !== "/dashboard" ? `/auth/register?next=${encodeURIComponent(next)}` : "/auth/register"}
+              className="font-semibold text-primary hover:underline"
+            >
               Créer mon compte gratuitement
             </Link>
           </p>

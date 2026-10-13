@@ -27,17 +27,17 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-type ShowcaseTab = "ce" | "co" | "ee" | "eo";
+type ShowcaseTab = "ee" | "eo" | "ce" | "co";
 
 const TABS = [
-  { id: "ce" as const, label: "1. Double Écran CBT (CE)", icon: Monitor, color: "text-brand-crimson" },
-  { id: "co" as const, label: "2. Lecteur Audio FEI (CO)", icon: Headphones, color: "text-cyan-500" },
-  { id: "ee" as const, label: "3. Magic Rewrite C1/C2 (EE)", icon: PenTool, color: "text-amber-500" },
-  { id: "eo" as const, label: "4. Examinateur IA Live (EO)", icon: Mic, color: "text-violet-500" },
+  { id: "ee" as const, label: "1. Expression Écrite (Disponible)", icon: PenTool, color: "text-brand-crimson" },
+  { id: "eo" as const, label: "2. Expression Orale IA (Disponible)", icon: Mic, color: "text-emerald-500" },
+  { id: "ce" as const, label: "3. Double Écran CE (Bientôt)", icon: Monitor, color: "text-amber-500" },
+  { id: "co" as const, label: "4. Audio FEI CO (Bientôt)", icon: Headphones, color: "text-cyan-500" },
 ];
 
 export function ProductShowcaseSection() {
-  const [activeTab, setActiveTab] = useState<ShowcaseTab>("ce");
+  const [activeTab, setActiveTab] = useState<ShowcaseTab>("ee");
   const [lastPressedKey, setLastPressedKey] = useState<string | null>(null);
 
   // ==========================================

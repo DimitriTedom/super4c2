@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -26,6 +26,8 @@ type Values = z.infer<typeof signUpSchema>;
 
 export function RegisterForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const next = searchParams.get("next") ?? "/dashboard";
   const [showPassword, setShowPassword] = React.useState(false);
 
   const form = useForm<Values>({
@@ -37,7 +39,7 @@ export function RegisterForm() {
 
   const onSubmit = (values: Values) => {
     startTransition(async () => {
-      const res = await signUpAction(values);
+      const res = await signUpAction({ ...values, next });
       if (!res.ok) {
         toast.error(res.error || "Impossible de créer le compte. Veuillez vérifier vos informations.");
         return;
@@ -178,7 +180,10 @@ export function RegisterForm() {
         <div className="text-center pt-2">
           <p className="text-sm text-muted-foreground">
             Vous avez déjà un compte ?{" "}
-            <Link href="/auth/login" className="font-semibold text-primary hover:underline">
+            <Link
+              href={next && next !== "/dashboard" ? `/auth/login?next=${encodeURIComponent(next)}` : "/auth/login"}
+              className="font-semibold text-primary hover:underline"
+            >
               Se connecter
             </Link>
           </p>

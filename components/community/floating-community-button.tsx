@@ -11,9 +11,12 @@ export function FloatingCommunityButton() {
   const pathname = usePathname();
   const [isHovered, setIsHovered] = useState(false);
 
-  // Masquer dans la salle d'examen plein écran ou lors d'une session de simulation
-  const isExamRunning = pathname?.includes("/ce") || pathname?.includes("/co") || pathname?.includes("/ee") || pathname?.includes("/eo");
-  if (isExamRunning) return null;
+  // Masquer dans la salle d'examen, sur les écrans d'authentification et dans le back-office admin
+  const isSuppressed =
+    /^\/examens\/[^/]+\/(ce|co|ee|eo|examen-blanc)\/?$/.test(pathname || "") ||
+    pathname?.startsWith("/auth") ||
+    pathname?.startsWith("/admin");
+  if (isSuppressed) return null;
 
   return (
     <div className="fixed bottom-6 right-6 z-40 flex flex-col items-end gap-2.5 print:hidden">

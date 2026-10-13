@@ -2,6 +2,32 @@
 
 ## 0. Chantiers Majeurs Récents : Compagnons 3D (Kodiak, Aura, Barnabé), Hub Méthodologique en 3 Paliers d'Expression Écrite, Barre du Temps & Clavier FEI
 
+### 0.00000000000000. Lancement 100% Gratuit, Gating d'Authentification, Isolation CBT & Épuration des Layouts Auth
+- **1. Épuration Radicale des Layouts d'Authentification (`components/app-shell.tsx`, `app/auth/login/page.tsx`, `app/auth/register/page.tsx`) :**
+  - **Suppression du SiteHeader & SiteFooter :** Les pages `/auth/login` et `/auth/register` ne subissent plus la barre de navigation marketing complète ni le footer à 4 colonnes.
+  - **Coque d'Auth Dédiée et Épurée :**
+    - En-tête minimal avec lien de retour direct vers l'accueil (`← Retour à l'accueil`) et badge officiel de certification.
+    - Conteneur centré sans distraction avec cartes d'authentification (`AuthCard`) harmonisées.
+    - Pied de page discret mentionnant les mentions légales, politique de confidentialité et conditions d'utilisation.
+    - Élimination de `MobileNavBar`, `AiChatWidget`, `FloatingCommunityButton` et `NewcomerGuideModal` sur tout le périmètre `/auth/*` et `/admin/login`.
+- **2. Préservation Stricte du Paramètre de Redirection `next` (`app/auth/actions.ts`, `components/auth/login-form.tsx`, `components/auth/register-form.tsx`) :**
+  - Transmission et encodage du paramètre `next` à travers tout le cycle d'authentification :
+    - `signInAction` redirige vers `input.next || "/dashboard"`.
+    - `signInDemoCandidateAction` redirige vers `next || "/dashboard"`.
+    - `signUpAction` redirige vers `input.next || "/dashboard"` (y compris dans le fallback local et lors de la confirmation par email).
+    - Liens de bascule croisée "Se connecter" ↔ "Créer un compte" transmettent dynamiquement `?next=...`.
+- **3. Isolation Totale des Salles d'Examen CBT FEI (`components/app-shell.tsx`, `components/community/floating-community-button.tsx`, `components/onboarding/newcomer-guide-modal.tsx`, `components/legal/cookie-consent-banner.tsx`) :**
+  - Regex officielle étendue : `const EXAM_ROOM = /^\/examens\/[^/]+\/(ce|co|ee|eo|examen-blanc)\/?$/`.
+  - Retourne strictement `<div className="min-h-screen bg-background">{children}</div>` sans barre de navigation, barre mobile, chatbot, ni scroll progress.
+  - Suppression conditionnelle automatique de `FloatingCommunityButton`, `NewcomerGuideModal` et `CookieConsentBanner` afin de ne jamais perturber l'attention du candidat ou le décompte du chronomètre de 60 minutes.
+- **4. Déploiement du Lancement 100% Gratuit & Masquage des Tarifs :**
+  - `middleware.ts` & pages `/tarifs` et `/checkout` redirigent automatiquement en HTTP 307 vers `/dashboard`.
+  - Remplacement des références tarifaires par le badge pulsant *"Accès 100% Gratuit — Pass Lancement Offert"* dans `SiteNav`, `SiteFooter`, `AccountPage` et `TestGratuitPage`.
+  - Mise à niveau du Dashboard candidat avec bannière de célébration du lancement gratuit, composant d'accueil vocal du Compagnon 3D (`CandidateCompanionWelcome`), et cartes héroïques d'accès direct aux épreuves actives EE & EO.
+- **5. Statut des Épreuves (EE & EO Actives, CE & CO en Calibrage FEI) :**
+  - Création de `components/exam/discipline-coming-soon.tsx` et montage sur `/examens/[seriesId]/ce` et `/co` informant clairement les candidats de l'étalonnage en cours avec liens de bascule immédiate vers l'Expression Écrite et l'Expression Orale.
+
+
 ### 0.0000000000000. Compagnons de Formation 3D & Hub Méthodologique d'Expression Écrite (TCF Canada)
 - **Choix des 3 Compagnons Charismatiques (Option C) :**
   1. **Kodiak (L'Ours / Grizzly Canadien)** : Le Coach Protecteur & Rassurant, veste polaire, écharpe rouge feuille d'érable (`/brand/companions/kodiak.jpg`).

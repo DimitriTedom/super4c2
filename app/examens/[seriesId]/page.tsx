@@ -113,122 +113,34 @@ export default async function SeriesDisciplineSelectorPage({
       </div>
 
 
+      {/* Bandeau d'information Lancement Gratuit */}
+      <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/[0.06] p-4 sm:p-5 flex items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-500/20 text-emerald-600 dark:text-emerald-400">
+            <Sparkles className="h-5 w-5" />
+          </div>
+          <div>
+            <h3 className="text-sm font-bold text-foreground">
+              Offre Spéciale Lancement : Accès 100% Gratuit
+            </h3>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              Les épreuves décisives d&apos;<strong>Expression Écrite</strong> (3 tâches FEI) et d&apos;<strong>Expression Orale</strong> (Examinateur IA) sont ouvertes sans frais à tous les candidats.
+            </p>
+          </div>
+        </div>
+      </div>
+
       {/* 4 Disciplines Grid */}
       <div className="grid gap-6 sm:grid-cols-2">
-        {/* 1. Compréhension Écrite / Reading (Flagship Highlight) */}
-        <div className="group relative flex flex-col justify-between rounded-3xl border-2 border-primary/50 bg-gradient-to-b from-card via-card to-primary/[0.04] p-6 shadow-md transition-all hover:-translate-y-1 hover:shadow-xl">
-          <span className="absolute -top-3 left-6 inline-flex items-center gap-1 rounded-full bg-primary px-3 py-0.5 text-xs font-bold uppercase tracking-wider text-primary-foreground shadow-xs">
-            <Sparkles className="h-3.5 w-3.5" /> {isIelts ? "Cambridge General · 40Q" : "Recommandé · Flagship 39Q"}
+        {/* 1. Expression Écrite / Writing (Flagship Actif) */}
+        <div className="group relative flex flex-col justify-between rounded-3xl border-2 border-brand-crimson/50 bg-gradient-to-b from-card via-card to-brand-crimson/[0.04] p-6 shadow-md transition-all hover:-translate-y-1 hover:shadow-xl">
+          <span className="absolute -top-3 left-6 inline-flex items-center gap-1 rounded-full bg-brand-crimson px-3 py-0.5 text-xs font-bold uppercase tracking-wider text-white shadow-xs">
+            <Sparkles className="h-3.5 w-3.5" /> Disponible · Recommandé FEI
           </span>
 
           <div className="space-y-4 pt-2">
             <div className="flex items-center justify-between">
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 p-1 transition-transform group-hover:scale-105">
-                <Image
-                  src="/brand/icons-3d/comprehension-ecrite-book.png"
-                  alt={isIelts ? "IELTS Reading" : "Compréhension Écrite"}
-                  width={48}
-                  height={48}
-                  className="h-12 w-12 object-contain drop-shadow-sm"
-                />
-              </div>
-              <div className="text-right">
-                <span className="font-mono text-xs font-semibold text-primary block">
-                  {isIelts ? "Barème Cambridge (Band 0–9.0)" : "Barème FEI (100–699)"}
-                </span>
-                <span className="text-xs text-muted-foreground">
-                  {isIelts ? "Seuil CLB 7 / CLB 9" : "Seuil NCLC 7"}
-                </span>
-              </div>
-            </div>
-
-            <div>
-              <h2 className="font-display text-xl font-bold">
-                {isIelts ? "Reading (Compréhension Écrite)" : "Compréhension Écrite"}
-              </h2>
-              <p className="mt-1 text-sm text-muted-foreground leading-relaxed">
-                {isIelts
-                  ? "3 sections authentiques Cambridge IELTS 18 (Social Survival, Workplace, General Reading). 40 questions True/False/Not Given et QCM avec analyse des pièges."
-                  : "Textes authentiques A1 à C2, double écran CBT officiel, zoom de lecture, touches A-D et décodage exhaustif des pièges avec intégration Carnet d'Erreurs (SRS)."}
-              </p>
-            </div>
-
-            <div className="flex items-center gap-4 text-xs font-semibold text-foreground/90 border-t pt-3">
-              <span className="inline-flex items-center gap-1.5">
-                <Clock className="h-4 w-4 text-primary" /> 60 minutes
-              </span>
-              <span className="inline-flex items-center gap-1.5">
-                <ListChecks className="h-4 w-4 text-primary" />{" "}
-                {isIelts ? "40 questions (T/F/NG & QCM)" : "39 questions QCM"}
-              </span>
-            </div>
-          </div>
-
-          <div className="pt-6">
-            <Button asChild size="lg" className="w-full font-bold shadow-xs">
-              <Link href={isIelts ? `/examens/${series.id}/ce` : `/examens/${series.id}/intro`}>
-                {isIelts ? "Démarrer le Reading (CE)" : "Démarrer la Compréhension Écrite"}
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
-          </div>
-        </div>
-
-        {/* 2. Compréhension Orale / Listening */}
-        <div className="group flex flex-col justify-between rounded-3xl border bg-card p-6 shadow-xs transition-all hover:-translate-y-1 hover:border-cyan-500/40 hover:shadow-lg">
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-cyan-500/10 p-1 transition-transform group-hover:scale-105">
-                <Image
-                  src="/brand/icons-3d/comprehension-orale-headphones.png"
-                  alt={isIelts ? "IELTS Listening" : "Compréhension Orale"}
-                  width={48}
-                  height={48}
-                  className="h-12 w-12 object-contain drop-shadow-sm"
-                />
-              </div>
-              <span className="font-mono text-xs text-cyan-600 dark:text-cyan-400 font-bold">
-                {isIelts ? "Listening 4 Sections" : "Mono-écoute stricte"}
-              </span>
-            </div>
-
-            <div>
-              <h2 className="font-display text-xl font-bold">
-                {isIelts ? "Listening (Compréhension Orale)" : "Compréhension Orale"}
-              </h2>
-              <p className="mt-1 text-sm text-muted-foreground leading-relaxed">
-                {isIelts
-                  ? "4 sections Cambridge officielles : dialogue quotidien, monologue social, discussion académique et conférence scientifique. Audio transcripts complets et explications."
-                  : "Documents sonores fidèles aux accents québécois et français. Une seule écoute sans pause ni retour, identique aux conditions de passation en centre agréé."}
-              </p>
-            </div>
-
-            <div className="flex items-center gap-4 text-xs font-semibold text-foreground/90 border-t pt-3">
-              <span className="inline-flex items-center gap-1.5">
-                <Clock className="h-4 w-4 text-muted-foreground" /> {isIelts ? "30 minutes" : "40 minutes"}
-              </span>
-              <span className="inline-flex items-center gap-1.5">
-                <ListChecks className="h-4 w-4 text-muted-foreground" />{" "}
-                {isIelts ? "40 questions QCM" : "39 questions QCM"}
-              </span>
-            </div>
-          </div>
-
-          <div className="pt-6">
-            <Button asChild variant="outline" size="lg" className="w-full font-semibold">
-              <Link href={`/examens/${series.id}/co`}>
-                {isIelts ? "Démarrer le Listening (CO)" : "Démarrer la Compréhension Orale"}
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
-          </div>
-        </div>
-
-        {/* 3. Expression Écrite / Writing */}
-        <div className="group flex flex-col justify-between rounded-3xl border bg-card p-6 shadow-xs transition-all hover:-translate-y-1 hover:border-brand-crimson/40 hover:shadow-lg">
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#E51A31]/10 p-1 transition-transform group-hover:scale-105">
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-crimson/10 p-1 transition-transform group-hover:scale-105">
                 <Image
                   src="/brand/icons-3d/expression-ecrite-pen.png"
                   alt={isIelts ? "IELTS Writing" : "Expression Écrite"}
@@ -237,8 +149,8 @@ export default async function SeriesDisciplineSelectorPage({
                   className="h-12 w-12 object-contain drop-shadow-sm"
                 />
               </div>
-              <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-[11px] font-semibold text-primary">
-                {isIelts ? "Task 1 & Task 2" : "Correction IA FEI"}
+              <span className="rounded-full bg-emerald-500/15 border border-emerald-500/30 px-2.5 py-0.5 text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
+                100% Gratuit · Correction IA
               </span>
             </div>
 
@@ -248,35 +160,39 @@ export default async function SeriesDisciplineSelectorPage({
               </h2>
               <p className="mt-1 text-sm text-muted-foreground leading-relaxed">
                 {isIelts
-                  ? "2 tâches officielles Cambridge General : Task 1 Lettre formelle (150 mots) et Task 2 Essai discursif (250 mots). Grille officielle IELTS 4 critères (TR, CC, LR, GRA)."
-                  : "3 tâches officielles (message, article, essai argumenté) avec compteur de mots dynamique, notation sur 20 selon la grille FEI et Magic Rewrite niveau C1/C2."}
+                  ? "2 tâches officielles Cambridge General : Task 1 Lettre formelle (150 mots) et Task 2 Essai discursif (250 mots). Grille officielle IELTS 4 critères."
+                  : "3 tâches officielles (courriel, récit d'expérience, prise de position) avec hub didactique en 3 paliers, compteur de mots officiel et Magic Rewrite C1/C2."}
               </p>
             </div>
 
             <div className="flex items-center gap-4 text-xs font-semibold text-foreground/90 border-t pt-3">
               <span className="inline-flex items-center gap-1.5">
-                <Clock className="h-4 w-4 text-muted-foreground" /> 60 minutes
+                <Clock className="h-4 w-4 text-brand-crimson" /> 60 minutes
               </span>
               <span className="inline-flex items-center gap-1.5">
-                <ListChecks className="h-4 w-4 text-muted-foreground" />{" "}
+                <ListChecks className="h-4 w-4 text-brand-crimson" />{" "}
                 {isIelts ? "2 tâches (Lettre + Essai)" : "3 tâches de rédaction"}
               </span>
             </div>
           </div>
 
           <div className="pt-6">
-            <Button asChild variant="outline" size="lg" className="w-full font-semibold">
+            <Button asChild size="lg" className="w-full bg-brand-crimson hover:bg-brand-crimson-dark text-white font-bold shadow-md">
               <Link href={`/examens/${series.id}/ee/intro`}>
-                {isIelts ? "Accéder à l'Atelier Writing" : "Accéder à l'Atelier Écrit"}
+                <span>Démarrer l&apos;Atelier d&apos;Écriture</span>
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </Button>
           </div>
         </div>
 
-        {/* 4. Expression Orale / Speaking */}
-        <div className="group flex flex-col justify-between rounded-3xl border bg-card p-6 shadow-xs transition-all hover:-translate-y-1 hover:border-amber-500/40 hover:shadow-lg">
-          <div className="space-y-4">
+        {/* 2. Expression Orale / Speaking (Flagship Actif) */}
+        <div className="group relative flex flex-col justify-between rounded-3xl border-2 border-amber-500/50 bg-gradient-to-b from-card via-card to-amber-500/[0.04] p-6 shadow-md transition-all hover:-translate-y-1 hover:shadow-xl">
+          <span className="absolute -top-3 left-6 inline-flex items-center gap-1 rounded-full bg-amber-500 px-3 py-0.5 text-xs font-bold uppercase tracking-wider text-white shadow-xs">
+            <Sparkles className="h-3.5 w-3.5" /> Disponible · Studio Visio IA
+          </span>
+
+          <div className="space-y-4 pt-2">
             <div className="flex items-center justify-between">
               <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-500/10 p-1 transition-transform group-hover:scale-105">
                 <Image
@@ -287,8 +203,8 @@ export default async function SeriesDisciplineSelectorPage({
                   className="h-12 w-12 object-contain drop-shadow-sm"
                 />
               </div>
-              <span className="rounded-full bg-amber-500/15 px-2.5 py-0.5 text-[11px] font-semibold text-amber-600 dark:text-amber-400">
-                {isIelts ? "3 Parts · Cambridge Examiner" : "Voice Agent Live"}
+              <span className="rounded-full bg-emerald-500/15 border border-emerald-500/30 px-2.5 py-0.5 text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
+                100% Gratuit · Examinateur Live
               </span>
             </div>
 
@@ -298,26 +214,124 @@ export default async function SeriesDisciplineSelectorPage({
               </h2>
               <p className="mt-1 text-sm text-muted-foreground leading-relaxed">
                 {isIelts
-                  ? "Entretien en 3 parties avec l'examinateur IA Cambridge : Part 1 Interview & Home town, Part 2 Cue Card (1 min prep, 2 min monologue), Part 3 Discussion abstraite."
-                  : "Interagissez avec notre examinateur vocal IA en direct. Simulation de jeu de rôle dynamique (Tâche 2) et monologue argumenté avec feedback vocal immédiat."}
+                  ? "Entretien en 3 parties avec l'examinateur IA : Interview, Cue Card et Discussion abstraite avec évaluation de la fluidité."
+                  : "Interagissez avec notre examinateur vocal IA M. Laurent en studio 16:9. Pré-test micro, 3 tâches d'entretien officiel et enregistrement intégral."}
               </p>
             </div>
 
             <div className="flex items-center gap-4 text-xs font-semibold text-foreground/90 border-t pt-3">
               <span className="inline-flex items-center gap-1.5">
-                <Clock className="h-4 w-4 text-muted-foreground" /> {isIelts ? "11–14 minutes" : "12 minutes"}
+                <Clock className="h-4 w-4 text-amber-500" /> {isIelts ? "11–14 minutes" : "12 minutes"}
               </span>
               <span className="inline-flex items-center gap-1.5">
-                <ListChecks className="h-4 w-4 text-muted-foreground" />{" "}
-                {isIelts ? "3 parties officielles" : "3 tâches interactives"}
+                <ListChecks className="h-4 w-4 text-amber-500" />{" "}
+                {isIelts ? "3 parties" : "3 tâches officielles"}
               </span>
             </div>
           </div>
 
           <div className="pt-6">
-            <Button asChild variant="outline" size="lg" className="w-full font-semibold">
+            <Button asChild size="lg" className="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold shadow-md">
               <Link href={`/examens/${series.id}/eo/intro`}>
-                {isIelts ? "Démarrer le Speaking IELTS" : "Démarrer le Jeu de Rôle Vocal"}
+                <span>Démarrer l&apos;Épreuve Orale</span>
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
+          </div>
+        </div>
+
+        {/* 3. Compréhension Écrite / Reading (Bientôt disponible) */}
+        <div className="group relative flex flex-col justify-between rounded-3xl border border-border/80 bg-muted/20 p-6 shadow-xs opacity-90 transition-all hover:border-amber-500/40">
+          <span className="absolute -top-3 left-6 inline-flex items-center gap-1 rounded-full border border-amber-500/40 bg-amber-500/10 px-3 py-0.5 text-xs font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400">
+            🔒 Bientôt disponible · Calibrage FEI
+          </span>
+
+          <div className="space-y-4 pt-2">
+            <div className="flex items-center justify-between">
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-muted p-1">
+                <Image
+                  src="/brand/icons-3d/comprehension-ecrite-book.png"
+                  alt={isIelts ? "IELTS Reading" : "Compréhension Écrite"}
+                  width={48}
+                  height={48}
+                  className="h-12 w-12 object-contain drop-shadow-sm opacity-70"
+                />
+              </div>
+              <span className="text-xs font-mono text-muted-foreground">39 questions</span>
+            </div>
+
+            <div>
+              <h2 className="font-display text-xl font-bold text-foreground/80">
+                {isIelts ? "Reading (Compréhension Écrite)" : "Compréhension Écrite"}
+              </h2>
+              <p className="mt-1 text-sm text-muted-foreground leading-relaxed">
+                Les banques de questions et le simulateur double écran font l&apos;objet d&apos;un calibrage approfondi pour garantir une fidélité 100% conforme aux épreuves réelles.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-4 text-xs font-semibold text-muted-foreground border-t pt-3">
+              <span className="inline-flex items-center gap-1.5">
+                <Clock className="h-4 w-4" /> 60 minutes
+              </span>
+              <span className="inline-flex items-center gap-1.5">
+                <ListChecks className="h-4 w-4" /> 39 questions
+              </span>
+            </div>
+          </div>
+
+          <div className="pt-6">
+            <Button asChild variant="outline" size="lg" className="w-full font-semibold border-dashed text-muted-foreground hover:text-foreground">
+              <Link href={`/examens/${series.id}/ce`}>
+                <span>Consulter le statut de calibrage</span>
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
+          </div>
+        </div>
+
+        {/* 4. Compréhension Orale / Listening (Bientôt disponible) */}
+        <div className="group relative flex flex-col justify-between rounded-3xl border border-border/80 bg-muted/20 p-6 shadow-xs opacity-90 transition-all hover:border-amber-500/40">
+          <span className="absolute -top-3 left-6 inline-flex items-center gap-1 rounded-full border border-amber-500/40 bg-amber-500/10 px-3 py-0.5 text-xs font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400">
+            🔒 Bientôt disponible · Calibrage FEI
+          </span>
+
+          <div className="space-y-4 pt-2">
+            <div className="flex items-center justify-between">
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-muted p-1">
+                <Image
+                  src="/brand/icons-3d/comprehension-orale-headphones.png"
+                  alt={isIelts ? "IELTS Listening" : "Compréhension Orale"}
+                  width={48}
+                  height={48}
+                  className="h-12 w-12 object-contain drop-shadow-sm opacity-70"
+                />
+              </div>
+              <span className="text-xs font-mono text-muted-foreground">39 questions</span>
+            </div>
+
+            <div>
+              <h2 className="font-display text-xl font-bold text-foreground/80">
+                {isIelts ? "Listening (Compréhension Orale)" : "Compréhension Orale"}
+              </h2>
+              <p className="mt-1 text-sm text-muted-foreground leading-relaxed">
+                Les extraits sonores studio et le lecteur de mono-écoute CBT sont en cours d&apos;ajustement pour reproduire exactement l&apos;environnement d&apos;un centre d&apos;examen officiel.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-4 text-xs font-semibold text-muted-foreground border-t pt-3">
+              <span className="inline-flex items-center gap-1.5">
+                <Clock className="h-4 w-4" /> 40 minutes
+              </span>
+              <span className="inline-flex items-center gap-1.5">
+                <ListChecks className="h-4 w-4" /> 39 questions
+              </span>
+            </div>
+          </div>
+
+          <div className="pt-6">
+            <Button asChild variant="outline" size="lg" className="w-full font-semibold border-dashed text-muted-foreground hover:text-foreground">
+              <Link href={`/examens/${series.id}/co`}>
+                <span>Consulter le statut de calibrage</span>
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </Button>

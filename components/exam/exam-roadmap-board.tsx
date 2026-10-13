@@ -588,8 +588,8 @@ export function ExamRoadmapBoard({
                         size="lg"
                         className="font-bold text-sm sm:text-base shadow-md px-6 bg-primary hover:bg-primary/90 w-full sm:w-auto"
                       >
-                        <Link href={selectedSeries.disciplines[0]?.url || "/examens/demo-101-ce"}>
-                          <span>Lancer la Série Complète (CBT)</span>
+                        <Link href={`/examens/${selectedSeries.id}`}>
+                          <span>Accéder aux Épreuves de la Série</span>
                           <ArrowRight className="h-5 w-5 ml-2" />
                         </Link>
                       </Button>
@@ -675,15 +675,15 @@ export function ExamRoadmapBoard({
                             ? PenTool
                             : Mic;
 
-                        const isFlagship = d.type === "ce";
+                        const isComingSoon = d.type === "ce" || d.type === "co";
 
                         return (
                           <div
                             key={d.type}
                             className={`group relative flex flex-col justify-between rounded-2xl border p-5 transition-all hover:-translate-y-1 ${
-                              isFlagship
-                                ? "border-primary/50 bg-card shadow-md"
-                                : "border-border bg-card/80 hover:border-primary/40"
+                              !isComingSoon
+                                ? "border-emerald-500/40 bg-card shadow-md"
+                                : "border-border/80 bg-muted/20 opacity-85"
                             }`}
                           >
                             <div className="space-y-3">
@@ -701,8 +701,15 @@ export function ExamRoadmapBoard({
                                 >
                                   <Icon className="h-5 w-5" />
                                 </div>
-                                <Badge variant="outline" className="text-[10px] font-bold">
-                                  {d.badge}
+                                <Badge
+                                  variant="outline"
+                                  className={`text-[10px] font-bold ${
+                                    isComingSoon
+                                      ? "border-amber-500/40 text-amber-600 dark:text-amber-400 bg-amber-500/10"
+                                      : "border-emerald-500/40 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10"
+                                  }`}
+                                >
+                                  {isComingSoon ? "🔒 Bientôt" : "Disponible (Gratuit)"}
                                 </Badge>
                               </div>
 
@@ -711,7 +718,7 @@ export function ExamRoadmapBoard({
                                   {d.name}
                                 </h4>
                                 <p className="text-xs text-muted-foreground mt-0.5">
-                                  {d.questionsOrTasks}
+                                  {isComingSoon ? "Calibrage officiel FEI en cours" : d.questionsOrTasks}
                                 </p>
                               </div>
 
@@ -725,11 +732,15 @@ export function ExamRoadmapBoard({
                               <Button
                                 asChild
                                 size="sm"
-                                variant={isFlagship ? "default" : "outline"}
-                                className="w-full mt-4 font-bold"
+                                variant={!isComingSoon ? "default" : "outline"}
+                                className={`w-full mt-4 font-bold ${
+                                  !isComingSoon
+                                    ? "bg-primary hover:bg-primary/90 text-white shadow-xs"
+                                    : "border-dashed text-muted-foreground hover:text-foreground"
+                                }`}
                               >
                                 <Link href={d.url}>
-                                  <span>Commencer ({d.duration})</span>
+                                  <span>{isComingSoon ? "Statut de calibrage" : `S'entraîner (${d.duration})`}</span>
                                 </Link>
                               </Button>
                             ) : (

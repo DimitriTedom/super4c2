@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   X,
@@ -109,11 +110,19 @@ const STEPS: Step[] = [
 const ONBOARDING_STORAGE_KEY = "super4c2:newcomer_guide_viewed";
 
 export function NewcomerGuideModal() {
+  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [currentStep, setCurrentStep] = useState<number>(1);
 
-  // Auto-open on first visit after a slight delay
+  const isSuppressed =
+    /^\/examens\/[^/]+\/(ce|co|ee|eo|examen-blanc)\/?$/.test(pathname || "") ||
+    pathname?.startsWith("/auth") ||
+    pathname?.startsWith("/admin");
+
+  // Auto-open on first visit after a slight delay (only on public / student pages)
   useEffect(() => {
+    if (isSuppressed) return;
+
     try {
       const alreadyViewed = localStorage.getItem(ONBOARDING_STORAGE_KEY);
       if (!alreadyViewed) {
@@ -125,7 +134,7 @@ export function NewcomerGuideModal() {
     } catch {
       // Ignore storage errors
     }
-  }, []);
+  }, [isSuppressed]);
 
   // Listen for manual trigger event
   useEffect(() => {
@@ -162,6 +171,8 @@ export function NewcomerGuideModal() {
 
   const step = STEPS[currentStep - 1];
   const progressPercent = (currentStep / STEPS.length) * 100;
+
+  if (isSuppressed) return null;
 
   return (
     <AnimatePresence>

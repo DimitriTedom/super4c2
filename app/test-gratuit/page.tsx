@@ -411,8 +411,8 @@ export default function TestGratuitPage() {
                 </span>
               </ShimmerButton>
 
-              <InteractiveHoverButton href="/tarifs" className="w-full sm:w-auto">
-                Voir les formules &amp; tarifs
+              <InteractiveHoverButton href="/dashboard" className="w-full sm:w-auto">
+                Accéder à mon cockpit gratuit
               </InteractiveHoverButton>
 
               <Button variant="ghost" size="sm" onClick={handleRestart} className="gap-2 text-xs">

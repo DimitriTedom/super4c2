@@ -99,3 +99,10 @@ export const COMPANIONS: Record<CompanionId, Companion> = {
 };
 
 export const DEFAULT_COMPANION_ID: CompanionId = "kodiak";
+
+export function getCompanionById(id?: string | null): Companion {
+  if (id && (id === "kodiak" || id === "aura" || id === "barnabe")) {
+    return COMPANIONS[id];
+  }
+  return COMPANIONS.kodiak;
+}

@@ -113,7 +113,7 @@ export async function signInAction(input: z.infer<typeof signInSchema> & { next?
   }
 }
 
-export async function signUpAction(input: z.infer<typeof signUpSchema>) {
+export async function signUpAction(input: z.infer<typeof signUpSchema> & { next?: string }) {
   const parsed = signUpSchema.safeParse(input);
   if (!parsed.success) {
     return { ok: false as const, error: "Informations invalides." };
@@ -151,14 +151,17 @@ export async function signUpAction(input: z.infer<typeof signUpSchema>) {
 
         // Si la session n'est pas établie immédiatement (confirmation par e-mail requise par Supabase)
         if (!data.session) {
+          const loginTarget = input.next
+            ? `/auth/login?registered=pending_confirmation&next=${encodeURIComponent(input.next)}`
+            : "/auth/login?registered=pending_confirmation";
           return {
             ok: true as const,
-            redirectTo: "/auth/login?registered=pending_confirmation",
+            redirectTo: loginTarget,
             message: "Votre compte a été créé. Si vous avez reçu un e-mail de confirmation, veuillez valider votre lien avant de vous connecter.",
           };
         }
 
-        return { ok: true as const, redirectTo: "/dashboard" };
+        return { ok: true as const, redirectTo: input.next || "/dashboard" };
       }
 
       if (error) {
@@ -201,5 +204,5 @@ export async function signUpAction(input: z.infer<typeof signUpSchema>) {
     maxAge: 60 * 60 * 24 * 7,
   });
 
-  return { ok: true as const, redirectTo: "/dashboard" };
+  return { ok: true as const, redirectTo: input.next || "/dashboard" };
 }

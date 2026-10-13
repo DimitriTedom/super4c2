@@ -233,8 +233,8 @@ export function SiteFooter() {
                 </Link>
               </li>
               <li>
-                <Link href="/tarifs" className="transition-colors hover:text-primary font-semibold text-primary">
-                  Tarifs & Formules d&apos;Accès
+                <Link href="/dashboard" className="transition-colors hover:text-emerald-500 font-semibold text-emerald-600 dark:text-emerald-400">
+                  Accès 100% Gratuit (Lancement)
                 </Link>
               </li>
             </ul>
