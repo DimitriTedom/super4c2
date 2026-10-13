@@ -21,6 +21,12 @@ export function CandidateCompanionWelcome({ userDisplayName }: CandidateCompanio
       const stored = localStorage.getItem("super4c2:user_companion");
       if (stored) {
         setCompanion(getCompanionById(stored));
+      } else {
+        // Premier passage : proposer le flow d'accueil TCF et de choix du compagnon
+        const timer = setTimeout(() => {
+          setSelectorOpen(true);
+        }, 800);
+        return () => clearTimeout(timer);
       }
     } catch {
       // Ignorer

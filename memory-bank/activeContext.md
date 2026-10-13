@@ -2,6 +2,20 @@
 
 ## 0. Chantiers Majeurs Récents : Compagnons 3D (Kodiak, Aura, Barnabé), Hub Méthodologique en 3 Paliers d'Expression Écrite, Barre du Temps & Clavier FEI
 
+### 0.000000000000000. Organigramme d'Accueil TCF Canada & Hub d'Expression Écrite Structuré
+- **1. Onboarding en 2 Étapes TCF Canada (`components/companions/companion-selector-dialog.tsx`) :**
+  - **Étape 1 — Accueil Oral du TCF Canada dans son ensemble :** Lecteur audio Web Speech et transcription complète présentant le TCF Canada, ses 4 épreuves, l'objectif capital NCLC 7 et le bonus de +50 points CRS, ainsi que la raison pour laquelle 78% des candidats perdent leurs points en Expression Écrite et Orale. Bouton : *"Suivant : Choisir mon Compagnon de Formation →"*.
+  - **Étape 2 — Choix du Compagnon 3D de Formation :** Présentation des 3 mentors avec Kodiak (le nounours/grizzly 3D canadien) en vedette, Aura et Barnabé. Écoute de la voix de chaque mentor et validation persistante (`super4c2:user_companion`).
+- **2. Hub d'Expression Écrite en 3 Grands Titres (`components/exam/writing-methodology-hub.tsx`) :**
+  - **Accueil Vocal du Compagnon :** Le compagnon 3D sélectionné lit la page à voix haute et présente les 3 grands titres structurés.
+  - **Grand Titre 1 — Présentation & Description de l'Épreuve :** Décomposition officielle du barème FEI sur 20 points (4 critères de 5 points : Adéquation, Cohérence, Lexique, Morphosyntaxe) et les 3 pièges éliminatoires.
+  - **Grand Titre 2 — Méthodologie & Exercices d'Application Corrigés :**
+    - *Tâche 1 (Courriel • 60-120 mots • ~15 min) :* Méthodologie en 3 blocs + Sujet type officiel FEI + Corrigé modèle rédigé C1/C2 (94 mots) + Décryptage 20/20 + Bouton d'entraînement dédié.
+    - *Tâche 2 (Récit • 120-150 mots • ~20 min) :* Méthodologie du récit d'expérience citoyenne + Sujet type officiel FEI + Corrigé modèle rédigé C1/C2 (138 mots) + Décryptage 20/20 + Bouton d'entraînement dédié.
+    - *Tâche 3 (Débat • 120-180 mots • ~25 min) :* Méthodologie de la double argumentation et formules de concession + Sujet type officiel FEI + Corrigé modèle rédigé C1/C2 (162 mots) + Décryptage 20/20 + Bouton d'entraînement dédié.
+  - **Grand Titre 3 — Session Examen Blanc (60 min) :** Simulateur officiel CBT chronométré 60 min avec barre de temps dynamique, clavier de caractères accentués (Maj/Min) et autosave.
+
+
 ### 0.00000000000000. Lancement 100% Gratuit, Gating d'Authentification, Isolation CBT & Épuration des Layouts Auth
 - **1. Épuration Radicale des Layouts d'Authentification (`components/app-shell.tsx`, `app/auth/login/page.tsx`, `app/auth/register/page.tsx`) :**
   - **Suppression du SiteHeader & SiteFooter :** Les pages `/auth/login` et `/auth/register` ne subissent plus la barre de navigation marketing complète ni le footer à 4 colonnes.

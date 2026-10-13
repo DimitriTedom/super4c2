@@ -9,6 +9,8 @@ export interface Companion {
   avatarUrl: string;
   tagline: string;
   speechText: string;
+  tcfWelcomeSpeech: string;
+  pageTourSpeech: string;
   voiceStyle: string;
   accentColor: string;
   tips: {
@@ -26,16 +28,20 @@ export const COMPANIONS: Record<CompanionId, Companion> = {
     name: "Kodiak",
     species: "Grizzly Canadien",
     role: "Le Coach Protecteur & Rassurant",
-    badge: "🇨🇦 Coach Boreal",
+    badge: "🇨🇦 Coach Boréal",
     avatarUrl: "/brand/companions/kodiak.jpg",
     tagline: "Calme, endurance et méthode pour dompter les 60 minutes de l'examen.",
     speechText:
-      "Bienvenue dans l'espace Expression Écrite du TCF Canada ! Je suis Kodiak, votre compagnon de route. 78% des candidats perdent leurs 50 points d'Entrée Express ici faute de méthode. Respirez : ensemble, nous allons décomposer chaque consigne pas à pas pour atteindre le C1/C2 !",
+      "Bienvenue ! Je suis Kodiak, ton coach pour le TCF Canada. 78% des candidats perdent leurs 50 points d'Entrée Express en Expression Écrite faute de structure. Respirez : ensemble, nous allons décomposer chaque consigne pas à pas pour atteindre le C1 et C2 !",
+    tcfWelcomeSpeech:
+      "Bienvenue sur Super4C2 ! Le TCF Canada est le test linguistique officiel requis pour l'immigration canadienne et l'Entrée Express. Votre objectif prioritaire est d'atteindre le palier NCLC 7 dans les 4 compétences afin de décrocher le bonus crucial de 50 points CRS. 78% des candidats trébuchent en Expression Écrite et Expression Orale à cause de la gestion du temps. Avec Super4C2, vous n'êtes jamais seul face à la page blanche : je serai là pour vous guider pas à pas. Cliquez sur suivant pour choisir votre compagnon de formation !",
+    pageTourSpeech:
+      "Bonjour ! Bienvenue dans l'espace d'Expression Écrite du TCF Canada. Je suis ton compagnon de formation. Voici ce que tu vas trouver sur cette page : d'abord, une présentation complète de l'épreuve d'expression écrite et du barème officiel FEI. Ensuite, la méthodologie détaillée de chacune des 3 tâches, accompagnée d'exercices d'application concrets et de corrigés modèles de niveau C1 et C2. Et enfin, la session d'examen blanc en conditions réelles sur 60 minutes avec barre de temps et clavier d'accents. Es-tu prêt ? Commençons par découvrir la présentation de l'épreuve !",
     voiceStyle: "Chaleureuse, posée et bienveillante",
     accentColor: "from-amber-600 to-rose-600",
     tips: {
       tcfGeneral:
-        "L'examen dure 60 minutes pour 3 tâches. Votre mission n'est pas d'écrire un roman, mais de prouver aux correcteurs FEI que vous maîtrisez la langue.",
+        "L'examen dure 60 minutes pour 3 tâches. Votre mission n'est pas d'écrire un roman, mais de prouver aux correcteurs FEI que vous maîtrisez la langue avec 4 critères clés.",
       task1:
         "Tâche 1 (Message/Courriel) : Visez 80 à 100 mots. Adoptez un registre amical ou neutre, et respectez scrupuleusement la consigne de communication.",
       task2:
@@ -56,6 +62,10 @@ export const COMPANIONS: Record<CompanionId, Companion> = {
     tagline: "Optimisation millimétrée du barème officiel FEI pour maximiser chaque point CRS.",
     speechText:
       "Salutations ! Je suis Aura, votre système de guidage analytique. Mon algorithme calibre votre syntaxe, vos connecteurs logiques et la richesse de votre lexique selon la grille exacte des examinateurs de France Éducation International.",
+    tcfWelcomeSpeech:
+      "Initialisation de votre protocole de réussite TCF Canada. Le système d'Entrée Express valorise le bilinguisme francophone à hauteur de 50 points CRS dès le seuil NCLC 7. L'analyse statistique révèle que les épreuves d'Expression Écrite et Orale concentrent l'essentiel des échecs. Notre simulateur intègre les barèmes exacts de France Éducation International pour vous préparer de façon chirurgicale. Cliquez sur suivant pour sélectionner votre mentor d'entraînement !",
+    pageTourSpeech:
+      "Bonjour. Bienvenue sur la plateforme d'Expression Écrite du TCF Canada. Voici la structure analytique de ce hub : en premier lieu, la présentation exhaustive du barème FEI et des 4 critères de notation sur 5 points. En second lieu, la méthodologie décortiquée des 3 tâches avec exercices d'application concrets et corrigés de niveau C1/C2. En dernier lieu, la simulation intégrale en conditions réelles sur 60 minutes. Débutons par l'analyse des critères officiels.",
     voiceStyle: "Claire, articulée et stimulante",
     accentColor: "from-cyan-500 to-blue-600",
     tips: {
@@ -81,6 +91,10 @@ export const COMPANIONS: Record<CompanionId, Companion> = {
     tagline: "Des structures de texte solides comme un barrage pour ne laisser passer aucune erreur.",
     speechText:
       "Salut à vous ! Moi c'est Barnabé. Un texte d'examen, ça se bâtit avec rigueur : une introduction claire, des paragraphes bien étanches et une conclusion percutante. On va construire ensemble votre réussite au TCF !",
+    tcfWelcomeSpeech:
+      "Salut le futur résident permanent ! Le TCF Canada, c'est comme bâtir une maison : si les fondations sont solides, la note monte tout seul. Le niveau NCLC 7 dans les 4 épreuves vous ouvre les portes du Canada avec 50 points d'Entrée Express en poche. C'est à l'écrit et à l'oral que tout se joue. Avec nous, vous aurez les plans, les outils et l'entraînement qu'il faut. Cliquez sur suivant pour choisir votre compagnon de chantier !",
+    pageTourSpeech:
+      "Salut ! Bienvenue dans l'atelier d'Expression Écrite du TCF Canada. Voici les 3 étapes de travail sur cette page : 1, on commence par décortiquer les règles du jeu et le barème des examinateurs. 2, on passe en revue la méthode de chacune des 3 tâches avec des exemples concrets et des textes modèles corrigés. 3, on se lance dans l'examen blanc officiel de 60 minutes. Prêt pour l'action ? Regardons d'abord le barème !",
     voiceStyle: "Dynamique, enthousiaste et concrète",
     accentColor: "from-amber-500 to-orange-600",
     tips: {

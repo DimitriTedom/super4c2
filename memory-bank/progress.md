@@ -1,3 +1,7 @@
+- [x] **Organigramme d'Accueil TCF Canada & Hub d'Expression Écrite Structuré :**
+  - Dialogue d'onboarding en 2 étapes : 1. Accueil oralisé du TCF Canada dans son ensemble (audio Web Speech + transcription 4 compétences + enjeu NCLC 7 / CRS +50 pts), 2. Choix du compagnon 3D (le nounours Kodiak, Aura, Barnabé) avec écoute vocale et sauvegarde du profil.
+  - Hub d'Expression Écrite (`WritingMethodologyHub`) avec lecture vocale de la visite guidée par le compagnon présentant fidèlement les 3 grands titres.
+  - Déploiement des 3 grands titres : 1. Présentation & Barème FEI 20/20, 2. Méthodologie et Exercices d'application concrets corrigés de niveau C1/C2 pour les Tâches 1, 2 et 3 avec décryptage 20/20 et bouton d'entraînement, 3. Session Examen Blanc officiel (60 min).
 - [x] **Lancement 100% Gratuit, Gating d'Authentification, Isolation CBT & Épuration des Layouts Auth :**
   - Épuration totale des pages `/auth/login` et `/auth/register` : suppression du `SiteHeader` (navbar marketing) et du `SiteFooter` (4 colonnes de liens), remplacés par une coque d'authentification minimale, centrée et sans distraction.
   - Suppression de `FloatingCommunityButton` et `NewcomerGuideModal` des pages d'authentification, de l'espace administration et des salles d'examen CBT.
