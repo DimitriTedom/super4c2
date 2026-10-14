@@ -1304,28 +1304,25 @@ export function OralExamRoom({ series }: OralExamRoomProps) {
             </div>
           </aside>
 
-          {/* ZONE PRINCIPALE — POD VIDÉO HAUTE VISIBILITÉ & SCÈNE D'INTERACTION */}
-          <main className="flex min-h-0 flex-1 flex-col bg-background p-4 sm:p-6 overflow-y-auto space-y-4">
+          {/* ZONE PRINCIPALE — COCKPIT D'EXAMEN SANS DÉFILEMENT (100% VIEWPORT CONTAINED) */}
+          <main className="flex min-h-0 flex-1 flex-col bg-background p-3 sm:p-4 overflow-hidden justify-between gap-2.5">
             {/* BANNIÈRE DE GESTION D'ERREUR ET DE SECOURS CANDIDAT */}
             {callError && (
-              <div className="rounded-2xl border-2 border-amber-500/40 bg-gradient-to-r from-amber-500/15 via-amber-500/10 to-transparent p-4 sm:p-5 shadow-lg space-y-3 animate-in fade-in slide-in-from-top-2">
+              <div className="rounded-2xl border-2 border-amber-500/40 bg-gradient-to-r from-amber-500/15 via-amber-500/10 to-transparent p-3 sm:p-4 shadow-md space-y-2 animate-in fade-in slide-in-from-top-2 shrink-0">
                 <div className="flex items-start justify-between gap-3">
-                  <div className="flex items-start gap-3">
-                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-amber-500/20 text-amber-600 dark:text-amber-400">
-                      <AlertCircle className="h-5 w-5" />
+                  <div className="flex items-start gap-2.5">
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-amber-500/20 text-amber-600 dark:text-amber-400">
+                      <AlertCircle className="h-4 w-4" />
                     </div>
-                    <div className="space-y-1">
-                      <h4 className="text-sm font-bold text-foreground flex items-center gap-2">
+                    <div className="space-y-0.5">
+                      <h4 className="text-xs font-bold text-foreground flex items-center gap-2">
                         Liaison Vocale Directe Non Établie
                         <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-700 dark:text-amber-300 font-bold">
-                          Assistance Candidat
+                          Assistance
                         </span>
                       </h4>
-                      <p className="text-xs text-muted-foreground leading-relaxed">
+                      <p className="text-[11px] text-muted-foreground leading-snug">
                         {callError}
-                      </p>
-                      <p className="text-xs text-foreground/90 font-medium pt-1">
-                        💡 <strong>Rassurez-vous :</strong> Votre examen n&apos;est pas interrompu. Vous pouvez enregistrer vos réponses normalement grâce au <strong>Mode Guidé (Microphone Standard)</strong> ci-dessous.
                       </p>
                     </div>
                   </div>
@@ -1338,14 +1335,14 @@ export function OralExamRoom({ series }: OralExamRoomProps) {
                     ✕
                   </button>
                 </div>
-                <div className="flex flex-wrap items-center gap-2.5 pt-1 pl-12">
+                <div className="flex flex-wrap items-center gap-2 pl-10.5">
                   <Button
                     type="button"
                     size="sm"
                     onClick={() => setCallError(null)}
-                    className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-xs gap-1.5 rounded-xl shadow-sm cursor-pointer"
+                    className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-xs gap-1.5 rounded-xl shadow-xs cursor-pointer h-7"
                   >
-                    <Mic className="h-3.5 w-3.5" />
+                    <Mic className="h-3 w-3" />
                     Continuer en Mode Guidé (Microphone Standard)
                   </Button>
                   <Button
@@ -1356,370 +1353,419 @@ export function OralExamRoom({ series }: OralExamRoomProps) {
                       setCallError(null);
                       void startLiveCall();
                     }}
-                    className="text-xs font-semibold gap-1.5 rounded-xl border-border/80 cursor-pointer"
+                    className="text-xs font-semibold gap-1.5 rounded-xl border-border/80 cursor-pointer h-7"
                   >
-                    <RotateCcw className="h-3.5 w-3.5" />
+                    <RotateCcw className="h-3 w-3" />
                     Réessayer l&apos;Appel Direct
                   </Button>
                 </div>
               </div>
             )}
 
-            {/* SCÈNE CENTRALE CIRCULAIRE DU PROFIL EXAMINATEUR M. LAURENT (DESIGN ORBITAL & DISTINCTIF SUPER4C2) */}
-            <div className="relative w-full rounded-3xl border border-border/80 bg-gradient-to-b from-card via-card/95 to-background p-6 sm:p-8 shadow-xl flex flex-col items-center justify-center overflow-hidden shrink-0">
-              {/* Effet d'aura lumineuse en arrière-plan */}
-              <div
-                className={cn(
-                  "absolute -top-20 left-1/2 -translate-x-1/2 w-80 h-80 sm:w-96 sm:h-96 rounded-full blur-3xl pointer-events-none transition-all duration-700",
-                  isExaminerSpeaking
-                    ? "bg-cyan-500/25 scale-110"
-                    : isRecording || (isLiveCallActive && !isExaminerSpeaking)
-                    ? "bg-emerald-500/20 scale-105"
-                    : "bg-primary/10 scale-100"
-                )}
-              />
-
-              {/* Badges supérieurs : Session en direct & Titre officiel */}
-              <div className="relative flex flex-wrap items-center justify-center gap-2 mb-4 sm:mb-6 z-10">
-                <div className="inline-flex items-center gap-1.5 rounded-full bg-background/90 backdrop-blur-md px-3 py-1 text-xs font-bold text-foreground border border-border shadow-xs">
-                  <span className="relative flex h-2 w-2">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-500 opacity-75" />
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-rose-600" />
-                  </span>
-                  <span>SESSION EN DIRECT</span>
-                </div>
-
-                <div className="inline-flex items-center gap-1.5 rounded-full bg-background/80 backdrop-blur-md px-3 py-1 text-xs font-semibold text-muted-foreground border border-border/60">
-                  <Signal className="h-3 w-3 text-cyan-500" />
-                  <span>M. Laurent Mercier · Examinateur Officiel FEI</span>
-                </div>
-              </div>
-
-              {/* L'ORBE CIRCULAIRE DU PROFIL EXAMINATEUR (AVEC ANNEAUX CONCENTRIQUES RÉACTIFS) */}
-              <div className="relative flex items-center justify-center my-1 sm:my-3">
-                {/* Anneau d'onde 1 (externe, réactif à la parole) */}
+            {/* SCÈNE CENTRALE : ORBE DE L'EXAMINATEUR À GAUCHE (5 cols) & QUESTION DE LA TÂCHE À DROITE (7 cols) */}
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-3 flex-1 min-h-0 items-stretch overflow-hidden">
+              {/* PANNEAU GAUCHE : L'ORBE CIRCULAIRE DE M. LAURENT & LE SPECTRE VOCAL */}
+              <div className="md:col-span-5 xl:col-span-5 rounded-2xl border border-border/80 bg-gradient-to-b from-card via-card/95 to-background p-3.5 sm:p-4 shadow-sm flex flex-col items-center justify-between relative overflow-hidden shrink-0">
+                {/* Aura lumineuse en arrière-plan */}
                 <div
                   className={cn(
-                    "absolute rounded-full transition-all duration-700 pointer-events-none",
+                    "absolute -top-16 left-1/2 -translate-x-1/2 w-64 h-64 rounded-full blur-3xl pointer-events-none transition-all duration-700",
                     isExaminerSpeaking
-                      ? "w-64 h-64 sm:w-76 sm:h-76 md:w-84 md:h-84 border-2 border-cyan-500/30 animate-[ping_2.5s_cubic-bezier(0,0,0.2,1)_infinite]"
+                      ? "bg-cyan-500/25 scale-110"
                       : isRecording || (isLiveCallActive && !isExaminerSpeaking)
-                      ? "w-64 h-64 sm:w-76 sm:h-76 md:w-84 md:h-84 border-2 border-emerald-500/25 animate-[pulse_2s_ease-in-out_infinite]"
-                      : "w-56 h-56 sm:w-68 sm:h-68 md:w-76 md:h-76 border border-border/30 opacity-40"
+                      ? "bg-emerald-500/20 scale-105"
+                      : "bg-primary/10 scale-100"
                   )}
                 />
 
-                {/* Anneau d'onde 2 (intermédiaire, aura lumineuse brillante) */}
-                <div
-                  className={cn(
-                    "absolute rounded-full transition-all duration-500 pointer-events-none",
-                    isExaminerSpeaking
-                      ? "w-56 h-56 sm:w-68 sm:h-68 md:w-76 md:h-76 border-2 border-cyan-400/60 shadow-[0_0_35px_rgba(6,182,212,0.35)]"
-                      : isRecording || (isLiveCallActive && !isExaminerSpeaking)
-                      ? "w-56 h-56 sm:w-68 sm:h-68 md:w-76 md:h-76 border-2 border-emerald-400/50 shadow-[0_0_30px_rgba(16,185,129,0.3)]"
-                      : "w-52 h-52 sm:w-64 sm:h-64 md:w-72 md:h-72 border border-border/50"
-                  )}
-                />
+                {/* En-tête de l'orbe : En Direct & Nom de l'examinateur */}
+                <div className="flex items-center justify-between w-full z-10 text-[11px] mb-1">
+                  <div className="inline-flex items-center gap-1.5 rounded-full bg-background/90 backdrop-blur-md px-2.5 py-0.5 font-bold text-foreground border border-border shadow-2xs">
+                    <span className="relative flex h-2 w-2">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-500 opacity-75" />
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-rose-600" />
+                    </span>
+                    <span>EN DIRECT</span>
+                  </div>
 
-                {/* LE POD CIRCULAIRE PRINCIPAL (Vidéo en boucle idle / speaking) */}
-                <div
-                  className={cn(
-                    "relative w-48 h-48 sm:w-56 sm:h-56 md:w-64 md:h-64 rounded-full overflow-hidden border-4 bg-slate-950 shadow-2xl transition-all duration-500 z-10 shrink-0",
-                    isExaminerSpeaking
-                      ? "border-cyan-400 ring-8 ring-cyan-500/20 scale-102"
-                      : isRecording || (isLiveCallActive && !isExaminerSpeaking)
-                      ? "border-emerald-500 ring-8 ring-emerald-500/20 scale-100"
-                      : "border-border/90 ring-4 ring-muted/40"
-                  )}
-                >
-                  {/* Fond d'affiche photographique de secours */}
-                  <img
-                    src="/brand/examiner-laurent.jpg"
-                    alt="M. Laurent Mercier - Examinateur Officiel FEI"
-                    className="absolute inset-0 w-full h-full object-cover object-top opacity-35 filter blur-[1px]"
+                  <div className="inline-flex items-center gap-1 text-[11px] font-semibold text-muted-foreground">
+                    <Signal className="h-3 w-3 text-cyan-500" />
+                    <span className="truncate">M. Laurent · FEI</span>
+                  </div>
+                </div>
+
+                {/* L'Orbe Circulaire Principal */}
+                <div className="relative flex items-center justify-center my-auto py-1">
+                  {/* Anneau d'onde 1 réactif (externe) */}
+                  <div
+                    className={cn(
+                      "absolute rounded-full transition-all duration-700 pointer-events-none",
+                      isExaminerSpeaking
+                        ? "w-48 h-48 sm:w-56 sm:h-56 border-2 border-cyan-500/30 animate-[ping_2.5s_cubic-bezier(0,0,0.2,1)_infinite]"
+                        : isRecording || (isLiveCallActive && !isExaminerSpeaking)
+                        ? "w-48 h-48 sm:w-56 sm:h-56 border-2 border-emerald-500/25 animate-[pulse_2s_ease-in-out_infinite]"
+                        : "w-40 h-40 sm:w-48 sm:h-48 border border-border/30 opacity-40"
+                    )}
                   />
 
-                  {/* 1. Vidéo en boucle d'attente (Idle Loop) */}
-                  <video
-                    autoPlay
-                    loop
-                    muted
-                    playsInline
+                  {/* Anneau d'onde 2 réactif (intermédiaire brillant) */}
+                  <div
                     className={cn(
-                      "absolute inset-0 w-full h-full object-cover object-top transition-all duration-700",
-                      !isExaminerSpeaking ? "opacity-100 scale-100" : "opacity-0 pointer-events-none scale-[0.98]"
+                      "absolute rounded-full transition-all duration-500 pointer-events-none",
+                      isExaminerSpeaking
+                        ? "w-40 h-40 sm:w-48 sm:h-48 border-2 border-cyan-400/60 shadow-[0_0_25px_rgba(6,182,212,0.35)]"
+                        : isRecording || (isLiveCallActive && !isExaminerSpeaking)
+                        ? "w-40 h-40 sm:w-48 sm:h-48 border-2 border-emerald-400/50 shadow-[0_0_20px_rgba(16,185,129,0.3)]"
+                        : "w-36 h-36 sm:w-44 sm:h-44 border border-border/50"
+                    )}
+                  />
+
+                  {/* Le Disque Vidéo Circulaire */}
+                  <div
+                    className={cn(
+                      "relative w-32 h-32 sm:w-36 sm:h-36 md:w-40 md:h-40 rounded-full overflow-hidden border-4 bg-slate-950 shadow-xl transition-all duration-500 z-10 shrink-0",
+                      isExaminerSpeaking
+                        ? "border-cyan-400 ring-4 ring-cyan-500/20 scale-102"
+                        : isRecording || (isLiveCallActive && !isExaminerSpeaking)
+                        ? "border-emerald-500 ring-4 ring-emerald-500/20 scale-100"
+                        : "border-border/90 ring-2 ring-muted/40"
                     )}
                   >
-                    <source src="/brand/examiner/examiner_idle.mp4" type="video/mp4" />
-                    <img src="/brand/examiner/examiner_idle.gif" alt="M. Laurent - En écoute" className="w-full h-full object-cover object-top" />
-                  </video>
+                    {/* Fond d'affiche photographique de secours */}
+                    <img
+                      src="/brand/examiner-laurent.jpg"
+                      alt="M. Laurent Mercier - Examinateur Officiel FEI"
+                      className="absolute inset-0 w-full h-full object-cover object-top opacity-35 filter blur-[1px]"
+                    />
 
-                  {/* 2. Vidéo en boucle de parole (Speaking Loop) */}
-                  <video
-                    autoPlay
-                    loop
-                    muted
-                    playsInline
+                    {/* Vidéo Idle */}
+                    <video
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                      className={cn(
+                        "absolute inset-0 w-full h-full object-cover object-top transition-all duration-700",
+                        !isExaminerSpeaking ? "opacity-100 scale-100" : "opacity-0 pointer-events-none scale-[0.98]"
+                      )}
+                    >
+                      <source src="/brand/examiner/examiner_idle.mp4" type="video/mp4" />
+                      <img src="/brand/examiner/examiner_idle.gif" alt="M. Laurent - En écoute" className="w-full h-full object-cover object-top" />
+                    </video>
+
+                    {/* Vidéo Speaking */}
+                    <video
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                      className={cn(
+                        "absolute inset-0 w-full h-full object-cover object-top transition-all duration-700",
+                        isExaminerSpeaking ? "opacity-100 scale-105 brightness-105" : "opacity-0 pointer-events-none scale-100"
+                      )}
+                    >
+                      <source src="/brand/examiner/examiner_speaking.mp4" type="video/mp4" />
+                      <img src="/brand/examiner/examiner_speaking.gif" alt="M. Laurent - En parole" className="w-full h-full object-cover object-top" />
+                    </video>
+
+                    {/* Ombrage circulaire périphérique subtil */}
+                    <div className="absolute inset-0 rounded-full shadow-[inset_0_0_20px_rgba(0,0,0,0.6)] pointer-events-none" />
+                  </div>
+
+                  {/* Bouton d'action flottant : Passer les consignes */}
+                  {isExaminerSpeaking && (
+                    <div className="absolute -top-1.5 -right-2 z-20 animate-in fade-in zoom-in-95">
+                      <Button
+                        type="button"
+                        onClick={handleSkipConsigne}
+                        size="sm"
+                        className="bg-amber-500 hover:bg-amber-600 text-slate-950 font-extrabold gap-1 rounded-full shadow-md border border-amber-300 text-[10px] h-6 px-2 cursor-pointer"
+                        title="Arrêter la voix de l'examinateur immédiatement"
+                      >
+                        <FastForward className="h-3 w-3 fill-current" />
+                        Passer
+                      </Button>
+                    </div>
+                  )}
+
+                  {/* Bouton d'action flottant : Réécouter */}
+                  {latestExaminerMsg && !isExaminerSpeaking && (
+                    <div className="absolute -top-1.5 -right-2 z-20 animate-in fade-in zoom-in-95">
+                      <Button
+                        type="button"
+                        onClick={() => playOrFetchExaminerSpeech(latestExaminerMsg.text)}
+                        variant="secondary"
+                        size="sm"
+                        className="bg-background/90 hover:bg-background text-foreground border border-border/80 rounded-full text-[10px] gap-1 shadow-xs h-6 px-2 cursor-pointer backdrop-blur-md"
+                      >
+                        <Volume2 className="h-3 w-3 text-cyan-500" />
+                        Réécouter
+                      </Button>
+                    </div>
+                  )}
+                </div>
+
+                {/* Pilule d'état dynamique sous l'orbe */}
+                <div className="w-full flex items-center justify-center mt-1 z-10">
+                  <div
                     className={cn(
-                      "absolute inset-0 w-full h-full object-cover object-top transition-all duration-700",
-                      isExaminerSpeaking ? "opacity-100 scale-105 brightness-105" : "opacity-0 pointer-events-none scale-100"
+                      "inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-bold border shadow-2xs transition-all duration-300",
+                      isExaminerSpeaking
+                        ? "bg-cyan-500/15 border-cyan-500/40 text-cyan-700 dark:text-cyan-300"
+                        : isLiveCallActive
+                        ? "bg-emerald-500/15 border-emerald-500/40 text-emerald-700 dark:text-emerald-300"
+                        : isRecording
+                        ? "bg-rose-500/15 border-rose-500/40 text-rose-700 dark:text-rose-300"
+                        : "bg-muted/80 border-border/80 text-muted-foreground"
                     )}
                   >
-                    <source src="/brand/examiner/examiner_speaking.mp4" type="video/mp4" />
-                    <img src="/brand/examiner/examiner_speaking.gif" alt="M. Laurent - En parole" className="w-full h-full object-cover object-top" />
-                  </video>
-
-                  {/* Ombrage circulaire périphérique subtil */}
-                  <div className="absolute inset-0 rounded-full shadow-[inset_0_0_24px_rgba(0,0,0,0.6)] pointer-events-none" />
+                    {isExaminerSpeaking ? (
+                      <>
+                        <Volume2 className="h-3.5 w-3.5 animate-pulse" />
+                        <span>M. Laurent s&apos;exprime...</span>
+                        <span className="flex gap-0.5 items-end h-2.5 ml-0.5">
+                          <span className="w-0.5 bg-cyan-500 animate-[bounce_0.6s_infinite_100ms] h-2.5 rounded-full" />
+                          <span className="w-0.5 bg-cyan-500 animate-[bounce_0.6s_infinite_200ms] h-1.5 rounded-full" />
+                          <span className="w-0.5 bg-cyan-500 animate-[bounce_0.6s_infinite_300ms] h-3 rounded-full" />
+                        </span>
+                      </>
+                    ) : isLiveCallActive ? (
+                      <>
+                        <Radio className="h-3.5 w-3.5 text-emerald-500 animate-pulse" />
+                        <span>Liaison WebRTC Active</span>
+                      </>
+                    ) : isRecording ? (
+                      <>
+                        <Mic className="h-3.5 w-3.5 text-rose-500 animate-pulse" />
+                        <span>Microphone actif</span>
+                      </>
+                    ) : (
+                      <>
+                        <User className="h-3.5 w-3.5" />
+                        <span>En attente de votre réponse</span>
+                      </>
+                    )}
+                  </div>
                 </div>
 
-                {/* Bouton d'action flottant : Passer les consignes */}
-                {isExaminerSpeaking && (
-                  <div className="absolute -top-2 right-0 sm:-right-4 z-20 animate-in fade-in zoom-in-95">
-                    <Button
-                      type="button"
-                      onClick={handleSkipConsigne}
-                      size="sm"
-                      className="bg-amber-500 hover:bg-amber-600 text-slate-950 font-extrabold gap-1.5 rounded-full shadow-lg shadow-amber-500/30 border border-amber-300 text-xs cursor-pointer"
-                      title="Arrêter la voix de l'examinateur immédiatement"
-                    >
-                      <FastForward className="h-3.5 w-3.5 fill-current" />
-                      Passer
-                    </Button>
-                  </div>
-                )}
-
-                {/* Bouton d'action flottant : Réécouter */}
-                {latestExaminerMsg && !isExaminerSpeaking && (
-                  <div className="absolute -top-2 right-0 sm:-right-4 z-20 animate-in fade-in zoom-in-95">
-                    <Button
-                      type="button"
-                      onClick={() => playOrFetchExaminerSpeech(latestExaminerMsg.text)}
-                      variant="secondary"
-                      size="sm"
-                      className="bg-background/90 hover:bg-background text-foreground border border-border/80 rounded-full text-xs gap-1.5 shadow-md cursor-pointer backdrop-blur-md"
-                    >
-                      <Volume2 className="h-3.5 w-3.5 text-cyan-500" />
-                      Réécouter
-                    </Button>
-                  </div>
-                )}
-              </div>
-
-              {/* Pilule d'état dynamique sous l'orbe */}
-              <div className="relative mt-3 sm:mt-4 flex items-center justify-center z-10">
-                <div
-                  className={cn(
-                    "inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-bold border shadow-xs transition-all duration-300",
-                    isExaminerSpeaking
-                      ? "bg-cyan-500/15 border-cyan-500/40 text-cyan-700 dark:text-cyan-300"
-                      : isLiveCallActive
-                      ? "bg-emerald-500/15 border-emerald-500/40 text-emerald-700 dark:text-emerald-300"
-                      : isRecording
-                      ? "bg-rose-500/15 border-rose-500/40 text-rose-700 dark:text-rose-300"
-                      : "bg-muted/80 border-border/80 text-muted-foreground"
-                  )}
-                >
-                  {isExaminerSpeaking ? (
-                    <>
-                      <Volume2 className="h-4 w-4 animate-pulse" />
-                      <span>M. Laurent Mercier s&apos;exprime...</span>
-                      <span className="flex gap-0.5 items-end h-3 ml-1">
-                        <span className="w-1 bg-cyan-500 animate-[bounce_0.6s_infinite_100ms] h-3 rounded-full" />
-                        <span className="w-1 bg-cyan-500 animate-[bounce_0.6s_infinite_200ms] h-2 rounded-full" />
-                        <span className="w-1 bg-cyan-500 animate-[bounce_0.6s_infinite_300ms] h-3.5 rounded-full" />
-                      </span>
-                    </>
-                  ) : isLiveCallActive ? (
-                    <>
-                      <Radio className="h-4 w-4 text-emerald-500 animate-pulse" />
-                      <span>Liaison WebRTC Active · À vous la parole</span>
-                    </>
-                  ) : isRecording ? (
-                    <>
-                      <Mic className="h-4 w-4 text-rose-500 animate-pulse" />
-                      <span>Microphone actif · Parlez distinctement</span>
-                    </>
-                  ) : (
-                    <>
-                      <User className="h-4 w-4" />
-                      <span>En attente de votre réponse</span>
-                    </>
-                  )}
+                {/* Visualiseur de Spectre Fréquentiel sous l'orbe */}
+                <div className="w-full max-w-[280px] mt-1.5">
+                  <OralWaveform
+                    isRecording={isRecording}
+                    isExaminerSpeaking={isExaminerSpeaking}
+                    isLiveCallActive={isLiveCallActive}
+                  />
                 </div>
               </div>
 
-              {/* Visualiseur de Spectre Fréquentiel sous l'orbe */}
-              <div className="w-full max-w-sm mt-3">
-                <OralWaveform
-                  isRecording={isRecording}
-                  isExaminerSpeaking={isExaminerSpeaking}
-                  isLiveCallActive={isLiveCallActive}
-                />
+              {/* PANNEAU DROIT : QUESTION DE LA TÂCHE & TRANSCRIPTION DIRECTE */}
+              <div className="md:col-span-7 xl:col-span-7 rounded-2xl border bg-card p-3.5 sm:p-4 shadow-sm flex flex-col justify-between overflow-hidden">
+                {/* En-tête de la consigne */}
+                <div className="flex items-center justify-between border-b pb-2 shrink-0">
+                  <span className="text-xs font-bold uppercase tracking-wider text-primary flex items-center gap-1.5">
+                    <Bot className="h-4 w-4" /> Consigne & Question de M. Laurent Mercier
+                  </span>
+                  {currentTaskDialogues.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => setShowFullTranscriptModal(true)}
+                      className="text-primary text-[11px] font-bold hover:underline inline-flex items-center gap-1 cursor-pointer"
+                    >
+                      <MessageSquare className="h-3 w-3" />
+                      Historique ({currentTaskDialogues.length})
+                    </button>
+                  )}
+                </div>
+
+                {/* Corps de la question et réponse candidat (déroulable si très long sans forcer le scroll de la page) */}
+                <div className="flex-1 min-h-0 overflow-y-auto py-2.5 space-y-2.5 pr-1">
+                  {/* Bulle de la question de l'examinateur */}
+                  <div className="bg-muted/30 rounded-xl p-3 sm:p-3.5 border border-border/60">
+                    <p className="text-xs sm:text-sm md:text-[15px] font-medium text-foreground leading-relaxed">
+                      « {latestExaminerMsg?.text || currentTask.examinerPrompt} »
+                    </p>
+                  </div>
+
+                  {/* Transcription en direct de la réponse du candidat */}
+                  {(currentCandidateInput || latestCandidateMsg) && (
+                    <div className="rounded-xl border border-primary/20 bg-primary/[0.03] p-2.5 text-xs space-y-1 animate-in fade-in">
+                      <div className="flex items-center justify-between text-muted-foreground font-semibold text-[11px]">
+                        <span className="flex items-center gap-1 text-primary">
+                          <User className="h-3.5 w-3.5" /> Votre réponse {isRecording && "(Transcription en direct)"} :
+                        </span>
+                        {isRecording && (
+                          <span className="h-2 w-2 rounded-full bg-rose-500 animate-ping" />
+                        )}
+                      </div>
+                      <p className="text-foreground font-medium leading-relaxed italic text-xs sm:text-sm">
+                        {currentCandidateInput || latestCandidateMsg?.text}
+                      </p>
+                    </div>
+                  )}
+                </div>
+
+                {/* Pied du panneau : suggestions d'amorce & statut micro */}
+                <div className="space-y-2 pt-2 border-t shrink-0">
+                  {/* Suggestions rapides en Tâche 2 (Jeu de rôle) */}
+                  {currentTaskIndex === 1 && !isLiveCallActive && (
+                    <div className="flex flex-wrap items-center gap-1.5 text-[11px]">
+                      <span className="text-muted-foreground font-bold">Amorces :</span>
+                      <button
+                        type="button"
+                        onClick={() => handleSendCandidateSpeech("Quels sont les jours et les horaires précis de ces séances ?")}
+                        className="rounded-full border bg-muted/60 hover:bg-muted px-2.5 py-0.5 text-foreground transition-all hover:border-primary/40 text-[10px] cursor-pointer"
+                      >
+                        « Quels horaires ? »
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleSendCandidateSpeech("Combien coûte l'inscription et proposez-vous un tarif réduit ?")}
+                        className="rounded-full border bg-muted/60 hover:bg-muted px-2.5 py-0.5 text-foreground transition-all hover:border-primary/40 text-[10px] cursor-pointer"
+                      >
+                        « Quels tarifs ? »
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleSendCandidateSpeech("Est-ce que le matériel et les ingrédients sont fournis ?")}
+                        className="rounded-full border bg-muted/60 hover:bg-muted px-2.5 py-0.5 text-foreground transition-all hover:border-primary/40 text-[10px] cursor-pointer"
+                      >
+                        « Matériel fourni ? »
+                      </button>
+                    </div>
+                  )}
+
+                  <div className="flex items-center justify-between text-[11px] text-muted-foreground">
+                    <p className="font-semibold truncate">
+                      {isExaminerSpeaking ? (
+                        <span className="text-amber-600 dark:text-amber-400 inline-flex items-center gap-1">
+                          <Clock className="h-3 w-3 shrink-0" />
+                          Microphone en pause pendant la consigne.
+                        </span>
+                      ) : isLiveCallActive ? (
+                        <span className="text-emerald-600 dark:text-emerald-400 inline-flex items-center gap-1">
+                          <Radio className="h-3 w-3 shrink-0 animate-pulse" />
+                          Microphone actif (WebRTC). Parlez librement.
+                        </span>
+                      ) : isRecording ? (
+                        <span className="text-rose-600 dark:text-rose-400 inline-flex items-center gap-1">
+                          <Mic className="h-3 w-3 shrink-0 animate-pulse" />
+                          Microphone actif. Exprimez votre réponse.
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1">
+                          <MicOff className="h-3 w-3 shrink-0" />
+                          Cliquez sur le bouton rouge ci-dessous pour parler.
+                        </span>
+                      )}
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
 
-            {/* BANDEAU DE CONSIGNE & QUESTION EN COURS DE M. LAURENT */}
-            <div className="rounded-2xl border bg-card p-4 sm:p-5 shadow-xs space-y-3">
-              <div className="flex items-center justify-between border-b pb-2">
-                <span className="text-xs font-bold uppercase tracking-wider text-primary flex items-center gap-1.5">
-                  <Bot className="h-4 w-4" /> Consigne & Question de M. Laurent Mercier
-                </span>
-                <span className="text-[11px] text-muted-foreground font-mono">
-                  {currentTaskDialogues.length} réplique(s) dans cette tâche
-                </span>
-              </div>
-
-              {/* Texte de la question de l'examinateur */}
-              <div className="bg-muted/30 rounded-xl p-3.5 border border-border/60">
-                <p className="text-sm sm:text-base font-medium text-foreground leading-relaxed">
-                  « {latestExaminerMsg?.text || currentTask.examinerPrompt} »
-                </p>
-              </div>
-
-              {/* Transcription en temps réel de la réponse du candidat */}
-              {(currentCandidateInput || latestCandidateMsg) && (
-                <div className="rounded-xl border border-primary/20 bg-primary/[0.03] p-3 text-xs space-y-1">
-                  <div className="flex items-center justify-between text-muted-foreground font-semibold text-[11px]">
-                    <span className="flex items-center gap-1 text-primary">
-                      <User className="h-3.5 w-3.5" /> Votre réponse {isRecording && "(Transcription en direct)"} :
-                    </span>
-                    {isRecording && (
-                      <span className="h-2 w-2 rounded-full bg-rose-500 animate-ping" />
+            {/* CONSOLE DE COMMANDES ET DE NAVIGATION ANCRÉE EN BAS (ZERO SCROLL) */}
+            <div className="rounded-2xl border bg-card p-3 sm:p-3.5 shadow-xs space-y-2.5 shrink-0">
+              <div className="flex flex-wrap items-center justify-between gap-2.5">
+                {/* Groupe Gauche : Bouton Micro + Validation + Clavier */}
+                <div className="flex items-center gap-2.5 flex-1 sm:flex-initial">
+                  {/* Bouton Micro Grand Format */}
+                  <Button
+                    type="button"
+                    variant={isRecording ? "destructive" : "default"}
+                    size="default"
+                    className={cn(
+                      "h-11 px-5 rounded-xl font-bold gap-2 shadow-sm transition-all cursor-pointer text-xs sm:text-sm",
+                      isRecording && "animate-pulse shadow-destructive/30 scale-102"
                     )}
-                  </div>
-                  <p className="text-foreground font-medium leading-relaxed italic">
-                    {currentCandidateInput || latestCandidateMsg?.text}
-                  </p>
+                    onClick={toggleRecording}
+                    disabled={isLiveCallActive}
+                  >
+                    {isRecording ? (
+                      <>
+                        <MicOff className="h-4 w-4" />
+                        <span>Terminer la prise de parole</span>
+                      </>
+                    ) : (
+                      <>
+                        <Mic className="h-4 w-4" />
+                        <span>Prendre la parole (Micro)</span>
+                      </>
+                    )}
+                  </Button>
+
+                  {/* Bouton de Validation / Envoi de la réponse */}
+                  <Button
+                    type="button"
+                    onClick={() => handleSendCandidateSpeech()}
+                    disabled={isLiveCallActive || (!currentCandidateInput.trim() && !isRecording)}
+                    size="default"
+                    variant="outline"
+                    className="h-11 px-4 rounded-xl font-bold gap-1.5 border-primary/40 text-primary hover:bg-primary/10 shadow-2xs cursor-pointer text-xs sm:text-sm"
+                  >
+                    <span>Valider ma réponse</span>
+                    <Send className="h-3.5 w-3.5" />
+                  </Button>
+
+                  {/* Bouton Clavier pour Bascule Discrète d'Accessibilité */}
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setShowKeyboardInput((prev) => !prev)}
+                    title={showKeyboardInput ? "Masquer la saisie clavier" : "Saisie clavier de secours"}
+                    className="h-11 w-11 rounded-xl border text-muted-foreground hover:text-foreground cursor-pointer shrink-0"
+                  >
+                    <Keyboard className="h-4 w-4" />
+                  </Button>
                 </div>
-              )}
 
-              {/* État synthétique du micro */}
-              <div className="flex items-center justify-between text-xs pt-1">
-                <p className="font-semibold">
-                  {isExaminerSpeaking ? (
-                    <span className="text-amber-600 dark:text-amber-400 inline-flex items-center gap-1.5">
-                      <Clock className="h-3.5 w-3.5" />
-                      Microphone inactif pendant la consigne. Écoutez ou cliquez sur « Passer les consignes ».
-                    </span>
-                  ) : isLiveCallActive ? (
-                    <span className="text-emerald-600 dark:text-emerald-400 inline-flex items-center gap-1.5">
-                      <Radio className="h-3.5 w-3.5 animate-pulse" />
-                      Microphone actif (WebRTC). Parlez librement, l&apos;examinateur vous écoute en temps réel.
-                    </span>
-                  ) : isRecording ? (
-                    <span className="text-rose-600 dark:text-rose-400 inline-flex items-center gap-1.5">
-                      <Mic className="h-3.5 w-3.5 animate-pulse" />
-                      Microphone actif. Exprimez votre réponse puis cliquez sur « Valider ma réponse ».
-                    </span>
-                  ) : (
-                    <span className="text-muted-foreground inline-flex items-center gap-1.5">
-                      <MicOff className="h-3.5 w-3.5" />
-                      Microphone en pause. Cliquez sur le micro pour répondre à M. Laurent.
-                    </span>
+                {/* Groupe Droit : Progression & Navigation de l'Examen */}
+                <div className="flex items-center gap-2 ml-auto">
+                  {currentTaskIndex > 0 && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+                        stopAllAudio();
+                        setCurrentTaskIndex((t) => (t - 1) as 0 | 1);
+                      }}
+                      className="gap-1 rounded-xl text-xs cursor-pointer h-10"
+                    >
+                      <ChevronLeft className="h-3.5 w-3.5" />
+                      Tâche {currentTaskIndex}
+                    </Button>
                   )}
-                </p>
 
-                {/* Bouton pour afficher le tiroir complet des échanges */}
-                {currentTaskDialogues.length > 1 && (
-                  <button
-                    type="button"
-                    onClick={() => setShowFullTranscriptModal(true)}
-                    className="text-primary text-[11px] font-bold hover:underline inline-flex items-center gap-1 cursor-pointer"
-                  >
-                    <MessageSquare className="h-3 w-3" />
-                    Historique ({currentTaskDialogues.length})
-                  </button>
-                )}
-              </div>
-            </div>
-
-            {/* CONSOLE DE COMMANDES ET D'ENVOI */}
-            <div className="rounded-2xl border bg-card p-4 sm:p-5 shadow-xs space-y-3">
-              {/* Suggestions rapides en Tâche 2 (Jeu de rôle) */}
-              {currentTaskIndex === 1 && !isLiveCallActive && (
-                <div className="flex flex-wrap items-center gap-2 text-xs">
-                  <span className="text-muted-foreground text-[11px] font-bold">Suggestions d&apos;amorce :</span>
-                  <button
-                    type="button"
-                    onClick={() => handleSendCandidateSpeech("Quels sont les jours et les horaires précis de ces séances ?")}
-                    className="rounded-full border bg-muted/60 hover:bg-muted px-3 py-1 text-foreground transition-all hover:border-primary/40 text-[11px] cursor-pointer"
-                  >
-                    « Quels sont les horaires ? »
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleSendCandidateSpeech("Combien coûte l'inscription et proposez-vous un tarif réduit ?")}
-                    className="rounded-full border bg-muted/60 hover:bg-muted px-3 py-1 text-foreground transition-all hover:border-primary/40 text-[11px] cursor-pointer"
-                  >
-                    « Quels sont les tarifs ? »
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleSendCandidateSpeech("Est-ce que le matériel et les ingrédients sont entièrement fournis ?")}
-                    className="rounded-full border bg-muted/60 hover:bg-muted px-3 py-1 text-foreground transition-all hover:border-primary/40 text-[11px] cursor-pointer"
-                  >
-                    « Le matériel est-il fourni ? »
-                  </button>
+                  {currentTaskIndex < 2 ? (
+                    <Button
+                      variant="default"
+                      size="sm"
+                      onClick={() => {
+                        stopAllAudio();
+                        setCurrentTaskIndex((t) => (t + 1) as 1 | 2);
+                      }}
+                      className="gap-1.5 font-bold rounded-xl shadow-xs text-xs cursor-pointer h-10 px-4 bg-brand-crimson hover:bg-brand-crimson-dark text-white"
+                    >
+                      Passer à la Tâche {currentTaskIndex + 2}
+                      <ChevronRight className="h-3.5 w-3.5" />
+                    </Button>
+                  ) : (
+                    <Button
+                      variant="default"
+                      size="sm"
+                      onClick={handleCompleteExam}
+                      className="gap-1.5 font-bold rounded-xl shadow-md text-xs bg-emerald-600 hover:bg-emerald-700 text-white cursor-pointer h-10 px-4"
+                    >
+                      <Award className="h-3.5 w-3.5" />
+                      Terminer et générer mon Bilan FEI
+                    </Button>
+                  )}
                 </div>
-              )}
-
-              {/* Barre Principale d'Action Micro / Envoi */}
-              <div className="flex items-center gap-3">
-                {/* Bouton Micro Grand Format */}
-                <Button
-                  type="button"
-                  variant={isRecording ? "destructive" : "default"}
-                  size="lg"
-                  className={cn(
-                    "flex-1 sm:flex-initial h-13 px-6 rounded-2xl font-bold gap-2.5 shadow-md transition-all cursor-pointer",
-                    isRecording && "animate-pulse shadow-destructive/30 scale-102"
-                  )}
-                  onClick={toggleRecording}
-                  disabled={isLiveCallActive}
-                >
-                  {isRecording ? (
-                    <>
-                      <MicOff className="h-5 w-5" />
-                      <span>Terminer la prise de parole</span>
-                    </>
-                  ) : (
-                    <>
-                      <Mic className="h-5 w-5" />
-                      <span>Prendre la parole (Micro)</span>
-                    </>
-                  )}
-                </Button>
-
-                {/* Bouton de Validation / Envoi de la réponse */}
-                <Button
-                  type="button"
-                  onClick={() => handleSendCandidateSpeech()}
-                  disabled={isLiveCallActive || (!currentCandidateInput.trim() && !isRecording)}
-                  size="lg"
-                  variant="outline"
-                  className="h-13 px-6 rounded-2xl font-bold gap-2 border-primary/40 text-primary hover:bg-primary/10 shadow-xs cursor-pointer"
-                >
-                  <span>Valider ma réponse</span>
-                  <Send className="h-4 w-4" />
-                </Button>
-
-                {/* Bouton Clavier pour Bascule Discrète d'Accessibilité */}
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => setShowKeyboardInput((prev) => !prev)}
-                  title={showKeyboardInput ? "Masquer la saisie clavier" : "Saisie clavier de secours"}
-                  className="h-13 w-13 rounded-2xl border text-muted-foreground hover:text-foreground cursor-pointer"
-                >
-                  <Keyboard className="h-5 w-5" />
-                </Button>
               </div>
 
               {/* Champ Clavier Optionnel (Discret / Dépliable) */}
               {showKeyboardInput && (
-                <div className="flex items-center gap-2 pt-2 animate-in fade-in">
+                <div className="flex items-center gap-2 pt-1 animate-in fade-in">
                   <input
                     type="text"
                     value={currentCandidateInput}
@@ -1731,64 +1777,19 @@ export function OralExamRoom({ series }: OralExamRoomProps) {
                       }
                     }}
                     placeholder="Saisie clavier de secours si votre microphone est défaillant..."
-                    className="flex-1 rounded-xl border border-border/80 bg-background px-4 py-2.5 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/40"
+                    className="flex-1 rounded-xl border border-border/80 bg-background px-3 py-2 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/40"
                   />
                   <Button
                     type="button"
                     size="sm"
                     onClick={() => handleSendCandidateSpeech()}
                     disabled={!currentCandidateInput.trim()}
-                    className="rounded-xl font-bold text-xs cursor-pointer"
+                    className="rounded-xl font-bold text-xs cursor-pointer h-8"
                   >
                     Envoyer
                   </Button>
                 </div>
               )}
-
-              {/* Navigation entre les 3 tâches de l'examen */}
-              <div className="flex items-center justify-between text-xs text-muted-foreground pt-3 border-t">
-                {currentTaskIndex > 0 ? (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => {
-                      stopAllAudio();
-                      setCurrentTaskIndex((t) => (t - 1) as 0 | 1);
-                    }}
-                    className="gap-1 rounded-full text-xs cursor-pointer"
-                  >
-                    <ChevronLeft className="h-4 w-4" />
-                    Tâche {currentTaskIndex}
-                  </Button>
-                ) : (
-                  <div />
-                )}
-
-                {currentTaskIndex < 2 ? (
-                  <Button
-                    variant="default"
-                    size="sm"
-                    onClick={() => {
-                      stopAllAudio();
-                      setCurrentTaskIndex((t) => (t + 1) as 1 | 2);
-                    }}
-                    className="gap-1.5 font-bold rounded-full shadow-sm text-xs cursor-pointer"
-                  >
-                    Passer à la Tâche {currentTaskIndex + 2}
-                    <ChevronRight className="h-4 w-4" />
-                  </Button>
-                ) : (
-                  <Button
-                    variant="default"
-                    size="sm"
-                    onClick={handleCompleteExam}
-                    className="gap-1.5 font-bold rounded-full shadow-md text-xs bg-emerald-600 hover:bg-emerald-700 text-white cursor-pointer"
-                  >
-                    <Award className="h-4 w-4" />
-                    Terminer et générer mon Bilan FEI
-                  </Button>
-                )}
-              </div>
             </div>
           </main>
         </div>
