@@ -1365,154 +1365,205 @@ export function OralExamRoom({ series }: OralExamRoomProps) {
               </div>
             )}
 
-            {/* POD VIDÉO ANIMÉ DE L'EXAMINATEUR M. LAURENT (BOUCLE D'ATTENTE & BOUCLE DE PAROLE) */}
-            <div className="relative w-full h-[260px] sm:h-[320px] md:h-[380px] rounded-3xl overflow-hidden border-2 border-border/80 bg-slate-950 shadow-2xl flex items-center justify-center shrink-0">
-              {/* Fond d'affiche photographique de secours */}
-              <img
-                src="/brand/examiner-laurent.jpg"
-                alt="M. Laurent - Examinateur Officiel FEI TCF Canada"
-                className="absolute inset-0 w-full h-full object-cover object-top opacity-40 filter blur-[1px]"
-              />
-
-              {/* 1. Vidéo en boucle d'attente / écoute attentive (Idle Loop avec micro-mouvements des yeux et respiration) */}
-              <video
-                autoPlay
-                loop
-                muted
-                playsInline
-                className={cn(
-                  "absolute inset-0 w-full h-full object-cover object-top transition-all duration-700",
-                  !isExaminerSpeaking ? "opacity-100 scale-100" : "opacity-0 pointer-events-none scale-[0.99]"
-                )}
-              >
-                <source src="/brand/examiner/examiner_idle.mp4" type="video/mp4" />
-                <img src="/brand/examiner/examiner_idle.gif" alt="M. Laurent - En écoute" className="w-full h-full object-cover object-top" />
-              </video>
-
-              {/* 2. Vidéo en boucle de parole / mime explicatif (Speaking Loop avec mimique articulatoire et cadence d'échange) */}
-              <video
-                autoPlay
-                loop
-                muted
-                playsInline
-                className={cn(
-                  "absolute inset-0 w-full h-full object-cover object-top transition-all duration-700",
-                  isExaminerSpeaking ? "opacity-100 scale-[1.01] brightness-105" : "opacity-0 pointer-events-none scale-100"
-                )}
-              >
-                <source src="/brand/examiner/examiner_speaking.mp4" type="video/mp4" />
-                <img src="/brand/examiner/examiner_speaking.gif" alt="M. Laurent - En parole" className="w-full h-full object-cover object-top" />
-              </video>
-
-              {/* Halo réactif subtil sur le contour */}
+            {/* SCÈNE CENTRALE CIRCULAIRE DU PROFIL EXAMINATEUR M. LAURENT (DESIGN ORBITAL & DISTINCTIF SUPER4C2) */}
+            <div className="relative w-full rounded-3xl border border-border/80 bg-gradient-to-b from-card via-card/95 to-background p-6 sm:p-8 shadow-xl flex flex-col items-center justify-center overflow-hidden shrink-0">
+              {/* Effet d'aura lumineuse en arrière-plan */}
               <div
                 className={cn(
-                  "absolute inset-0 pointer-events-none transition-all duration-500",
+                  "absolute -top-20 left-1/2 -translate-x-1/2 w-80 h-80 sm:w-96 sm:h-96 rounded-full blur-3xl pointer-events-none transition-all duration-700",
                   isExaminerSpeaking
-                    ? "ring-4 ring-inset ring-cyan-500/60 shadow-[inset_0_0_40px_rgba(6,182,212,0.25)]"
+                    ? "bg-cyan-500/25 scale-110"
                     : isRecording || (isLiveCallActive && !isExaminerSpeaking)
-                    ? "ring-4 ring-inset ring-emerald-500/60 shadow-[inset_0_0_40px_rgba(16,185,129,0.25)]"
-                    : ""
+                    ? "bg-emerald-500/20 scale-105"
+                    : "bg-primary/10 scale-100"
                 )}
               />
 
-              {/* Gradient bas uniquement pour lisibilité des badges (laisse le visage totalement dégagé) */}
-              <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-slate-950/80 via-slate-950/30 to-transparent pointer-events-none" />
-
-              {/* OVERLAY HAUT GAUCHE : EN DIRECT & EXAMINATEUR */}
-              <div className="absolute top-4 left-4 flex flex-wrap items-center gap-2 z-10">
-                <div className="inline-flex items-center gap-1.5 rounded-full bg-slate-900/85 backdrop-blur-md px-3 py-1 text-xs font-bold text-white border border-white/15 shadow-lg">
-                  <span className="relative flex h-2.5 w-2.5">
+              {/* Badges supérieurs : Session en direct & Titre officiel */}
+              <div className="relative flex flex-wrap items-center justify-center gap-2 mb-4 sm:mb-6 z-10">
+                <div className="inline-flex items-center gap-1.5 rounded-full bg-background/90 backdrop-blur-md px-3 py-1 text-xs font-bold text-foreground border border-border shadow-xs">
+                  <span className="relative flex h-2 w-2">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-500 opacity-75" />
-                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-rose-600" />
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-rose-600" />
                   </span>
-                  <span>EN DIRECT</span>
+                  <span>SESSION EN DIRECT</span>
                 </div>
 
-                <div className="inline-flex items-center gap-1.5 rounded-full bg-slate-900/80 backdrop-blur-md px-3 py-1 text-xs font-semibold text-slate-200 border border-white/10 shadow-sm">
-                  <Signal className="h-3 w-3 text-cyan-400" />
-                  <span>M. Laurent · Examinateur FEI</span>
+                <div className="inline-flex items-center gap-1.5 rounded-full bg-background/80 backdrop-blur-md px-3 py-1 text-xs font-semibold text-muted-foreground border border-border/60">
+                  <Signal className="h-3 w-3 text-cyan-500" />
+                  <span>M. Laurent Mercier · Examinateur Officiel FEI</span>
                 </div>
               </div>
 
-              {/* OVERLAY HAUT DROIT : BOUTON PASSER LES CONSIGNES & QUALITÉ AUDIO */}
-              <div className="absolute top-4 right-4 flex items-center gap-2 z-10">
-                {isExaminerSpeaking && (
-                  <Button
-                    type="button"
-                    onClick={handleSkipConsigne}
-                    size="sm"
-                    className="bg-amber-500 hover:bg-amber-600 text-slate-950 font-extrabold gap-1.5 rounded-full shadow-lg shadow-amber-500/25 border border-amber-300 text-xs animate-in fade-in zoom-in-95 cursor-pointer"
-                    title="Arrêter la voix de l'examinateur immédiatement"
+              {/* L'ORBE CIRCULAIRE DU PROFIL EXAMINATEUR (AVEC ANNEAUX CONCENTRIQUES RÉACTIFS) */}
+              <div className="relative flex items-center justify-center my-1 sm:my-3">
+                {/* Anneau d'onde 1 (externe, réactif à la parole) */}
+                <div
+                  className={cn(
+                    "absolute rounded-full transition-all duration-700 pointer-events-none",
+                    isExaminerSpeaking
+                      ? "w-64 h-64 sm:w-76 sm:h-76 md:w-84 md:h-84 border-2 border-cyan-500/30 animate-[ping_2.5s_cubic-bezier(0,0,0.2,1)_infinite]"
+                      : isRecording || (isLiveCallActive && !isExaminerSpeaking)
+                      ? "w-64 h-64 sm:w-76 sm:h-76 md:w-84 md:h-84 border-2 border-emerald-500/25 animate-[pulse_2s_ease-in-out_infinite]"
+                      : "w-56 h-56 sm:w-68 sm:h-68 md:w-76 md:h-76 border border-border/30 opacity-40"
+                  )}
+                />
+
+                {/* Anneau d'onde 2 (intermédiaire, aura lumineuse brillante) */}
+                <div
+                  className={cn(
+                    "absolute rounded-full transition-all duration-500 pointer-events-none",
+                    isExaminerSpeaking
+                      ? "w-56 h-56 sm:w-68 sm:h-68 md:w-76 md:h-76 border-2 border-cyan-400/60 shadow-[0_0_35px_rgba(6,182,212,0.35)]"
+                      : isRecording || (isLiveCallActive && !isExaminerSpeaking)
+                      ? "w-56 h-56 sm:w-68 sm:h-68 md:w-76 md:h-76 border-2 border-emerald-400/50 shadow-[0_0_30px_rgba(16,185,129,0.3)]"
+                      : "w-52 h-52 sm:w-64 sm:h-64 md:w-72 md:h-72 border border-border/50"
+                  )}
+                />
+
+                {/* LE POD CIRCULAIRE PRINCIPAL (Vidéo en boucle idle / speaking) */}
+                <div
+                  className={cn(
+                    "relative w-48 h-48 sm:w-56 sm:h-56 md:w-64 md:h-64 rounded-full overflow-hidden border-4 bg-slate-950 shadow-2xl transition-all duration-500 z-10 shrink-0",
+                    isExaminerSpeaking
+                      ? "border-cyan-400 ring-8 ring-cyan-500/20 scale-102"
+                      : isRecording || (isLiveCallActive && !isExaminerSpeaking)
+                      ? "border-emerald-500 ring-8 ring-emerald-500/20 scale-100"
+                      : "border-border/90 ring-4 ring-muted/40"
+                  )}
+                >
+                  {/* Fond d'affiche photographique de secours */}
+                  <img
+                    src="/brand/examiner-laurent.jpg"
+                    alt="M. Laurent Mercier - Examinateur Officiel FEI"
+                    className="absolute inset-0 w-full h-full object-cover object-top opacity-35 filter blur-[1px]"
+                  />
+
+                  {/* 1. Vidéo en boucle d'attente (Idle Loop) */}
+                  <video
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    className={cn(
+                      "absolute inset-0 w-full h-full object-cover object-top transition-all duration-700",
+                      !isExaminerSpeaking ? "opacity-100 scale-100" : "opacity-0 pointer-events-none scale-[0.98]"
+                    )}
                   >
-                    <FastForward className="h-3.5 w-3.5 fill-current" />
-                    Passer les consignes
-                  </Button>
+                    <source src="/brand/examiner/examiner_idle.mp4" type="video/mp4" />
+                    <img src="/brand/examiner/examiner_idle.gif" alt="M. Laurent - En écoute" className="w-full h-full object-cover object-top" />
+                  </video>
+
+                  {/* 2. Vidéo en boucle de parole (Speaking Loop) */}
+                  <video
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    className={cn(
+                      "absolute inset-0 w-full h-full object-cover object-top transition-all duration-700",
+                      isExaminerSpeaking ? "opacity-100 scale-105 brightness-105" : "opacity-0 pointer-events-none scale-100"
+                    )}
+                  >
+                    <source src="/brand/examiner/examiner_speaking.mp4" type="video/mp4" />
+                    <img src="/brand/examiner/examiner_speaking.gif" alt="M. Laurent - En parole" className="w-full h-full object-cover object-top" />
+                  </video>
+
+                  {/* Ombrage circulaire périphérique subtil */}
+                  <div className="absolute inset-0 rounded-full shadow-[inset_0_0_24px_rgba(0,0,0,0.6)] pointer-events-none" />
+                </div>
+
+                {/* Bouton d'action flottant : Passer les consignes */}
+                {isExaminerSpeaking && (
+                  <div className="absolute -top-2 right-0 sm:-right-4 z-20 animate-in fade-in zoom-in-95">
+                    <Button
+                      type="button"
+                      onClick={handleSkipConsigne}
+                      size="sm"
+                      className="bg-amber-500 hover:bg-amber-600 text-slate-950 font-extrabold gap-1.5 rounded-full shadow-lg shadow-amber-500/30 border border-amber-300 text-xs cursor-pointer"
+                      title="Arrêter la voix de l'examinateur immédiatement"
+                    >
+                      <FastForward className="h-3.5 w-3.5 fill-current" />
+                      Passer
+                    </Button>
+                  </div>
                 )}
 
-                <div className="hidden sm:inline-flex items-center gap-1.5 rounded-full bg-slate-900/80 backdrop-blur-md px-3 py-1 text-xs font-medium text-slate-300 border border-white/10">
-                  <Headphones className="h-3 w-3 text-cyan-400" />
-                  <span>Audio Studio Charlie</span>
-                </div>
+                {/* Bouton d'action flottant : Réécouter */}
+                {latestExaminerMsg && !isExaminerSpeaking && (
+                  <div className="absolute -top-2 right-0 sm:-right-4 z-20 animate-in fade-in zoom-in-95">
+                    <Button
+                      type="button"
+                      onClick={() => playOrFetchExaminerSpeech(latestExaminerMsg.text)}
+                      variant="secondary"
+                      size="sm"
+                      className="bg-background/90 hover:bg-background text-foreground border border-border/80 rounded-full text-xs gap-1.5 shadow-md cursor-pointer backdrop-blur-md"
+                    >
+                      <Volume2 className="h-3.5 w-3.5 text-cyan-500" />
+                      Réécouter
+                    </Button>
+                  </div>
+                )}
               </div>
 
-              {/* OVERLAY BAS : PILULE D'ÉTAT DYNAMIQUE & BOUTON RÉÉCOUTER */}
-              <div className="absolute bottom-4 inset-x-4 flex items-center justify-between z-10">
-                <div className="inline-flex items-center gap-2 rounded-full bg-slate-900/90 backdrop-blur-md px-4 py-1.5 text-xs font-bold border border-white/15 shadow-xl">
+              {/* Pilule d'état dynamique sous l'orbe */}
+              <div className="relative mt-3 sm:mt-4 flex items-center justify-center z-10">
+                <div
+                  className={cn(
+                    "inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-bold border shadow-xs transition-all duration-300",
+                    isExaminerSpeaking
+                      ? "bg-cyan-500/15 border-cyan-500/40 text-cyan-700 dark:text-cyan-300"
+                      : isLiveCallActive
+                      ? "bg-emerald-500/15 border-emerald-500/40 text-emerald-700 dark:text-emerald-300"
+                      : isRecording
+                      ? "bg-rose-500/15 border-rose-500/40 text-rose-700 dark:text-rose-300"
+                      : "bg-muted/80 border-border/80 text-muted-foreground"
+                  )}
+                >
                   {isExaminerSpeaking ? (
                     <>
-                      <Volume2 className="h-4 w-4 text-cyan-400 animate-pulse" />
-                      <span className="text-cyan-300">M. Laurent s&apos;exprime...</span>
-                      <span className="flex gap-0.5 items-end h-3">
-                        <span className="w-1 bg-cyan-400 animate-[bounce_0.6s_infinite_100ms] h-3 rounded-full" />
-                        <span className="w-1 bg-cyan-400 animate-[bounce_0.6s_infinite_200ms] h-2 rounded-full" />
-                        <span className="w-1 bg-cyan-400 animate-[bounce_0.6s_infinite_300ms] h-3.5 rounded-full" />
+                      <Volume2 className="h-4 w-4 animate-pulse" />
+                      <span>M. Laurent Mercier s&apos;exprime...</span>
+                      <span className="flex gap-0.5 items-end h-3 ml-1">
+                        <span className="w-1 bg-cyan-500 animate-[bounce_0.6s_infinite_100ms] h-3 rounded-full" />
+                        <span className="w-1 bg-cyan-500 animate-[bounce_0.6s_infinite_200ms] h-2 rounded-full" />
+                        <span className="w-1 bg-cyan-500 animate-[bounce_0.6s_infinite_300ms] h-3.5 rounded-full" />
                       </span>
                     </>
                   ) : isLiveCallActive ? (
                     <>
-                      <Radio className="h-4 w-4 text-emerald-400 animate-pulse" />
-                      <span className="text-emerald-300">Microphone ouvert · Vous pouvez parler</span>
-                      <span className="flex gap-0.5 items-end h-3">
-                        <span className="w-1 bg-emerald-400 animate-[bounce_0.6s_infinite_100ms] h-2.5 rounded-full" />
-                        <span className="w-1 bg-emerald-400 animate-[bounce_0.6s_infinite_200ms] h-3.5 rounded-full" />
-                        <span className="w-1 bg-emerald-400 animate-[bounce_0.6s_infinite_300ms] h-2 rounded-full" />
-                      </span>
+                      <Radio className="h-4 w-4 text-emerald-500 animate-pulse" />
+                      <span>Liaison WebRTC Active · À vous la parole</span>
                     </>
                   ) : isRecording ? (
                     <>
-                      <Mic className="h-4 w-4 text-rose-400 animate-pulse" />
-                      <span className="text-rose-300">Microphone actif · Parlez distinctement</span>
+                      <Mic className="h-4 w-4 text-rose-500 animate-pulse" />
+                      <span>Microphone actif · Parlez distinctement</span>
                     </>
                   ) : (
                     <>
-                      <User className="h-4 w-4 text-slate-300" />
-                      <span className="text-slate-300">En attente de votre réponse</span>
+                      <User className="h-4 w-4" />
+                      <span>En attente de votre réponse</span>
                     </>
                   )}
                 </div>
+              </div>
 
-                {/* Bouton pour réécouter la consigne */}
-                {latestExaminerMsg && !isExaminerSpeaking && (
-                  <Button
-                    type="button"
-                    onClick={() => playOrFetchExaminerSpeech(latestExaminerMsg.text)}
-                    variant="secondary"
-                    size="sm"
-                    className="bg-slate-900/80 hover:bg-slate-800 text-slate-200 border border-white/10 rounded-full text-xs gap-1.5 shadow-md cursor-pointer backdrop-blur-md"
-                  >
-                    <Volume2 className="h-3.5 w-3.5 text-cyan-400" />
-                    Réécouter
-                  </Button>
-                )}
+              {/* Visualiseur de Spectre Fréquentiel sous l'orbe */}
+              <div className="w-full max-w-sm mt-3">
+                <OralWaveform
+                  isRecording={isRecording}
+                  isExaminerSpeaking={isExaminerSpeaking}
+                  isLiveCallActive={isLiveCallActive}
+                />
               </div>
             </div>
 
-            {/* BANDEAU D'ÉTAT DU MICROPHONE & SOUS-TITRE / CONSIGNE EN COURS */}
+            {/* BANDEAU DE CONSIGNE & QUESTION EN COURS DE M. LAURENT */}
             <div className="rounded-2xl border bg-card p-4 sm:p-5 shadow-xs space-y-3">
               <div className="flex items-center justify-between border-b pb-2">
                 <span className="text-xs font-bold uppercase tracking-wider text-primary flex items-center gap-1.5">
-                  <Bot className="h-4 w-4" /> Consigne & Question de M. Laurent
+                  <Bot className="h-4 w-4" /> Consigne & Question de M. Laurent Mercier
                 </span>
                 <span className="text-[11px] text-muted-foreground font-mono">
                   {currentTaskDialogues.length} réplique(s) dans cette tâche
@@ -1542,15 +1593,6 @@ export function OralExamRoom({ series }: OralExamRoomProps) {
                   </p>
                 </div>
               )}
-
-              {/* Visualiseur de Spectre Fréquentiel 21st.dev MCP */}
-              <div className="pt-2">
-                <OralWaveform
-                  isRecording={isRecording}
-                  isExaminerSpeaking={isExaminerSpeaking}
-                  isLiveCallActive={isLiveCallActive}
-                />
-              </div>
 
               {/* État synthétique du micro */}
               <div className="flex items-center justify-between text-xs pt-1">

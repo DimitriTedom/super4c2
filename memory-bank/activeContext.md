@@ -1,6 +1,14 @@
 # Active Context: Super4C2
 
-## 0. Chantiers Majeurs Récents : Résilience Audio Vocale & Gestion d'Erreur Complète (Appel Direct WebRTC, PostgreSQL ConnectionReset 10054, Mode Guidé Secours)
+## 0. Chantiers Majeurs Récents : Design Orbital Circulaire de l'Examinateur (Anti-Copycat Objectif Canada), Résilience Audio Vocale & Gestion d'Erreur Complète
+
+### 0.00000000000000000. Refonte Visuelle : Scène Orbitale Circulaire de l'Examinateur M. Laurent Mercier
+- **Élimination du Cadre Rectangulaire "Copycat Objectif Canada" :**
+  - Abandon du format boîte webcam 16:9 standard utilisé par Objectif Canada et les plateformes génériques.
+  - Création d'un **Orbe Focal Circulaire Signature Super4C2** (`w-48 h-48 sm:w-56 sm:h-56 md:w-64 md:h-64 rounded-full overflow-hidden border-4 shadow-2xl`) centré sur M. Laurent Mercier.
+  - **Anneaux Acoustiques Concentriques Réactifs :** Double anneau orbital pulsant et réagissant en temps réel à l'état vocal (ondulation cyan/bleu électrique lors de l'élocution de l'examinateur, halo vert émeraude/teal lors de l'écoute du candidat, bordure givrée au repos).
+  - **Boutons Flottants Orbitaux :** Accrochage ergonomique des boutons *"Passer"* (FastForward) et *"Réécouter"* (Volume2) sur l'orbe avec pilule dynamique et égaliseur de fréquences.
+  - **Visualiseur Harmonisé :** Intégration directe du spectre de fréquences (`OralWaveform`) sous l'orbe circulaire, créant une unité visuelle épurée et moderne avant les consignes et les contrôles micro.
 
 ### 0.0000000000000000. Résilience d'Appel Vocal ElevenLabs & Gestion d'Erreur Candidat Complète
 - **1. Diagnostic & Correction de l'Échec de Session d'Appel (`OralExamRoom`) :**
