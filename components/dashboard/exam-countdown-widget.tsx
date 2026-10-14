@@ -76,7 +76,7 @@ export function ExamCountdownWidget() {
     if (days <= 45) {
       return {
         label: "Phase Intensive",
-        desc: "Enchaînez les séries complètes en mode Examen Strict 60 min.",
+        desc: "Enchaînez les sujets complets en mode Examen Strict 60 min.",
         color: "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/30",
       };
     }

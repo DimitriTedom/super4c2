@@ -3,7 +3,7 @@ import type { WrittenExamSeries } from "./written-types";
 export const MOCK_WRITTEN_SERIES_101: WrittenExamSeries = {
   id: "demo-101-ee",
   seriesNumber: 101,
-  title: "TCF Canada — Expression Écrite, Série 101 (Officiel)",
+  title: "TCF Canada — Expression Écrite, Sujet 101 (Officiel)",
   durationSeconds: 60 * 60, // 60 minutes
   tasks: [
     {

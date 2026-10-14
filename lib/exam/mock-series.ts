@@ -3,7 +3,7 @@ import type { ExamSeriesData } from "./types";
 export const MOCK_SERIES_CE_101: ExamSeriesData = {
   id: "demo-101",
   seriesNumber: 101,
-  title: "TCF Canada — Compréhension écrite, Série 101 (démo)",
+  title: "TCF Canada — Compréhension écrite, Sujet 101 (démo)",
   discipline: "CE",
   durationSeconds: 60 * 60,
   questions: [
@@ -107,7 +107,7 @@ export const MOCK_SERIES_CE_101: ExamSeriesData = {
 export const MOCK_SERIES_CO_101: ExamSeriesData = {
   id: "demo-101-co",
   seriesNumber: 101,
-  title: "TCF Canada — Compréhension orale, Série 101 (démo)",
+  title: "TCF Canada — Compréhension orale, Sujet 101 (démo)",
   discipline: "CO",
   durationSeconds: 40 * 60,
   questions: [

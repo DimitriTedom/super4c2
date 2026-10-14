@@ -30,11 +30,11 @@ export async function generateMetadata({
   }
 
   return {
-    title: `Série ${series?.seriesNumber || 101} — TCF & TEF Canada CBT`,
-    description: `Simulation officielle de la Série ${series?.seriesNumber || 101} TCF Canada : Compréhension Écrite, Compréhension Orale, Expression Écrite et Orale. Objectif NCLC 7+ (+50 pts CRS).`,
+    title: `Sujet ${series?.seriesNumber || 101} — TCF & TEF Canada CBT`,
+    description: `Simulation officielle du Sujet ${series?.seriesNumber || 101} TCF Canada : Compréhension Écrite, Compréhension Orale, Expression Écrite et Orale. Objectif NCLC 7+ (+50 pts CRS).`,
     openGraph: {
-      title: `Série ${series?.seriesNumber || 101} TCF Canada — Super4C2`,
-      description: `Entraînez-vous sur la Série ${series?.seriesNumber || 101} en conditions officielles d'examen CBT.`,
+      title: `Sujet ${series?.seriesNumber || 101} TCF Canada — Super4C2`,
+      description: `Entraînez-vous sur le Sujet ${series?.seriesNumber || 101} en conditions officielles d'examen CBT.`,
     },
   };
 }
@@ -62,7 +62,7 @@ export default async function SeriesDisciplineSelectorPage({
               : "🇨🇦 Simulateur Officiel FEI · Nouveau Format TCF Canada"}
           </div>
           <h1 className="font-display text-2xl sm:text-4xl font-extrabold tracking-tight">
-            {isIelts ? series.title : `Vous êtes sur le point de commencer la Série ${series.seriesNumber || 101}`}
+            {isIelts ? series.title : `Vous êtes sur le point de commencer le Sujet ${series.seriesNumber || 101}`}
           </h1>
           <p className="text-base text-muted-foreground max-w-2xl">
             {isIelts
@@ -342,7 +342,7 @@ export default async function SeriesDisciplineSelectorPage({
       {/* Back Link */}
       <div className="text-center pt-4">
         <Button variant="ghost" asChild>
-          <Link href="/examens">← Revenir au catalogue des séries</Link>
+          <Link href="/examens">← Revenir à la banque des sujets</Link>
         </Button>
       </div>
     </div>

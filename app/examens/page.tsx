@@ -9,13 +9,13 @@ import type { Metadata } from "next";
 import type { TestType, DisciplineType } from "@/lib/exam/series-progression";
 
 export const metadata: Metadata = {
-  title: "Séries d'Examens & Parcours de Déblocage CBT — TCF • TEF • IELTS | Super4C2",
+  title: "Sujets d'Examens & Parcours de Déblocage CBT — TCF • TEF • IELTS | Super4C2",
   description:
-    "Explorez notre roadmap interactif de séries d'entraînement officielles pour le TCF Canada, TEF et IELTS General. Débloquez les niveaux jusqu'au seuil NCLC 7+ (+50 pts CRS).",
+    "Explorez notre banque officielle de sujets d'entraînement pour le TCF Canada, TEF et IELTS General. Débloquez les niveaux jusqu'au seuil NCLC 7+ (+50 pts CRS).",
   openGraph: {
-    title: "Séries d'Examens & Parcours CBT | Super4C2",
+    title: "Sujets d'Examens & Parcours CBT | Super4C2",
     description:
-      "Roadmap d'entraînement officiel TCF Canada & IELTS : simulateur CBT officiel, 4 épreuves chronométrées et correction IA immédiate.",
+      "Banque de sujets d'entraînement officiels TCF Canada & IELTS : simulateur CBT officiel, 4 épreuves chronométrées et correction IA immédiate.",
     images: ["/brand/og-image-simulator.jpg"],
   },
 };
@@ -99,7 +99,7 @@ export default async function ExamCataloguePage({ searchParams }: ExamCatalogueP
                     />
                   </div>
                   <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-[10px] font-bold text-primary">
-                    Série {201 + idx}
+                    Sujet {201 + idx}
                   </span>
                 </div>
 
@@ -169,7 +169,7 @@ export default async function ExamCataloguePage({ searchParams }: ExamCatalogueP
             <span className="font-mono text-xs font-bold text-primary block">03 • Seuil NCLC 7 Automatisé</span>
             <h4 className="font-display font-bold text-base">Calculateur CRS en direct</h4>
             <p className="text-xs text-muted-foreground leading-relaxed">
-              Dès que vous validez les paliers B2/C1 sur une série, votre tableau de bord débloque instantanément la série supérieure.
+              Dès que vous validez les paliers B2/C1 sur un sujet, votre tableau de bord débloque instantanément le sujet supérieur.
             </p>
           </div>
         </div>

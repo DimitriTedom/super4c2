@@ -146,7 +146,7 @@ export function ExamRoadmapBoard({
             </div>
 
             <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-foreground">
-              Séries {testMeta.name} — Parcours CBT Officiel
+              Sujets {testMeta.name} — Banque Officielle CBT
             </h1>
 
             <p className="text-muted-foreground text-sm sm:text-base leading-relaxed">
@@ -381,7 +381,7 @@ export function ExamRoadmapBoard({
             </div>
             <div className="flex items-center gap-4 text-xs font-mono text-muted-foreground">
               <span>
-                Séries débloquées :{" "}
+                Sujets débloqués :{" "}
                 <strong className="text-foreground">
                   {seriesList.filter((s) => s.status !== "LOCKED").length} / {seriesList.length}
                 </strong>
@@ -468,7 +468,7 @@ export function ExamRoadmapBoard({
 
                             <div>
                               <h3 className="font-display text-base font-bold text-foreground leading-tight">
-                                Série {series.seriesNumber}
+                                Sujet {series.seriesNumber}
                               </h3>
                               <span className="text-[11px] font-medium text-muted-foreground block">
                                 {series.levelBadge}
@@ -531,7 +531,7 @@ export function ExamRoadmapBoard({
                             <ArrowRight className="h-4 w-4 text-foreground/80" />
                           </div>
                           <span className="text-[10px] font-mono text-muted-foreground mt-1">
-                            S.{series.seriesNumber} ➔ S.{nextSeries.seriesNumber}
+                            Sujet {series.seriesNumber} ➔ Sujet {nextSeries.seriesNumber}
                           </span>
                         </div>
                       )}
@@ -557,7 +557,7 @@ export function ExamRoadmapBoard({
                   <div className="space-y-2">
                     <div className="flex flex-wrap items-center gap-2">
                       <span className="font-mono text-xs font-bold text-primary uppercase tracking-wider">
-                        Série Sélectionnée
+                        Sujet Sélectionné
                       </span>
                       <Badge variant="outline" className="border-primary/40 bg-primary/10 text-primary font-bold">
                         {selectedSeries.levelBadge}
@@ -589,7 +589,7 @@ export function ExamRoadmapBoard({
                         className="font-bold text-sm sm:text-base shadow-md px-6 bg-primary hover:bg-primary/90 w-full sm:w-auto"
                       >
                         <Link href={`/examens/${selectedSeries.id}`}>
-                          <span>Accéder aux Épreuves de la Série</span>
+                          <span>Lancer les Épreuves du Sujet</span>
                           <ArrowRight className="h-5 w-5 ml-2" />
                         </Link>
                       </Button>
@@ -602,7 +602,7 @@ export function ExamRoadmapBoard({
                           className="opacity-70 gap-2 border-border/80 cursor-not-allowed w-full sm:w-auto"
                         >
                           <Lock className="h-4 w-4" />
-                          <span>Série Verrouillée</span>
+                          <span>Sujet Verrouillé</span>
                         </Button>
                         <Button
                           size="lg"
@@ -627,7 +627,7 @@ export function ExamRoadmapBoard({
                       </p>
                       <p className="text-xs leading-relaxed">
                         {selectedSeries.unlockCondition ||
-                          "Validez votre épreuve sur la série précédente ou souscrivez à l'accès Pro pour déverrouiller ce palier."}
+                          "Validez votre épreuve sur le sujet précédent ou activez votre accès gratuit pour déverrouiller ce palier."}
                       </p>
                     </div>
                   </div>
@@ -636,7 +636,7 @@ export function ExamRoadmapBoard({
                 {/* Focus Topics Pills */}
                 <div className="space-y-2">
                   <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
-                    Thématiques clés & pièges abordés dans cette série :
+                    Thématiques clés & pièges abordés dans ce sujet :
                   </span>
                   <div className="flex flex-wrap gap-2">
                     {selectedSeries.focusTopics.map((topic) => (
@@ -655,7 +655,7 @@ export function ExamRoadmapBoard({
                 <div className="space-y-3 pt-2">
                   <div className="flex items-center justify-between">
                     <h3 className="font-display text-lg font-bold">
-                      Accès direct par discipline pour la Série {selectedSeries.seriesNumber}
+                      Accès direct par épreuve pour le Sujet {selectedSeries.seriesNumber}
                     </h3>
                     <span className="text-xs text-muted-foreground font-mono">
                       4 simulateurs indépendants
@@ -801,7 +801,7 @@ export function ExamRoadmapBoard({
 
                     <div>
                       <h3 className="font-display text-xl font-bold leading-snug">
-                        Série {series.seriesNumber}
+                        Sujet {series.seriesNumber}
                       </h3>
                       <p className="text-xs text-muted-foreground mt-0.5">
                         {series.subtitle}
@@ -826,7 +826,7 @@ export function ExamRoadmapBoard({
                     {isUnlocked ? (
                       <Button asChild className="w-full font-bold shadow-xs">
                         <Link href={series.disciplines[0]?.url || "/examens/demo-101-ce"}>
-                          <span>Choisir la Série {series.seriesNumber}</span>
+                          <span>Lancer le Sujet {series.seriesNumber}</span>
                           <ArrowRight className="h-4 w-4 ml-1.5" />
                         </Link>
                       </Button>
@@ -837,7 +837,7 @@ export function ExamRoadmapBoard({
                         className="w-full gap-2 text-primary border-primary/30 hover:bg-primary/10"
                       >
                         <Unlock className="h-4 w-4" />
-                        <span>Débloquer la Série {series.seriesNumber}</span>
+                        <span>Débloquer le Sujet {series.seriesNumber}</span>
                       </Button>
                     )}
                   </div>
