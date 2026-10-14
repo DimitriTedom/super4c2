@@ -86,7 +86,7 @@ export function CompanionPod({
             src={companion.avatarUrl}
             alt={companion.name}
             fill
-            className="object-cover object-top"
+            className="object-cover object-center"
             priority
           />
 

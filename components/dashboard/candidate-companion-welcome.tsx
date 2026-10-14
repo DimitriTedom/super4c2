@@ -91,7 +91,7 @@ export function CandidateCompanionWelcome({ userDisplayName }: CandidateCompanio
                   src={companion.avatarUrl}
                   alt={companion.name}
                   fill
-                  className="object-cover object-top"
+                  className="object-cover object-center"
                 />
               </div>
               <span className="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full bg-background border border-border shadow-xs text-xs">
