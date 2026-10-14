@@ -1,7 +1,8 @@
-- [x] **Design Orbital Circulaire de l'Examinateur M. Laurent Mercier (Anti-Copycat Objectif Canada) :**
-  - Remplacement du cadre vidéo rectangulaire de type webcam par un **Orbe Circulaire Haut de Gamme** avec masquage vidéo fluide (`rounded-full`).
-  - Déploiement d'anneaux acoustiques concentriques réactifs aux états vocaux (parole cyan, écoute émeraude, repos givré).
-  - Boutons d'action flottants attachés (*« Passer »* et *« Réécouter »*) et harmonisation du visualiseur de spectre fréquentiel (`OralWaveform`) directement sous l'orbe.
+- [x] **Cockpit d'Examen Sans Défilement (Zero-Scroll 100vh) & Design Orbital Circulaire :**
+  - Architecture côte-à-côte à hauteur d'écran stricte (`h-screen overflow-hidden`) conforme aux standards officiels FEI (suppression totale de la barre de défilement).
+  - Panneau gauche (5 cols) avec l'orbe circulaire de l'examinateur (`w-36 h-36 md:w-40 md:h-40 rounded-full`), anneaux réactifs et spectre audio compact.
+  - Panneau droit (7 cols) avec la question officielle, la bulle de transcription directe du candidat et les amorces.
+  - Console d'action inférieure unifiée regroupant les boutons de prise de parole, validation et passage à la tâche suivante sur une seule ligne.
 - [x] **Résilience Audio Vocale & Gestion d'Erreur Complète (Appel Direct WebRTC, PostgreSQL ConnectionReset 10054, Mode Guidé Secours) :**
   - Diagnostic et affichage dynamique des erreurs d'appel (`callError`) dans un bandeau interactif haute visibilité et dans le panneau latéral.
   - Déploiement du bouton de repli immédiat à 1-clic : *« Continuer en Mode Guidé (Microphone Standard) »* permettant d'effectuer l'épreuve sans dépendance WebRTC ni interruption de session.
