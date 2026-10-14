@@ -26,14 +26,47 @@ import {
   Radio,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 type ShowcaseTab = "ee" | "eo" | "ce" | "co";
 
 const TABS = [
-  { id: "ee" as const, label: "1. Expression Écrite (Disponible)", icon: PenTool, color: "text-brand-crimson" },
-  { id: "eo" as const, label: "2. Expression Orale IA (Disponible)", icon: Mic, color: "text-emerald-500" },
-  { id: "ce" as const, label: "3. Double Écran CE (Bientôt)", icon: Monitor, color: "text-amber-500" },
-  { id: "co" as const, label: "4. Audio FEI CO (Bientôt)", icon: Headphones, color: "text-cyan-500" },
+  {
+    id: "ee" as const,
+    num: "1",
+    label: "Expression Écrite",
+    badge: "Ouvert",
+    isAvailable: true,
+    icon: PenTool,
+    color: "text-brand-crimson",
+  },
+  {
+    id: "eo" as const,
+    num: "2",
+    label: "Expression Orale IA",
+    badge: "Ouvert",
+    isAvailable: true,
+    icon: Mic,
+    color: "text-emerald-500",
+  },
+  {
+    id: "ce" as const,
+    num: "3",
+    label: "Compréhension Écrite",
+    badge: "Bientôt",
+    isAvailable: false,
+    icon: Monitor,
+    color: "text-amber-500",
+  },
+  {
+    id: "co" as const,
+    num: "4",
+    label: "Compréhension Orale",
+    badge: "Bientôt",
+    isAvailable: false,
+    icon: Headphones,
+    color: "text-cyan-500",
+  },
 ];
 
 export function ProductShowcaseSection() {
@@ -219,7 +252,7 @@ export function ProductShowcaseSection() {
       </div>
 
       {/* 4 Tabs navigation with smooth Framer Motion layout pill */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 w-full max-w-4xl mx-auto p-1.5 rounded-2xl bg-muted/70 dark:bg-slate-900/80 border border-border/80">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-1.5 sm:gap-2 w-full max-w-4xl mx-auto p-1.5 rounded-2xl bg-muted/70 dark:bg-slate-900/80 border border-border/80 shadow-xs">
         {TABS.map((tab) => {
           const isActive = activeTab === tab.id;
           const Icon = tab.icon;
@@ -228,11 +261,12 @@ export function ProductShowcaseSection() {
               key={tab.id}
               type="button"
               onClick={() => setActiveTab(tab.id)}
-              className={`relative flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-colors duration-200 ${
+              className={cn(
+                "relative flex items-center justify-center w-full min-w-0 px-2 sm:px-3 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 overflow-hidden cursor-pointer",
                 isActive
-                  ? "text-foreground font-bold"
+                  ? "text-foreground font-bold shadow-xs"
                   : "text-muted-foreground hover:text-foreground hover:bg-background/40"
-              }`}
+              )}
             >
               {isActive && (
                 <motion.div
@@ -241,9 +275,22 @@ export function ProductShowcaseSection() {
                   transition={{ type: "spring", stiffness: 450, damping: 32 }}
                 />
               )}
-              <span className="relative z-10 flex items-center gap-2">
-                <Icon className={`h-4 w-4 ${isActive ? tab.color : "text-muted-foreground"}`} />
-                <span className="truncate">{tab.label}</span>
+              <span className="relative z-10 flex items-center justify-center gap-1.5 w-full min-w-0">
+                <Icon className={cn("h-4 w-4 shrink-0", isActive ? tab.color : "text-muted-foreground")} />
+                <span className="truncate font-bold">
+                  <span className="opacity-60 mr-1">{tab.num}.</span>
+                  {tab.label}
+                </span>
+                <span
+                  className={cn(
+                    "text-[9px] font-extrabold uppercase tracking-wide px-1.5 py-0.5 rounded-full shrink-0 hidden xl:inline-block border",
+                    tab.isAvailable
+                      ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30"
+                      : "bg-muted/80 text-muted-foreground border-border/60"
+                  )}
+                >
+                  {tab.badge}
+                </span>
               </span>
             </button>
           );
