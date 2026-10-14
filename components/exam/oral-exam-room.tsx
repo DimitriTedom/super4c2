@@ -1212,7 +1212,6 @@ export function OralExamRoom({ series }: OralExamRoomProps) {
 
               {/* 1. Vidéo en boucle d'attente / écoute attentive (Idle Loop avec micro-mouvements des yeux et respiration) */}
               <video
-                src="/brand/examiner/examiner_idle.mp4"
                 autoPlay
                 loop
                 muted
@@ -1221,11 +1220,13 @@ export function OralExamRoom({ series }: OralExamRoomProps) {
                   "absolute inset-0 w-full h-full object-cover object-top transition-all duration-700",
                   !isExaminerSpeaking ? "opacity-100 scale-100" : "opacity-0 pointer-events-none scale-[0.99]"
                 )}
-              />
+              >
+                <source src="/brand/examiner/examiner_idle.mp4" type="video/mp4" />
+                <img src="/brand/examiner/examiner_idle.gif" alt="M. Laurent - En écoute" className="w-full h-full object-cover object-top" />
+              </video>
 
               {/* 2. Vidéo en boucle de parole / mime explicatif (Speaking Loop avec mimique articulatoire et cadence d'échange) */}
               <video
-                src="/brand/examiner/examiner_speaking.mp4"
                 autoPlay
                 loop
                 muted
@@ -1234,7 +1235,10 @@ export function OralExamRoom({ series }: OralExamRoomProps) {
                   "absolute inset-0 w-full h-full object-cover object-top transition-all duration-700",
                   isExaminerSpeaking ? "opacity-100 scale-[1.01] brightness-105" : "opacity-0 pointer-events-none scale-100"
                 )}
-              />
+              >
+                <source src="/brand/examiner/examiner_speaking.mp4" type="video/mp4" />
+                <img src="/brand/examiner/examiner_speaking.gif" alt="M. Laurent - En parole" className="w-full h-full object-cover object-top" />
+              </video>
 
               {/* Halo réactif subtil sur le contour */}
               <div
