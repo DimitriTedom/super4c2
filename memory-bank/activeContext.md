@@ -1,6 +1,20 @@
 # Active Context: Super4C2
 
-## 0. Chantiers Majeurs Récents : Compagnons 3D (Kodiak, Aura, Barnabé), Hub Méthodologique en 3 Paliers d'Expression Écrite, Barre du Temps & Clavier FEI
+## 0. Chantiers Majeurs Récents : Résilience Audio Vocale & Gestion d'Erreur Complète (Appel Direct WebRTC, PostgreSQL ConnectionReset 10054, Mode Guidé Secours)
+
+### 0.0000000000000000. Résilience d'Appel Vocal ElevenLabs & Gestion d'Erreur Candidat Complète
+- **1. Diagnostic & Correction de l'Échec de Session d'Appel (`OralExamRoom`) :**
+  - **Gestion Visuelle de l'Erreur d'Appel (`callError`) :** Auparavant, `callError` était enregistré dans l'état sans être affiché dans le JSX. Un bandeau interactif haute visibilité a été intégré au-dessus du pod vidéo ainsi qu'une alerte interactive dans le panneau latéral.
+  - **Boutons de Secours Instantanés :**
+    - 🎙️ *« Continuer en Mode Guidé (Microphone Standard) »* (Recommandé) : permet au candidat de continuer son examen tour par tour de manière 100% fiable avec enregistrement audio sans dépendance WebRTC.
+    - 🔄 *« Réessayer l'Appel Direct »* : réinitialise l'audio et relance proprement la session.
+  - **Détection des Permissions Microphone :** Détection explicite des erreurs `NotAllowedError`, `NotFoundError` et `NotReadableError` avec instructions précises pour débloquer l'accès au microphone dans le navigateur.
+- **2. Élimination des Erreurs PostgreSQL `ConnectionReset 10054` (Prisma + Supabase PgBouncer) :**
+  - **Résilience Server Actions (`lib/notifications/actions.ts`) :** Sécurisation de `getNotificationsAction` avec `try / catch` et repli sur des notifications de démonstration par défaut, éliminant les crashs silencieux lors des interrogations cycliques (45s).
+  - **Résilience API Tentatives (`app/api/exam/attempt/route.ts`) :** Sécurisation de la persistance en base avec fallback local gracieux pour ne jamais pénaliser un candidat finissant son épreuve en cas de réinitialisation du pooler SQL.
+  - **Configuration Pooler Supabase (`.env`) :** Ajout de `connection_limit=1` à `DATABASE_URL` pour prévenir les fermetures de connexions inactives par PgBouncer sur le port 6543, et synchronisation de `ELEVENLABS_AGENT_ID`.
+- **3. Error Boundary Dédié (`app/examens/[seriesId]/eo/error.tsx`) :**
+  - Mise en place d'un écran de secours stylisé reprenant les codes de l'EdTech pour intercepter toute défaillance inattendue de page et permettre la reprise immédiate de l'entretien.
 
 ### 0.000000000000000. Organigramme d'Accueil TCF Canada & Hub d'Expression Écrite Structuré
 - **1. Onboarding en 2 Étapes TCF Canada (`components/companions/companion-selector-dialog.tsx`) :**

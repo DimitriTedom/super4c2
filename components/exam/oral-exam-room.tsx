@@ -483,79 +483,152 @@ export function OralExamRoom({ series }: OralExamRoomProps) {
       stopAllAudio();
       isLiveCallActiveRef.current = true;
 
-      // 1. Autorisation du microphone & démarrage de l'enregistrement de session
-      await ensureMediaRecordingStarted();
+      // 1. Autorisation du microphone & démarrage de l'enregistrement de session (non-bloquant)
+      try {
+        await ensureMediaRecordingStarted();
+      } catch (mediaErr) {
+        console.warn("[Live Call] Enregistreur de session optionnel non démarré:", mediaErr);
+      }
 
-      // 2. URL signée sécurisée
+      // 2. URL signée sécurisée depuis le serveur
       const res = await fetch("/api/ai/oral-signed-url");
       const data = await res.json();
       if (!data.ok || !data.signedUrl) {
-        throw new Error(data.error || "Impossible d'obtenir le jeton d'appel.");
+        throw new Error(data.error || "Impossible d'obtenir le jeton d'autorisation ElevenLabs.");
       }
 
-      // 3. Démarrage de la conversation avec Worklets auto-hébergés
-      const conversation = await Conversation.startSession({
-        signedUrl: data.signedUrl,
-        workletPaths: {
-          rawAudioProcessor: "/worklets/rawAudioProcessor.js",
-          audioConcatProcessor: "/worklets/audioConcatProcessor.js",
-        },
-        dynamicVariables: {
-          candidate_name: "Candidat",
-          task_number: `Tâche ${currentTaskIndex + 1}`,
-          scenario_topic: currentTask.title,
-          target_level: "NCLC 7+",
-        },
-        onConnect: () => {
-          setIsLiveCallActive(true);
-          isLiveCallActiveRef.current = true;
-          setIsCallConnecting(false);
-          setCallError(null);
-        },
-        onDisconnect: () => {
-          setIsLiveCallActive(false);
-          isLiveCallActiveRef.current = false;
-          setIsCallConnecting(false);
-          setIsExaminerSpeaking(false);
-        },
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onError: (err: any) => {
-          console.error("[Live Call] Erreur:", err);
-          const msg = typeof err === "string" ? err : err?.message || "Erreur de connexion audio.";
-          setCallError(msg);
-          setIsLiveCallActive(false);
-          isLiveCallActiveRef.current = false;
-          setIsCallConnecting(false);
-        },
-        onModeChange: ({ mode }: { mode: "speaking" | "listening" }) => {
-          setIsExaminerSpeaking(mode === "speaking");
-          setIsRecording(mode === "listening");
-        },
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onMessage: (payload: any) => {
-          if (payload && payload.message) {
-            const isAgent = payload.role === "agent" || payload.source === "ai";
-            const newMsg: OralDialogueMessage = {
-              id: `live-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
-              sender: isAgent ? "examiner" : "candidate",
-              text: payload.message,
-              timestamp: Date.now(),
-            };
-            setDialogues((prev) => ({
-              ...prev,
-              [currentTaskIndex]: [...prev[currentTaskIndex], newMsg],
-            }));
-          }
-        },
-      });
+      // 3. Démarrage de la conversation avec Worklets auto-hébergés ou intégrés
+      let conversation;
+      try {
+        conversation = await Conversation.startSession({
+          signedUrl: data.signedUrl,
+          dynamicVariables: {
+            candidate_name: "Candidat",
+            task_number: `Tâche ${currentTaskIndex + 1}`,
+            scenario_topic: currentTask.title,
+            target_level: "NCLC 7+",
+          },
+          onConnect: () => {
+            setIsLiveCallActive(true);
+            isLiveCallActiveRef.current = true;
+            setIsCallConnecting(false);
+            setCallError(null);
+          },
+          onDisconnect: () => {
+            setIsLiveCallActive(false);
+            isLiveCallActiveRef.current = false;
+            setIsCallConnecting(false);
+            setIsExaminerSpeaking(false);
+          },
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          onError: (err: any) => {
+            console.error("[Live Call] Erreur:", err);
+            const msg = typeof err === "string" ? err : err?.message || "La liaison vocale directe a été interrompue.";
+            setCallError(msg);
+            setIsLiveCallActive(false);
+            isLiveCallActiveRef.current = false;
+            setIsCallConnecting(false);
+          },
+          onModeChange: ({ mode }: { mode: "speaking" | "listening" }) => {
+            setIsExaminerSpeaking(mode === "speaking");
+            setIsRecording(mode === "listening");
+          },
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          onMessage: (payload: any) => {
+            if (payload && payload.message) {
+              const isAgent = payload.role === "agent" || payload.source === "ai";
+              const newMsg: OralDialogueMessage = {
+                id: `live-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+                sender: isAgent ? "examiner" : "candidate",
+                text: payload.message,
+                timestamp: Date.now(),
+              };
+              setDialogues((prev) => ({
+                ...prev,
+                [currentTaskIndex]: [...prev[currentTaskIndex], newMsg],
+              }));
+            }
+          },
+        });
+      } catch (sessionErr: unknown) {
+        // En cas de problème de worklet, réessai avec chemins explicites
+        const msg = sessionErr instanceof Error ? sessionErr.message : String(sessionErr);
+        if (msg.includes("worklet") || msg.includes("processor")) {
+          conversation = await Conversation.startSession({
+            signedUrl: data.signedUrl,
+            workletPaths: {
+              rawAudioProcessor: "/worklets/rawAudioProcessor.js",
+              audioConcatProcessor: "/worklets/audioConcatProcessor.js",
+            },
+            dynamicVariables: {
+              candidate_name: "Candidat",
+              task_number: `Tâche ${currentTaskIndex + 1}`,
+              scenario_topic: currentTask.title,
+              target_level: "NCLC 7+",
+            },
+            onConnect: () => {
+              setIsLiveCallActive(true);
+              isLiveCallActiveRef.current = true;
+              setIsCallConnecting(false);
+              setCallError(null);
+            },
+            onDisconnect: () => {
+              setIsLiveCallActive(false);
+              isLiveCallActiveRef.current = false;
+              setIsCallConnecting(false);
+              setIsExaminerSpeaking(false);
+            },
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            onError: (err: any) => {
+              console.error("[Live Call Fallback] Erreur:", err);
+              const fallbackMsg = typeof err === "string" ? err : err?.message || "Erreur de connexion audio.";
+              setCallError(fallbackMsg);
+              setIsLiveCallActive(false);
+              isLiveCallActiveRef.current = false;
+              setIsCallConnecting(false);
+            },
+            onModeChange: ({ mode }: { mode: "speaking" | "listening" }) => {
+              setIsExaminerSpeaking(mode === "speaking");
+              setIsRecording(mode === "listening");
+            },
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            onMessage: (payload: any) => {
+              if (payload && payload.message) {
+                const isAgent = payload.role === "agent" || payload.source === "ai";
+                const newMsg: OralDialogueMessage = {
+                  id: `live-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+                  sender: isAgent ? "examiner" : "candidate",
+                  text: payload.message,
+                  timestamp: Date.now(),
+                };
+                setDialogues((prev) => ({
+                  ...prev,
+                  [currentTaskIndex]: [...prev[currentTaskIndex], newMsg],
+                }));
+              }
+            },
+          });
+        } else {
+          throw sessionErr;
+        }
+      }
 
       conversationRef.current = conversation;
     } catch (error: unknown) {
       console.error("[Live Call] Échec initialisation:", error);
-      const errMsg =
-        error instanceof Error
-          ? error.message
-          : "Microphone inaccessible ou refusé par le navigateur.";
+      let errMsg = "Microphone inaccessible ou liaison vocale refusée par le navigateur.";
+      if (error instanceof Error) {
+        const lower = error.message.toLowerCase();
+        if (error.name === "NotAllowedError" || lower.includes("permission") || lower.includes("not allowed")) {
+          errMsg = "Accès microphone bloqué : Cliquez sur l'icône de cadenas à gauche de l'adresse web pour autoriser le microphone, puis réessayez.";
+        } else if (error.name === "NotFoundError" || lower.includes("not found") || lower.includes("devices")) {
+          errMsg = "Aucun microphone détecté : Veuillez brancher un casque ou un microphone sur cet appareil.";
+        } else if (error.name === "NotReadableError" || lower.includes("already in use")) {
+          errMsg = "Microphone occupé : Une autre application ou un autre onglet utilise votre micro. Veuillez les fermer.";
+        } else {
+          errMsg = error.message;
+        }
+      }
       setCallError(errMsg);
       setIsCallConnecting(false);
       setIsLiveCallActive(false);
@@ -1164,6 +1237,38 @@ export function OralExamRoom({ series }: OralExamRoomProps) {
               <p className="text-xs text-muted-foreground leading-relaxed">
                 Interagissez en continu avec l&apos;examinateur Charlie sans appuyer sur aucun bouton.
               </p>
+              {callError && (
+                <div className="rounded-xl border border-destructive/40 bg-destructive/10 p-2.5 text-xs space-y-2 animate-in fade-in">
+                  <div className="flex items-start gap-1.5 text-destructive font-semibold">
+                    <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
+                    <p className="text-[11px] leading-tight">{callError}</p>
+                  </div>
+                  <div className="flex items-center gap-2 pt-1">
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="outline"
+                      onClick={() => {
+                        setCallError(null);
+                        void startLiveCall();
+                      }}
+                      className="h-7 text-[11px] font-bold gap-1 rounded-lg border-destructive/30 hover:bg-destructive/15 text-destructive"
+                    >
+                      <RotateCcw className="h-3 w-3" />
+                      Réessayer
+                    </Button>
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => setCallError(null)}
+                      className="h-7 text-[11px] text-muted-foreground hover:text-foreground"
+                    >
+                      Masquer
+                    </Button>
+                  </div>
+                </div>
+              )}
               {!isLiveCallActive ? (
                 <Button
                   type="button"
@@ -1175,7 +1280,7 @@ export function OralExamRoom({ series }: OralExamRoomProps) {
                   {isCallConnecting ? (
                     <>
                       <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                      Connexion...
+                      Connexion audio...
                     </>
                   ) : (
                     <>
@@ -1201,6 +1306,65 @@ export function OralExamRoom({ series }: OralExamRoomProps) {
 
           {/* ZONE PRINCIPALE — POD VIDÉO HAUTE VISIBILITÉ & SCÈNE D'INTERACTION */}
           <main className="flex min-h-0 flex-1 flex-col bg-background p-4 sm:p-6 overflow-y-auto space-y-4">
+            {/* BANNIÈRE DE GESTION D'ERREUR ET DE SECOURS CANDIDAT */}
+            {callError && (
+              <div className="rounded-2xl border-2 border-amber-500/40 bg-gradient-to-r from-amber-500/15 via-amber-500/10 to-transparent p-4 sm:p-5 shadow-lg space-y-3 animate-in fade-in slide-in-from-top-2">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-start gap-3">
+                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-amber-500/20 text-amber-600 dark:text-amber-400">
+                      <AlertCircle className="h-5 w-5" />
+                    </div>
+                    <div className="space-y-1">
+                      <h4 className="text-sm font-bold text-foreground flex items-center gap-2">
+                        Liaison Vocale Directe Non Établie
+                        <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-700 dark:text-amber-300 font-bold">
+                          Assistance Candidat
+                        </span>
+                      </h4>
+                      <p className="text-xs text-muted-foreground leading-relaxed">
+                        {callError}
+                      </p>
+                      <p className="text-xs text-foreground/90 font-medium pt-1">
+                        💡 <strong>Rassurez-vous :</strong> Votre examen n&apos;est pas interrompu. Vous pouvez enregistrer vos réponses normalement grâce au <strong>Mode Guidé (Microphone Standard)</strong> ci-dessous.
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setCallError(null)}
+                    className="text-muted-foreground hover:text-foreground text-xs p-1 rounded-md cursor-pointer"
+                    title="Fermer cette notification"
+                  >
+                    ✕
+                  </button>
+                </div>
+                <div className="flex flex-wrap items-center gap-2.5 pt-1 pl-12">
+                  <Button
+                    type="button"
+                    size="sm"
+                    onClick={() => setCallError(null)}
+                    className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-xs gap-1.5 rounded-xl shadow-sm cursor-pointer"
+                  >
+                    <Mic className="h-3.5 w-3.5" />
+                    Continuer en Mode Guidé (Microphone Standard)
+                  </Button>
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    onClick={() => {
+                      setCallError(null);
+                      void startLiveCall();
+                    }}
+                    className="text-xs font-semibold gap-1.5 rounded-xl border-border/80 cursor-pointer"
+                  >
+                    <RotateCcw className="h-3.5 w-3.5" />
+                    Réessayer l&apos;Appel Direct
+                  </Button>
+                </div>
+              </div>
+            )}
+
             {/* POD VIDÉO ANIMÉ DE L'EXAMINATEUR M. LAURENT (BOUCLE D'ATTENTE & BOUCLE DE PAROLE) */}
             <div className="relative w-full h-[260px] sm:h-[320px] md:h-[380px] rounded-3xl overflow-hidden border-2 border-border/80 bg-slate-950 shadow-2xl flex items-center justify-center shrink-0">
               {/* Fond d'affiche photographique de secours */}

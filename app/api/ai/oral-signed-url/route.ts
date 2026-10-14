@@ -9,7 +9,11 @@ export async function GET(req: Request) {
 
     if (!apiKey) {
       return NextResponse.json(
-        { error: "Clé API ElevenLabs non configurée." },
+        {
+          ok: false,
+          code: "API_KEY_MISSING",
+          error: "Clé API ElevenLabs non configurée sur le serveur.",
+        },
         { status: 500 }
       );
     }
@@ -32,8 +36,22 @@ export async function GET(req: Request) {
     if (!response.ok) {
       const errorText = await response.text();
       console.error("[ElevenLabs ConvAI] Erreur signed URL:", response.status, errorText);
+
+      let userFriendlyMessage = "Impossible d'établir la liaison vocale avec l'examinateur IA.";
+      if (response.status === 401 || response.status === 403) {
+        userFriendlyMessage = "Authentification ElevenLabs invalide ou forfait épuisé.";
+      } else if (response.status === 404) {
+        userFriendlyMessage = "L'agent examinateur vocal configuré est introuvable.";
+      }
+
       return NextResponse.json(
-        { error: "Impossible de générer l'URL signée de conversation." },
+        {
+          ok: false,
+          code: "ELEVENLABS_ERROR",
+          status: response.status,
+          error: userFriendlyMessage,
+          details: errorText,
+        },
         { status: response.status }
       );
     }
@@ -48,7 +66,11 @@ export async function GET(req: Request) {
   } catch (error) {
     console.error("[ElevenLabs ConvAI] Exception:", error);
     return NextResponse.json(
-      { error: "Erreur serveur lors de l'initialisation de l'appel." },
+      {
+        ok: false,
+        code: "SERVER_EXCEPTION",
+        error: "Erreur serveur lors de l'initialisation de l'appel direct.",
+      },
       { status: 500 }
     );
   }

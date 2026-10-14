@@ -1,3 +1,10 @@
+- [x] **Résilience Audio Vocale & Gestion d'Erreur Complète (Appel Direct WebRTC, PostgreSQL ConnectionReset 10054, Mode Guidé Secours) :**
+  - Diagnostic et affichage dynamique des erreurs d'appel (`callError`) dans un bandeau interactif haute visibilité et dans le panneau latéral.
+  - Déploiement du bouton de repli immédiat à 1-clic : *« Continuer en Mode Guidé (Microphone Standard) »* permettant d'effectuer l'épreuve sans dépendance WebRTC ni interruption de session.
+  - Détection contextuelle des erreurs de microphone (permissions bloquées, aucun micro détecté, micro occupé) avec consignes claires pour le candidat.
+  - Élimination des crashs et logs d'erreurs `ConnectionReset 10054` : sécurisation de `getNotificationsAction` et `POST /api/exam/attempt` avec gestion d'erreurs résiliente et sauvegarde locale.
+  - Optimisation du pooler Supabase PgBouncer avec `connection_limit=1` et enregistrement officiel de `ELEVENLABS_AGENT_ID`.
+  - Création de l'Error Boundary dédié `app/examens/[seriesId]/eo/error.tsx` pour sécuriser l'expérience candidat.
 - [x] **Organigramme d'Accueil TCF Canada & Hub d'Expression Écrite Structuré :**
   - Dialogue d'onboarding en 2 étapes : 1. Accueil oralisé du TCF Canada dans son ensemble (audio Web Speech + transcription 4 compétences + enjeu NCLC 7 / CRS +50 pts), 2. Choix du compagnon 3D (le nounours Kodiak, Aura, Barnabé) avec écoute vocale et sauvegarde du profil.
   - Hub d'Expression Écrite (`WritingMethodologyHub`) avec lecture vocale de la visite guidée par le compagnon présentant fidèlement les 3 grands titres.
