@@ -1,13 +1,15 @@
-export type CompanionId = "kodiak" | "aura" | "barnabe";
+export type CompanionId = "laurent" | "eleonore" | "marc" | "kodiak" | "aura" | "barnabe";
 
 export interface Companion {
   id: CompanionId;
   name: string;
-  species: string;
+  title: string;
   role: string;
   badge: string;
   avatarUrl: string;
   tagline: string;
+  audioPreviewUrl: string;
+  tcfIntroAudioUrl: string;
   speechText: string;
   tcfWelcomeSpeech: string;
   pageTourSpeech: string;
@@ -23,22 +25,24 @@ export interface Companion {
 }
 
 export const COMPANIONS: Record<CompanionId, Companion> = {
-  kodiak: {
-    id: "kodiak",
-    name: "Kodiak",
-    species: "Grizzly Canadien",
-    role: "Le Coach Protecteur & Rassurant",
-    badge: "🇨🇦 Coach Boréal",
-    avatarUrl: "/brand/companions/kodiak.jpg",
-    tagline: "Calme, endurance et méthode pour dompter les 60 minutes de l'examen.",
+  laurent: {
+    id: "laurent",
+    name: "M. Laurent Mercier",
+    title: "Examinateur Certifié France Éducation International (FEI)",
+    role: "Lead Mentor & Examinateur Officiel",
+    badge: "🏛️ Examinateur FEI",
+    avatarUrl: "/brand/companions/laurent.jpg",
+    tagline: "Rigueur institutionnelle, bienveillance et maîtrise absolue du barème officiel FEI.",
+    audioPreviewUrl: "/audio/eo/laurent-step1.mp3",
+    tcfIntroAudioUrl: "/audio/eo/laurent-step1.mp3",
     speechText:
-      "Bienvenue ! Je suis Kodiak, ton coach pour le TCF Canada. 78% des candidats perdent leurs 50 points d'Entrée Express en Expression Écrite faute de structure. Respirez : ensemble, nous allons décomposer chaque consigne pas à pas pour atteindre le C1 et C2 !",
+      "Bonjour. Je suis Laurent Mercier, examinateur agréé FEI et lead mentor TCF Canada. 78% des candidats perdent leurs 50 points d'Entrée Express en Expression Écrite et Orale par manque de méthode. Ensemble, nous allons décortiquer chaque consigne pour sécuriser le seuil NCLC 7 et viser le C2.",
     tcfWelcomeSpeech:
-      "Bienvenue sur Super4C2 ! Le TCF Canada est le test linguistique officiel requis pour l'immigration canadienne et l'Entrée Express. Votre objectif prioritaire est d'atteindre le palier NCLC 7 dans les 4 compétences afin de décrocher le bonus crucial de 50 points CRS. 78% des candidats trébuchent en Expression Écrite et Expression Orale à cause de la gestion du temps. Avec Super4C2, vous n'êtes jamais seul face à la page blanche : je serai là pour vous guider pas à pas. Cliquez sur suivant pour choisir votre compagnon de formation !",
+      "Bienvenue sur Super4C2. Le TCF Canada est le test linguistique officiel administré par France Éducation International pour l'immigration et l'Entrée Express. Votre objectif prioritaire est d'atteindre le palier NCLC 7 dans les 4 épreuves afin de débloquer le bonus décisif de 50 points CRS. 78% des candidats trébuchent en Expression Écrite et Orale en raison de la gestion du temps et du respect des consignes. Avec notre simulateur, vous n'êtes plus seul face à l'épreuve : je vous guiderai pas à pas. Choisissez votre mentor pédagogique pour débuter l'entraînement.",
     pageTourSpeech:
-      "Bonjour ! Bienvenue dans l'espace d'Expression Écrite du TCF Canada. Je suis ton compagnon de formation. Voici ce que tu vas trouver sur cette page : d'abord, une présentation complète de l'épreuve d'expression écrite et du barème officiel FEI. Ensuite, la méthodologie détaillée de chacune des 3 tâches, accompagnée d'exercices d'application concrets et de corrigés modèles de niveau C1 et C2. Et enfin, la session d'examen blanc en conditions réelles sur 60 minutes avec barre de temps et clavier d'accents. Es-tu prêt ? Commençons par découvrir la présentation de l'épreuve !",
-    voiceStyle: "Chaleureuse, posée et bienveillante",
-    accentColor: "from-amber-600 to-rose-600",
+      "Bonjour et bienvenue dans l'espace d'Expression Écrite du TCF Canada. Je suis votre mentor de formation. Voici la structure de votre préparation : d'abord, la présentation détaillée de l'épreuve et des 4 critères officiels de notation sur 5 points. Ensuite, la méthodologie étape par étape de chacune des 3 tâches avec exercices d'application concrets et corrigés de niveau C1/C2. Enfin, l'examen blanc officiel en 60 minutes réelles avec barre de temps. Commençons sans attendre par la présentation de l'épreuve.",
+    voiceStyle: "Studio ElevenLabs · Posée, institutionnelle et bienveillante",
+    accentColor: "from-blue-700 to-indigo-800",
     tips: {
       tcfGeneral:
         "L'examen dure 60 minutes pour 3 tâches. Votre mission n'est pas d'écrire un roman, mais de prouver aux correcteurs FEI que vous maîtrisez la langue avec 4 critères clés.",
@@ -52,22 +56,25 @@ export const COMPANIONS: Record<CompanionId, Companion> = {
         "Surveillez la barre de temps ! Accordez 15 min à la Tâche 1, 20 min à la Tâche 2 et 25 min à la Tâche 3.",
     },
   },
-  aura: {
-    id: "aura",
-    name: "Aura",
-    species: "Intelligence Artificielle C2",
-    role: "Le Mentor Stratège & Méthodique",
-    badge: "⚡ Mentor IA C2",
-    avatarUrl: "/brand/companions/aura.jpg",
-    tagline: "Optimisation millimétrée du barème officiel FEI pour maximiser chaque point CRS.",
+
+  eleonore: {
+    id: "eleonore",
+    name: "Mme Éléonore de Saint-Germain",
+    title: "Formatrice Pédagogique & Spécialiste Stylistique C1/C2",
+    role: "Mentor Stratégie & Stylistique C2",
+    badge: "⭐ Experte NCLC 7+",
+    avatarUrl: "/brand/companions/eleonore.jpg",
+    tagline: "Élégance stylistique, richesse des connecteurs et décodage chirurgical du barème.",
+    audioPreviewUrl: "/audio/eo/laurent-step1.mp3", // En dev : voix studio unifiée
+    tcfIntroAudioUrl: "/audio/eo/laurent-step1.mp3",
     speechText:
-      "Salutations ! Je suis Aura, votre système de guidage analytique. Mon algorithme calibre votre syntaxe, vos connecteurs logiques et la richesse de votre lexique selon la grille exacte des examinateurs de France Éducation International.",
+      "Bonjour. Je suis Éléonore de Saint-Germain, formatrice et spécialiste des registres formels. Mon objectif est d'aiguiser votre syntaxe, de diversifier vos connecteurs logiques et d'enrichir votre lexique pour séduire le jury de France Éducation International.",
     tcfWelcomeSpeech:
-      "Initialisation de votre protocole de réussite TCF Canada. Le système d'Entrée Express valorise le bilinguisme francophone à hauteur de 50 points CRS dès le seuil NCLC 7. L'analyse statistique révèle que les épreuves d'Expression Écrite et Orale concentrent l'essentiel des échecs. Notre simulateur intègre les barèmes exacts de France Éducation International pour vous préparer de façon chirurgicale. Cliquez sur suivant pour sélectionner votre mentor d'entraînement !",
+      "Bienvenue sur la plateforme d'excellence Super4C2. Le TCF Canada requiert non seulement de la précision linguistique mais aussi une grande rigueur argumentative. Le seuil NCLC 7 est la clé qui valorise votre profil Entrée Express à hauteur de 50 points CRS. Nous allons calibrer ensemble votre expression pour transformer chaque tâche en un succès probant. Cliquez sur suivant pour débuter notre parcours.",
     pageTourSpeech:
-      "Bonjour. Bienvenue sur la plateforme d'Expression Écrite du TCF Canada. Voici la structure analytique de ce hub : en premier lieu, la présentation exhaustive du barème FEI et des 4 critères de notation sur 5 points. En second lieu, la méthodologie décortiquée des 3 tâches avec exercices d'application concrets et corrigés de niveau C1/C2. En dernier lieu, la simulation intégrale en conditions réelles sur 60 minutes. Débutons par l'analyse des critères officiels.",
-    voiceStyle: "Claire, articulée et stimulante",
-    accentColor: "from-cyan-500 to-blue-600",
+      "Bonjour et bienvenue sur le module d'Expression Écrite. Nous aborderons d'abord le barème officiel FEI : Adéquation, Cohérence, Lexique et Morphosyntaxe. Nous travaillerons ensuite la méthode pas à pas des 3 tâches avec des exemples rédigés de niveau C1/C2. Enfin, vous vous entraînerez dans les conditions exactes de l'examen CBT de 60 minutes. Prête pour l'excellence ? Découvrons la présentation.",
+    voiceStyle: "Studio ElevenLabs · Claire, distinguée et stimulante",
+    accentColor: "from-purple-600 to-indigo-700",
     tips: {
       tcfGeneral:
         "Le barème FEI est divisé en 4 critères sur 5 : Adéquation, Cohérence, Lexique et Morphosyntaxe. Un texte équilibré score immédiatement NCLC 7+.",
@@ -81,22 +88,25 @@ export const COMPANIONS: Record<CompanionId, Companion> = {
         "Le chronomètre est votre allié si vous commencez par un plan au brouillon de 2 minutes par tâche.",
     },
   },
-  barnabe: {
-    id: "barnabe",
-    name: "Barnabé",
-    species: "Castor Bâtisseur Canadien",
-    role: "L'Architecte & Pragmatique",
-    badge: "📐 Bâtisseur de Succès",
-    avatarUrl: "/brand/companions/barnabe.jpg",
-    tagline: "Des structures de texte solides comme un barrage pour ne laisser passer aucune erreur.",
+
+  marc: {
+    id: "marc",
+    name: "Marc-Antoine Tremblay",
+    title: "Pédagogue Bilingue & Coach Entrée Express (Montréal)",
+    role: "Coach Pragmatique & Immersion Canada",
+    badge: "🇨🇦 Spécialiste Canada",
+    avatarUrl: "/brand/companions/marc.jpg",
+    tagline: "Des structures de texte solides et une gestion chrono pragmatique pour le Canada.",
+    audioPreviewUrl: "/audio/eo/laurent-step1.mp3", // En dev : voix studio unifiée
+    tcfIntroAudioUrl: "/audio/eo/laurent-step1.mp3",
     speechText:
-      "Salut à vous ! Moi c'est Barnabé. Un texte d'examen, ça se bâtit avec rigueur : une introduction claire, des paragraphes bien étanches et une conclusion percutante. On va construire ensemble votre réussite au TCF !",
+      "Bonjour ! Je suis Marc-Antoine Tremblay, coach pédagogique à Montréal. Le TCF Canada est une épreuve d'efficacité : pas de bavardage superflu, des paragraphes nets, des idées percutantes et une gestion chrono millimétrée. On bâtit ensemble votre immigration réussie !",
     tcfWelcomeSpeech:
-      "Salut le futur résident permanent ! Le TCF Canada, c'est comme bâtir une maison : si les fondations sont solides, la note monte tout seul. Le niveau NCLC 7 dans les 4 épreuves vous ouvre les portes du Canada avec 50 points d'Entrée Express en poche. C'est à l'écrit et à l'oral que tout se joue. Avec nous, vous aurez les plans, les outils et l'entraînement qu'il faut. Cliquez sur suivant pour choisir votre compagnon de chantier !",
+      "Bienvenue ! Le TCF Canada est l'étape décisive de votre projet de résidence permanente. Atteindre le niveau NCLC 7 dans les 4 épreuves vous octroie immédiatement le bonus vital de 50 points CRS dans le bassin d'Entrée Express. C'est à l'écrit et à l'oral que se joue la différence. Avec notre méthode structurée, vous allez aborder l'examen avec sérénité et maîtrise. Choisissez votre mentor pour commencer !",
     pageTourSpeech:
-      "Salut ! Bienvenue dans l'atelier d'Expression Écrite du TCF Canada. Voici les 3 étapes de travail sur cette page : 1, on commence par décortiquer les règles du jeu et le barème des examinateurs. 2, on passe en revue la méthode de chacune des 3 tâches avec des exemples concrets et des textes modèles corrigés. 3, on se lance dans l'examen blanc officiel de 60 minutes. Prêt pour l'action ? Regardons d'abord le barème !",
-    voiceStyle: "Dynamique, enthousiaste et concrète",
-    accentColor: "from-amber-500 to-orange-600",
+      "Salut ! Bienvenue dans votre atelier d'Expression Écrite. Voici notre plan de match : 1, nous décortiquons les critères des examinateurs. 2, nous passons en revue la structure infaillible de chaque tâche avec des corrigés concrets. 3, nous passons à l'action avec l'examen blanc de 60 minutes avec compte à rebours officiel. Allons-y !",
+    voiceStyle: "Studio ElevenLabs · Dynamique, directe et concrète",
+    accentColor: "from-amber-600 to-orange-600",
     tips: {
       tcfGeneral:
         "Ne commencez jamais à rédiger sans avoir compté mentalement vos paragraphes. Chaque idée maîtresse mérite son propre paragraphe aéré.",
@@ -110,13 +120,30 @@ export const COMPANIONS: Record<CompanionId, Companion> = {
         "Relisez-vous systématiquement 3 minutes avant la fin : vérifiez les accords pluriels, les accents et la ponctuation.",
     },
   },
+
+  // Alias de rétrocompatibilité (évite tout crash avec les cookies/localStorage existants)
+  kodiak: null as unknown as Companion,
+  aura: null as unknown as Companion,
+  barnabe: null as unknown as Companion,
 };
 
-export const DEFAULT_COMPANION_ID: CompanionId = "kodiak";
+// Rétrocompatibilité : lier les anciens alias animaux aux nouveaux mentors humains
+COMPANIONS.kodiak = COMPANIONS.laurent;
+COMPANIONS.aura = COMPANIONS.eleonore;
+COMPANIONS.barnabe = COMPANIONS.marc;
+
+export const HUMAN_COMPANION_IDS: CompanionId[] = ["laurent", "eleonore", "marc"];
+
+export const DEFAULT_COMPANION_ID: CompanionId = "laurent";
 
 export function getCompanionById(id?: string | null): Companion {
-  if (id && (id === "kodiak" || id === "aura" || id === "barnabe")) {
-    return COMPANIONS[id];
+  if (id) {
+    if (id === "laurent" || id === "eleonore" || id === "marc") {
+      return COMPANIONS[id];
+    }
+    if (id === "kodiak") return COMPANIONS.laurent;
+    if (id === "aura") return COMPANIONS.eleonore;
+    if (id === "barnabe") return COMPANIONS.marc;
   }
-  return COMPANIONS.kodiak;
+  return COMPANIONS.laurent;
 }

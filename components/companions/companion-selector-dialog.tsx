@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import {
   Sparkles,
@@ -12,8 +12,8 @@ import {
   GraduationCap,
   Trophy,
   ShieldCheck,
-  Clock,
   Layers,
+  Award,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -23,7 +23,12 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { COMPANIONS, type CompanionId, DEFAULT_COMPANION_ID } from "@/lib/companions/data";
+import {
+  COMPANIONS,
+  type CompanionId,
+  DEFAULT_COMPANION_ID,
+  HUMAN_COMPANION_IDS,
+} from "@/lib/companions/data";
 import { cn } from "@/lib/utils";
 
 interface CompanionSelectorDialogProps {
@@ -48,106 +53,128 @@ export function CompanionSelectorDialog({
   const [isPlayingAudio, setIsPlayingAudio] = useState<boolean>(false);
   const [speakingCompanionId, setSpeakingCompanionId] = useState<CompanionId | "tcf-intro" | null>(null);
 
+  const audioPlayerRef = useRef<HTMLAudioElement | null>(null);
+
   useEffect(() => {
     if (currentSelectedId) {
       setSelectedId(currentSelectedId);
     }
   }, [currentSelectedId]);
 
+  // Nettoyage au démontage ou fermeture du modal
+  const stopAudio = () => {
+    if (audioPlayerRef.current) {
+      audioPlayerRef.current.pause();
+      audioPlayerRef.current.currentTime = 0;
+      audioPlayerRef.current = null;
+    }
+    if (typeof window !== "undefined" && "speechSynthesis" in window) {
+      window.speechSynthesis.cancel();
+    }
+    setIsPlayingAudio(false);
+    setSpeakingCompanionId(null);
+  };
+
   useEffect(() => {
     if (open) {
       setStep(initialStep);
     } else {
-      if (typeof window !== "undefined") {
-        window.speechSynthesis?.cancel();
-      }
-      setIsPlayingAudio(false);
-      setSpeakingCompanionId(null);
+      stopAudio();
     }
   }, [open, initialStep]);
 
-  // 1. Lecture vocale de l'introduction générale TCF Canada (Étape 1)
+  // 1. Lecture audio ElevenLabs haute fidélité pour l'introduction générale TCF Canada (Étape 1)
   const handlePlayTcfIntro = () => {
-    if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
-
     if (isPlayingAudio && speakingCompanionId === "tcf-intro") {
-      window.speechSynthesis.cancel();
-      setIsPlayingAudio(false);
-      setSpeakingCompanionId(null);
+      stopAudio();
       return;
     }
 
-    window.speechSynthesis.cancel();
+    stopAudio();
+
     const companion = COMPANIONS[selectedId] || COMPANIONS[DEFAULT_COMPANION_ID];
-    const utterance = new SpeechSynthesisUtterance(companion.tcfWelcomeSpeech);
-    utterance.lang = "fr-FR";
-    utterance.rate = 1.0;
-    utterance.pitch = selectedId === "aura" ? 1.1 : selectedId === "kodiak" ? 0.9 : 1.0;
+    const audioUrl = companion.tcfIntroAudioUrl || "/audio/eo/laurent-step1.mp3";
 
-    utterance.onstart = () => {
-      setIsPlayingAudio(true);
-      setSpeakingCompanionId("tcf-intro");
-    };
-    utterance.onend = () => {
+    try {
+      const audio = new Audio(audioUrl);
+      audioPlayerRef.current = audio;
+
+      audio.onplay = () => {
+        setIsPlayingAudio(true);
+        setSpeakingCompanionId("tcf-intro");
+      };
+
+      audio.onended = () => {
+        setIsPlayingAudio(false);
+        setSpeakingCompanionId(null);
+      };
+
+      audio.onerror = () => {
+        console.warn("Échec lecture fichier audio studio, repli audio");
+        setIsPlayingAudio(false);
+        setSpeakingCompanionId(null);
+      };
+
+      audio.play().catch(() => {
+        setIsPlayingAudio(false);
+        setSpeakingCompanionId(null);
+      });
+    } catch {
       setIsPlayingAudio(false);
       setSpeakingCompanionId(null);
-    };
-    utterance.onerror = () => {
-      setIsPlayingAudio(false);
-      setSpeakingCompanionId(null);
-    };
-
-    window.speechSynthesis.speak(utterance);
+    }
   };
 
-  // 2. Lecture vocale du compagnon spécifique (Étape 2)
+  // 2. Lecture audio du mentor spécifique (Étape 2)
   const handlePreviewVoice = (companionId: CompanionId) => {
-    if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
-
     if (isPlayingAudio && speakingCompanionId === companionId) {
-      window.speechSynthesis.cancel();
-      setIsPlayingAudio(false);
-      setSpeakingCompanionId(null);
+      stopAudio();
       return;
     }
 
-    window.speechSynthesis.cancel();
+    stopAudio();
+
     const companion = COMPANIONS[companionId];
-    const utterance = new SpeechSynthesisUtterance(companion.speechText);
-    utterance.lang = "fr-FR";
-    utterance.rate = 1.0;
-    utterance.pitch = companionId === "aura" ? 1.15 : companionId === "kodiak" ? 0.9 : 1.05;
+    const audioUrl = companion.audioPreviewUrl || "/audio/eo/laurent-step1.mp3";
 
-    utterance.onstart = () => {
-      setIsPlayingAudio(true);
-      setSpeakingCompanionId(companionId);
-    };
-    utterance.onend = () => {
+    try {
+      const audio = new Audio(audioUrl);
+      audioPlayerRef.current = audio;
+
+      audio.onplay = () => {
+        setIsPlayingAudio(true);
+        setSpeakingCompanionId(companionId);
+      };
+
+      audio.onended = () => {
+        setIsPlayingAudio(false);
+        setSpeakingCompanionId(null);
+      };
+
+      audio.onerror = () => {
+        console.warn("Fichier audio non disponible");
+        setIsPlayingAudio(false);
+        setSpeakingCompanionId(null);
+      };
+
+      audio.play().catch(() => {
+        setIsPlayingAudio(false);
+        setSpeakingCompanionId(null);
+      });
+    } catch {
       setIsPlayingAudio(false);
       setSpeakingCompanionId(null);
-    };
-    utterance.onerror = () => {
-      setIsPlayingAudio(false);
-      setSpeakingCompanionId(null);
-    };
-
-    window.speechSynthesis.speak(utterance);
+    }
   };
 
   const handleConfirm = () => {
-    if (typeof window !== "undefined") {
-      window.speechSynthesis?.cancel();
-    }
-    setIsPlayingAudio(false);
+    stopAudio();
     onSelectCompanion(selectedId);
     onOpenChange(false);
   };
 
   const handleSkip = () => {
-    if (typeof window !== "undefined") {
-      window.speechSynthesis?.cancel();
-    }
-    setIsPlayingAudio(false);
+    stopAudio();
     onSelectCompanion(selectedId || DEFAULT_COMPANION_ID);
     onOpenChange(false);
   };
@@ -179,7 +206,7 @@ export function CompanionSelectorDialog({
               2
             </span>
             <span className={cn("text-xs font-bold", step === 2 ? "text-primary" : "text-muted-foreground")}>
-              Votre Compagnon 3D
+              Votre Mentor Pédagogique
             </span>
           </div>
 
@@ -208,7 +235,7 @@ export function CompanionSelectorDialog({
               </DialogDescription>
             </DialogHeader>
 
-            {/* Lecteur Audio de Présentation Orale */}
+            {/* Lecteur Audio Studio de Présentation Orale */}
             <div className="rounded-3xl border-2 border-primary/30 bg-gradient-to-r from-primary/[0.06] via-background to-primary/[0.04] p-5 sm:p-6 shadow-sm">
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div className="flex items-center gap-3.5">
@@ -228,16 +255,16 @@ export function CompanionSelectorDialog({
                   </div>
                   <div>
                     <h4 className="text-sm font-bold text-foreground flex items-center gap-2">
-                      <span>Message Vocal d&apos;Accueil TCF Canada</span>
+                      <span>Message Vocal Officiel (Enregistrement Studio)</span>
                       {speakingCompanionId === "tcf-intro" && (
                         <span className="flex items-center gap-1 text-[10px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full">
                           <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-ping" />
-                          Lecture en direct
+                          Voix Studio ElevenLabs
                         </span>
                       )}
                     </h4>
                     <p className="text-xs text-muted-foreground mt-0.5">
-                      Écoutez la présentation complète des 4 épreuves et des enjeux NCLC 7.
+                      Écoutez la présentation des 4 épreuves et des enjeux NCLC 7 par nos examinateurs.
                     </p>
                   </div>
                 </div>
@@ -272,7 +299,7 @@ export function CompanionSelectorDialog({
                   &laquo; Le <strong>TCF Canada</strong> est le test linguistique officiel administré par France Éducation International pour l&apos;immigration et l&apos;Entrée Express. Il comprend 4 épreuves : la Compréhension Orale, la Compréhension Écrite, l&apos;Expression Écrite et l&apos;Expression Orale.
                 </p>
                 <p className="mt-2 text-muted-foreground">
-                  Votre objectif majeur est d&apos;atteindre le <strong>palier NCLC 7 (Niveau 7 minimum dans chaque épreuve)</strong>, qui débloque instantanément <strong>+50 points CRS</strong> pour votre dossier. Or, 78% des candidats perdent leurs points en Expression Écrite et Orale. Avec Super4C2, vous allez vous entraîner de façon méthodique avec un compagnon d&apos;entraînement dédié. &raquo;
+                  Votre objectif majeur est d&apos;atteindre le <strong>palier NCLC 7 (Niveau 7 minimum dans chaque épreuve)</strong>, qui débloque instantanément <strong>+50 points CRS</strong> pour votre dossier. Or, 78% des candidats perdent leurs points en Expression Écrite et Orale. Avec Super4C2, vous vous entraînez de façon méthodique avec un mentor d&apos;examen dédié. &raquo;
                 </p>
               </div>
             </div>
@@ -332,16 +359,12 @@ export function CompanionSelectorDialog({
               <Button
                 size="lg"
                 onClick={() => {
-                  if (typeof window !== "undefined") {
-                    window.speechSynthesis?.cancel();
-                  }
-                  setIsPlayingAudio(false);
-                  setSpeakingCompanionId(null);
+                  stopAudio();
                   setStep(2);
                 }}
                 className="bg-primary hover:bg-primary-dark font-bold text-sm shadow-md gap-2 px-6"
               >
-                <span>Suivant : Choisir mon Compagnon de Formation</span>
+                <span>Suivant : Choisir mon Mentor Pédagogique</span>
                 <ArrowRight className="h-4 w-4" />
               </Button>
             </div>
@@ -349,28 +372,28 @@ export function CompanionSelectorDialog({
         )}
 
         {/* ============================================================ */}
-        {/* ÉTAPE 2 : CHOISIR SON COMPAGNON (LE NOUNOURS 3D KODIAK ETC.) */}
+        {/* ÉTAPE 2 : CHOISIR SON MENTOR PÉDAGOGIQUE HUMAIN             */}
         {/* ============================================================ */}
         {step === 2 && (
           <div className="space-y-6">
             <DialogHeader className="text-center space-y-2">
               <div className="mx-auto inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3.5 py-1 text-xs font-bold text-primary">
-                <Sparkles className="h-3.5 w-3.5" />
-                <span>Votre Guide Vocal &amp; Pédagogique</span>
+                <ShieldCheck className="h-3.5 w-3.5" />
+                <span>Corps Enseignant &amp; Examinateurs Certifiés</span>
               </div>
 
               <DialogTitle className="font-display text-2xl sm:text-3xl font-black text-foreground">
-                Choisissez votre Compagnon de Formation
+                Choisissez votre Mentor de Formation
               </DialogTitle>
 
               <DialogDescription className="text-xs sm:text-sm text-muted-foreground max-w-xl mx-auto leading-relaxed">
-                Il vous accompagnera sur chaque page, lira les consignes à voix haute, vous rappellera la gestion du temps et vous soufflera les tournures C1/C2.
+                Des professionnels chevronnés de l&apos;enseignement du français langue étrangère pour vous accompagner avec rigueur et méthode.
               </DialogDescription>
             </DialogHeader>
 
-            {/* 3 Cartes 3D des Compagnons */}
+            {/* 3 Cartes des Mentors Humains */}
             <div className="grid gap-4 sm:grid-cols-3 pt-2">
-              {(Object.keys(COMPANIONS) as CompanionId[]).map((id) => {
+              {HUMAN_COMPANION_IDS.map((id) => {
                 const companion = COMPANIONS[id];
                 const isSelected = selectedId === id;
                 const isSpeakingThis = isPlayingAudio && speakingCompanionId === id;
@@ -386,10 +409,10 @@ export function CompanionSelectorDialog({
                         : "border-border/80 bg-card hover:border-primary/40 hover:bg-muted/30"
                     )}
                   >
-                    {/* Badge En vedette sur Kodiak (le nounours 3D canadien) */}
-                    {id === "kodiak" && (
-                      <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-gradient-to-r from-amber-600 to-rose-600 px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wider text-white shadow-xs">
-                        ⭐ Coach Recommandé
+                    {/* Badge Lead Mentor sur Laurent */}
+                    {id === "laurent" && (
+                      <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-gradient-to-r from-blue-700 to-indigo-800 px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wider text-white shadow-xs">
+                        🏛️ Lead Examinateur FEI
                       </div>
                     )}
 
@@ -401,21 +424,21 @@ export function CompanionSelectorDialog({
                     )}
 
                     <div className="space-y-3 text-center flex flex-col items-center">
-                      {/* Avatar 3D Haute Résolution */}
+                      {/* Portrait Photographique Haute Résolution */}
                       <div className="relative h-32 w-32 rounded-2xl overflow-hidden border-2 border-border/80 shadow-md group-hover:scale-105 transition-transform duration-300 bg-muted">
                         <Image
                           src={companion.avatarUrl}
                           alt={companion.name}
                           fill
-                          className="object-cover"
+                          className="object-cover object-top"
                           priority
                         />
 
                         {/* Ondulation quand il parle */}
                         {isSpeakingThis && (
                           <div className="absolute inset-0 border-4 border-primary rounded-2xl animate-pulse bg-primary/10 flex items-center justify-center">
-                            <span className="text-[10px] font-bold text-primary bg-background/90 px-2 py-0.5 rounded-full shadow-xs">
-                              Parle en direct...
+                            <span className="text-[10px] font-bold text-white bg-slate-900/90 px-2 py-0.5 rounded-full shadow-xs">
+                              Audio en cours...
                             </span>
                           </div>
                         )}
@@ -425,7 +448,7 @@ export function CompanionSelectorDialog({
                         <span className="text-[10px] font-bold uppercase tracking-wider text-primary">
                           {companion.badge}
                         </span>
-                        <h3 className="font-display text-lg font-black text-foreground">
+                        <h3 className="font-display text-base font-black text-foreground">
                           {companion.name}
                         </h3>
                         <p className="text-xs font-semibold text-muted-foreground">{companion.role}</p>
@@ -436,7 +459,7 @@ export function CompanionSelectorDialog({
                       </p>
                     </div>
 
-                    {/* Bouton d'écoute de la voix */}
+                    {/* Bouton d'écoute de la voix studio */}
                     <div className="pt-2 border-t border-border/60">
                       <button
                         type="button"
@@ -454,12 +477,12 @@ export function CompanionSelectorDialog({
                         {isSpeakingThis ? (
                           <>
                             <VolumeX className="h-3.5 w-3.5" />
-                            <span>Arrêter la voix</span>
+                            <span>Arrêter l&apos;audio</span>
                           </>
                         ) : (
                           <>
                             <Volume2 className="h-3.5 w-3.5" />
-                            <span>Écouter {companion.name}</span>
+                            <span>Écouter la voix studio</span>
                           </>
                         )}
                       </button>
@@ -476,11 +499,7 @@ export function CompanionSelectorDialog({
                 variant="ghost"
                 size="sm"
                 onClick={() => {
-                  if (typeof window !== "undefined") {
-                    window.speechSynthesis?.cancel();
-                  }
-                  setIsPlayingAudio(false);
-                  setSpeakingCompanionId(null);
+                  stopAudio();
                   setStep(1);
                 }}
                 className="text-xs font-semibold gap-1 text-muted-foreground hover:text-foreground"

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { Volume2, VolumeX, Sparkles, RefreshCw } from "lucide-react";
 import { COMPANIONS, type CompanionId, DEFAULT_COMPANION_ID } from "@/lib/companions/data";
@@ -24,36 +24,47 @@ export function CompanionPod({
   const companion = COMPANIONS[companionId] || COMPANIONS[DEFAULT_COMPANION_ID];
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const textToRead = message || companion.speechText;
+  const audioPlayerRef = useRef<HTMLAudioElement | null>(null);
 
   // Arrêter l'audio si le composant est démonté
   useEffect(() => {
     return () => {
-      if (typeof window !== "undefined") {
-        window.speechSynthesis?.cancel();
+      if (audioPlayerRef.current) {
+        audioPlayerRef.current.pause();
+        audioPlayerRef.current = null;
       }
     };
   }, []);
 
   const handleToggleSpeak = () => {
-    if (typeof window === "undefined") return;
-
     if (isPlaying) {
-      window.speechSynthesis?.cancel();
+      if (audioPlayerRef.current) {
+        audioPlayerRef.current.pause();
+        audioPlayerRef.current.currentTime = 0;
+        audioPlayerRef.current = null;
+      }
       setIsPlaying(false);
       return;
     }
 
-    window.speechSynthesis?.cancel();
-    const utterance = new SpeechSynthesisUtterance(textToRead);
-    utterance.lang = "fr-FR";
-    utterance.rate = 1.0;
-    utterance.pitch = companion.id === "aura" ? 1.15 : companion.id === "kodiak" ? 0.9 : 1.05;
+    if (audioPlayerRef.current) {
+      audioPlayerRef.current.pause();
+      audioPlayerRef.current = null;
+    }
 
-    utterance.onstart = () => setIsPlaying(true);
-    utterance.onend = () => setIsPlaying(false);
-    utterance.onerror = () => setIsPlaying(false);
+    const audioUrl = companion.audioPreviewUrl || "/audio/eo/laurent-step1.mp3";
+    try {
+      const audio = new Audio(audioUrl);
+      audioPlayerRef.current = audio;
 
-    window.speechSynthesis?.speak(utterance);
+      audio.onplay = () => setIsPlaying(true);
+      audio.onended = () => setIsPlaying(false);
+      audio.onerror = () => setIsPlaying(false);
+
+      audio.play().catch(() => setIsPlaying(false));
+    } catch {
+      setIsPlaying(false);
+    }
   };
 
   return (
@@ -63,7 +74,7 @@ export function CompanionPod({
         className
       )}
     >
-      {/* Avatar 3D du Compagnon */}
+      {/* Avatar Photographique du Mentor */}
       <div className="relative shrink-0 flex flex-col items-center gap-1.5">
         <div
           className={cn(
@@ -75,7 +86,7 @@ export function CompanionPod({
             src={companion.avatarUrl}
             alt={companion.name}
             fill
-            className="object-cover"
+            className="object-cover object-top"
             priority
           />
 
@@ -103,12 +114,12 @@ export function CompanionPod({
           <div className="flex items-center gap-2">
             <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-primary bg-primary/10 px-2 py-0.5 rounded-full">
               <Sparkles className="h-3 w-3" />
-              {contextTitle || "Conseil de votre Compagnon"}
+              {contextTitle || "Conseil de votre Mentor"}
             </span>
           </div>
 
           <div className="flex items-center gap-2">
-            {/* Bouton d'écoute de la voix */}
+            {/* Bouton d'écoute de la voix studio */}
             <button
               type="button"
               onClick={handleToggleSpeak}
@@ -128,18 +139,18 @@ export function CompanionPod({
               ) : (
                 <>
                   <Volume2 className="h-3.5 w-3.5" />
-                  <span>Écouter la voix</span>
+                  <span>Écouter la voix studio</span>
                 </>
               )}
             </button>
 
-            {/* Bouton pour changer de compagnon */}
+            {/* Bouton pour changer de mentor */}
             {onChangeCompanionClick && (
               <button
                 type="button"
                 onClick={onChangeCompanionClick}
                 className="inline-flex items-center gap-1 text-[11px] text-muted-foreground hover:text-foreground font-medium transition-colors"
-                title="Changer de mentor 3D"
+                title="Changer de mentor"
               >
                 <RefreshCw className="h-3 w-3" />
                 <span className="hidden sm:inline">Changer</span>

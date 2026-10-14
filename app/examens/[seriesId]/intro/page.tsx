@@ -3,6 +3,10 @@ import { notFound } from "next/navigation";
 import { AlertTriangle, CheckCircle2, Clock, FileText, Keyboard, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { getMockSeries } from "@/lib/exam/mock-series";
+import { getWrittenSeries } from "@/lib/exam/mock-written-series";
+import { getOralSeries } from "@/lib/exam/mock-oral-series";
+import { WritingMethodologyHub } from "@/components/exam/writing-methodology-hub";
+import { redirect } from "next/navigation";
 
 export const metadata = { title: "Consignes de l'épreuve — TCF Canada CBT" };
 
@@ -12,6 +16,20 @@ export default async function IntroPage({
   params: Promise<{ seriesId: string }>;
 }) {
   const { seriesId } = await params;
+
+  // 1. Détection épreuve Expression Écrite (ex: demo-101-ee)
+  const writtenSeries = getWrittenSeries(seriesId);
+  if (writtenSeries) {
+    return <WritingMethodologyHub series={writtenSeries} />;
+  }
+
+  // 2. Détection épreuve Expression Orale (ex: demo-101-eo)
+  const oralSeries = getOralSeries(seriesId);
+  if (oralSeries) {
+    redirect(`/examens/${seriesId}/eo/intro`);
+  }
+
+  // 3. Détection épreuve Compréhension Écrite / Orale (CE / CO)
   const series = getMockSeries(seriesId);
   if (!series) notFound();
 

@@ -1201,15 +1201,38 @@ export function OralExamRoom({ series }: OralExamRoomProps) {
 
           {/* ZONE PRINCIPALE — POD VIDÉO HAUTE VISIBILITÉ & SCÈNE D'INTERACTION */}
           <main className="flex min-h-0 flex-1 flex-col bg-background p-4 sm:p-6 overflow-y-auto space-y-4">
-            {/* POD VIDÉO DE L'EXAMINATEUR M. LAURENT (HAUTEUR FIXE SÉCURISÉE & VISAGE CENTRÉ) */}
-            <div className="relative w-full h-[260px] sm:h-[320px] md:h-[380px] rounded-3xl overflow-hidden border-2 border-border/80 bg-slate-900 shadow-2xl flex items-center justify-center shrink-0">
-              {/* Image directe de l'Examinateur M. Laurent (object-top pour centrage parfait du visage) */}
+            {/* POD VIDÉO ANIMÉ DE L'EXAMINATEUR M. LAURENT (BOUCLE D'ATTENTE & BOUCLE DE PAROLE) */}
+            <div className="relative w-full h-[260px] sm:h-[320px] md:h-[380px] rounded-3xl overflow-hidden border-2 border-border/80 bg-slate-950 shadow-2xl flex items-center justify-center shrink-0">
+              {/* Fond d'affiche photographique de secours */}
               <img
                 src="/brand/examiner-laurent.jpg"
                 alt="M. Laurent - Examinateur Officiel FEI TCF Canada"
+                className="absolute inset-0 w-full h-full object-cover object-top opacity-40 filter blur-[1px]"
+              />
+
+              {/* 1. Vidéo en boucle d'attente / écoute attentive (Idle Loop avec micro-mouvements des yeux et respiration) */}
+              <video
+                src="/brand/examiner/examiner_idle.mp4"
+                autoPlay
+                loop
+                muted
+                playsInline
                 className={cn(
-                  "w-full h-full object-cover object-top transition-all duration-700",
-                  isExaminerSpeaking ? "scale-[1.02] filter brightness-105" : "scale-100 filter brightness-100"
+                  "absolute inset-0 w-full h-full object-cover object-top transition-all duration-700",
+                  !isExaminerSpeaking ? "opacity-100 scale-100" : "opacity-0 pointer-events-none scale-[0.99]"
+                )}
+              />
+
+              {/* 2. Vidéo en boucle de parole / mime explicatif (Speaking Loop avec mimique articulatoire et cadence d'échange) */}
+              <video
+                src="/brand/examiner/examiner_speaking.mp4"
+                autoPlay
+                loop
+                muted
+                playsInline
+                className={cn(
+                  "absolute inset-0 w-full h-full object-cover object-top transition-all duration-700",
+                  isExaminerSpeaking ? "opacity-100 scale-[1.01] brightness-105" : "opacity-0 pointer-events-none scale-100"
                 )}
               />
 

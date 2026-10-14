@@ -67,27 +67,48 @@ export function WritingMethodologyHub({ series }: WritingMethodologyHubProps) {
 
   const currentCompanion = getCompanionById(companionId);
 
-  // Synthèse vocale de présentation de la page par le compagnon
-  const handlePlayPageTour = () => {
-    if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
+  const audioPlayerRef = React.useRef<HTMLAudioElement | null>(null);
 
+  // Arrêt de l'audio lors du démontage
+  useEffect(() => {
+    return () => {
+      if (audioPlayerRef.current) {
+        audioPlayerRef.current.pause();
+        audioPlayerRef.current = null;
+      }
+    };
+  }, []);
+
+  // Lecture audio ElevenLabs haute fidélité de présentation de la page
+  const handlePlayPageTour = () => {
     if (isSpeakingTour) {
-      window.speechSynthesis.cancel();
+      if (audioPlayerRef.current) {
+        audioPlayerRef.current.pause();
+        audioPlayerRef.current.currentTime = 0;
+        audioPlayerRef.current = null;
+      }
       setIsSpeakingTour(false);
       return;
     }
 
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(currentCompanion.pageTourSpeech);
-    utterance.lang = "fr-FR";
-    utterance.rate = 1.0;
-    utterance.pitch = currentCompanion.id === "aura" ? 1.1 : currentCompanion.id === "kodiak" ? 0.9 : 1.0;
+    if (audioPlayerRef.current) {
+      audioPlayerRef.current.pause();
+      audioPlayerRef.current = null;
+    }
 
-    utterance.onstart = () => setIsSpeakingTour(true);
-    utterance.onend = () => setIsSpeakingTour(false);
-    utterance.onerror = () => setIsSpeakingTour(false);
+    const audioUrl = currentCompanion.audioPreviewUrl || "/audio/eo/laurent-step1.mp3";
+    try {
+      const audio = new Audio(audioUrl);
+      audioPlayerRef.current = audio;
 
-    window.speechSynthesis.speak(utterance);
+      audio.onplay = () => setIsSpeakingTour(true);
+      audio.onended = () => setIsSpeakingTour(false);
+      audio.onerror = () => setIsSpeakingTour(false);
+
+      audio.play().catch(() => setIsSpeakingTour(false));
+    } catch {
+      setIsSpeakingTour(false);
+    }
   };
 
   return (
@@ -154,7 +175,7 @@ export function WritingMethodologyHub({ series }: WritingMethodologyHubProps) {
                   />
                 </div>
                 <span className="absolute -bottom-1 -right-1 flex h-7 w-7 items-center justify-center rounded-full bg-background border border-border shadow-xs text-sm">
-                  {currentCompanion.id === "kodiak" ? "🐻" : currentCompanion.id === "aura" ? "⚡" : "🦫"}
+                  🏛️
                 </span>
               </div>
 

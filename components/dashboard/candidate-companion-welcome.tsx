@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
-import { Volume2, VolumeX, Sparkles, RefreshCw } from "lucide-react";
+import { Volume2, VolumeX, RefreshCw, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { COMPANIONS, getCompanionById, type Companion, type CompanionId } from "@/lib/companions/data";
 import { CompanionSelectorDialog } from "@/components/companions/companion-selector-dialog";
@@ -12,9 +12,10 @@ interface CandidateCompanionWelcomeProps {
 }
 
 export function CandidateCompanionWelcome({ userDisplayName }: CandidateCompanionWelcomeProps) {
-  const [companion, setCompanion] = useState<Companion>(COMPANIONS.kodiak);
+  const [companion, setCompanion] = useState<Companion>(COMPANIONS.laurent);
   const [selectorOpen, setSelectorOpen] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const audioPlayerRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     try {
@@ -22,7 +23,7 @@ export function CandidateCompanionWelcome({ userDisplayName }: CandidateCompanio
       if (stored) {
         setCompanion(getCompanionById(stored));
       } else {
-        // Premier passage : proposer le flow d'accueil TCF et de choix du compagnon
+        // Premier passage : proposer le flow d'accueil TCF et de choix du mentor
         const timer = setTimeout(() => {
           setSelectorOpen(true);
         }, 800);
@@ -34,31 +35,42 @@ export function CandidateCompanionWelcome({ userDisplayName }: CandidateCompanio
   }, []);
 
   const handleSelectCompanion = (id: CompanionId) => {
-    setCompanion(getCompanionById(id));
+    const selected = getCompanionById(id);
+    setCompanion(selected);
+    try {
+      localStorage.setItem("super4c2:user_companion", id);
+    } catch {}
   };
 
   const handleSpeak = () => {
-    if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
-
     if (isSpeaking) {
-      window.speechSynthesis.cancel();
+      if (audioPlayerRef.current) {
+        audioPlayerRef.current.pause();
+        audioPlayerRef.current.currentTime = 0;
+        audioPlayerRef.current = null;
+      }
       setIsSpeaking(false);
       return;
     }
 
-    window.speechSynthesis.cancel();
-    const speechText = `Bonjour ${userDisplayName} ! Je suis ${companion.name}, ton coach pour le TCF Canada. Aujourd'hui, l'Expression Écrite et l'Expression Orale sont à l'honneur et 100% gratuites. Ensemble, nous allons viser le C2 et décrocher tes 50 points d'Entrée Express !`;
+    if (audioPlayerRef.current) {
+      audioPlayerRef.current.pause();
+      audioPlayerRef.current = null;
+    }
 
-    const utterance = new SpeechSynthesisUtterance(speechText);
-    utterance.lang = "fr-FR";
-    utterance.rate = 1.0;
-    utterance.pitch = companion.id === "kodiak" ? 0.9 : companion.id === "aura" ? 1.05 : 0.95;
+    const audioUrl = companion.audioPreviewUrl || "/audio/eo/laurent-step1.mp3";
+    try {
+      const audio = new Audio(audioUrl);
+      audioPlayerRef.current = audio;
 
-    utterance.onend = () => setIsSpeaking(false);
-    utterance.onerror = () => setIsSpeaking(false);
+      audio.onplay = () => setIsSpeaking(true);
+      audio.onended = () => setIsSpeaking(false);
+      audio.onerror = () => setIsSpeaking(false);
 
-    setIsSpeaking(true);
-    window.speechSynthesis.speak(utterance);
+      audio.play().catch(() => setIsSpeaking(false));
+    } catch {
+      setIsSpeaking(false);
+    }
   };
 
   return (
@@ -79,11 +91,11 @@ export function CandidateCompanionWelcome({ userDisplayName }: CandidateCompanio
                   src={companion.avatarUrl}
                   alt={companion.name}
                   fill
-                  className="object-cover"
+                  className="object-cover object-top"
                 />
               </div>
               <span className="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full bg-background border border-border shadow-xs text-xs">
-                {companion.id === "kodiak" ? "🐻" : companion.id === "aura" ? "⚡" : "🦫"}
+                🏛️
               </span>
             </div>
 
@@ -97,7 +109,7 @@ export function CandidateCompanionWelcome({ userDisplayName }: CandidateCompanio
                 </span>
               </div>
               <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed max-w-xl">
-                &laquo; Bonjour <strong>{userDisplayName}</strong> ! Prêt pour l&apos;entraînement ? Les simulateurs d&apos;<strong>Expression Écrite</strong> et d&apos;<strong>Expression Orale</strong> sont 100% gratuits et débloqués. Visons le C2 ensemble ! &raquo;
+                &laquo; Bonjour <strong>{userDisplayName}</strong> ! Prêt pour l&apos;entraînement ? Les simulateurs d&apos;<strong>Expression Écrite</strong> et d&apos;<strong>Expression Orale</strong> sont 100% gratuits et calibrés sur les grilles FEI. Visons ensemble le palier NCLC 7 et le C2 ! &raquo;
               </p>
             </div>
           </div>
@@ -116,7 +128,7 @@ export function CandidateCompanionWelcome({ userDisplayName }: CandidateCompanio
               {isSpeaking ? (
                 <>
                   <VolumeX className="h-3.5 w-3.5 animate-pulse" />
-                  <span>Arrêter</span>
+                  <span>Arrêter la voix</span>
                 </>
               ) : (
                 <>
@@ -140,7 +152,7 @@ export function CandidateCompanionWelcome({ userDisplayName }: CandidateCompanio
         </div>
       </div>
 
-      {/* Modal Sélecteur de Compagnon */}
+      {/* Modal Sélecteur de Mentor */}
       <CompanionSelectorDialog
         open={selectorOpen}
         onOpenChange={setSelectorOpen}
