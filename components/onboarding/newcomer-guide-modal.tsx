@@ -38,7 +38,7 @@ const STEPS: Step[] = [
     badge: "Bienvenue sur Super4C2",
     title: "Décrochez vos 4 C2 & Débloquez +50 Points CRS",
     description:
-      "Super4C2 est le premier centre d'entraînement numérique officiel reproduisant à l'identique l'environnement CBT (Computer-Based Test) du TCF Canada, TEF et IELTS.",
+      "Super4C2 est un centre d'entraînement numérique de référence reproduisant fidèlement l'environnement CBT (Computer-Based Test) du TCF Canada, TEF et IELTS.",
     iconSrc: "/brand/icons-3d/diploma-achievement.png",
     highlightText: "Objectif Immédiat : Palier NCLC 7+ dans les 4 compétences",
     bulletPoints: [
@@ -58,7 +58,7 @@ const STEPS: Step[] = [
     bulletPoints: [
       "Mode Examen Strict : Chronomètre officiel FEI de 60 min, zéro pause",
       "Mode Didactique : Mettez en pause le chrono et analysez les justifications",
-      "Raccourcis clavier physiques officiels (touches A, B, C, D et F pour marquer)",
+      "Raccourcis clavier physiques de l'examen (touches A, B, C, D et F pour marquer)",
     ],
   },
   {

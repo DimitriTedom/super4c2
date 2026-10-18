@@ -51,7 +51,7 @@ export function AppShell({ header, children }: AppShellProps) {
           </Link>
           <div className="flex items-center gap-2 text-xs text-muted-foreground">
             <span className="inline-block h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="hidden sm:inline">Plateforme Officielle TCF &amp; TEF Canada</span>
+            <span className="hidden sm:inline">Préparation TCF &amp; TEF Canada</span>
           </div>
         </header>
 

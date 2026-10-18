@@ -53,7 +53,7 @@ export default function NotFoundPage() {
           <h3 className="font-display text-sm font-bold group-hover:text-primary transition-colors">
             Séries TCF Canada
           </h3>
-          <p className="text-xs text-muted-foreground mt-0.5">Simulateur officiel 39Q</p>
+          <p className="text-xs text-muted-foreground mt-0.5">Simulateur CBT 39Q</p>
         </Link>
 
         <Link

@@ -149,10 +149,10 @@ export default function CommunautePage() {
       {/* 🎯 CTA simulateur */}
       <div className="rounded-3xl border bg-gradient-to-r from-card to-primary/5 p-8 text-center space-y-4">
         <h3 className="font-display text-2xl font-black">
-          Combinez l&apos;Entraide avec le Simulateur Officiel
+          Combinez l&apos;Entraide avec le Simulateur CBT Conforme
         </h3>
         <p className="text-xs sm:text-sm text-muted-foreground max-w-xl mx-auto">
-          Les groupes communautaires vous apportent les thèmes d&apos;actualité, et Super4C2 vous offre le chronomètre officiel CBT pour valider votre rythme.
+          Les groupes communautaires vous apportent les thèmes d&apos;actualité, et Super4C2 vous offre le simulateur CBT conforme pour valider votre rythme.
         </p>
         <div className="pt-2">
           <ShimmerButton

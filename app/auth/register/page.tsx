@@ -12,7 +12,7 @@ export default function RegisterPage() {
     <div className="w-full flex items-center justify-center py-6 px-4">
       <AuthCard
         title="Créer votre compte candidat"
-        description="Rejoignez la préparation officielle et débloquez votre potentiel NCLC 7."
+        description="Rejoignez la préparation d'excellence et débloquez votre potentiel NCLC 7."
         badgeText="Inscription Gratuite TCF Canada"
       >
         <Suspense fallback={<div className="h-40 flex items-center justify-center text-sm text-muted-foreground">Chargement...</div>}>

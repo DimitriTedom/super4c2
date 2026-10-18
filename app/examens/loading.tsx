@@ -17,7 +17,7 @@ export default function ExamensLoading() {
           <Loader2 className="h-4 w-4 animate-spin text-brand-crimson" />
         </h2>
         <p className="text-xs text-muted-foreground leading-relaxed">
-          Calibrage des questions officielles de France Éducation International, vérification du moteur audio ElevenLabs et synchronisation du chronomètre officiel.
+          Calibrage des questions d&apos;entraînement, vérification du moteur audio ElevenLabs et synchronisation du chronomètre d&apos;examen.
         </p>
       </div>
 

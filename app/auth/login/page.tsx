@@ -12,7 +12,7 @@ export default function LoginPage() {
     <div className="w-full flex items-center justify-center py-6 px-4">
       <AuthCard
         title="Bon retour parmi nous"
-        description="Accédez à votre simulateur officiel CBT et à vos analyses NCLC."
+        description="Accédez à votre simulateur CBT et à vos analyses NCLC."
         badgeText="Espace Candidat TCF & TEF"
       >
         <Suspense fallback={<div className="h-40 flex items-center justify-center text-sm text-muted-foreground">Chargement...</div>}>

@@ -38,7 +38,7 @@ export const metadata: Metadata = {
     template: "%s | Super4C2",
   },
   description:
-    "Plateforme officielle d'entraînement aux examens TCF Canada, TEF Canada et Cambridge IELTS General Training. Simulateur CBT officiel, examinateur oral IA en direct, 4 épreuves chronométrées et correction FEI instantanée.",
+    "Plateforme de préparation aux examens TCF Canada, TEF Canada et Cambridge IELTS General Training. Simulateur CBT conforme, examinateur oral IA en direct, 4 épreuves chronométrées et correction FEI instantanée.",
   keywords: [
     "TCF Canada",
     "TEF Canada",
@@ -78,13 +78,13 @@ export const metadata: Metadata = {
     siteName: "Super4C2",
     title: "Super4C2 | Préparation TCF, TEF Canada & IELTS — Objectif C2 / CLB 9",
     description:
-      "Simulateur CBT officiel, 4 épreuves chronométrées, correction IA instantanée et examinateur vocal IA pour décrocher le NCLC 7+ (+50 pts CRS) et CLB 9.",
+      "Simulateur CBT conforme, 4 épreuves chronométrées, correction IA instantanée et examinateur vocal IA pour décrocher le NCLC 7+ (+50 pts CRS) et CLB 9.",
     images: [
       {
         url: "/brand/og-image-super4c2.jpg",
         width: 1200,
         height: 630,
-        alt: "Super4C2 — Plateforme d'Examen CBT Officiel TCF Canada, TEF & IELTS",
+        alt: "Super4C2 — Plateforme de Préparation CBT TCF Canada, TEF & IELTS",
       },
     ],
   },
@@ -92,7 +92,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Super4C2 | Préparation TCF, TEF Canada & IELTS — Objectif C2 / CLB 9",
     description:
-      "Simulateur CBT officiel, 4 épreuves chronométrées et examinateur vocal IA pour maximiser vos points Entrée Express Canada.",
+      "Simulateur CBT conforme, 4 épreuves chronométrées et examinateur vocal IA pour maximiser vos points Entrée Express Canada.",
     images: ["/brand/og-image-super4c2.jpg"],
     creator: "@super4c2",
   },

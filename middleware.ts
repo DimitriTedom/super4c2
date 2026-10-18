@@ -8,6 +8,16 @@ export async function middleware(request: NextRequest) {
 
   const pathname = request.nextUrl.pathname;
 
+  // 0. Redirection automatique des codes Supabase Auth arrivant sur la racine vers le callback
+  if (
+    (request.nextUrl.searchParams.has("code") || request.nextUrl.searchParams.has("token_hash")) &&
+    pathname !== "/auth/callback"
+  ) {
+    const callbackUrl = request.nextUrl.clone();
+    callbackUrl.pathname = "/auth/callback";
+    return NextResponse.redirect(callbackUrl);
+  }
+
   // 1. Back-Office & Super Admin Gate
   if (pathname.startsWith("/admin") && pathname !== "/admin/login") {
     const adminToken = request.cookies.get("super4c2_admin_token")?.value;

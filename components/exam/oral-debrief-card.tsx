@@ -72,10 +72,10 @@ export function OralDebriefCard({ evaluation, sessionAudioUrl, dialogues, classN
       {/* Header des scores */}
       <div className="border-b pb-6">
         <span className="text-xs font-bold uppercase tracking-wider text-primary">
-          Bilan Officiel de l&apos;Épreuve Orale
+          Bilan Didactique de l&apos;Épreuve Orale
         </span>
         <h2 className="font-display text-2xl font-black text-foreground mt-1">
-          Rapport d&apos;Évaluation de l&apos;Examinateur FEI
+          Rapport d&apos;Évaluation Conforme aux Critères FEI
         </h2>
 
         <div className="grid gap-4 sm:grid-cols-4 mt-6">
@@ -137,7 +137,7 @@ export function OralDebriefCard({ evaluation, sessionAudioUrl, dialogues, classN
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="space-y-1">
             <div className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wider text-primary">
-              <ShieldCheck className="h-3 w-3" /> Archive Audio Officielle FEI
+              <ShieldCheck className="h-3 w-3" /> Archive Audio de la Session
             </div>
             <h3 className="font-display text-base sm:text-lg font-black text-foreground flex items-center gap-2">
               <Volume2 className="h-5 w-5 text-primary" />
@@ -241,7 +241,7 @@ export function OralDebriefCard({ evaluation, sessionAudioUrl, dialogues, classN
       {/* Grille des 5 critères FEI */}
       <div className="space-y-4">
         <h3 className="font-display text-base font-bold text-foreground">
-          Détail des 5 Critères d&apos;Évaluation Officiels :
+          Détail des 5 Critères d&apos;Évaluation FEI :
         </h3>
 
         <div className="grid gap-3 sm:grid-cols-2">

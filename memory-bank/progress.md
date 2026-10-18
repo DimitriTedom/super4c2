@@ -1,3 +1,10 @@
+- [x] **Assainissement Global de Marque & Élimination des Allégations "Plateforme Officielle" :**
+  - **Objectif :** Supprimer rigoureusement toute mention qualifiant Super4C2 de « Plateforme Officielle », « Préparation Officielle », « Simulateur Officiel » ou « Épreuves Officielles », en clarifiant la nature indépendante et conforme du produit.
+  - **Composants & Layouts :** Nettoyage dans `components/app-shell.tsx`, `components/site-footer.tsx`, `components/site-nav.tsx`, `lib/i18n/translations.ts`, `app/layout.tsx`.
+  - **Toutes Pages Publiques & SEO :** `app/page.tsx`, `app/nclc-calculator/page.tsx`, `app/test-gratuit/page.tsx`, `app/examens/`, `app/auth/`, `app/blog/`, `app/communaute/`, `lib/mail.ts`, `components/seo/json-ld.tsx`.
+  - **Moteurs d'Examen & Simulateurs :** `components/exam/question-panel.tsx`, `components/exam/written-exam-editor.tsx`, `components/exam/mock-exam-orchestrator.tsx`, `components/exam/oral-debrief-card.tsx`, `lib/pricing/geo-pricing.ts`.
+  - **Middleware :** Redirection immédiate des paramètres d'auth (`code`, `token_hash`) atterrissant sur `/` vers `/auth/callback`.
+  - **Validation :** 0 erreur TypeScript (`npx tsc --noEmit`).
 - [x] **Résolution du Conflit d'Unicité E-mail & Réconciliation Atomique des Utilisateurs (Commit `14d1256`) :**
   - **Diagnostic :** Des comptes créés lors de tests préalables possédaient un UUID local orphelin dans `users`, entrant en collision d'unicité sur le champ `email` lors de l'upsert par ID officiel Supabase.
   - **Moteur de Synchronisation Dédié ([lib/supabase/sync-user.ts](file:///d:/SnowDev/Documents/super4c2/lib/supabase/sync-user.ts)) :** Détection automatique des collisions d'e-mail avec migration transactionnelle des tentatives et profils vers le nouvel ID Supabase canonique.

@@ -59,7 +59,7 @@ interface MockExamOrchestratorProps {
 
 export function MockExamOrchestrator({
   seriesId,
-  seriesTitle = "Examen Blanc Officiel N°1 — Simulation Complète 4 Épreuves",
+  seriesTitle = "Examen Blanc Standard N°1 — Simulation Complète 4 Épreuves",
 }: MockExamOrchestratorProps) {
   const [stage, setStage] = useState<MockStage>("INTRO");
 
@@ -260,7 +260,7 @@ export function MockExamOrchestrator({
               </h1>
 
               <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
-                Vous allez passer les <strong>4 épreuves officielles</strong> dans les conditions réelles du jour J (ordre strict, chronomètre continu, pauses réglementaires et relevé d&apos;attestation agrégé).
+                Vous allez passer les <strong>4 épreuves du TCF</strong> dans les conditions réelles du jour J (ordre strict, chronomètre continu, pauses réglementaires et relevé d&apos;attestation agrégé).
               </p>
             </div>
 
@@ -972,7 +972,7 @@ export function MockExamOrchestrator({
               <div className="space-y-2 max-w-xl mx-auto">
                 <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-4 py-1 text-xs font-bold text-emerald-600 dark:text-emerald-400">
                   <Sparkles className="h-3.5 w-3.5" />
-                  <span>Attestation Officielle Provisoire Délivrée</span>
+                  <span>Attestation Provisoire de Simulation Délivrée</span>
                 </div>
 
                 <h1 className="font-display text-3xl sm:text-4xl font-black text-foreground">

@@ -770,7 +770,7 @@ export const QUESTIONS_CE_101: ExamQuestion[] = [
 export const FULL_SERIES_CE_101: ExamSeriesData = {
   id: "demo-101-ce",
   seriesNumber: 101,
-  title: "TCF Canada — Compréhension Écrite, Série 101 (Officiel FEI)",
+  title: "TCF Canada — Compréhension Écrite, Série 101 (Conforme FEI)",
   discipline: "CE",
   durationSeconds: 60 * 60, // 60 minutes
   questions: QUESTIONS_CE_101,

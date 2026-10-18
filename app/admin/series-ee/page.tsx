@@ -91,13 +91,13 @@ export default async function SeriesEePage({ searchParams }: SeriesEePageProps) 
           <div>
             <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-primary/10 text-primary border border-primary/20 mb-1.5">
               <PenTool className="h-3 w-3" />
-              Épreuves Officielles FEI · 3 Tâches Rédactionnelles
+              Épreuves Conformes FEI · 3 Tâches Rédactionnelles
             </div>
             <h1 className="font-display text-2xl sm:text-3xl font-black tracking-tight text-foreground">
               Séries d&apos;Expression Écrite (EE)
             </h1>
             <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">
-              Gérez les séries de rédaction officielle (Tâche 1 : message, Tâche 2 : article/lettre, Tâche 3 : essai comparatif).
+              Gérez les séries de rédaction conformes FEI (Tâche 1 : message, Tâche 2 : article/lettre, Tâche 3 : essai comparatif).
             </p>
           </div>
 

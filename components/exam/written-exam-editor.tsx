@@ -596,7 +596,7 @@ export function WrittenExamEditor({
           </div>
           <div className="space-y-2 max-w-md">
             <h2 className="font-display text-2xl font-black text-foreground">
-              Correction IA Officielle FEI en cours...
+              Correction IA conforme FEI en cours...
             </h2>
             <p className="text-sm text-muted-foreground leading-relaxed">
               {mode === "practice"
@@ -606,7 +606,7 @@ export function WrittenExamEditor({
           </div>
           <div className="w-full max-w-sm rounded-xl border bg-card p-4 text-xs text-left space-y-2.5 text-muted-foreground shadow-xs">
             <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-medium">
-              <CheckCircle2 className="h-4 w-4" /> Comptage officiel des mots (norme FEI)
+              <CheckCircle2 className="h-4 w-4" /> Comptage des mots (norme FEI)
             </div>
             <div className="flex items-center gap-2 text-primary font-medium">
               <div className="h-2 w-2 rounded-full bg-primary animate-ping ml-1 mr-1" /> Évaluation syntaxique &amp; connecteurs logiques
@@ -1054,7 +1054,7 @@ export function WrittenExamEditor({
           <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-3 text-xs text-red-700 dark:text-red-300 flex items-start gap-2.5 font-medium">
             <AlertTriangle className="h-4 w-4 shrink-0 text-red-600 mt-0.5" />
             <span>
-              <strong>Attention, action irréversible :</strong> une fois votre épreuve transmise, vous ne pourrez plus modifier vos textes. Votre copie sera immédiatement transmise au jury IA pour notation finale officielle FEI.
+              <strong>Attention, action irréversible :</strong> une fois votre épreuve transmise, vous ne pourrez plus modifier vos textes. Votre copie sera immédiatement transmise au jury IA pour notation finale selon la grille FEI.
             </span>
           </div>
 

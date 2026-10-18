@@ -737,7 +737,7 @@ export const QUESTIONS_CO_101: ExamQuestion[] = [
 export const FULL_SERIES_CO_101: ExamSeriesData = {
   id: "demo-101-co",
   seriesNumber: 101,
-  title: "TCF Canada — Compréhension Orale, Série 101 (Officiel)",
+  title: "TCF Canada — Compréhension Orale, Série 101 (Conforme FEI)",
   discipline: "CO",
   durationSeconds: 40 * 60, // 40 minutes officielles FEI
   questions: QUESTIONS_CO_101,

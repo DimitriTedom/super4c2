@@ -43,7 +43,7 @@ export default async function OralIntroPage({
           <div className="space-y-1">
             <p className="text-xs font-bold uppercase tracking-widest text-primary flex items-center gap-1.5">
               <Mic className="h-3.5 w-3.5" />
-              Épreuve Officielle TCF Canada — Expression Orale
+              Épreuve TCF Canada — Expression Orale
             </p>
             <h1 className="font-display text-2xl sm:text-3xl font-extrabold tracking-tight">
               {series.title}
@@ -65,7 +65,7 @@ export default async function OralIntroPage({
       {/* Consignes officielles FEI */}
       <div className="space-y-4 rounded-2xl border bg-card p-6 shadow-sm">
         <div className="flex items-center justify-between">
-          <h2 className="font-display text-lg font-bold">Consignes Officielles & Déroulement</h2>
+          <h2 className="font-display text-lg font-bold">Consignes &amp; Déroulement de l&apos;Épreuve</h2>
           <span className="text-xs font-mono font-bold text-muted-foreground bg-muted px-2.5 py-1 rounded-full border">
             3 Tâches • ~12 min
           </span>

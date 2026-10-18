@@ -68,7 +68,7 @@ export async function POST(req: NextRequest) {
       }
 
       if (!seriesTitle) {
-        seriesTitle = `TCF Canada — Compréhension Écrite, Série ${seriesNumber} (Officielle)`;
+        seriesTitle = `TCF Canada — Compréhension Écrite, Série ${seriesNumber} (Conforme FEI)`;
       }
 
       // Upsert de la série

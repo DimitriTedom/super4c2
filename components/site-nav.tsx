@@ -146,7 +146,7 @@ export function SiteNav() {
                         Expression Écrite (EE)
                       </h4>
                       <p className="text-[11px] text-muted-foreground mt-1 leading-snug">
-                        Les 3 tâches d&apos;examen, chrono officiel 60 min, notation par critères et Magic Rewrite C1/C2.
+                        Les 3 tâches d&apos;examen, chrono 60 min, notation par critères et Magic Rewrite C1/C2.
                       </p>
                     </div>
                   </div>

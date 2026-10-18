@@ -243,7 +243,7 @@ export function QuestionPanel({
         <div className="rounded-2xl border border-border/80 bg-muted/40 p-4 sm:p-5 space-y-3 animate-in fade-in duration-200">
           <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-primary">
             <HelpCircle className="h-4 w-4" />
-            <span>Explication Didactique Officielle</span>
+            <span>Explication Didactique & Justification</span>
           </div>
 
           <p className="text-sm text-foreground/90 leading-relaxed font-medium">

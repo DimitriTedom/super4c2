@@ -69,7 +69,7 @@ export async function getNotificationsAction(options?: {
           id: "demo-welcome",
           recipient,
           title: "🎯 Simulateur TCF Canada Prêt",
-          message: "Toutes les épreuves authentiques avec minuterie officielle et correction détaillée.",
+          message: "Toutes les épreuves avec minuterie conforme et correction détaillée.",
           type: "SYSTEM",
           link: "/examens",
           isRead: false,
@@ -134,7 +134,7 @@ async function seedDemoNotifications(recipient: "CANDIDATE" | "ADMIN") {
         {
           recipient: "CANDIDATE",
           title: "🎯 Objectif NCLC 7 Activé (+50 pts CRS)",
-          message: "Votre simulateur officiel TCF Canada est configuré pour le seuil critique B2-C1.",
+          message: "Votre simulateur d'entraînement TCF Canada est configuré pour le seuil critique B2-C1.",
           type: "SYSTEM",
           link: "/nclc-calculator",
           isRead: false,

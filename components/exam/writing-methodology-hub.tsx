@@ -146,7 +146,7 @@ export function WritingMethodologyHub({
         <div className="space-y-1.5">
           <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3 py-0.5 text-xs font-bold text-primary">
             <PenTool className="h-3.5 w-3.5" />
-            <span>Hub de Préparation Officiel TCF Canada</span>
+            <span>Hub de Méthodologie &amp; Préparation TCF Canada</span>
           </div>
           <h1 className="font-display text-3xl sm:text-4xl font-black tracking-tight text-foreground">
             Expression Écrite — Méthodologie &amp; Entraînement
@@ -334,7 +334,7 @@ export function WritingMethodologyHub({
             Session Examen Blanc (60 min)
           </h3>
           <p className="text-xs text-muted-foreground">
-            Simulateur CBT officiel chronométré avec clavier d&apos;accents FEI.
+            Simulateur CBT conforme chronométré avec clavier d&apos;accents FEI.
           </p>
         </button>
       </div>

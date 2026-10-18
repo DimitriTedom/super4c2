@@ -184,7 +184,7 @@ for (const num of [102, 103, 104, 105]) {
   const dynamicSeries: ExamSeriesData = {
     id: `serie-${num}`,
     seriesNumber: num,
-    title: `TCF Canada — Série ${num} (Officielle)`,
+    title: `TCF Canada — Série ${num} (Conforme FEI)`,
     discipline: "CE",
     durationSeconds: 3600,
     questions: FULL_SERIES_CE_101.questions,

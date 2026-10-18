@@ -95,11 +95,11 @@ export const PRICING_PLANS: PricingPlan[] = [
       USD: { amount: 9, formatted: "9 $ USD", periodText: "pour 7 jours" },
     },
     features: [
-      "Accès aux séries officielles CBT (Compréhension Écrite & Orale)",
-      "3 évaluations d'Expression Écrite avec grille FEI officielle",
+      "Accès aux séries CBT conformes (Compréhension Écrite & Orale)",
+      "3 évaluations d'Expression Écrite avec grille conforme FEI",
       "2 simulations orales avec examinateur IA interactif",
       "Carnet d'Erreurs intelligent (Spaced Repetition de base)",
-      "Chronomètre réel & conditions officielles France Éducation International",
+      "Chronomètre réel & conditions conformes aux standards FEI",
     ],
     limits: {
       cbtSimulationCount: "5 examens complets",
@@ -122,7 +122,7 @@ export const PRICING_PLANS: PricingPlan[] = [
     },
     features: [
       "Tout le contenu du Pass Sprint",
-      "Accès à 15 séries CBT officielles inédites",
+      "Accès à 15 séries CBT inédites de haut niveau",
       "10 évaluations d'Expression Écrite avec Magic Rewrite C1/C2",
       "6 séances d'Expression Orale (Jeu de rôle Tâche 2 & Dialogue Tâche 3)",
       "Carnet d'Erreurs SRS illimité (J+1, J+3, J+7)",
@@ -208,7 +208,7 @@ export const PRICING_PLANS: PricingPlan[] = [
     },
     features: [
       "Accès TOTAL & ILLIMITÉ 365 jours à TOUS les examens (TCF Canada, TEF Canada, IELTS)",
-      "Toutes les nouvelles séries officielles ajoutées chaque semaine pendant 1 an",
+      "Toutes les nouvelles séries d'entraînement ajoutées chaque semaine pendant 1 an",
       "Examens Blancs Complets illimités (repassages sans limite)",
       "Corrections IA illimitées d'Expression Écrite & simulateur d'audience orale illimité",
       "Carnet d'Erreurs SRS permanent avec consolidation mémorielle sur 1 an",

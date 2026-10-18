@@ -61,7 +61,7 @@ export function SiteFooter() {
             <BrandLogo size="md" />
             <p className="text-sm text-muted-foreground leading-relaxed max-w-sm">
               La plateforme d&apos;entraînement de référence au TCF Canada et TEF Canada.
-              Simulateur CBT officiel, analyse des pièges FEI et répétition espacée pour sécuriser votre palier NCLC 7 et débloquer les +50 points bonus CRS.
+              Simulateur CBT conforme, analyse des pièges FEI et répétition espacée pour sécuriser votre palier NCLC 7 et débloquer les +50 points bonus CRS.
             </p>
             <div className="flex items-center gap-3 pt-1 text-xs text-muted-foreground">
               <span className="inline-flex items-center gap-1.5 rounded-full border bg-muted/40 px-3 py-1 font-mono text-[11px]">
@@ -81,7 +81,7 @@ export function SiteFooter() {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="h-8 w-8 rounded-lg border border-border/70 bg-background/80 hover:bg-red-500/10 hover:border-red-500/40 hover:text-red-500 text-muted-foreground flex items-center justify-center transition-all duration-200 shadow-2xs group"
-                  title="Chaîne YouTube Officielle Super4C2 (Cours, Décryptages & Sujets réels)"
+                  title="Chaîne YouTube Super4C2 (Cours, Décryptages & Sujets réels)"
                   aria-label="YouTube Super4C2"
                 >
                   <svg className="h-4 w-4 fill-current transition-transform group-hover:scale-110" viewBox="0 0 24 24">
@@ -120,7 +120,7 @@ export function SiteFooter() {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="h-8 w-8 rounded-lg border border-border/70 bg-background/80 hover:bg-blue-600/10 hover:border-blue-600/40 hover:text-blue-600 text-muted-foreground flex items-center justify-center transition-all duration-200 shadow-2xs group"
-                  title="Page LinkedIn Officielle Super4C2"
+                  title="Page LinkedIn Super4C2"
                   aria-label="LinkedIn Super4C2"
                 >
                   <svg className="h-4 w-4 fill-current transition-transform group-hover:scale-110" viewBox="0 0 24 24">

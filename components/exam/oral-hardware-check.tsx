@@ -189,7 +189,7 @@ export function OralHardwareCheck({ seriesId }: OralHardwareCheckProps) {
         <div className="space-y-1">
           <span className="text-xs font-bold uppercase tracking-wider text-primary flex items-center gap-1.5">
             <ShieldCheck className="h-4 w-4" />
-            Protocole Officiel FEI — Étape Préalable
+            Vérification Audio &amp; Matériel — Étape Préalable
           </span>
           <h2 className="font-display text-xl sm:text-2xl font-extrabold text-foreground">
             Vérification du Matériel Audio
@@ -387,7 +387,7 @@ export function OralHardwareCheck({ seriesId }: OralHardwareCheckProps) {
               <div className="flex items-center justify-between">
                 <span className="text-xs font-semibold text-foreground flex items-center gap-1.5">
                   <Volume2 className="h-3.5 w-3.5 text-cyan-500" />
-                  <span>Voix officielle de l&apos;examinateur</span>
+                  <span>Voix de l&apos;examinateur IA</span>
                 </span>
                 <span className="text-[10px] font-mono text-muted-foreground">0:04</span>
               </div>

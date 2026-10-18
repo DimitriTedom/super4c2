@@ -10,7 +10,7 @@ export function JsonLd() {
     logo: "https://super4c2.com/brand/Le%20Logo%20Primaire.png",
     image: "https://super4c2.com/brand/cbt-platform-preview.jpg",
     description:
-      "Plateforme d'entraînement officielle aux examens TCF Canada, TEF Canada et Cambridge IELTS General Training pour l'immigration canadienne (Entrée Express).",
+      "Plateforme de préparation aux examens TCF Canada, TEF Canada et Cambridge IELTS General Training pour l'immigration canadienne (Entrée Express).",
     sameAs: [
       "https://t.me/super4c2",
       "https://chat.whatsapp.com/super4c2-vip",
@@ -33,7 +33,7 @@ export function JsonLd() {
     "@type": "Course",
     name: "Préparation Complète TCF Canada & IELTS General Training (Objectif C2 / CLB 9)",
     description:
-      "Entraînement intensif au TCF Canada avec simulateur CBT officiel, 4 épreuves chronométrées, correction IA instantanée et examinateur vocal IA.",
+      "Entraînement intensif au TCF Canada avec simulateur CBT conforme, 4 épreuves chronométrées, correction IA instantanée et examinateur vocal IA.",
     provider: {
       "@type": "Organization",
       name: "Super4C2",

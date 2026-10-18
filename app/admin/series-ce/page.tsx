@@ -74,7 +74,7 @@ export default async function SeriesCeListPage({ searchParams }: SeriesCeListPag
               Séries de Compréhension Écrite (CE)
             </h1>
             <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">
-              Gérez les séries officielles de Compréhension Écrite, leurs 39 questions authentiques et le décodage des pièges FEI.
+              Gérez les séries de Compréhension Écrite, leurs 39 questions conformes et le décodage des pièges FEI.
             </p>
           </div>
 
@@ -116,7 +116,7 @@ export default async function SeriesCeListPage({ searchParams }: SeriesCeListPag
             description={
               search
                 ? `Aucune série ne correspond à la recherche "${search}".`
-                : "Commencez par créer la Série 101 avec ses 39 questions officielles."
+                : "Commencez par créer la Série 101 avec ses 39 questions conformes FEI."
             }
             actionHref="/admin/series-ce/ajouter"
             actionLabel="Créer une Série CE"

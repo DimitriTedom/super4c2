@@ -9,7 +9,7 @@ export const dynamic = "force-dynamic";
 export const metadata = {
   title: "Tableau de Bord Candidat — Objectif NCLC 7 / C2 | Super4C2",
   description:
-    "Votre centre de pilotage officiel pour réussir le TCF Canada C2 : Historique de corrections, statistiques de compétences FEI et admissibilité Entrée Express (+50 pts CRS).",
+    "Votre centre de pilotage personnalisé pour réussir le TCF Canada C2 : Historique de corrections, statistiques de compétences FEI et admissibilité Entrée Express (+50 pts CRS).",
 };
 
 export default async function DashboardPage() {

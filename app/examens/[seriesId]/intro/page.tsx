@@ -40,7 +40,7 @@ export default async function IntroPage({
       <div className="space-y-2">
         <div className="flex items-center gap-2">
           <span className="rounded-md border border-primary/30 bg-primary/10 px-2.5 py-0.5 text-xs font-bold uppercase tracking-wider text-primary">
-            {isCO ? "Compréhension orale (CO)" : "Compréhension écrite (CE) • Officiel FEI"}
+            {isCO ? "Compréhension orale (CO)" : "Compréhension écrite (CE) • Standard FEI"}
           </span>
           <span className="text-xs text-muted-foreground font-mono">
             {series.questions.length} questions · {series.durationSeconds / 60} minutes
@@ -50,7 +50,7 @@ export default async function IntroPage({
           {series.title}
         </h1>
         <p className="text-sm text-muted-foreground leading-relaxed">
-          Simulation en conditions réelles d&apos;examen sur ordinateur (CBT). Prenez connaissance des consignes officielles avant d&apos;enclencher le chronomètre.
+          Simulation en conditions réelles d&apos;examen sur ordinateur (CBT). Prenez connaissance des consignes de l&apos;épreuve avant d&apos;enclencher le chronomètre.
         </p>
       </div>
 
@@ -59,7 +59,7 @@ export default async function IntroPage({
         <div className="rounded-2xl border bg-card p-6 shadow-xs space-y-4">
           <div className="flex items-center gap-2 border-b pb-3">
             <FileText className="h-4 w-4 text-primary" />
-            <h2 className="font-display text-base font-bold">Structure Officielle des 39 Questions (Paliers CECRL)</h2>
+            <h2 className="font-display text-base font-bold">Structure des 39 Questions (Paliers CECRL)</h2>
           </div>
           <div className="grid gap-3 sm:grid-cols-2 text-xs">
             <div className="rounded-xl border bg-muted/30 p-3 space-y-1">
@@ -144,7 +144,7 @@ export default async function IntroPage({
                 <span className="text-[10px] uppercase font-bold text-muted-foreground">Standard FEI</span>
               </div>
               <h4 className="font-display font-bold text-base text-foreground group-hover:text-blue-600 transition-colors">
-                Simulation 100% Officielle
+                Simulation Conforme CBT
               </h4>
               <p className="text-xs text-muted-foreground leading-relaxed">
                 Chronomètre strict, écoute unique, aucune aide immédiate. Idéal pour évaluer votre vrai score TCF &amp; NCLC.

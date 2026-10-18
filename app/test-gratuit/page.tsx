@@ -185,7 +185,7 @@ export default function TestGratuitPage() {
           <span className="text-brand-crimson">+50 Points</span> CRS
         </h1>
         <p className="font-body text-sm sm:text-base text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-          Testez vos réflexes sur 4 questions clés représentatives des épreuves officielles CBT de France Éducation International.
+          Testez vos réflexes sur 4 questions clés représentatives des épreuves CBT de France Éducation International.
         </p>
       </div>
 
@@ -211,7 +211,7 @@ export default function TestGratuitPage() {
           {currentQ.documentText && (
             <div className="rounded-2xl border bg-muted/40 p-5 space-y-2">
               <p className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
-                {currentQ.documentTitle || "Document officiel :"}
+                {currentQ.documentTitle || "Document d'examen :"}
               </p>
               <p className="text-sm sm:text-base font-body leading-relaxed text-foreground whitespace-pre-line">
                 {currentQ.documentText}
@@ -377,7 +377,7 @@ export default function TestGratuitPage() {
             <div className="rounded-2xl border bg-muted/30 p-5 text-sm leading-relaxed text-foreground space-y-2">
               {crsUnlocked ? (
                 <p>
-                  🎉 <strong>Excellente nouvelle !</strong> Vos bases sont solides et vous vous situez déjà dans le corridor du palier NCLC 7 (B2 / C1). Pour sécuriser vos 4 épreuves le jour J (notamment l&apos;Oral avec le jeu de rôle et l&apos;Écrit), un entraînement intensif sur le format officiel CBT FEI vous permettra de garantir vos <strong>+50 points Entrée Express</strong>.
+                  🎉 <strong>Excellente nouvelle !</strong> Vos bases sont solides et vous vous situez déjà dans le corridor du palier NCLC 7 (B2 / C1). Pour sécuriser vos 4 épreuves le jour J (notamment l&apos;Oral avec le jeu de rôle et l&apos;Écrit), un entraînement intensif sur le format CBT vous permettra de garantir vos <strong>+50 points Entrée Express</strong>.
                 </p>
               ) : (
                 <p>
@@ -394,7 +394,7 @@ export default function TestGratuitPage() {
                 Prêt à vous entraîner dans les conditions réelles ?
               </h3>
               <p className="text-sm text-muted-foreground">
-                Accédez à nos 4 épreuves officielles complètes, notre correcteur d&apos;Expression Écrite instantané et notre examinateur vocal IA en jeu de rôle.
+                Accédez à nos 4 épreuves d&apos;entraînement complètes, notre correcteur d&apos;Expression Écrite instantané et notre examinateur vocal IA en jeu de rôle.
               </p>
             </div>
 

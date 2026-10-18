@@ -2,6 +2,28 @@
 
 ## 0. Déploiement Production Vercel & Moteur de Conversion
 
+### 0.0k. Assainissement Global de Marque : Élimination des Allégations "Plateforme Officielle"
+- **Demande Utilisateur :** Éliminer l'allégation trompeuse selon laquelle Super4C2 serait la « Plateforme Officielle TCF & TEF Canada » ou un organisme certificateur officiel, le site étant un outil d'entraînement et simulateur indépendant conforme.
+- **Périmètre d'Intervention Transversal :**
+  - **Barre supérieure & Layouts :**
+    - `components/app-shell.tsx` : Remplacement du slogan `Plateforme Officielle TCF & TEF Canada` par `Préparation TCF & TEF Canada`.
+    - `app/layout.tsx` : Remplacement de `Plateforme officielle d'entraînement...`, `Simulateur CBT officiel`, `Plateforme d'Examen CBT Officiel` par `Plateforme de préparation...`, `Simulateur CBT conforme...`.
+    - `components/site-footer.tsx` : Remplacement de `Simulateur CBT officiel` par `Simulateur CBT conforme`, et suppression de « Officielle » sur les libellés YouTube et LinkedIn. Conservation du disclaimer d'indépendance légale (FEI / CCI).
+    - `components/site-nav.tsx` & `lib/i18n/translations.ts` : Adaptation des menus et traductions FR/EN (`Épreuves CBT Conformes`, `Écran scindé conforme FEI`, etc.).
+  - **Pages Clés, SEO & Landing Page :**
+    - `app/page.tsx`, `components/product-showcase-section.tsx`, `components/seo/json-ld.tsx`, `lib/mail.ts`, `app/auth/login/page.tsx`, `app/auth/register/page.tsx`.
+    - `app/nclc-calculator/page.tsx` : `Calculateur Conforme aux Barèmes IRCC (Entrée Express)`.
+    - `app/examens/`, `app/test-gratuit/`, `app/communaute/`, `app/blog/`, `app/dashboard/`, `app/not-found/`.
+  - **Simulateurs & Éditeurs :**
+    - `components/exam/question-panel.tsx` : `Explication Didactique & Justification`.
+    - `components/exam/written-exam-editor.tsx` : `Correction IA conforme FEI en cours...`, suppression de « officiel » sur le décompte de mots et la notification finale.
+    - `components/exam/mock-exam-orchestrator.tsx` : `Examen Blanc Standard N°1`, `Attestation Provisoire de Simulation Délivrée`.
+    - `components/exam/oral-debrief-card.tsx` : `Bilan Didactique de l'Épreuve Orale`, `Archive Audio de la Session`.
+    - Données de test et séries : `lib/exam/series-ce-101.ts`, `lib/exam/series-co-101.ts`, `lib/exam/multi-series-data.ts`, `lib/exam/mock-series.ts` (`Conforme FEI`).
+  - **Interception URL Middleware :**
+    - `middleware.ts` : Redirection automatique des requêtes root (`/`) contenant `code` ou `token_hash` vers `/auth/callback` pour empêcher toute perte de session d'authentification ou redirection vers localhost.
+- **Validation :** `npx tsc --noEmit` validé avec 0 erreur.
+
 ### 0.0j. Résolution Définitive du Conflit d'Unicité E-mail (`syncPrismaUser`, Commit `14d1256`)
 - **Origine de l'Erreur :** Lors des phases de test précédentes en local, des enregistrements `User` avaient été créés dans PostgreSQL avec des UUIDs aléatoires (`crypto.randomUUID()`) au lieu des véritables `userId` Supabase Auth. Lors d'une inscription ou reconnexion sur Supabase, l'appel à `prisma.user.upsert({ where: { id: user.id } })` ne trouvait pas la clé primaire et tentait un `create` avec le même e-mail, déclenchant l'exception `Unique constraint failed on the fields: ('email')`.
 - **Architecture de Réconciliation Atomique (`lib/supabase/sync-user.ts`) :**

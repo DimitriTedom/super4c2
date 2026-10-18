@@ -4,7 +4,7 @@ import { MULTI_SERIES_EE } from "./multi-series-data";
 export const MOCK_WRITTEN_SERIES_101: WrittenExamSeries = {
   id: "demo-101-ee",
   seriesNumber: 101,
-  title: "TCF Canada — Expression Écrite, Sujet 101 (Officiel)",
+  title: "TCF Canada — Expression Écrite, Sujet 101 (Conforme FEI)",
   durationSeconds: 60 * 60, // 60 minutes
   tasks: MULTI_SERIES_EE[0].tasks.map((t) => ({
     taskNumber: t.taskNumber as 1 | 2 | 3,

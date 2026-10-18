@@ -20,21 +20,21 @@ export async function generateMetadata({
     return {
       title: `${series?.title || "Cambridge IELTS 18 General Training"} — Simulateur CBT`,
       description:
-        "Entraînement officiel Cambridge IELTS General Training : 40 questions Reading, 40 questions Listening, Writing Task 1-2 et Speaking. Barème Band 0-9.0 et équivalence CLB Canada.",
+        "Entraînement conforme Cambridge IELTS General Training : 40 questions Reading, 40 questions Listening, Writing Task 1-2 et Speaking. Barème Band 0-9.0 et équivalence CLB Canada.",
       openGraph: {
         title: `${series?.title || "Cambridge IELTS 18 General Training"} | Super4C2`,
         description:
-          "Simulation officielle Cambridge English avec conversion automatique en Band Scores (0-9.0) et CLB Canada.",
+          "Simulation conforme Cambridge English avec conversion automatique en Band Scores (0-9.0) et CLB Canada.",
       },
     };
   }
 
   return {
     title: `Sujet ${series?.seriesNumber || 101} — TCF & TEF Canada CBT`,
-    description: `Simulation officielle du Sujet ${series?.seriesNumber || 101} TCF Canada : Compréhension Écrite, Compréhension Orale, Expression Écrite et Orale. Objectif NCLC 7+ (+50 pts CRS).`,
+    description: `Simulation d'entraînement du Sujet ${series?.seriesNumber || 101} TCF Canada : Compréhension Écrite, Compréhension Orale, Expression Écrite et Orale. Objectif NCLC 7+ (+50 pts CRS).`,
     openGraph: {
       title: `Sujet ${series?.seriesNumber || 101} TCF Canada — Super4C2`,
-      description: `Entraînez-vous sur le Sujet ${series?.seriesNumber || 101} en conditions officielles d'examen CBT.`,
+      description: `Entraînez-vous sur le Sujet ${series?.seriesNumber || 101} en conditions réelles d'examen CBT.`,
     },
   };
 }
@@ -94,8 +94,8 @@ export default async function SeriesDisciplineSelectorPage({
             </h2>
             <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
               {isIelts
-                ? "Enchaînez les 4 compétences officielles (Listening ➔ Reading ➔ Writing ➔ Speaking) avec relevé de notes Band Scores Cambridge et équivalence CLB Express Entry."
-                : "Enchaînez les 4 compétences dans l'ordre officiel (CO ➔ CE ➔ EE ➔ EO) sur 2h47min avec pauses réglementaires et relevé d'attestation FEI officiel (+50 pts CRS)."}
+                ? "Enchaînez les 4 compétences du test (Listening ➔ Reading ➔ Writing ➔ Speaking) avec relevé de notes Band Scores Cambridge et équivalence CLB Express Entry."
+                : "Enchaînez les 4 compétences dans l'ordre de l'examen (CO ➔ CE ➔ EE ➔ EO) sur 2h47min avec pauses réglementaires et bilan de score simulé (+50 pts CRS)."}
             </p>
           </div>
 
@@ -160,8 +160,8 @@ export default async function SeriesDisciplineSelectorPage({
               </h2>
               <p className="mt-1 text-sm text-muted-foreground leading-relaxed">
                 {isIelts
-                  ? "2 tâches officielles Cambridge General : Task 1 Lettre formelle (150 mots) et Task 2 Essai discursif (250 mots). Grille officielle IELTS 4 critères."
-                  : "3 tâches officielles (courriel, récit d'expérience, prise de position) avec hub didactique en 3 paliers, compteur de mots officiel et Magic Rewrite C1/C2."}
+                  ? "2 tâches Cambridge General : Task 1 Lettre formelle (150 mots) et Task 2 Essai discursif (250 mots). Grille IELTS 4 critères."
+                  : "3 tâches rédactionnelles (courriel, récit d'expérience, prise de position) avec hub didactique en 3 paliers, compteur de mots et Magic Rewrite C1/C2."}
               </p>
             </div>
 

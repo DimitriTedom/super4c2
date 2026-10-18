@@ -5,7 +5,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Blog & Guides Stratégiques TCF Canada • NCLC 7 • Entrée Express | Super4C2",
   description:
-    "Découvrez les guides méthodologiques officiels pour réussir le TCF Canada, valider le palier NCLC 7 et débloquer les 50 points de bonus CRS en Entrée Express.",
+    "Découvrez nos guides méthodologiques d'experts pour réussir le TCF Canada, valider le palier NCLC 7 et débloquer les 50 points de bonus CRS en Entrée Express.",
 };
 
 export default async function BlogIndexPage() {

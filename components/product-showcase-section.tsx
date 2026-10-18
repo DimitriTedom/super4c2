@@ -534,7 +534,7 @@ export function ProductShowcaseSection() {
             {/* Navigation 39 questions grid (Real CBT standard) */}
             <div className="pt-2 border-t border-slate-200 dark:border-slate-800 space-y-1.5">
               <div className="flex items-center justify-between text-[11px] text-slate-600 dark:text-slate-400">
-                <span>Grille Officielle des 39 Questions (Cliquer pour naviguer) :</span>
+                <span>Grille des 39 Questions (Cliquer pour naviguer) :</span>
                 <span className="font-mono text-emerald-600 dark:text-emerald-400 font-semibold">1 répondu • 38 en attente</span>
               </div>
               <div className="flex flex-wrap gap-1">
@@ -608,7 +608,7 @@ export function ProductShowcaseSection() {
                   <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2">
                     <span className="font-bold uppercase tracking-wider text-[11px] text-cyan-600 dark:text-cyan-400 flex items-center gap-1.5">
                       <Radio className={`h-3.5 w-3.5 text-cyan-500 ${coPlaying ? "animate-pulse" : ""}`} />
-                      Document Audio Officiel FEI
+                      Document Audio d&apos;Examen
                     </span>
                     <span className="text-[10px] bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded text-slate-600 dark:text-slate-400 font-mono">
                       Annonce en Gare SNCF
@@ -644,7 +644,7 @@ export function ProductShowcaseSection() {
                               : "Cliquer pour écouter l'audio"}
                           </p>
                           <p className="text-[10px] text-slate-500 dark:text-slate-400 font-mono">
-                            Enregistrement studio MP3 officiel FEI
+                            Enregistrement studio MP3 haute fidélité
                           </p>
                         </div>
                       </div>
@@ -789,7 +789,7 @@ export function ProductShowcaseSection() {
             {/* Navigation 39 questions grid */}
             <div className="pt-2 border-t border-slate-200 dark:border-slate-800 space-y-1.5">
               <div className="flex items-center justify-between text-[11px] text-slate-600 dark:text-slate-400">
-                <span>Grille Officielle des 39 Questions Audio (Cliquer pour naviguer) :</span>
+                <span>Grille des 39 Questions Audio (Cliquer pour naviguer) :</span>
                 <span className="font-mono text-cyan-600 dark:text-cyan-400 font-semibold">
                   {selectedCoAnswer !== null ? "1 répondu" : "0 répondu"} • 38 en attente
                 </span>
@@ -930,7 +930,7 @@ export function ProductShowcaseSection() {
               <div className="md:col-span-6 relative aspect-video rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 bg-slate-900 shadow-md">
                 <Image
                   src="/brand/examiner-laurent.jpg"
-                  alt="M. Laurent - Examinateur Officiel Super4C2"
+                  alt="M. Laurent - Examinateur IA Super4C2"
                   fill
                   className="object-cover object-top"
                   sizes="(max-width: 768px) 100vw, 500px"
@@ -960,7 +960,7 @@ export function ProductShowcaseSection() {
               <div className="md:col-span-6 space-y-3">
                 <div className="p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-1.5 shadow-xs">
                   <span className="text-[10px] font-bold uppercase tracking-wider text-primary">
-                    Consigne Officielle Tâche 2 (Jeu de rôle • 5 min)
+                    Consigne Tâche 2 (Jeu de rôle • 5 min)
                   </span>
                   <p className="text-xs text-slate-600 dark:text-slate-300">
                     Vous souhaitez inscrire votre enfant à une école de hockey sur glace à Montréal. Vous interrogez le directeur (M. Laurent) pour obtenir des précisions sur les horaires, les tarifs et l&apos;équipement.
@@ -1036,7 +1036,7 @@ export function ProductShowcaseSection() {
         <div className="bg-slate-900 border-t border-slate-800 p-3 sm:p-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
           <div className="flex items-center gap-2 text-slate-300">
             <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
-            <span>Plus de 1 200 questions officielles FEI disponibles en continu avec correction instantanée.</span>
+            <span>Plus de 1 200 questions d&apos;entraînement conformes FEI disponibles en continu avec correction instantanée.</span>
           </div>
 
           <Button

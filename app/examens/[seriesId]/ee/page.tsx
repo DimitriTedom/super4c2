@@ -3,7 +3,7 @@ import { WrittenExamEditor } from "@/components/exam/written-exam-editor";
 import { getWrittenSeries } from "@/lib/exam/written-service";
 
 export const metadata = {
-  title: "Expression Écrite — Simulateur CBT Officiel",
+  title: "Expression Écrite — Simulateur CBT TCF Canada",
 };
 
 export default async function WrittenExamPage({

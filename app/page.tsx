@@ -24,7 +24,7 @@ import { prisma } from "@/lib/prisma";
 export const metadata = {
   title: "Super4C2 — Réussir le TCF Canada & Décrocher NCLC 7+ (+50 pts CRS)",
   description:
-    "La première plateforme d'entraînement au TCF Canada avec simulateur officiel CBT, correcteur IA instantané FEI et examinateur vocal interactif en jeu de rôle.",
+    "La première plateforme d'entraînement au TCF Canada avec simulateur CBT conforme, correcteur IA instantané FEI et examinateur vocal interactif en jeu de rôle.",
 };
 
 export default async function HomePage() {
@@ -156,7 +156,7 @@ export default async function HomePage() {
                 <span className="text-xs font-bold text-cyan-600 dark:text-cyan-400 uppercase tracking-wider block">03 • Chrono &amp; Entraînement</span>
                 <p className="text-xs text-foreground font-semibold">Tâche par tâche ou 60 min</p>
                 <p className="text-[11px] text-muted-foreground leading-relaxed">
-                  Barre de temps officielle et clavier d&apos;accents FEI pour maîtriser votre vitesse de frappe.
+                  Barre de temps conforme et clavier d&apos;accents pour maîtriser votre vitesse de frappe.
                 </p>
               </div>
             </div>
@@ -249,7 +249,7 @@ export default async function HomePage() {
                   <span>Super4C2 • Plateforme CBT &amp; IA</span>
                 </div>
                 <span className="text-[11px] font-bold text-brand-crimson bg-primary/10 border border-primary/20 px-2 py-0.5 rounded-md">
-                  Standard Officiel
+                  Format Réel CBT
                 </span>
               </div>
 
@@ -257,7 +257,7 @@ export default async function HomePage() {
                 <li className="flex items-start gap-3">
                   <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0 mt-0.5" />
                   <span>
-                    <strong className="text-foreground">Vrai Double Écran Scindé CBT :</strong> Document source à gauche, question ciblée à droite, grille de 39 pastilles interactives et compte à rebours officiel strict.
+                    <strong className="text-foreground">Vrai Double Écran Scindé CBT :</strong> Document source à gauche, question ciblée à droite, grille de 39 pastilles interactives et compte à rebours chronométré strict.
                   </span>
                 </li>
                 <li className="flex items-start gap-3">
@@ -284,7 +284,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* 🧩 LES 4 ÉPREUVES OFFICIELLES TCF CANADA MAÎTRISÉES */}
+      {/* 🧩 LES 4 ÉPREUVES TCF CANADA MAÎTRISÉES */}
       <section className="space-y-10 max-w-6xl mx-auto">
         <div className="text-center space-y-3">
           <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3.5 py-1 text-xs font-semibold text-primary">
@@ -292,13 +292,13 @@ export default async function HomePage() {
             <span>Format Conforme FEI • TCF & TEF Canada</span>
           </div>
           <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-foreground">
-            Les 4 Épreuves Officielles{" "}
+            Les 4 Épreuves du Test{" "}
             <span className="bg-gradient-to-r from-brand-crimson to-rose-600 bg-clip-text text-transparent">
               Maîtrisées
             </span>
           </h2>
           <p className="text-sm sm:text-base text-muted-foreground max-w-2xl mx-auto">
-            Chaque module est une réplique exacte des contraintes de l&apos;examen officiel, optimisée pour débloquer le niveau C1/C2 (NCLC 7+).
+            Chaque module est une réplique exacte des contraintes de l&apos;examen, optimisée pour débloquer le niveau C1/C2 (NCLC 7+).
           </p>
         </div>
 
@@ -339,7 +339,7 @@ export default async function HomePage() {
                   Compréhension Écrite
                 </h3>
                 <p className="text-xs text-muted-foreground leading-relaxed">
-                  Double écran scindé officiel FEI, zoom typographique, touches rapides A-D et drapeaux de révision.
+                  Double écran scindé conforme FEI, zoom typographique, touches rapides A-D et drapeaux de révision.
                 </p>
               </div>
 
@@ -399,7 +399,7 @@ export default async function HomePage() {
                   Compréhension Orale
                 </h3>
                 <p className="text-xs text-muted-foreground leading-relaxed">
-                  Lecteur officiel FEI à écoute unique stricte, accents canadiens authentiques et timer verrouillé.
+                  Lecteur CBT à écoute unique stricte, accents canadiens réalistes et timer verrouillé.
                 </p>
               </div>
 
@@ -570,7 +570,7 @@ export default async function HomePage() {
           </h2>
 
           <p className="text-slate-600 dark:text-slate-300 text-xs sm:text-sm max-w-lg mx-auto">
-            Simulateur officiel CBT et correction IA instantanée pour réussir dès votre premier essai.
+            Simulateur CBT conforme et correction IA instantanée pour réussir dès votre premier essai.
           </p>
         </div>
 

@@ -278,7 +278,7 @@ export default async function BlogPostPage({
           Prêt à Valider votre Palier NCLC 7 et Gagner vos 50 Points CRS ?
         </h3>
         <p className="text-sm text-muted-foreground leading-relaxed max-w-xl">
-          Entraînez-vous dans le simulateur officiel CBT de Super4C2 avec le chronomètre officiel de 60 minutes et le décodage des pièges de France Éducation International.
+          Entraînez-vous dans le simulateur CBT de Super4C2 avec le chronomètre conforme de 60 minutes et le décodage des pièges de France Éducation International.
         </p>
         <div className="pt-2">
           <ShimmerButton

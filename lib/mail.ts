@@ -104,7 +104,7 @@ function generateBrandedEmailHtml(params: {
   <div class="container">
     <div class="header">
       <div class="logo">SUPER<span>4C2</span> 🇨🇦</div>
-      <div style="color: #94a3b8; font-size: 11px; margin-top: 4px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">Préparation Officielle TCF & TEF Canada</div>
+      <div style="color: #94a3b8; font-size: 11px; margin-top: 4px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">Préparation TCF & TEF Canada</div>
     </div>
     <div class="content">
       <h1 class="headline">${params.headline}</h1>

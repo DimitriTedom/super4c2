@@ -15,10 +15,10 @@ export function DisciplineComingSoon({ discipline, seriesId }: DisciplineComingS
   const icon3d = isCe
     ? "/brand/icons-3d/comprehension-ecrite-book.png"
     : "/brand/icons-3d/comprehension-orale-headphones.png";
-  const questionsCount = "39 questions officielles";
+  const questionsCount = "39 questions conformes";
   const explanation = isCe
     ? "Pour vous assurer une préparation rigoureusement conforme aux critères de France Éducation International, l'épreuve de Compréhension Écrite (39 questions, double écran CBT) est actuellement en cours de calibrage final par nos concepteurs pédagogiques."
-    : "Les enregistrements sonores haute fidélité et le lecteur officiel à mono-écoute sans retour arrière font l'objet d'un calibrage approfondi afin de reproduire exactement les conditions d'un centre agréé TCF Canada.";
+    : "Les enregistrements sonores haute fidélité et le lecteur CBT à mono-écoute sans retour arrière font l'objet d'un calibrage approfondi afin de reproduire exactement les conditions d'un centre agréé TCF Canada.";
 
   const normalizedSeriesId = seriesId.replace(/-(ce|co|ee|eo)$/, "");
 
@@ -52,7 +52,7 @@ export function DisciplineComingSoon({ discipline, seriesId }: DisciplineComingS
           {title} ({code})
         </h1>
         <p className="mt-1 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-          {questionsCount} · Format Officiel FEI
+          {questionsCount} · Standard FEI
         </p>
 
         <p className="mt-4 text-sm text-muted-foreground leading-relaxed">

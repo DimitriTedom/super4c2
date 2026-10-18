@@ -23,16 +23,16 @@ export const translations = {
     nav_trial: "Essai",
 
     // Header Mega-Menu
-    menu_cbtExams: "Épreuves Officielles CBT",
+    menu_cbtExams: "Épreuves CBT Conformes",
     menu_feiStandard: "FEI Standard",
     menu_ceTitle: "Compréhension Écrite (CE)",
-    menu_ceDesc: "Écran scindé officiel FEI, zoom de police & pièges décodés",
+    menu_ceDesc: "Écran scindé conforme FEI, zoom de police & pièges décodés",
     menu_coTitle: "Compréhension Orale (CO)",
     menu_coDesc: "Lecteur CBT sans retour arrière & audio studio HD",
     menu_eoTitle: "Expression Orale IA",
-    menu_eoDesc: "Examinateur IA M. Laurent & studio visio officiel",
+    menu_eoDesc: "Examinateur IA M. Laurent & studio visio interactif",
     menu_eeTitle: "Expression Écrite FEI",
-    menu_eeDesc: "3 tâches, notation officielle & Magic Rewrite C1/C2",
+    menu_eeDesc: "3 tâches, barème conforme FEI & Magic Rewrite C1/C2",
     menu_accelerators: "Accélérateurs & Outils",
     menu_crsTitle: "Calculateur NCLC & CRS",
     menu_crsDesc: "Simulez vos points bonus Entrée Express Canada",
@@ -43,7 +43,7 @@ export const translations = {
     menu_fullSimulator: "Simulateur Complet Multidiscipline",
 
     // Hero Section
-    hero_badge: "Préparation Officielle Canada : TCF • TEF • IELTS",
+    hero_badge: "Préparation Complète Canada : TCF • TEF • IELTS",
     hero_h1_part1: "Décrochez vos",
     hero_h1_4c2: "4 C2",
     hero_h1_part2: "et Débloquez les",
@@ -60,7 +60,7 @@ export const translations = {
 
     // Language switcher
     lang_activeToast: "Langue active :",
-    lang_subFr: "Langue officielle TCF & TEF Canada",
+    lang_subFr: "Épreuves TCF & TEF Canada",
     lang_subEn: "IRCC Express Entry / CLB Standards",
   },
   en: {
@@ -85,16 +85,16 @@ export const translations = {
     nav_trial: "Trial",
 
     // Header Mega-Menu
-    menu_cbtExams: "Official CBT Tests",
+    menu_cbtExams: "CBT Compliant Tests",
     menu_feiStandard: "FEI Standard",
     menu_ceTitle: "Reading Comprehension (CE)",
-    menu_ceDesc: "Official FEI split-screen, text zoom & traps decoded",
+    menu_ceDesc: "FEI-compliant split-screen, text zoom & traps decoded",
     menu_coTitle: "Listening Comprehension (CO)",
-    menu_coDesc: "Official CBT player without rewind & studio HD audio",
+    menu_coDesc: "Realistic CBT player without rewind & studio HD audio",
     menu_eoTitle: "Speaking Test (EO) AI",
-    menu_eoDesc: "AI Examiner Mr. Laurent & official video studio",
+    menu_eoDesc: "AI Examiner Mr. Laurent & interactive video studio",
     menu_eeTitle: "Writing Test (EE) FEI",
-    menu_eeDesc: "3 tasks, official FEI rubric & Magic Rewrite C1/C2",
+    menu_eeDesc: "3 tasks, FEI-aligned rubric & Magic Rewrite C1/C2",
     menu_accelerators: "Accelerators & Tools",
     menu_crsTitle: "NCLC & CRS Calculator",
     menu_crsDesc: "Simulate your +50 Express Entry bonus points",
@@ -105,7 +105,7 @@ export const translations = {
     menu_fullSimulator: "Full Multidisciplinary Simulator",
 
     // Hero Section
-    hero_badge: "Official Canada Test Prep: TCF • TEF • IELTS",
+    hero_badge: "Complete Canada Test Prep: TCF • TEF • IELTS",
     hero_h1_part1: "Score Your",
     hero_h1_4c2: "4 C2s",
     hero_h1_part2: "and Unlock the",
@@ -122,7 +122,7 @@ export const translations = {
 
     // Language switcher
     lang_activeToast: "Active language:",
-    lang_subFr: "Official TCF & TEF Canada language",
+    lang_subFr: "TCF & TEF Canada tests",
     lang_subEn: "IRCC Express Entry / CLB Standards",
   },
 } as const;

@@ -13,7 +13,7 @@ export default function NclcCalculatorPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 border-b pb-6">
         <div className="max-w-3xl space-y-3">
           <span className="text-xs font-bold uppercase tracking-wider text-primary">
-            Simulateur Officiel Entrée Express Canada (IRCC)
+            Calculateur Conforme aux Barèmes IRCC (Entrée Express)
           </span>
           <h1 className="font-display text-3xl sm:text-4xl font-extrabold tracking-tight">
             Simulateur de Points CRS & Niveaux NCLC

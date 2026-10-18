@@ -42,7 +42,7 @@ export interface StaticOralSeries {
 export const MULTI_SERIES_EE: StaticWrittenSeries[] = [
   {
     seriesNumber: 101,
-    title: "TCF Canada — Expression Écrite, Série 101 (Officiel)",
+    title: "TCF Canada — Expression Écrite, Série 101 (Conforme FEI)",
     durationSeconds: 3600,
     tasks: [
       {
@@ -88,7 +88,7 @@ export const MULTI_SERIES_EE: StaticWrittenSeries[] = [
   },
   {
     seriesNumber: 102,
-    title: "TCF Canada — Expression Écrite, Série 102 (Officielle)",
+    title: "TCF Canada — Expression Écrite, Série 102 (Conforme FEI)",
     durationSeconds: 3600,
     tasks: [
       {
@@ -134,7 +134,7 @@ export const MULTI_SERIES_EE: StaticWrittenSeries[] = [
   },
   {
     seriesNumber: 103,
-    title: "TCF Canada — Expression Écrite, Série 103 (Officielle)",
+    title: "TCF Canada — Expression Écrite, Série 103 (Conforme FEI)",
     durationSeconds: 3600,
     tasks: [
       {
@@ -180,7 +180,7 @@ export const MULTI_SERIES_EE: StaticWrittenSeries[] = [
   },
   {
     seriesNumber: 104,
-    title: "TCF Canada — Expression Écrite, Série 104 (Officielle)",
+    title: "TCF Canada — Expression Écrite, Série 104 (Conforme FEI)",
     durationSeconds: 3600,
     tasks: [
       {
@@ -226,7 +226,7 @@ export const MULTI_SERIES_EE: StaticWrittenSeries[] = [
   },
   {
     seriesNumber: 105,
-    title: "TCF Canada — Expression Écrite, Série 105 (Officielle)",
+    title: "TCF Canada — Expression Écrite, Série 105 (Conforme FEI)",
     durationSeconds: 3600,
     tasks: [
       {
@@ -275,7 +275,7 @@ export const MULTI_SERIES_EE: StaticWrittenSeries[] = [
 export const MULTI_SERIES_EO: StaticOralSeries[] = [
   {
     seriesNumber: 101,
-    title: "TCF Canada — Expression Orale, Série 101 (Officiel)",
+    title: "TCF Canada — Expression Orale, Série 101 (Conforme FEI)",
     durationSeconds: 720,
     tasks: [
       {
@@ -317,7 +317,7 @@ export const MULTI_SERIES_EO: StaticOralSeries[] = [
   },
   {
     seriesNumber: 102,
-    title: "TCF Canada — Expression Orale, Série 102 (Officielle)",
+    title: "TCF Canada — Expression Orale, Série 102 (Conforme FEI)",
     durationSeconds: 720,
     tasks: [
       {
@@ -359,7 +359,7 @@ export const MULTI_SERIES_EO: StaticOralSeries[] = [
   },
   {
     seriesNumber: 103,
-    title: "TCF Canada — Expression Orale, Série 103 (Officielle)",
+    title: "TCF Canada — Expression Orale, Série 103 (Conforme FEI)",
     durationSeconds: 720,
     tasks: [
       {
@@ -401,7 +401,7 @@ export const MULTI_SERIES_EO: StaticOralSeries[] = [
   },
   {
     seriesNumber: 104,
-    title: "TCF Canada — Expression Orale, Série 104 (Officielle)",
+    title: "TCF Canada — Expression Orale, Série 104 (Conforme FEI)",
     durationSeconds: 720,
     tasks: [
       {
@@ -443,7 +443,7 @@ export const MULTI_SERIES_EO: StaticOralSeries[] = [
   },
   {
     seriesNumber: 105,
-    title: "TCF Canada — Expression Orale, Série 105 (Officielle)",
+    title: "TCF Canada — Expression Orale, Série 105 (Conforme FEI)",
     durationSeconds: 720,
     tasks: [
       {
