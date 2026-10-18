@@ -2,6 +2,24 @@
 
 ## 0. Déploiement Production Vercel & Moteur de Conversion
 
+### 0.0i. Sécurisation & Nettoyage Intégral de l'Authentification Production (Commit `581a96e`)
+- **Éradication Totale du Mock Démo & Hijacking de Cookie (`lib/supabase/server.ts`, `app/auth/actions.ts`) :**
+  - Suppression définitive du mock local qui lisait le cookie `sb-super4c2-demo-candidate` et forçait l'identité de n'importe quel visiteur vers `candidat.demo@super4c2.com`.
+  - Nettoyage préventif et défensif automatique de l'ancien cookie démo sur chaque appel serveur (`createSupabaseServerClient`, `signInAction`, `signUpAction`, `/logout`).
+- **Suppression du Bouton Démo & Boutons Flottants :**
+  - Retrait du bouton en pointillés `⚡ Connexion Démo Immédiate (Candidat Test NCLC 7)` et du séparateur "ou" dans `components/auth/login-form.tsx`.
+  - Retrait des boutons flottants (`Guide Plateforme` et `Espace Entraide | Communauté VIP`) dans `components/app-shell.tsx` et `components/community/floating-community-button.tsx`.
+- **Flux d'Inscription Réel avec Confirmation par E-mail :**
+  - Supabase `signUpAction` appelle l'API native `supabase.auth.signUp` avec `emailRedirectTo`.
+  - Quand la confirmation par e-mail est requise (`!data.session`), redirection propre vers `/auth/login?registered=pending_confirmation` avec affichage d'un bandeau ambré guidant le candidat à vérifier sa boîte de réception avant de se connecter.
+- **Réinitialisation & Modification de Mot de Passe 100% Fonctionnelles :**
+  - **Mot de passe oublié (`components/auth/login-form.tsx`) :** Modal Dialog interactif demandant l'email et déclenchant `resetPasswordForEmailAction(email)` avec lien sécurisé Supabase.
+  - **Modification de mot de passe (`components/account/security-password-form.tsx`, `app/account/page.tsx`) :** Formulaire dédié avec contrôles d'affichage, validation de conformité (8 car. min, confirmation identique) et exécution de `updatePasswordAction(newPassword)`.
+- **Validation Robuste Callback Supabase (`app/auth/callback/route.ts`) :**
+  - Prise en charge conjointe du flux PKCE (`code`) et du flux OTP / Magic Link (`token_hash` & `type`).
+  - Résolution d'origine absolue sécurisée garantissant la redirection vers `https://super4c2.vercel.app` en production.
+- **Déploiement Vercel :** Code pushé sur `origin/main` (commit `581a96e`), 0 erreur TypeScript (`tsc --noEmit`).
+
 ### 0.0h. Déploiement Production Vercel Réussi (Commit `f87e0fe`)
 - **Validation Build Next.js 15 en Local :** `npm run build` exécuté avec succès (code de retour 0, 39 routes statiques/dynamiques générées sans aucune erreur TypeScript ou de compilation).
 - **Synchronisation Git & Déclenchement Automatique Vercel :**

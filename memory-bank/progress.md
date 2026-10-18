@@ -1,3 +1,13 @@
+- [x] **Sécurisation & Nettoyage Intégral de l'Authentification Production (Commit `581a96e`) :**
+  - **Éradication du Mock Démo & Hijacking :** Suppression intégrale dans [lib/supabase/server.ts](file:///d:/SnowDev/Documents/super4c2/lib/supabase/server.ts) et [app/auth/actions.ts](file:///d:/SnowDev/Documents/super4c2/app/auth/actions.ts) du mock local et purge automatique du cookie résiduel `sb-super4c2-demo-candidate`.
+  - **Suppression du Bouton Démo :** Retrait du bouton en pointillés `⚡ Connexion Démo Immédiate (Candidat Test NCLC 7)` dans [components/auth/login-form.tsx](file:///d:/SnowDev/Documents/super4c2/components/auth/login-form.tsx).
+  - **Suppression des Boutons Flottants :** Élimination définitive des boutons `Guide Plateforme` et `Espace Entraide | Communauté VIP` dans [components/app-shell.tsx](file:///d:/SnowDev/Documents/super4c2/components/app-shell.tsx).
+  - **Confirmation d'E-mail Requise :** Lors de l'inscription (`signUpAction`), si Supabase exige la validation d'adresse (`!data.session`), redirection propre vers `/auth/login?registered=pending_confirmation` avec affichage d'un bandeau explicite invitant le candidat à cliquer sur le lien reçu.
+  - **Réinitialisation & Modification de Mot de Passe Complètes :**
+    - Modal interactif « Mot de passe oublié ? » avec envoi du lien de réinitialisation sécurisé via `resetPasswordForEmailAction(email)`.
+    - Formulaire de modification de mot de passe (`SecurityPasswordForm`) intégré dans la page [app/account/page.tsx](file:///d:/SnowDev/Documents/super4c2/app/account/page.tsx) avec validation de conformité (8 car. min, vérification de correspondance) et appel à `updatePasswordAction(newPassword)`.
+  - **Callback Supabase Bi-Mode (PKCE + OTP) :** Route [app/auth/callback/route.ts](file:///d:/SnowDev/Documents/super4c2/app/auth/callback/route.ts) gérant à la fois les codes PKCE et les tokens Magic Link/OTP, avec résolution automatique de l'origine de production.
+  - **Validation TypeScript & Déploiement Git :** `npx tsc --noEmit` avec 0 erreur. Pushé sur `origin/main` pour déploiement automatique sur Vercel.
 - [x] **Déploiement Production Vercel Réussi (Commit `f87e0fe`) :**
   - Validation préalable en local de `npm run build` : succès total (code 0, 39 routes générées, 0 erreur de typage ou de bundle).
   - Push sur la branche principale GitHub `origin/main` (`b5d5176..f87e0fe`).
