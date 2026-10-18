@@ -2,6 +2,15 @@
 
 ## 0. Déploiement Production Vercel & Moteur de Conversion
 
+### 0.0j. Résolution Définitive du Conflit d'Unicité E-mail (`syncPrismaUser`, Commit `14d1256`)
+- **Origine de l'Erreur :** Lors des phases de test précédentes en local, des enregistrements `User` avaient été créés dans PostgreSQL avec des UUIDs aléatoires (`crypto.randomUUID()`) au lieu des véritables `userId` Supabase Auth. Lors d'une inscription ou reconnexion sur Supabase, l'appel à `prisma.user.upsert({ where: { id: user.id } })` ne trouvait pas la clé primaire et tentait un `create` avec le même e-mail, déclenchant l'exception `Unique constraint failed on the fields: ('email')`.
+- **Architecture de Réconciliation Atomique (`lib/supabase/sync-user.ts`) :**
+  - Implémentation de `syncPrismaUser(userId, email, displayName)`.
+  - Si l'utilisateur existe déjà par son e-mail avec un ancien UUID hérité, une transaction atomique migre les tentatives (`userAttempt`), purge l'ancien profil orphelin et recrée proprement l'utilisateur avec son identifiant Supabase canonique.
+  - Déploiement transversal dans [app/auth/actions.ts](file:///d:/SnowDev/Documents/super4c2/app/auth/actions.ts) (`signUpAction`, `signInAction`), [app/auth/callback/route.ts](file:///d:/SnowDev/Documents/super4c2/app/auth/callback/route.ts) et [app/api/account/profile/route.ts](file:///d:/SnowDev/Documents/super4c2/app/api/account/profile/route.ts).
+  - Gestion gracieuse des comptes déjà existants (détection `identities.length === 0` Supabase) avec message d'orientation explicite vers la connexion ou la réinitialisation de mot de passe.
+- **Validation :** TypeScript validé avec 0 erreur (`tsc --noEmit`), commit `14d1256` poussé sur `origin/main`.
+
 ### 0.0i. Sécurisation & Nettoyage Intégral de l'Authentification Production (Commit `581a96e`)
 - **Éradication Totale du Mock Démo & Hijacking de Cookie (`lib/supabase/server.ts`, `app/auth/actions.ts`) :**
   - Suppression définitive du mock local qui lisait le cookie `sb-super4c2-demo-candidate` et forçait l'identité de n'importe quel visiteur vers `candidat.demo@super4c2.com`.

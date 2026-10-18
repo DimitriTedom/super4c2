@@ -1,3 +1,9 @@
+- [x] **Résolution du Conflit d'Unicité E-mail & Réconciliation Atomique des Utilisateurs (Commit `14d1256`) :**
+  - **Diagnostic :** Des comptes créés lors de tests préalables possédaient un UUID local orphelin dans `users`, entrant en collision d'unicité sur le champ `email` lors de l'upsert par ID officiel Supabase.
+  - **Moteur de Synchronisation Dédié ([lib/supabase/sync-user.ts](file:///d:/SnowDev/Documents/super4c2/lib/supabase/sync-user.ts)) :** Détection automatique des collisions d'e-mail avec migration transactionnelle des tentatives et profils vers le nouvel ID Supabase canonique.
+  - **Raccordement Global :** Utilisé dans [app/auth/actions.ts](file:///d:/SnowDev/Documents/super4c2/app/auth/actions.ts), [app/auth/callback/route.ts](file:///d:/SnowDev/Documents/super4c2/app/auth/callback/route.ts) et [app/api/account/profile/route.ts](file:///d:/SnowDev/Documents/super4c2/app/api/account/profile/route.ts).
+  - **Gestion Supabase Duplicate :** Détection du statut `identities.length === 0` avec message clair orientant vers la connexion.
+  - **Déploiement :** 0 erreur TypeScript, commit `14d1256` déployé en production.
 - [x] **Sécurisation & Nettoyage Intégral de l'Authentification Production (Commit `581a96e`) :**
   - **Éradication du Mock Démo & Hijacking :** Suppression intégrale dans [lib/supabase/server.ts](file:///d:/SnowDev/Documents/super4c2/lib/supabase/server.ts) et [app/auth/actions.ts](file:///d:/SnowDev/Documents/super4c2/app/auth/actions.ts) du mock local et purge automatique du cookie résiduel `sb-super4c2-demo-candidate`.
   - **Suppression du Bouton Démo :** Retrait du bouton en pointillés `⚡ Connexion Démo Immédiate (Candidat Test NCLC 7)` dans [components/auth/login-form.tsx](file:///d:/SnowDev/Documents/super4c2/components/auth/login-form.tsx).
