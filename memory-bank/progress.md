@@ -1,3 +1,8 @@
+- [x] **Déploiement Production Vercel Réussi (Commit `f87e0fe`) :**
+  - Validation préalable en local de `npm run build` : succès total (code 0, 39 routes générées, 0 erreur de typage ou de bundle).
+  - Push sur la branche principale GitHub `origin/main` (`b5d5176..f87e0fe`).
+  - Déclenchement automatique de la compilation et du déploiement de production sur Vercel (`super4c2`).
+  - Intégration de `"vercel-build": "prisma generate && next build"` et `"postinstall": "prisma generate"` assurant la génération du client Prisma dans le container Vercel.
 - [x] **Épuration Dashboard Candidat — Retrait du Cockpit Analytique FEI & Trajectoire C2 :**
   - Suppression de l'onglet « Analytique FEI » et du composant lourd `AnalyticsBreakdown` dans [components/dashboard/dashboard-pro-view.tsx](file:///d:/SnowDev/Documents/super4c2/components/dashboard/dashboard-pro-view.tsx).
   - Élimination de la surcharge cognitive pour les candidats en phase d'apprentissage.

@@ -1,6 +1,14 @@
 # Active Context: Super4C2
 
-## 0. Conversion Visiteurs (WhatsApp-First), Connectivité Ressources Admin-Candidats & Épuration Dashboard
+## 0. Déploiement Production Vercel & Moteur de Conversion
+
+### 0.0h. Déploiement Production Vercel Réussi (Commit `f87e0fe`)
+- **Validation Build Next.js 15 en Local :** `npm run build` exécuté avec succès (code de retour 0, 39 routes statiques/dynamiques générées sans aucune erreur TypeScript ou de compilation).
+- **Synchronisation Git & Déclenchement Automatique Vercel :**
+  - Commit : `f87e0fe` (*feat: whatsapp lead capture, multi-series ee/eo catalog, attempt history studio & dashboard cleanup*).
+  - Push : Déployé sur la branche `origin/main` du dépôt GitHub `DimitriTedom/super4c2`.
+  - Intégration Vercel : La pipeline Vercel est connectée à `main` du projet `super4c2` (`prj_pkvMOSv4rwBg6JgmQtkGX8P1vq29`), déclenchant immédiatement la compilation et le déploiement en production.
+  - Scripts Vercel : Configuration avec `"postinstall": "prisma generate"` et `"vercel-build": "prisma generate && next build"` assurant la génération du client Prisma sur l'environnement cloud Vercel.
 
 ### 0.0g. Épuration du Dashboard Candidat : Retrait du Menu « Cockpit Analytique FEI & Trajectoire C2 » (`components/dashboard/dashboard-pro-view.tsx`)
 - **Simplification Radicale Demandée par l'Utilisateur :**
