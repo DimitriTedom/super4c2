@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { SrsCarnet } from "@/components/dashboard/srs-carnet";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export const metadata = {
   title: "Carnet d'Erreurs Intelligent — Répétition Espacée SRS",
@@ -7,7 +8,10 @@ export const metadata = {
     "Révisez vos erreurs et pièges ratés lors de vos entraînements TCF Canada selon l'algorithme de répétition espacée (J+1, J+3, J+7) pour garantir le seuil NCLC 7.",
 };
 
-export default function CarnetErreursPage() {
+export default async function CarnetErreursPage() {
+  const supabase = await createSupabaseServerClient();
+  const user = supabase ? (await supabase.auth.getUser()).data.user : null;
+
   return (
     <div className="space-y-8 py-4">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 border-b pb-6">
@@ -34,7 +38,7 @@ export default function CarnetErreursPage() {
         </div>
       </div>
 
-      <SrsCarnet />
+      <SrsCarnet userId={user?.id} />
     </div>
   );
 }

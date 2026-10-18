@@ -22,12 +22,6 @@ export async function getNotificationsAction(options?: {
   const recipient = options?.recipient || "CANDIDATE";
 
   try {
-    // Check if we need to seed initial notifications for demo
-    const count = await prisma.notification.count({ where: { recipient } });
-    if (count === 0) {
-      await seedDemoNotifications(recipient);
-    }
-
     const whereClause: {
       recipient: string;
       isRead?: boolean;
@@ -62,21 +56,9 @@ export async function getNotificationsAction(options?: {
     };
   } catch (error) {
     console.warn("[Notifications] Repli hors-ligne / réinitialisation pooler SQL:", error);
-    // Fournir des notifications de démonstration par défaut pour une expérience utilisateur irréprochable
     return {
-      notifications: [
-        {
-          id: "demo-welcome",
-          recipient,
-          title: "🎯 Simulateur TCF Canada Prêt",
-          message: "Toutes les épreuves avec minuterie conforme et correction détaillée.",
-          type: "SYSTEM",
-          link: "/examens",
-          isRead: false,
-          createdAt: new Date(),
-        },
-      ],
-      unreadCount: 1,
+      notifications: [],
+      unreadCount: 0,
     };
   }
 }

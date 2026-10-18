@@ -1,3 +1,9 @@
+- [x] **Synchronisation Auth Multi-Onglets, Bouton Retour Profil & Carnet SRS Vierge Multi-Tenant :**
+  - **Gestion de Session & Redirection Auth :** `LoginPage` et `RegisterPage` redirigent directement les utilisateurs connectés vers `/dashboard` (ou `next`). Le `middleware.ts` bloque l'accès aux formulaires si une session active existe.
+  - **Écoute Temps Réel Inter-Onglets :** `LoginForm` et `RegisterForm` écoutent `supabase.auth.onAuthStateChange`, permettant à l'onglet initial d'être automatiquement redirigé dès qu'un Magic Link est validé dans un autre onglet.
+  - **Bouton Retour Profil (`/account`) :** Ajout de la flèche de retour en arrière « Retour au Tableau de bord » en tête de page profil.
+  - **Éradication Totale des Mocks & Cloisonnement Multi-Tenant SRS :** `INITIAL_SRS_CARDS` vidé (`[]`), stockage local cloisonné par `userId` (`super4c2:srs_cards:${userId}`), état vierge d'onboarding engageant, et suppression de tout seed démo factice dans les notifications.
+  - **Validation :** 0 erreur TypeScript (`npx tsc --noEmit`).
 - [x] **Assainissement Global de Marque & Élimination des Allégations "Plateforme Officielle" :**
   - **Objectif :** Supprimer rigoureusement toute mention qualifiant Super4C2 de « Plateforme Officielle », « Préparation Officielle », « Simulateur Officiel » ou « Épreuves Officielles », en clarifiant la nature indépendante et conforme du produit.
   - **Composants & Layouts :** Nettoyage dans `components/app-shell.tsx`, `components/site-footer.tsx`, `components/site-nav.tsx`, `lib/i18n/translations.ts`, `app/layout.tsx`.

@@ -18,6 +18,24 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(callbackUrl);
   }
 
+  // 0b. Si l'utilisateur possède déjà une session active et visite les pages d'authentification
+  if (pathname === "/auth/login" || pathname === "/auth/register") {
+    const hasSbCookie = request.cookies.getAll().some(
+      (c) => c.name.startsWith("sb-") && c.name.endsWith("-auth-token")
+    );
+    if (hasSbCookie) {
+      const nextParam = request.nextUrl.searchParams.get("next");
+      const target =
+        nextParam && nextParam.startsWith("/") && !nextParam.startsWith("/auth")
+          ? nextParam
+          : "/dashboard";
+      const redirectUrl = request.nextUrl.clone();
+      redirectUrl.pathname = target;
+      redirectUrl.search = "";
+      return NextResponse.redirect(redirectUrl);
+    }
+  }
+
   // 1. Back-Office & Super Admin Gate
   if (pathname.startsWith("/admin") && pathname !== "/admin/login") {
     const adminToken = request.cookies.get("super4c2_admin_token")?.value;

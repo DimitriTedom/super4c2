@@ -2,6 +2,25 @@
 
 ## 0. Déploiement Production Vercel & Moteur de Conversion
 
+### 0.0l. Synchronisation Auth Multi-Onglets, Bouton Retour Profil & Carnet SRS Vierge Multi-Tenant
+- **Demande Utilisateur :**
+  1. Lors de la validation d'un compte par Magic Link dans un nouvel onglet, l'ancien onglet restait figé sur le formulaire d'authentification et ne redirigeait pas vers le dashboard lors d'un rechargement.
+  2. Sur la page de profil (`/account`), ajouter une flèche de retour en arrière vers le tableau de bord.
+  3. Supprimer les données factices / mock data du Carnet d'Erreurs (SRS) : un nouvel utilisateur doit commencer de zéro avec un deck vierge, avec gestion stricte multi-tenant.
+- **Résolution & Améliorations Apportées :**
+  - **Gestion de Session & Synchronisation Multi-Onglets (`app/auth/login/page.tsx`, `app/auth/register/page.tsx`, `middleware.ts`, `components/auth/`) :**
+    - `LoginPage` & `RegisterPage` vérifient désormais la session active côté serveur (`supabase.auth.getUser()`) et redirigent immédiatement l'utilisateur connecté vers `/dashboard` (ou l'URL `next`).
+    - `middleware.ts` intercepte les accès aux routes `/auth/login` et `/auth/register` lorsque des cookies de session Supabase existent, renvoyant directement vers le dashboard.
+    - `LoginForm` et `RegisterForm` écoutent `supabase.auth.onAuthStateChange` pour réagir instantanément aux événements inter-onglets (`SIGNED_IN`, `TOKEN_REFRESHED`) et rediriger automatiquement l'ancien onglet sans nécessiter de rafraîchissement manuel.
+  - **Bouton Retour sur le Profil (`app/account/page.tsx`) :**
+    - Ajout d'un bouton de navigation `ArrowLeft` « Retour au Tableau de bord » en en-tête de la page de gestion du compte.
+  - **Élimination Totale des Mocks & Cloisonnement Multi-Tenant SRS (`lib/srs/sm2-algorithm.ts`, `components/dashboard/srs-carnet.tsx`, `app/carnet-erreurs/page.tsx`, `lib/notifications/actions.ts`) :**
+    - `INITIAL_SRS_CARDS` vidé (`[]`).
+    - Implémentation de `getSrsStorageKey(userId)` cloisonnant le stockage local par identifiant utilisateur (`super4c2:srs_cards:${userId}`).
+    - `SrsCarnet` reçoit le `userId` du candidat connecté depuis le serveur et affiche un Onboarding / Empty State accueillant invitant à démarrer une première simulation lorsqu'aucun piège n'a encore été commis.
+    - Purge automatique des notifications de démo factices dans `lib/notifications/actions.ts`.
+- **Validation :** `npx tsc --noEmit` avec 0 erreur.
+
 ### 0.0k. Assainissement Global de Marque : Élimination des Allégations "Plateforme Officielle"
 - **Demande Utilisateur :** Éliminer l'allégation trompeuse selon laquelle Super4C2 serait la « Plateforme Officielle TCF & TEF Canada » ou un organisme certificateur officiel, le site étant un outil d'entraînement et simulateur indépendant conforme.
 - **Périmètre d'Intervention Transversal :**

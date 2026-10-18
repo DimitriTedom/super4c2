@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import {
   CheckCircle2,
   Filter,
@@ -15,6 +16,7 @@ import {
   Layers,
   ChevronRight,
   Trash2,
+  ArrowRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -24,6 +26,8 @@ import {
   isCardDueToday,
   calculateDeckStats,
   getCardMasteryStatus,
+  getSrsCardsFromVault,
+  saveSrsCardsToVault,
 } from "@/lib/srs/sm2-algorithm";
 import { SrsFlashcardPlayer } from "./srs-flashcard-player";
 import {
@@ -36,8 +40,12 @@ import {
 } from "@/components/ui/dialog";
 import { toast } from "react-toastify";
 
-export function SrsCarnet() {
-  const [cards, setCards] = useState<SrsCard[]>(INITIAL_SRS_CARDS);
+interface SrsCarnetProps {
+  userId?: string;
+}
+
+export function SrsCarnet({ userId }: SrsCarnetProps) {
+  const [cards, setCards] = useState<SrsCard[]>([]);
   const [selectedDiscipline, setSelectedDiscipline] = useState<string>("ALL");
   const [selectedStatus, setSelectedStatus] = useState<string>("ALL");
   const [searchQuery, setSearchQuery] = useState("");
@@ -53,36 +61,36 @@ export function SrsCarnet() {
   const [newExplanation, setNewExplanation] = useState("");
   const [newTrapType, setNewTrapType] = useState("");
 
-  // Synchronisation avec localStorage & événement personnalisé srs:vault_updated
+  // Synchronisation cloisonnée par utilisateur (multi-tenant)
   useEffect(() => {
-    const loadCards = () => {
-      try {
-        const stored = localStorage.getItem("super4c2:srs_cards");
-        if (stored) {
-          const parsed = JSON.parse(stored);
-          if (Array.isArray(parsed) && parsed.length > 0) {
-            // Fusionner avec les cartes initiales pour toujours avoir un deck riche
-            const merged: SrsCard[] = [...parsed];
-            INITIAL_SRS_CARDS.forEach((init) => {
-              if (!merged.some((m) => m.id === init.id)) {
-                merged.push(init);
-              }
-            });
-            setCards(merged);
-            return;
-          }
+    // Purge préventive de l'ancienne clé globale démo si présente
+    try {
+      const legacy = localStorage.getItem("super4c2:srs_cards");
+      if (legacy) {
+        const parsed = JSON.parse(legacy);
+        if (
+          Array.isArray(parsed) &&
+          parsed.some((c) => c.id === "err-ce-1" || c.id === "err-co-2")
+        ) {
+          localStorage.removeItem("super4c2:srs_cards");
         }
-        localStorage.setItem("super4c2:srs_cards", JSON.stringify(INITIAL_SRS_CARDS));
-        setCards(INITIAL_SRS_CARDS);
-      } catch {
-        // ignore storage error
       }
+    } catch {
+      // ignore
+    }
+
+    const loadCards = () => {
+      const userCards = getSrsCardsFromVault(userId);
+      setCards(userCards);
     };
 
     loadCards();
 
-    const handleVaultUpdated = () => {
-      loadCards();
+    const handleVaultUpdated = (e?: Event) => {
+      const custom = e as CustomEvent;
+      if (!custom?.detail?.userId || custom.detail.userId === userId) {
+        loadCards();
+      }
     };
 
     window.addEventListener("srs:vault_updated", handleVaultUpdated);
@@ -91,15 +99,11 @@ export function SrsCarnet() {
       window.removeEventListener("srs:vault_updated", handleVaultUpdated);
       window.removeEventListener("storage", handleVaultUpdated);
     };
-  }, []);
+  }, [userId]);
 
   const saveCards = (updated: SrsCard[]) => {
     setCards(updated);
-    try {
-      localStorage.setItem("super4c2:srs_cards", JSON.stringify(updated));
-    } catch {
-      // quota
-    }
+    saveSrsCardsToVault(updated, userId);
   };
 
   const stats = calculateDeckStats(cards);
@@ -526,15 +530,48 @@ export function SrsCarnet() {
         </div>
       </div>
 
-      {/* Grille des Flashcards SRS */}
-      {filteredCards.length === 0 ? (
+      {/* Grille des Flashcards SRS ou État Vierge Initial */}
+      {cards.length === 0 ? (
+        <div className="rounded-3xl border border-border/80 bg-gradient-to-b from-card via-card to-primary/[0.03] p-8 sm:p-14 text-center space-y-6 shadow-sm">
+          <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-3xl bg-primary/10 text-primary shadow-inner ring-4 ring-primary/5">
+            <BookOpen className="h-10 w-10 text-primary" />
+          </div>
+
+          <div className="space-y-2 max-w-lg mx-auto">
+            <h3 className="font-display text-xl sm:text-2xl font-black text-foreground">
+              Votre Carnet d&apos;Erreurs est Vierge
+            </h3>
+            <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+              Vous démarrez votre préparation de zéro : c&apos;est parfait ! Dès que vous passez une simulation (Compréhension Écrite, Compréhension Orale ou Expression Écrite), chaque question manquée ou piège FEI sera automatiquement archivé ici pour être révisé aux intervalles scientifiques J+1, J+3 et J+7 (algorithme SM-2).
+            </p>
+          </div>
+
+          <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+            <Button asChild className="gap-2 font-bold shadow-md">
+              <Link href="/examens">
+                <Sparkles className="h-4 w-4" />
+                <span>Lancer un Entraînement CBT</span>
+              </Link>
+            </Button>
+
+            <Button
+              variant="outline"
+              onClick={() => setIsAddOpen(true)}
+              className="gap-2 font-semibold"
+            >
+              <Plus className="h-4 w-4" />
+              <span>Ajouter un Piège Manuellement</span>
+            </Button>
+          </div>
+        </div>
+      ) : filteredCards.length === 0 ? (
         <div className="rounded-3xl border bg-card p-12 text-center space-y-3">
           <BookOpen className="h-10 w-10 text-muted-foreground/40 mx-auto" />
           <h3 className="font-display text-base font-bold text-foreground">
             Aucun piège ne correspond à vos filtres
           </h3>
           <p className="text-xs text-muted-foreground max-w-sm mx-auto">
-            Modifiez vos critères de recherche ou ajoutez un nouveau piège pour démarrer votre entraînement.
+            Modifiez vos critères de recherche ou sélectionnez un autre statut pour afficher vos cartes.
           </p>
         </div>
       ) : (

@@ -1,13 +1,32 @@
 import { Suspense } from "react";
+import { redirect } from "next/navigation";
 import { AuthCard } from "@/components/auth/auth-card";
 import { RegisterForm } from "@/components/auth/register-form";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export const metadata = {
   title: "Inscription — Rejoindre Super4C2 | Préparation TCF & TEF Canada",
   description: "Créez votre compte candidat pour vous entraîner en conditions réelles et sécuriser NCLC 7+ pour Entrée Express.",
 };
 
-export default function RegisterPage() {
+export default async function RegisterPage({
+  searchParams,
+}: {
+  searchParams?: Promise<{ next?: string }>;
+}) {
+  const resolvedParams = searchParams ? await searchParams : undefined;
+  const next =
+    resolvedParams?.next && resolvedParams.next.startsWith("/") && !resolvedParams.next.startsWith("/auth")
+      ? resolvedParams.next
+      : "/dashboard";
+
+  const supabase = await createSupabaseServerClient();
+  const user = supabase ? (await supabase.auth.getUser()).data.user : null;
+
+  if (user) {
+    redirect(next);
+  }
+
   return (
     <div className="w-full flex items-center justify-center py-6 px-4">
       <AuthCard

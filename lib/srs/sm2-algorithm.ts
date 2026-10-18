@@ -30,94 +30,11 @@ export interface SrsCard {
   sourceExamId?: string;
 }
 
-export const INITIAL_SRS_CARDS: SrsCard[] = [
-  {
-    id: "err-ce-1",
-    discipline: "CE",
-    questionNumber: 4,
-    questionPrompt: "Que laisse entendre l'auteur à propos de la démission du ministre ?",
-    documentSnippet:
-      "Bien que la polémique enfle, le ministre n'a jamais franchi le pas décisif malgré les rumeurs persistantes d'un départ imminent.",
-    candidateMistake: "A. Il a déjà officiellement quitté ses fonctions.",
-    correctAnswer: "B. Il hésite ou repousse sa décision de départ sans l'avoir encore actée.",
-    ruleExplanation:
-      "L'expression « n'a jamais franchi le pas » exprime l'hésitation ou l'inachèvement d'une action, jamais son accomplissement.",
-    trapType: "Confusion d'aspect verbal (accompli vs inachevé)",
-    repetitions: 0,
-    intervalDays: 1,
-    easinessFactor: 2.5,
-    nextReviewDate: new Date().toISOString(), // Due now
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: "err-co-2",
-    discipline: "CO",
-    questionNumber: 2,
-    questionPrompt: "Quelle annonce est diffusée dans le hall de la gare pour le TGV de Lyon ?",
-    documentSnippet:
-      "« Mesdames et messieurs, le TGV numéro 6604 à destination de Lyon Part-Dieu subira un retard d'environ quarante minutes suite à une vérification technique. »",
-    candidateMistake: "A. Le train pour Lyon est supprimé et annulé.",
-    correctAnswer: "C. Le train pour Lyon est retardé d'environ 40 minutes.",
-    ruleExplanation:
-      "Un retard partiel ne doit jamais être confondu avec une annulation ou une suppression du service. Attention aux distracteurs extrêmes du TCF.",
-    trapType: "Distracteur d'amplification excessive",
-    repetitions: 1,
-    intervalDays: 3,
-    easinessFactor: 2.4,
-    nextReviewDate: new Date(Date.now() - 3600 * 1000).toISOString(), // Due now
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: "err-ee-3",
-    discipline: "EE",
-    questionNumber: 2,
-    questionPrompt: "Tâche 2 — Récit d'expérience et courrier au journal",
-    candidateMistake: "Volume insuffisant : 98 mots rédigés.",
-    correctAnswer: "Fourchette obligatoire : 120 à 150 mots.",
-    ruleExplanation:
-      "En Tâche 2 du TCF, tout texte inférieur à 120 mots subit une pénalité sévère sur le critère 1 (Adéquation). Développez systématiquement au moins un exemple concret supplémentaire.",
-    trapType: "Non-respect du seuil de volume officiel FEI",
-    repetitions: 2,
-    intervalDays: 6,
-    easinessFactor: 2.6,
-    nextReviewDate: new Date(Date.now() + 86400 * 1000 * 2).toISOString(), // In 2 days
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: "err-eo-4",
-    discipline: "EO",
-    questionNumber: 2,
-    questionPrompt: "Tâche 2 — Formules de négociation en jeu de rôle commercial",
-    candidateMistake: "« Vous avez des réductions pour les étudiants ? » (registre familier)",
-    correctAnswer: "« Proposez-vous un tarif préférentiel ou dégressif pour les étudiants ? » (registre soutenu)",
-    ruleExplanation:
-      "Pour valider l'échelon B2/NCLC 7 à l'oral, bannissez les questions familières directes et utilisez des tournures soutenues avec le conditionnel de politesse.",
-    trapType: "Registre de langue insuffisant pour NCLC 7",
-    repetitions: 3,
-    intervalDays: 14,
-    easinessFactor: 2.7,
-    nextReviewDate: new Date(Date.now() + 86400 * 1000 * 8).toISOString(), // Mastered
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: "err-ce-5",
-    discipline: "CE",
-    questionNumber: 24,
-    questionPrompt: "Quelle est la visée principale de l'auteur concernant l'agriculture régénératrice ?",
-    documentSnippet:
-      "Loin d'être une panacée sans contraintes, la transition vers les couverts végétaux permanents exige un amortissement financier pluriannuel que les exploitations modestes peinent à assumer seules.",
-    candidateMistake: "D. Condamner définitivement toute démarche écologique en milieu rural.",
-    correctAnswer: "B. Nuancer l'enthousiasme général en soulignant les défis économiques réels des agriculteurs.",
-    ruleExplanation:
-      "La formule « Loin d'être une panacée » introduit une posture de nuance et de réalisme critique, et non un rejet catégorique.",
-    trapType: "Sur-interprétation négative / Faux dilemme",
-    repetitions: 0,
-    intervalDays: 1,
-    easinessFactor: 2.5,
-    nextReviewDate: new Date().toISOString(), // Due now
-    createdAt: new Date().toISOString(),
-  },
-];
+/**
+ * Deck initial vierge pour garantir qu'un nouveau candidat démarre de zéro
+ * et ne voit que ses propres erreurs réelles commises lors des simulations.
+ */
+export const INITIAL_SRS_CARDS: SrsCard[] = [];
 
 /**
  * Calcule les nouveaux paramètres SM-2 après une évaluation de carte.
@@ -255,37 +172,89 @@ export function createSrsCardFromMistake(params: {
 }
 
 /**
- * Charge les cartes depuis le stockage local (localStorage) en fusionnant avec le deck par défaut si vide.
+ * Détecte de façon synchrone l'identifiant de l'utilisateur actif via le token Supabase en localStorage.
  */
-export function getSrsCardsFromVault(): SrsCard[] {
-  if (typeof window === "undefined") return INITIAL_SRS_CARDS;
+export function getActiveUserIdSync(): string {
+  if (typeof window === "undefined") return "anonymous";
   try {
-    const stored = localStorage.getItem("super4c2:srs_cards");
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key && key.startsWith("sb-") && key.endsWith("-auth-token")) {
+        const item = localStorage.getItem(key);
+        if (item) {
+          const parsed = JSON.parse(item);
+          if (parsed?.user?.id) return parsed.user.id;
+        }
+      }
+    }
+  } catch {
+    // ignore
+  }
+  return "anonymous";
+}
+
+/**
+ * Génère la clé de stockage isolée par utilisateur pour garantir un cloisonnement strict multi-tenant.
+ */
+export function getSrsStorageKey(userId?: string): string {
+  const uid = userId || getActiveUserIdSync();
+  return `super4c2:srs_cards:${uid}`;
+}
+
+/**
+ * Charge les cartes depuis le stockage local (localStorage) cloisonné par utilisateur.
+ * Retourne un tableau vide pour tout nouvel utilisateur (zéro mock data).
+ */
+export function getSrsCardsFromVault(userId?: string): SrsCard[] {
+  if (typeof window === "undefined") return [];
+  try {
+    const key = getSrsStorageKey(userId);
+    const stored = localStorage.getItem(key);
     if (stored) {
       const parsed = JSON.parse(stored);
-      if (Array.isArray(parsed) && parsed.length > 0) {
+      if (Array.isArray(parsed)) {
         return parsed as SrsCard[];
       }
     }
-    // Si rien en cache, initialiser
-    localStorage.setItem("super4c2:srs_cards", JSON.stringify(INITIAL_SRS_CARDS));
-    return INITIAL_SRS_CARDS;
+    return [];
   } catch {
-    return INITIAL_SRS_CARDS;
+    return [];
   }
 }
 
 /**
- * Ajoute un lot de cartes au coffre SRS dans le localStorage sans doublon.
+ * Enregistre directement le deck de cartes pour l'utilisateur spécifié.
+ */
+export function saveSrsCardsToVault(cards: SrsCard[], userId?: string): void {
+  if (typeof window === "undefined") return;
+  try {
+    const key = getSrsStorageKey(userId);
+    localStorage.setItem(key, JSON.stringify(cards));
+    window.dispatchEvent(
+      new CustomEvent("srs:vault_updated", {
+        detail: { totalCount: cards.length, userId: userId || getActiveUserIdSync() },
+      })
+    );
+  } catch (error) {
+    console.error("Erreur lors de la sauvegarde SRS :", error);
+  }
+}
+
+/**
+ * Ajoute un lot de cartes au coffre SRS dans le localStorage sans doublon pour l'utilisateur actif.
  * Déclenche un événement personnalisé `srs:vault_updated` pour synchroniser les composants ouverts.
  */
-export function addCardsToSrsVault(newCards: SrsCard[]): { addedCount: number; totalCount: number } {
+export function addCardsToSrsVault(
+  newCards: SrsCard[],
+  userId?: string
+): { addedCount: number; totalCount: number } {
   if (typeof window === "undefined" || newCards.length === 0) {
     return { addedCount: 0, totalCount: 0 };
   }
 
   try {
-    const existing = getSrsCardsFromVault();
+    const key = getSrsStorageKey(userId);
+    const existing = getSrsCardsFromVault(userId);
     let addedCount = 0;
     const updated = [...existing];
 
@@ -306,10 +275,10 @@ export function addCardsToSrsVault(newCards: SrsCard[]): { addedCount: number; t
     }
 
     if (addedCount > 0) {
-      localStorage.setItem("super4c2:srs_cards", JSON.stringify(updated));
+      localStorage.setItem(key, JSON.stringify(updated));
       window.dispatchEvent(
         new CustomEvent("srs:vault_updated", {
-          detail: { addedCount, totalCount: updated.length },
+          detail: { addedCount, totalCount: updated.length, userId: userId || getActiveUserIdSync() },
         })
       );
     }

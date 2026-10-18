@@ -21,6 +21,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 
 type Values = z.infer<typeof signUpSchema>;
 
@@ -29,6 +30,35 @@ export function RegisterForm() {
   const searchParams = useSearchParams();
   const next = searchParams.get("next") ?? "/dashboard";
   const [showPassword, setShowPassword] = React.useState(false);
+
+  // Synchronisation multi-onglets : Si l'utilisateur est déjà ou vient de se connecter
+  React.useEffect(() => {
+    try {
+      const supabase = createSupabaseBrowserClient();
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        if (session?.user) {
+          router.push(next);
+          router.refresh();
+        }
+      });
+
+      const {
+        data: { subscription },
+      } = supabase.auth.onAuthStateChange((event, session) => {
+        if ((event === "SIGNED_IN" || event === "TOKEN_REFRESHED") && session?.user) {
+          toast.success("Session validée ! Redirection vers votre espace...");
+          router.push(next);
+          router.refresh();
+        }
+      });
+
+      return () => {
+        subscription.unsubscribe();
+      };
+    } catch {
+      // Ignorer si indisponible
+    }
+  }, [router, next]);
 
   const form = useForm<Values>({
     resolver: zodResolver(signUpSchema),

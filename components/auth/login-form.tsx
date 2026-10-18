@@ -28,6 +28,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 
 type Values = z.infer<typeof signInSchema>;
 
@@ -40,6 +41,35 @@ export function LoginForm() {
   const [resetDialogOpen, setResetDialogOpen] = React.useState(false);
   const [resetEmail, setResetEmail] = React.useState("");
   const [resetPending, setResetPending] = React.useState(false);
+
+  // Synchronisation multi-onglets : Si l'utilisateur a validé son compte dans un autre onglet
+  React.useEffect(() => {
+    try {
+      const supabase = createSupabaseBrowserClient();
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        if (session?.user) {
+          router.push(next);
+          router.refresh();
+        }
+      });
+
+      const {
+        data: { subscription },
+      } = supabase.auth.onAuthStateChange((event, session) => {
+        if ((event === "SIGNED_IN" || event === "TOKEN_REFRESHED") && session?.user) {
+          toast.success("Session validée ! Redirection vers votre espace...");
+          router.push(next);
+          router.refresh();
+        }
+      });
+
+      return () => {
+        subscription.unsubscribe();
+      };
+    } catch {
+      // Ignorer si indisponible
+    }
+  }, [router, next]);
 
   const form = useForm<Values>({
     resolver: zodResolver(signInSchema),
