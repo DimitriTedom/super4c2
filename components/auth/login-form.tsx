@@ -10,8 +10,15 @@ import { z } from "zod";
 import { Eye, EyeOff, Lock, Mail, ArrowRight, ShieldAlert } from "lucide-react";
 
 import { signInSchema } from "@/lib/validations";
-import { signInAction, signInDemoCandidateAction } from "@/app/auth/actions";
+import { signInAction, resetPasswordForEmailAction } from "@/app/auth/actions";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import {
   Form,
   FormControl,
@@ -28,7 +35,11 @@ export function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const next = searchParams.get("next") ?? "/dashboard";
+  const isPendingConfirmation = searchParams.get("registered") === "pending_confirmation";
   const [showPassword, setShowPassword] = React.useState(false);
+  const [resetDialogOpen, setResetDialogOpen] = React.useState(false);
+  const [resetEmail, setResetEmail] = React.useState("");
+  const [resetPending, setResetPending] = React.useState(false);
 
   const form = useForm<Values>({
     resolver: zodResolver(signInSchema),
@@ -36,6 +47,28 @@ export function LoginForm() {
   });
 
   const [pending, startTransition] = React.useTransition();
+
+  const handleResetPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!resetEmail || !resetEmail.includes("@")) {
+      toast.error("Veuillez renseigner une adresse e-mail valide.");
+      return;
+    }
+    setResetPending(true);
+    try {
+      const res = await resetPasswordForEmailAction(resetEmail);
+      if (res.ok) {
+        toast.success(res.message);
+        setResetDialogOpen(false);
+      } else {
+        toast.error(res.error || "Impossible d'envoyer l'e-mail de réinitialisation.");
+      }
+    } catch {
+      toast.error("Une erreur inattendue est survenue.");
+    } finally {
+      setResetPending(false);
+    }
+  };
 
   const onSubmit = (values: Values) => {
     startTransition(async () => {
@@ -51,8 +84,22 @@ export function LoginForm() {
   };
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+    <>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        {/* Bandeau d'invitation à valider le lien dans la boîte mail */}
+        {isPendingConfirmation && (
+          <div className="rounded-2xl border border-amber-500/40 bg-amber-500/10 p-4 text-xs text-amber-900 dark:text-amber-200 space-y-1.5 shadow-xs">
+            <p className="font-bold text-sm flex items-center gap-2 text-amber-700 dark:text-amber-300">
+              <Mail className="h-4 w-4 shrink-0" />
+              Lien de confirmation envoyé !
+            </p>
+            <p className="leading-relaxed">
+              Votre compte a été créé avec succès. Veuillez ouvrir l&apos;e-mail reçu et cliquer sur le lien de confirmation avant de vous connecter.
+            </p>
+          </div>
+        )}
+
         {/* Email Field */}
         <FormField
           control={form.control}
@@ -85,9 +132,16 @@ export function LoginForm() {
             <FormItem>
               <div className="flex items-center justify-between">
                 <FormLabel className="text-xs font-semibold">Mot de passe</FormLabel>
-                <span className="text-xs text-primary hover:underline cursor-pointer">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setResetEmail(form.getValues("email") || "");
+                    setResetDialogOpen(true);
+                  }}
+                  className="text-xs text-primary hover:underline cursor-pointer"
+                >
                   Mot de passe oublié ?
-                </span>
+                </button>
               </div>
               <FormControl>
                 <div className="relative">
@@ -129,32 +183,6 @@ export function LoginForm() {
           )}
         </Button>
 
-        {/* 1-Click Demo Candidate Access */}
-        <div className="pt-1">
-          <Button
-            type="button"
-            variant="outline"
-            disabled={pending}
-            onClick={() => {
-              startTransition(async () => {
-                const res = await signInDemoCandidateAction(next);
-                if (res.ok) {
-                  toast.success("Bienvenue dans votre Espace Démo Candidat !");
-                  router.push(res.redirectTo);
-                  router.refresh();
-                }
-              });
-            }}
-            className="w-full h-10 rounded-xl border-dashed border-primary/40 bg-primary/5 hover:bg-primary/10 text-primary font-semibold text-xs transition-colors"
-          >
-            ⚡ Connexion Démo Immédiate (Candidat Test NCLC 7)
-          </Button>
-        </div>
-
-        {/* Divider */}
-        <div className="relative my-2 text-center text-xs after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
-          <span className="relative z-10 bg-card px-2 text-muted-foreground">ou</span>
-        </div>
 
         {/* Create Account Link */}
         <div className="text-center pt-1 space-y-2">
@@ -179,5 +207,59 @@ export function LoginForm() {
         </div>
       </form>
     </Form>
+
+    <Dialog open={resetDialogOpen} onOpenChange={setResetDialogOpen}>
+      <DialogContent className="sm:max-w-md rounded-3xl p-6">
+        <DialogHeader className="space-y-2">
+          <DialogTitle className="font-display text-xl font-bold">
+            Réinitialisation du mot de passe
+          </DialogTitle>
+          <DialogDescription className="text-xs text-muted-foreground leading-relaxed">
+            Indiquez l&apos;adresse e-mail associée à votre compte Super4C2. Nous vous enverrons immédiatement un lien sécurisé pour définir un nouveau mot de passe.
+          </DialogDescription>
+        </DialogHeader>
+        <form onSubmit={handleResetPassword} className="space-y-4 pt-2">
+          <div className="space-y-1.5">
+            <label className="text-xs font-semibold">Adresse e-mail</label>
+            <div className="relative">
+              <Mail className="absolute left-3.5 top-3 h-4 w-4 text-muted-foreground" />
+              <Input
+                type="email"
+                placeholder="votre.email@exemple.com"
+                value={resetEmail}
+                onChange={(e) => setResetEmail(e.target.value)}
+                className="pl-10 h-10 rounded-xl"
+                required
+              />
+            </div>
+          </div>
+          <div className="flex items-center justify-end gap-2 pt-2">
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={() => setResetDialogOpen(false)}
+              className="h-10 rounded-xl text-xs"
+            >
+              Annuler
+            </Button>
+            <Button
+              type="submit"
+              disabled={resetPending}
+              className="h-10 rounded-xl font-semibold text-xs gap-2"
+            >
+              {resetPending ? (
+                <>
+                  <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                  Envoi en cours...
+                </>
+              ) : (
+                "Envoyer le lien de réinitialisation"
+              )}
+            </Button>
+          </div>
+        </form>
+      </DialogContent>
+    </Dialog>
+    </>
   );
 }

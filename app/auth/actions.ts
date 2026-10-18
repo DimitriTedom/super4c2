@@ -46,46 +46,15 @@ async function resolveOrigin(): Promise<string> {
     : "http://localhost:3000";
 }
 
-export async function signInDemoCandidateAction(next?: string) {
-  const cookieStore = await cookies();
-  cookieStore.set("sb-super4c2-demo-candidate", DEMO_USER_ID, {
-    path: "/",
-    httpOnly: true,
-    sameSite: "lax",
-    maxAge: 60 * 60 * 24 * 7,
-  });
-
-  await prisma.user.upsert({
-    where: { id: DEMO_USER_ID },
-    update: { email: "candidat.demo@super4c2.com" },
-    create: {
-      id: DEMO_USER_ID,
-      email: "candidat.demo@super4c2.com",
-      profile: {
-        create: {
-          displayName: "Dimitri (Candidat Test)",
-          targetNclc: 7,
-        },
-      },
-    },
-  });
-
-  return { ok: true as const, redirectTo: next || "/dashboard" };
-}
-
 export async function signInAction(input: z.infer<typeof signInSchema> & { next?: string }) {
   const parsed = signInSchema.safeParse(input);
   if (!parsed.success) {
     return { ok: false as const, error: "Identifiants invalides." };
   }
 
-  // Fast demo credentials check
-  if (
-    parsed.data.email === "candidat@canada.ca" ||
-    parsed.data.email === "candidat.demo@super4c2.com"
-  ) {
-    return signInDemoCandidateAction(input.next);
-  }
+  // Nettoyage préventif des anciens cookies démo résiduels
+  const cookieStore = await cookies();
+  cookieStore.delete("sb-super4c2-demo-candidate");
 
   const supabase = await createSupabaseServerClient();
   if (!supabase) {
@@ -94,11 +63,24 @@ export async function signInAction(input: z.infer<typeof signInSchema> & { next?
 
   try {
     const { data, error } = await supabase.auth.signInWithPassword({
-      email: parsed.data.email,
+      email: parsed.data.email.trim().toLowerCase(),
       password: parsed.data.password,
     });
 
     if (error) {
+      const msg = error.message.toLowerCase();
+      if (msg.includes("email not confirmed")) {
+        return {
+          ok: false as const,
+          error: "Votre adresse e-mail n'a pas encore été confirmée. Veuillez cliquer sur le lien reçu dans votre boîte de réception avant de vous connecter.",
+        };
+      }
+      if (msg.includes("invalid login credentials") || msg.includes("invalid_grant")) {
+        return {
+          ok: false as const,
+          error: "Adresse e-mail ou mot de passe incorrect. Veuillez vérifier vos identifiants.",
+        };
+      }
       return { ok: false as const, error: error.message };
     }
 
@@ -127,7 +109,6 @@ export async function signInAction(input: z.infer<typeof signInSchema> & { next?
         user.email === "admin@super4c2.com";
 
       if (isSuperAdmin) {
-        const cookieStore = await cookies();
         cookieStore.set("super4c2_admin_token", `admin-exec-session-${Date.now()}`, {
           path: "/",
           httpOnly: false,
@@ -141,11 +122,11 @@ export async function signInAction(input: z.infer<typeof signInSchema> & { next?
     }
 
     return { ok: true as const, redirectTo: input.next ?? "/dashboard" };
-  } catch {
-    // If Supabase GoTrue daemon is temporarily unreachable, offer demo fallback
+  } catch (err: unknown) {
+    const error = err as Error;
     return {
       ok: false as const,
-      error: "Serveur d'authentification Supabase injoignable. Utilisez le bouton 'Accès Démo Candidat'.",
+      error: error?.message || "Erreur de connexion au serveur d'authentification.",
     };
   }
 }
@@ -156,93 +137,102 @@ export async function signUpAction(input: z.infer<typeof signUpSchema> & { next?
     return { ok: false as const, error: "Informations invalides." };
   }
 
+  // Nettoyage préventif des anciens cookies démo résiduels
+  const cookieStore = await cookies();
+  cookieStore.delete("sb-super4c2-demo-candidate");
+
   const supabase = await createSupabaseServerClient();
-  if (supabase) {
-    try {
-      const origin = await resolveOrigin();
-      const nextPath = input.next || "/dashboard";
-      const { data, error } = await supabase.auth.signUp({
-        email: parsed.data.email,
-        password: parsed.data.password,
-        options: {
-          emailRedirectTo: `${origin}/auth/callback?next=${encodeURIComponent(nextPath)}`,
-          data: {
-            displayName: parsed.data.displayName?.trim() || null,
+  if (!supabase) {
+    return { ok: false as const, error: "Configuration Supabase manquante." };
+  }
+
+  try {
+    const origin = await resolveOrigin();
+    const nextPath = input.next || "/dashboard";
+    const { data, error } = await supabase.auth.signUp({
+      email: parsed.data.email.trim().toLowerCase(),
+      password: parsed.data.password,
+      options: {
+        emailRedirectTo: `${origin}/auth/callback?next=${encodeURIComponent(nextPath)}`,
+        data: {
+          displayName: parsed.data.displayName?.trim() || null,
+        },
+      },
+    });
+
+    if (error) {
+      return { ok: false as const, error: error.message };
+    }
+
+    if (data?.user) {
+      const user = data.user;
+      await prisma.user.upsert({
+        where: { id: user.id },
+        update: { email: parsed.data.email.trim().toLowerCase() },
+        create: {
+          id: user.id,
+          email: parsed.data.email.trim().toLowerCase(),
+          profile: {
+            create: {
+              displayName: parsed.data.displayName?.trim() || null,
+              targetNclc: 7,
+            },
           },
         },
       });
 
-      if (!error && data?.user) {
-        const user = data.user;
-        await prisma.user.upsert({
-          where: { id: user.id },
-          update: { email: parsed.data.email },
-          create: {
-            id: user.id,
-            email: parsed.data.email,
-            profile: {
-              create: {
-                displayName: parsed.data.displayName?.trim() || null,
-                targetNclc: 7,
-              },
-            },
-          },
-        });
-
-        // Si la session n'est pas établie immédiatement (confirmation par e-mail requise par Supabase)
-        if (!data.session) {
-          const loginTarget = input.next
-            ? `/auth/login?registered=pending_confirmation&next=${encodeURIComponent(input.next)}`
-            : "/auth/login?registered=pending_confirmation";
-          return {
-            ok: true as const,
-            redirectTo: loginTarget,
-            message: "Votre compte a été créé. Si vous avez reçu un e-mail de confirmation, veuillez valider votre lien avant de vous connecter.",
-          };
-        }
-
-        return { ok: true as const, redirectTo: input.next || "/dashboard" };
+      // Si la session n'est pas établie immédiatement (confirmation par e-mail requise par Supabase)
+      if (!data.session) {
+        const loginTarget = input.next
+          ? `/auth/login?registered=pending_confirmation&next=${encodeURIComponent(input.next)}`
+          : "/auth/login?registered=pending_confirmation";
+        return {
+          ok: true as const,
+          redirectTo: loginTarget,
+          message:
+            "Votre compte a été créé avec succès ! Un e-mail contenant un lien de confirmation vous a été envoyé. Veuillez cliquer sur ce lien pour valider votre adresse avant de vous connecter.",
+        };
       }
 
-      if (error) {
-        return { ok: false as const, error: error.message };
-      }
-    } catch {
-      // In local dev without Supabase auth GoTrue daemon, continue to local registration below
+      return { ok: true as const, redirectTo: input.next || "/dashboard" };
     }
+
+    return { ok: false as const, error: "Impossible de créer le compte. Veuillez réessayer." };
+  } catch (err: unknown) {
+    const error = err as Error;
+    return {
+      ok: false as const,
+      error: error?.message || "Une erreur est survenue lors de la création du compte.",
+    };
   }
+}
 
-  // Local candidate registration fallback with valid RFC 4122 UUID
-  const candidateId = crypto.randomUUID();
-  await prisma.user.upsert({
-    where: { email: parsed.data.email.toLowerCase() },
-    update: {
-      profile: {
-        upsert: {
-          create: { displayName: parsed.data.displayName?.trim() || null, targetNclc: 7 },
-          update: { displayName: parsed.data.displayName?.trim() || null },
-        },
-      },
-    },
-    create: {
-      id: candidateId,
-      email: parsed.data.email.toLowerCase(),
-      profile: {
-        create: {
-          displayName: parsed.data.displayName?.trim() || null,
-          targetNclc: 7,
-        },
-      },
-    },
+export async function resetPasswordForEmailAction(email: string) {
+  const supabase = await createSupabaseServerClient();
+  if (!supabase) {
+    return { ok: false as const, error: "Configuration Supabase manquante." };
+  }
+  const origin = await resolveOrigin();
+  const { error } = await supabase.auth.resetPasswordForEmail(email.trim().toLowerCase(), {
+    redirectTo: `${origin}/auth/callback?next=/account`,
   });
+  if (error) {
+    return { ok: false as const, error: error.message };
+  }
+  return {
+    ok: true as const,
+    message: "Un lien de réinitialisation de mot de passe vous a été envoyé par e-mail.",
+  };
+}
 
-  const cookieStore = await cookies();
-  cookieStore.set("sb-super4c2-demo-candidate", candidateId, {
-    path: "/",
-    httpOnly: true,
-    sameSite: "lax",
-    maxAge: 60 * 60 * 24 * 7,
-  });
-
-  return { ok: true as const, redirectTo: input.next || "/dashboard" };
+export async function updatePasswordAction(newPassword: string) {
+  const supabase = await createSupabaseServerClient();
+  if (!supabase) {
+    return { ok: false as const, error: "Configuration Supabase manquante." };
+  }
+  const { error } = await supabase.auth.updateUser({ password: newPassword });
+  if (error) {
+    return { ok: false as const, error: error.message };
+  }
+  return { ok: true as const, message: "Votre mot de passe a été mis à jour avec succès." };
 }

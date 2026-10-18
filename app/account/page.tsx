@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { prisma } from "@/lib/prisma";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { ProfileEditForm } from "@/components/account/profile-edit-form";
+import { SecurityPasswordForm } from "@/components/account/security-password-form";
 
 export const metadata = {
   title: "Mon Compte — Espace Candidat | Super4C2",
@@ -90,6 +91,9 @@ export default async function AccountPage() {
 
       {/* Formulaire interactif d'édition du profil */}
       <ProfileEditForm initialProfile={initialProfile} userEmail={user.email || ""} />
+
+      {/* Formulaire sécurisé de mise à jour du mot de passe */}
+      <SecurityPasswordForm />
 
       {/* Grid of Profile Cards */}
       <div className="grid gap-6 sm:grid-cols-2">
