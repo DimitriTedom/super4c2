@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { syncPrismaUser } from "@/lib/supabase/sync-user";
 import { prisma } from "@/lib/prisma";
 
 const profileSchema = z.object({
@@ -32,15 +33,8 @@ export async function PATCH(req: NextRequest) {
 
     const { displayName, targetNclc, examDate, phone, country } = parsed.data;
 
-    // Garantir l'existence de l'utilisateur dans la table users
-    await prisma.user.upsert({
-      where: { id: user.id },
-      update: {},
-      create: {
-        id: user.id,
-        email: user.email,
-      },
-    });
+    // Garantir l'existence et la synchronisation de l'utilisateur dans la table users
+    await syncPrismaUser(user.id, user.email, displayName);
 
     const parsedExamDate = examDate ? new Date(examDate) : null;
 

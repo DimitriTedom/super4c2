@@ -5,9 +5,8 @@ import { z } from "zod";
 
 import { prisma } from "@/lib/prisma";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { syncPrismaUser } from "@/lib/supabase/sync-user";
 import { signInSchema, signUpSchema } from "@/lib/validations";
-
-const DEMO_USER_ID = "00000000-0000-0000-0000-000000000001";
 
 async function resolveOrigin(): Promise<string> {
   // En production, ne JAMAIS renvoyer localhost
@@ -86,21 +85,12 @@ export async function signInAction(input: z.infer<typeof signInSchema> & { next?
 
     if (data?.user) {
       const user = data.user;
-      // Synchronisation de sécurité avec la base PostgreSQL
-      await prisma.user.upsert({
-        where: { id: user.id },
-        update: { email: user.email ?? parsed.data.email },
-        create: {
-          id: user.id,
-          email: user.email ?? parsed.data.email,
-          profile: {
-            create: {
-              displayName: user.user_metadata?.displayName || user.email?.split("@")[0] || "Candidat",
-              targetNclc: 7,
-            },
-          },
-        },
-      });
+      // Synchronisation sécurisée et atomique avec la base PostgreSQL
+      await syncPrismaUser(
+        user.id,
+        user.email ?? parsed.data.email,
+        user.user_metadata?.displayName || user.email?.split("@")[0] || null
+      );
 
       // Si l'utilisateur est Super Admin, initialiser la session d'administration
       const isSuperAdmin =
@@ -161,25 +151,34 @@ export async function signUpAction(input: z.infer<typeof signUpSchema> & { next?
     });
 
     if (error) {
+      const msg = error.message.toLowerCase();
+      if (msg.includes("already registered") || msg.includes("already in use")) {
+        return {
+          ok: false as const,
+          error:
+            "Un compte existe déjà avec cette adresse e-mail. Veuillez vous connecter ou utiliser « Mot de passe oublié ».",
+        };
+      }
       return { ok: false as const, error: error.message };
+    }
+
+    // Gestion de la protection contre l'énumération des utilisateurs dans Supabase (identities vide = compte déjà existant)
+    if (data?.user && Array.isArray(data.user.identities) && data.user.identities.length === 0) {
+      return {
+        ok: false as const,
+        error:
+          "Un compte existe déjà avec cette adresse e-mail. Veuillez vous connecter ou réinitialiser votre mot de passe si vous l'avez oublié.",
+      };
     }
 
     if (data?.user) {
       const user = data.user;
-      await prisma.user.upsert({
-        where: { id: user.id },
-        update: { email: parsed.data.email.trim().toLowerCase() },
-        create: {
-          id: user.id,
-          email: parsed.data.email.trim().toLowerCase(),
-          profile: {
-            create: {
-              displayName: parsed.data.displayName?.trim() || null,
-              targetNclc: 7,
-            },
-          },
-        },
-      });
+      // Synchronisation atomique et réassignation des anciens identifiants éventuels
+      await syncPrismaUser(
+        user.id,
+        parsed.data.email,
+        parsed.data.displayName
+      );
 
       // Si la session n'est pas établie immédiatement (confirmation par e-mail requise par Supabase)
       if (!data.session) {

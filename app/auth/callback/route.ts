@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { type EmailOtpType } from "@supabase/supabase-js";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { prisma } from "@/lib/prisma";
+import { syncPrismaUser } from "@/lib/supabase/sync-user";
 
 export async function GET(request: Request) {
   const url = new URL(request.url);
@@ -37,20 +37,11 @@ export async function GET(request: Request) {
       }
 
       if (authUser) {
-        await prisma.user.upsert({
-          where: { id: authUser.id },
-          update: { email: authUser.email ?? "" },
-          create: {
-            id: authUser.id,
-            email: authUser.email ?? "",
-            profile: {
-              create: {
-                displayName: authUser.user_metadata?.displayName || authUser.email?.split("@")[0] || "Candidat",
-                targetNclc: 7,
-              },
-            },
-          },
-        });
+        await syncPrismaUser(
+          authUser.id,
+          authUser.email ?? "",
+          authUser.user_metadata?.displayName || authUser.email?.split("@")[0] || null
+        );
       }
     } catch (err) {
       console.error("Erreur lors de la validation Supabase :", err);
