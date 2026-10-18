@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   Home,
-  BookOpenText,
+  PenTool,
   Calculator,
   Newspaper,
   User,
@@ -30,9 +30,9 @@ export function MobileNavBar() {
       isActive: pathname === "/",
     },
     {
-      label: "Épreuves",
-      href: "/examens",
-      icon: BookOpenText,
+      label: "Expressions",
+      href: "/examens?discipline=ee",
+      icon: PenTool,
       isActive: pathname.startsWith("/examens"),
     },
     {

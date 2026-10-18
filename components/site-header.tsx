@@ -5,7 +5,6 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
 import { BrandLogo } from "@/components/brand-logo";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { LanguageSwitcher } from "@/components/language-switcher";
 import { NotificationBell } from "@/components/notifications/notification-bell";
 import { SiteNav } from "@/components/site-nav";
 
@@ -30,8 +29,6 @@ export async function SiteHeader() {
 
           {/* Actions & CTA */}
           <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
-            <LanguageSwitcher />
-
             <ThemeToggle />
 
             {user ? (

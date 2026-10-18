@@ -9,6 +9,7 @@ import {
   Clock,
   CheckCircle2,
   AlertTriangle,
+  ArrowLeft,
   ArrowRight,
   ShieldCheck,
   PenTool,
@@ -34,12 +35,16 @@ import { cn } from "@/lib/utils";
 
 interface WritingMethodologyHubProps {
   series: WrittenExamSeries;
+  initialTab?: "presentation" | "methodologie" | "examen";
 }
 
-export function WritingMethodologyHub({ series }: WritingMethodologyHubProps) {
+export function WritingMethodologyHub({
+  series,
+  initialTab = "presentation",
+}: WritingMethodologyHubProps) {
   const [companionId, setCompanionId] = useState<CompanionId>(DEFAULT_COMPANION_ID);
   const [isSelectorOpen, setIsSelectorOpen] = useState<boolean>(false);
-  const [activeTab, setActiveTab] = useState<"presentation" | "methodologie" | "examen">("presentation");
+  const [activeTab, setActiveTab] = useState<"presentation" | "methodologie" | "examen">(initialTab);
   const [activeTaskTab, setActiveTaskTab] = useState<1 | 2 | 3>(1);
   const [hydrated, setHydrated] = useState<boolean>(false);
   const [isSpeakingTour, setIsSpeakingTour] = useState<boolean>(false);
@@ -120,6 +125,21 @@ export function WritingMethodologyHub({ series }: WritingMethodologyHubProps) {
         onSelectCompanion={handleSelectCompanion}
         currentSelectedId={companionId}
       />
+
+      {/* Bouton Précédent */}
+      <div>
+        <Button
+          asChild
+          variant="outline"
+          size="sm"
+          className="rounded-full gap-2 px-3.5 h-8 border-border/80 bg-background/80 hover:bg-muted font-bold text-xs shadow-2xs group"
+        >
+          <Link href={`/examens/${series.id}/ee/intro`}>
+            <ArrowLeft className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-1 text-primary" />
+            <span>Précédent</span>
+          </Link>
+        </Button>
+      </div>
 
       {/* En-tête de l'épreuve */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b pb-6">

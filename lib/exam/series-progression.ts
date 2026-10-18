@@ -47,11 +47,11 @@ export const TEST_CATALOG: Record<
 > = {
   tcf: {
     name: "TCF Canada",
-    fullName: "Test de Connaissance du Français — Canada",
-    officialAuthority: "France Éducation International (FEI) & IRCC",
-    badge: "🇨🇦 Standard Fédéral Officiel",
+    fullName: "Pack TCF Canada — Préparation NCLC 7+",
+    officialAuthority: "Conforme aux grilles NCLC / IRCC",
+    badge: "🇨🇦 Objectif Entrée Express",
     description:
-      "Épreuve standardisée d'immigration canadienne et Entrée Express. Atteignez le seuil NCLC 7 dans les 4 compétences pour débloquer jusqu'à 50 points de bonus CRS.",
+      "Entraînement ciblé pour l'immigration canadienne et l'Entrée Express. Atteignez le seuil NCLC 7 dans les épreuves clés pour débloquer jusqu'à 50 points de bonus CRS.",
     nclcTarget: "NCLC 7+ (B2 Supérieur)",
     crsBonusLabel: "+50 pts CRS débloqués",
   },
@@ -115,7 +115,7 @@ export const TCF_PROGRESSION_SERIES: ProgressionSeries[] = [
         badge: "Épreuve 3/4 (60 min)",
         questionsOrTasks: "3 tâches rédactionnelles",
         duration: "60 min",
-        url: "/examens/tcf-blanc-1/examen-blanc",
+        url: "/examens/101/ee/intro",
       },
       {
         type: "eo",
@@ -123,7 +123,7 @@ export const TCF_PROGRESSION_SERIES: ProgressionSeries[] = [
         badge: "Épreuve 4/4 (12 min)",
         questionsOrTasks: "3 tâches avec M. Laurent",
         duration: "12 min",
-        url: "/examens/tcf-blanc-1/examen-blanc",
+        url: "/examens/101/eo/intro",
       },
     ],
     description:
@@ -174,7 +174,7 @@ export const TCF_PROGRESSION_SERIES: ProgressionSeries[] = [
         badge: "IA FEI 10s",
         questionsOrTasks: "3 tâches rédactionnelles",
         duration: "60 min",
-        url: "/examens/demo-101-ee/ee",
+        url: "/examens/101/ee/intro",
       },
       {
         type: "eo",
@@ -182,7 +182,7 @@ export const TCF_PROGRESSION_SERIES: ProgressionSeries[] = [
         badge: "Jeu de Rôle Live",
         questionsOrTasks: "3 tâches conversationnelles",
         duration: "12 min",
-        url: "/examens/demo-101-eo/eo",
+        url: "/examens/101/eo/intro",
       },
     ],
     description:
@@ -228,7 +228,7 @@ export const TCF_PROGRESSION_SERIES: ProgressionSeries[] = [
         badge: "Sujets Immigration",
         questionsOrTasks: "3 tâches rédactionnelles",
         duration: "60 min",
-        url: "/examens/demo-101-ee/ee",
+        url: "/examens/102/ee/intro",
       },
       {
         type: "eo",
@@ -236,7 +236,7 @@ export const TCF_PROGRESSION_SERIES: ProgressionSeries[] = [
         badge: "Examinateur IA",
         questionsOrTasks: "3 échanges dirigés",
         duration: "12 min",
-        url: "/examens/demo-101-eo/eo",
+        url: "/examens/102/eo/intro",
       },
     ],
     description:
@@ -283,7 +283,7 @@ export const TCF_PROGRESSION_SERIES: ProgressionSeries[] = [
         badge: "Argumentation B2+",
         questionsOrTasks: "3 sujets polémiques",
         duration: "60 min",
-        url: "/examens/demo-101-ee/ee",
+        url: "/examens/103/ee/intro",
       },
       {
         type: "eo",
@@ -291,7 +291,7 @@ export const TCF_PROGRESSION_SERIES: ProgressionSeries[] = [
         badge: "Contradiction IA",
         questionsOrTasks: "3 scénarios de négociation",
         duration: "12 min",
-        url: "/examens/demo-101-eo/eo",
+        url: "/examens/103/eo/intro",
       },
     ],
     description:
@@ -338,7 +338,7 @@ export const TCF_PROGRESSION_SERIES: ProgressionSeries[] = [
         badge: "Style C1",
         questionsOrTasks: "Synthèse & point de vue étayé",
         duration: "60 min",
-        url: "/examens/demo-101-ee/ee",
+        url: "/examens/104/ee/intro",
       },
       {
         type: "eo",
@@ -346,7 +346,7 @@ export const TCF_PROGRESSION_SERIES: ProgressionSeries[] = [
         badge: "Éloquence IA",
         questionsOrTasks: "Défense de thèse complexe",
         duration: "12 min",
-        url: "/examens/demo-101-eo/eo",
+        url: "/examens/104/eo/intro",
       },
     ],
     description:
@@ -393,7 +393,7 @@ export const TCF_PROGRESSION_SERIES: ProgressionSeries[] = [
         badge: "Magic Rewrite C2",
         questionsOrTasks: "Essai philosophique & sociétal",
         duration: "60 min",
-        url: "/examens/demo-101-ee/ee",
+        url: "/examens/105/ee/intro",
       },
       {
         type: "eo",
@@ -401,7 +401,7 @@ export const TCF_PROGRESSION_SERIES: ProgressionSeries[] = [
         badge: "Jury d'Élite",
         questionsOrTasks: "Grand oral interactif",
         duration: "12 min",
-        url: "/examens/demo-101-eo/eo",
+        url: "/examens/105/eo/intro",
       },
     ],
     description:

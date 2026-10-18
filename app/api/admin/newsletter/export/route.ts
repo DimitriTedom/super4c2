@@ -9,9 +9,23 @@ export async function GET() {
       orderBy: { subscribedAt: "desc" },
     });
 
-    const headers = ["Email", "Statut", "Source", "Date Inscription", "Date Desinscription"];
+    const headers = [
+      "Nom",
+      "Email",
+      "Telephone_WhatsApp",
+      "Score_CRS",
+      "Profil_NCLC",
+      "Statut",
+      "Source",
+      "Date Inscription",
+      "Date Desinscription",
+    ];
     const rows = subscribers.map((s) => [
+      `"${(s.name || "").replace(/"/g, '""')}"`,
       `"${s.email.replace(/"/g, '""')}"`,
+      `"${(s.phone || "").replace(/"/g, '""')}"`,
+      `"${s.crsScore != null ? s.crsScore : ""}"`,
+      `"${(s.nclcProfile || "").replace(/"/g, '""')}"`,
       `"${s.isActive ? "Actif" : "Desinscrit"}"`,
       `"${s.source}"`,
       `"${s.subscribedAt.toISOString()}"`,

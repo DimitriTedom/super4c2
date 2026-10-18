@@ -10,17 +10,15 @@ import {
   Headphones,
   PenTool,
   Clock,
+  Lock,
 } from "lucide-react";
-import NumberTicker from "@/components/ui/number-ticker";
 import { Button } from "@/components/ui/button";
-import { Globe } from "@/components/ui/globe";
 import { ShimmerButton } from "@/components/ui/shimmer-button";
-import { InteractiveHoverButton } from "@/components/ui/interactive-hover-button";
-import { AnimatedGradientText } from "@/components/ui/animated-gradient-text";
 import { BlurFade } from "@/components/ui/blur-fade";
+import { ProductShowcaseSection } from "@/components/product-showcase-section";
+import { MagicRewriteShowcase } from "@/components/marketing/magic-rewrite-showcase";
 import { TestimonialsSection } from "@/components/testimonials-section";
 import { FaqSection } from "@/components/faq-section";
-import { ProductShowcaseSection } from "@/components/product-showcase-section";
 import { prisma } from "@/lib/prisma";
 
 export const metadata = {
@@ -42,46 +40,15 @@ export default async function HomePage() {
   }
   return (
     <div className="overflow-x-clip">
-      {/* 🌟 HERO — pleine largeur, sans bordure ; le globe est strictement coupé en deux à sa fin (équateur au bord bas) */}
-      <section className="relative overflow-hidden w-full flex flex-col items-center justify-start pt-6 sm:pt-8 lg:pt-10 pb-20 sm:pb-24 min-h-[680px] sm:min-h-[760px] lg:min-h-[800px] border-b border-border/40">
-        {/* Halo d'ambiance + trame de points fondue */}
-        <div className="pointer-events-none absolute inset-0 z-0 bg-[radial-gradient(65%_55%_at_50%_15%,rgba(229,26,49,0.12),transparent_70%),radial-gradient(45%_45%_at_85%_25%,rgba(0,180,216,0.10),transparent_70%)]" />
-        <div className="pointer-events-none absolute inset-0 z-0 [background-image:radial-gradient(hsl(var(--foreground)/0.08)_1px,transparent_1px)] [background-size:28px_28px] [mask-image:radial-gradient(ellipse_75%_60%_at_50%_25%,black,transparent_75%)]" />
+      {/* 🌟 HERO — pleine largeur, sans composant lourd, halo lumineux CSS ultra-rapide */}
+      <section className="relative overflow-hidden w-full flex flex-col items-center justify-start pt-10 sm:pt-14 lg:pt-16 pb-16 sm:pb-20 border-b border-border/40">
+        {/* Halo d'ambiance vibrant & ultra-fluide pur CSS */}
+        <div className="pointer-events-none absolute inset-0 z-0 bg-[radial-gradient(55%_45%_at_50%_20%,rgba(229,26,49,0.18),transparent_70%),radial-gradient(40%_40%_at_80%_30%,rgba(0,180,216,0.15),transparent_70%)]" />
+        <div className="pointer-events-none absolute inset-0 z-0 [background-image:radial-gradient(hsl(var(--foreground)/0.06)_1px,transparent_1px)] [background-size:28px_28px] [mask-image:radial-gradient(ellipse_75%_60%_at_50%_25%,black,transparent_75%)]" />
 
-        {/* 🌍 Globe en arrière-plan (z-0) */}
-        <div className="pointer-events-none absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-[38%] z-0 w-[min(1280px,160vw)] aspect-square select-none">
-          <Globe className="w-full h-full max-w-none pointer-events-auto" />
-        </div>
-
-        {/* 📝 Contenu textuel et CTAs au premier plan (z-10) — strictement au-dessus du globe sur l'axe Z */}
+        {/* 📝 Contenu textuel et CTAs au premier plan */}
         <div className="relative z-10 mx-auto max-w-4xl space-y-6 sm:space-y-7 text-center">
           <BlurFade delay={0.05}>
-            <div className="group relative inline-flex items-center gap-2 rounded-full border border-border/70 bg-background/85 px-4 py-1.5 shadow-[inset_0_-8px_10px_rgba(229,26,49,0.06)] transition-all duration-300 hover:border-brand-crimson/50 hover:shadow-[inset_0_-8px_14px_rgba(229,26,49,0.15)] backdrop-blur-md">
-              <span
-                className="animate-gradient absolute inset-0 block h-full w-full rounded-full bg-gradient-to-r from-brand-crimson/40 via-cyan-500/40 to-brand-crimson/40 bg-[length:300%_100%] p-[1px] opacity-70 transition-opacity group-hover:opacity-100"
-                style={{
-                  WebkitMask:
-                    "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-                  WebkitMaskComposite: "destination-out",
-                  mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-                  maskComposite: "subtract",
-                  WebkitClipPath: "padding-box",
-                }}
-              />
-              <Sparkles className="h-3.5 w-3.5 text-brand-crimson shrink-0" />
-              <span className="h-3 w-px bg-border/80 shrink-0" />
-              <AnimatedGradientText
-                colorFrom="#E51A31"
-                colorTo="#00B4D8"
-                className="text-xs sm:text-sm font-bold tracking-tight"
-              >
-                Préparation Officielle Canada : TCF • TEF • IELTS
-              </AnimatedGradientText>
-              <ArrowRight className="h-3.5 w-3.5 text-muted-foreground shrink-0 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:text-foreground" />
-            </div>
-          </BlurFade>
-
-          <BlurFade delay={0.15}>
             <h1 className="font-display text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight leading-[1.08] text-foreground text-balance drop-shadow-[0_2px_12px_rgba(0,0,0,0.06)] dark:drop-shadow-[0_2px_16px_rgba(0,0,0,0.4)]">
               Décrochez vos{" "}
               <span className="bg-gradient-to-r from-brand-crimson to-rose-500 bg-clip-text text-transparent">4 C2</span>{" "}
@@ -95,41 +62,37 @@ export default async function HomePage() {
               {/* Flou ciblé uniquement derrière le texte de description pour adoucir les points sous les lettres sans voiler le titre ni le globe */}
               <div className="pointer-events-none absolute -inset-x-6 -inset-y-3 z-[-1] rounded-2xl bg-background/75 dark:bg-background/65 backdrop-blur-md [mask-image:radial-gradient(ellipse_90%_80%_at_50%_50%,black_50%,transparent_100%)]" />
               <p className="font-body text-base sm:text-xl text-foreground/90 dark:text-slate-200 font-medium leading-relaxed text-balance">
-                78% des candidats échouent à cause de l&apos;Expression Écrite. Maîtrisez les <strong className="text-foreground font-bold">conditions réelles du CBT officiel</strong> : simulateur chronométré, Magic Rewrite C1/C2 et examinateur vocal IA en direct.
+                Le guide pour décrocher vos <strong className="text-foreground font-bold">4 C2</strong>. Surtout en <strong className="text-foreground font-bold">Expression Écrite</strong>, la bête noire des candidats.
               </p>
             </div>
           </BlurFade>
 
           <BlurFade delay={0.35}>
             <div className="flex flex-col items-center justify-center gap-4 pt-2">
-              <div className="flex flex-col sm:flex-row flex-wrap items-center justify-center gap-3 w-full">
+              <div className="flex flex-col items-center justify-center gap-3">
                 <ShimmerButton
-                  href="/examens?test=tcf"
+                  href="/examens"
                   background="#E51A31"
                   shimmerColor="#ffffff"
-                  className="w-full sm:w-auto shadow-[0_10px_40px_-10px_rgba(229,26,49,0.65)] font-bold px-7"
+                  className="shadow-[0_12px_45px_-10px_rgba(229,26,49,0.7)] font-bold px-8 py-3.5 sm:px-10 sm:py-4 group"
                 >
-                  <span className="flex items-center gap-2 text-base font-bold">
-                    Commencer le TCF
-                    <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+                  <span className="flex items-center gap-2.5 text-base sm:text-lg font-black tracking-tight text-white">
+                    Choisir ma Session d&apos;Examen
+                    <ArrowRight className="h-5 w-5 transition-transform duration-200 group-hover:translate-x-1.5" />
                   </span>
                 </ShimmerButton>
 
-                <InteractiveHoverButton href="/examens?test=tef" className="w-full sm:w-auto text-base font-semibold px-6">
-                  Commencer le TEF
-                </InteractiveHoverButton>
-
-                <Button
-                  asChild
-                  variant="outline"
-                  size="lg"
-                  className="w-full sm:w-auto rounded-full border-border/80 bg-background/80 hover:bg-muted/80 backdrop-blur-md px-6 text-sm font-semibold shadow-xs transition-all hover:border-cyan-500/50"
-                >
-                  <Link href="/examens?test=ielts" className="gap-2">
-                    <span className="inline-block h-2 w-2 rounded-full bg-cyan-500" />
-                    <span>Préparer l&apos;IELTS General</span>
-                  </Link>
-                </Button>
+                {/* Badges de couverture directe des tests officiels */}
+                <div className="flex items-center gap-2.5 text-xs font-semibold text-muted-foreground pt-0.5">
+                  <span className="flex items-center gap-1.5 text-foreground/85 dark:text-slate-300">
+                    <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                    TCF Canada
+                  </span>
+                  <span className="text-border">•</span>
+                  <span className="text-foreground/85 dark:text-slate-300">TEF Canada</span>
+                  <span className="text-border">•</span>
+                  <span className="text-foreground/85 dark:text-slate-300">IELTS General</span>
+                </div>
               </div>
 
               <p className="text-xs text-muted-foreground flex items-center gap-1.5 pt-1">
@@ -145,38 +108,9 @@ export default async function HomePage() {
 
       {/* Reste de la page dans un conteneur centré */}
       <div className="space-y-24 px-4 pb-8 pt-20 sm:px-6">
-      {/* 📊 Statistiques clés */}
+      {/* 💻 VITRINE INTERACTIVE DU SIMULATEUR CBT (Démonstration Produit Directe) */}
       <BlurFade inView>
-        <section className="mx-auto grid max-w-5xl grid-cols-2 gap-y-8 sm:grid-cols-4 sm:divide-x sm:divide-border/50">
-          <div className="text-center">
-            <p className="font-display text-4xl sm:text-5xl font-black text-foreground">
-              <NumberTicker value={50} />
-              <span className="text-brand-crimson font-bold">+</span>
-            </p>
-            <p className="mt-1 text-xs text-muted-foreground">Points CRS Débloqués</p>
-          </div>
-
-          <div className="text-center">
-            <p className="font-display text-4xl sm:text-5xl font-black text-emerald-600 dark:text-emerald-400">
-              <NumberTicker value={100} />%
-            </p>
-            <p className="mt-1 text-xs text-muted-foreground">Format Conforme CBT FEI</p>
-          </div>
-
-          <div className="text-center">
-            <p className="font-display text-4xl sm:text-5xl font-black text-foreground">
-              0<span className="text-sm font-normal"> sec</span>
-            </p>
-            <p className="mt-1 text-xs text-muted-foreground">Correction IA Instantanée</p>
-          </div>
-
-          <div className="text-center">
-            <p className="font-display text-4xl sm:text-5xl font-black text-cyan-600 dark:text-cyan-400">
-              NCLC 7<span className="text-sm font-normal"> à 10</span>
-            </p>
-            <p className="mt-1 text-xs text-muted-foreground">Objectif B2 / C1 / C2</p>
-          </div>
-        </section>
+        <ProductShowcaseSection />
       </BlurFade>
 
       {/* 🎯 LE CONSTAT 4C2 : POURQUOI L'EXPRESSION ÉCRITE FAIT ÉCHOUER LES CANDIDATS */}
@@ -242,9 +176,9 @@ export default async function HomePage() {
         </section>
       </BlurFade>
 
-      {/* 💻 VITRINE INTERACTIVE DU SIMULATEUR CBT */}
+      {/* ✨ DÉMONSTRATION INTERACTIVE : AVANT / APRÈS MAGIC REWRITE */}
       <BlurFade inView>
-        <ProductShowcaseSection />
+        <MagicRewriteShowcase />
       </BlurFade>
 
       {/* ⚔️ COMPARATIF HAUT DE GAMME : MÉTHODES CLASSIQUES VS SUPER4C2 */}
@@ -422,12 +356,10 @@ export default async function HomePage() {
 
             {/* CTA Button */}
             <div className="relative z-10 pt-5">
-              <Button asChild variant="outline" size="sm" className="w-full text-xs font-bold rounded-xl border-border/80 group-hover:border-rose-500/50 group-hover:bg-rose-50 dark:group-hover:bg-rose-950/30 group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-all justify-between">
-                <Link href="/examens/demo-101/ce">
-                  <span>Tester le simulateur CE</span>
-                  <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
-                </Link>
-              </Button>
+              <div className="w-full py-2 px-3 rounded-xl border border-dashed border-border/80 bg-muted/40 text-center text-xs font-semibold text-muted-foreground flex items-center justify-center gap-1.5">
+                <Lock className="h-3.5 w-3.5 text-muted-foreground" />
+                <span>Calibrage QCM en cours</span>
+              </div>
             </div>
           </div>
 
@@ -484,12 +416,10 @@ export default async function HomePage() {
 
             {/* CTA Button */}
             <div className="relative z-10 pt-5">
-              <Button asChild variant="outline" size="sm" className="w-full text-xs font-bold rounded-xl border-border/80 group-hover:border-cyan-500/50 group-hover:bg-cyan-50 dark:group-hover:bg-cyan-950/30 group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-all justify-between">
-                <Link href="/examens/demo-101-co/co">
-                  <span>Tester le simulateur CO</span>
-                  <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
-                </Link>
-              </Button>
+              <div className="w-full py-2 px-3 rounded-xl border border-dashed border-border/80 bg-muted/40 text-center text-xs font-semibold text-muted-foreground flex items-center justify-center gap-1.5">
+                <Lock className="h-3.5 w-3.5 text-muted-foreground" />
+                <span>Calibrage QCM en cours</span>
+              </div>
             </div>
           </div>
 
@@ -547,7 +477,7 @@ export default async function HomePage() {
             {/* CTA Button */}
             <div className="relative z-10 pt-5">
               <Button asChild variant="outline" size="sm" className="w-full text-xs font-bold rounded-xl border-border/80 group-hover:border-amber-500/50 group-hover:bg-amber-50 dark:group-hover:bg-amber-950/30 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-all justify-between">
-                <Link href="/examens/demo-101-ee/intro">
+                <Link href="/examens?discipline=ee">
                   <span>Accéder à l&apos;atelier écrit</span>
                   <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
                 </Link>
@@ -609,7 +539,7 @@ export default async function HomePage() {
             {/* CTA Button */}
             <div className="relative z-10 pt-5">
               <Button asChild variant="outline" size="sm" className="w-full text-xs font-bold rounded-xl border-border/80 group-hover:border-violet-500/50 group-hover:bg-violet-50 dark:group-hover:bg-violet-950/30 group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-all justify-between">
-                <Link href="/examens/demo-101-eo/intro">
+                <Link href="/examens?discipline=eo">
                   <span>Entrer en salle d&apos;oral</span>
                   <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
                 </Link>
@@ -625,37 +555,33 @@ export default async function HomePage() {
       {/* ❓ FOIRE AUX QUESTIONS OFFICIELLES (FAQ) */}
       <FaqSection initialFaqs={faqs} />
 
-      {/* 🎯 CTA FINAL HAUTE PERFORMANCE & CONVERSION */}
-      <section className="relative mx-auto max-w-6xl rounded-3xl border border-red-200/70 dark:border-slate-800 bg-gradient-to-br from-rose-50/80 via-white to-slate-50/90 dark:bg-[#0B132B] dark:from-transparent dark:via-transparent dark:to-transparent p-6 sm:p-12 lg:p-16 text-foreground dark:text-white text-center space-y-6 shadow-xl shadow-red-500/5 dark:shadow-2xl overflow-hidden transition-colors">
-        {/* Subtle radial ambient gradients */}
-        <div className="pointer-events-none absolute -top-24 left-1/2 -translate-x-1/2 w-[500px] h-[300px] bg-brand-crimson/15 dark:bg-brand-crimson/20 blur-[100px] rounded-full" />
-        <div className="pointer-events-none absolute -bottom-24 right-10 w-[400px] h-[250px] bg-cyan-500/10 dark:bg-cyan-500/15 blur-[90px] rounded-full" />
-        <div className="pointer-events-none absolute inset-0 [background-image:radial-gradient(rgba(0,0,0,0.04)_1px,transparent_1px)] dark:[background-image:radial-gradient(rgba(255,255,255,0.06)_1px,transparent_1px)] [background-size:24px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,black,transparent_80%)]" />
+      {/* 🎯 CTA FINAL CONDENSÉ & PERCUTANT */}
+      <section className="relative mx-auto max-w-4xl rounded-3xl border border-red-200/70 dark:border-slate-800 bg-gradient-to-br from-rose-50/80 via-white to-slate-50/90 dark:bg-[#0B132B] dark:from-transparent dark:via-transparent dark:to-transparent p-6 sm:p-10 text-center space-y-5 shadow-xl shadow-red-500/5 dark:shadow-2xl overflow-hidden transition-colors">
+        <div className="pointer-events-none absolute -top-20 left-1/2 -translate-x-1/2 w-96 h-48 bg-brand-crimson/15 dark:bg-brand-crimson/20 blur-[80px] rounded-full" />
 
-        <div className="relative z-10 space-y-4 max-w-3xl mx-auto">
-          <div className="inline-flex items-center gap-2 rounded-full border border-red-200/80 dark:border-white/15 bg-white dark:bg-white/5 px-3.5 py-1 text-xs font-semibold text-slate-700 dark:text-slate-200 shadow-xs dark:shadow-none backdrop-blur-xs">
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400 animate-pulse" />
-            <span>Objectif Immigration Canada • Entrée Express 2026</span>
+        <div className="relative z-10 space-y-2 max-w-2xl mx-auto">
+          <div className="inline-flex items-center gap-2 rounded-full border border-red-200/80 dark:border-white/15 bg-white/80 dark:bg-white/5 px-3 py-0.5 text-xs font-semibold text-slate-700 dark:text-slate-200">
+            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            <span>Objectif Entrée Express 2026</span>
           </div>
 
-          <h2 className="font-display text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-tight text-slate-900 dark:text-white text-balance">
-            Sécurisez vos <span className="bg-gradient-to-r from-brand-crimson to-rose-600 bg-clip-text text-transparent">+50 Points CRS</span> avec la référence CBT
+          <h2 className="font-display text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight text-slate-900 dark:text-white">
+            Débloquez vos <span className="bg-gradient-to-r from-brand-crimson to-rose-600 bg-clip-text text-transparent">+50 Points CRS</span>
           </h2>
 
-          <p className="text-slate-600 dark:text-slate-300 text-xs sm:text-base leading-relaxed max-w-xl mx-auto text-balance">
-            Rejoignez les candidats qui s&apos;entraînent sur la réplique exacte du logiciel officiel et réussissent leur examen dès leur première tentative.
+          <p className="text-slate-600 dark:text-slate-300 text-xs sm:text-sm max-w-lg mx-auto">
+            Simulateur officiel CBT et correction IA instantanée pour réussir dès votre premier essai.
           </p>
         </div>
 
-        {/* Buttons container (Fully responsive, no overflow) */}
-        <div className="relative z-10 flex flex-col sm:flex-row items-center justify-center gap-3 w-full max-w-md mx-auto pt-2">
+        <div className="relative z-10 flex flex-col sm:flex-row items-center justify-center gap-3 w-full max-w-sm mx-auto">
           <Button
             asChild
             size="lg"
-            className="w-full sm:w-auto bg-brand-crimson hover:bg-brand-crimson/90 text-white font-bold text-sm sm:text-base px-6 h-12 rounded-full shadow-lg shadow-brand-crimson/25 gap-2"
+            className="w-full sm:w-auto bg-brand-crimson hover:bg-brand-crimson/90 text-white font-bold text-sm px-6 h-11 rounded-full shadow-md shadow-brand-crimson/25 gap-2"
           >
             <Link href="/examens?test=tcf">
-              <span>Commencer mon Essai Gratuit</span>
+              <span>Commencer Gratuitement</span>
               <ArrowRight className="h-4 w-4" />
             </Link>
           </Button>
@@ -664,7 +590,7 @@ export default async function HomePage() {
             asChild
             variant="outline"
             size="lg"
-            className="w-full sm:w-auto border-slate-300 dark:border-white/20 bg-white dark:bg-white/5 hover:bg-slate-100 dark:hover:bg-white/10 text-slate-800 dark:text-slate-100 font-semibold text-sm px-6 h-12 rounded-full shadow-xs dark:shadow-none backdrop-blur-xs"
+            className="w-full sm:w-auto border-slate-300 dark:border-white/20 bg-white/80 dark:bg-white/5 hover:bg-slate-100 dark:hover:bg-white/10 text-slate-800 dark:text-slate-100 font-semibold text-xs px-5 h-11 rounded-full"
           >
             <Link href="/nclc-calculator">
               <span>Calculer mes Points CRS</span>
@@ -672,19 +598,18 @@ export default async function HomePage() {
           </Button>
         </div>
 
-        {/* Trust Badges */}
-        <div className="relative z-10 pt-4 border-t border-slate-200/80 dark:border-white/10 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-[11px] sm:text-xs text-slate-500 dark:text-slate-400">
+        <div className="relative z-10 pt-3 border-t border-slate-200/80 dark:border-white/10 flex flex-wrap items-center justify-center gap-x-5 gap-y-1.5 text-[11px] text-slate-500 dark:text-slate-400">
           <span className="flex items-center gap-1.5">
-            <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 dark:text-emerald-400" />
-            Conforme France Éducation International
+            <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
+            Conforme FEI
           </span>
           <span className="flex items-center gap-1.5">
-            <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 dark:text-emerald-400" />
-            Accès immédiat sans carte bancaire
+            <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
+            Sans carte bancaire
           </span>
           <span className="flex items-center gap-1.5">
             <CheckCircle2 className="h-3.5 w-3.5 text-cyan-600 dark:text-cyan-400" />
-            Noté 4.9/5 par les candidats
+            Noté 4.9/5
           </span>
         </div>
       </section>

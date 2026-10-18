@@ -11,15 +11,16 @@ export function FloatingCommunityButton() {
   const pathname = usePathname();
   const [isHovered, setIsHovered] = useState(false);
 
-  // Masquer dans la salle d'examen, sur les écrans d'authentification et dans le back-office admin
+  // Masquer dans la salle d'examen, sur les écrans d'authentification, dans le back-office admin et sur la page communauté elle-même
   const isSuppressed =
     /^\/examens\/[^/]+\/(ce|co|ee|eo|examen-blanc)\/?$/.test(pathname || "") ||
     pathname?.startsWith("/auth") ||
-    pathname?.startsWith("/admin");
+    pathname?.startsWith("/admin") ||
+    pathname === "/communaute";
   if (isSuppressed) return null;
 
   return (
-    <div className="fixed bottom-6 right-6 z-40 flex flex-col items-end gap-2.5 print:hidden">
+    <div className="hidden lg:flex fixed bottom-6 left-6 z-40 flex-col items-start gap-2.5 print:hidden">
       {/* Bouton Guide Découverte Rapide */}
       <button
         type="button"

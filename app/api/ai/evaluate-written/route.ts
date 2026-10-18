@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { countWordsFei, type TaskEvaluation, type WrittenExamResult } from "@/lib/exam/written-types";
-import { getWrittenSeries } from "@/lib/exam/mock-written-series";
+import { getWrittenSeries } from "@/lib/exam/written-service";
 import { evaluateWrittenTaskWithAi } from "@/lib/ai/service";
 import { createNotificationAction } from "@/lib/notifications/actions";
 import { prisma } from "@/lib/prisma";
@@ -24,7 +24,7 @@ export async function POST(req: Request) {
     }
 
     const { seriesId, texts } = parsed.data;
-    const series = getWrittenSeries(seriesId) ?? getWrittenSeries("demo-101-ee") ?? getWrittenSeries("demo-101");
+    const series = (await getWrittenSeries(seriesId)) ?? (await getWrittenSeries("101"));
 
     if (!series) {
       return NextResponse.json(

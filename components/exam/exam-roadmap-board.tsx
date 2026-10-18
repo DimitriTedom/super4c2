@@ -55,13 +55,21 @@ export function ExamRoadmapBoard({
     ? currentTestParam
     : "tcf";
 
+  const rawDiscipline = (searchParams.get("discipline") as DisciplineType) || initialDiscipline;
+  const validDiscipline: DisciplineType = ["ce", "co"].includes(rawDiscipline)
+    ? "ee"
+    : ["all", "ee", "eo"].includes(rawDiscipline)
+    ? rawDiscipline
+    : "all";
+
   const [activeTest, setActiveTest] = useState<TestType>(validTest);
-  const [activeDiscipline, setActiveDiscipline] = useState<DisciplineType>(initialDiscipline);
+  const [activeDiscipline, setActiveDiscipline] = useState<DisciplineType>(validDiscipline);
   const [viewMode, setViewMode] = useState<"roadmap" | "grid">(initialView);
   const [ieltsTrack, setIeltsTrack] = useState<"general" | "academic">("general");
 
   // Dynamic unlocking state saved in localStorage
   const [unlockedSeriesIds, setUnlockedSeriesIds] = useState<string[]>([
+    "tcf-blanc-1",
     "demo-101-ce",
     "serie-102",
     "tef-201",
@@ -76,7 +84,7 @@ export function ExamRoadmapBoard({
       if (stored) {
         const parsed = JSON.parse(stored);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          setUnlockedSeriesIds(parsed);
+          setUnlockedSeriesIds((prev) => Array.from(new Set([...prev, ...parsed])));
         }
       }
     } catch {
@@ -101,7 +109,12 @@ export function ExamRoadmapBoard({
       : rawSeriesList;
   const seriesList = filteredRaw.map((s) => ({
     ...s,
-    status: unlockedSeriesIds.includes(s.id) || s.status === "COMPLETED" ? "UNLOCKED" : "LOCKED",
+    status:
+      s.status === "UNLOCKED" ||
+      s.status === "COMPLETED" ||
+      unlockedSeriesIds.includes(s.id)
+        ? "UNLOCKED"
+        : "LOCKED",
   }));
 
   const [selectedSeriesId, setSelectedSeriesId] = useState<string>(seriesList[0]?.id || "");
@@ -124,729 +137,296 @@ export function ExamRoadmapBoard({
     });
   };
 
+  const handleDisciplineChange = (disc: DisciplineType) => {
+    setActiveDiscipline(disc);
+    startTransition(() => {
+      const params = new URLSearchParams(searchParams.toString());
+      if (disc === "all") {
+        params.delete("discipline");
+      } else {
+        params.set("discipline", disc);
+      }
+      router.push(`/examens?${params.toString()}`, { scroll: false });
+    });
+  };
+
   const testMeta = TEST_CATALOG[activeTest];
   const isSelectedUnlocked = selectedSeries && selectedSeries.status !== "LOCKED";
 
   return (
-    <div className="space-y-10">
-      {/* 🧭 Header & Test Selector Hub */}
-      <div className="relative overflow-hidden rounded-3xl border border-border/80 bg-gradient-to-br from-card via-card/95 to-primary/[0.04] p-6 sm:p-10 shadow-lg backdrop-blur-xl">
-        <div className="absolute top-0 right-0 -mr-20 -mt-20 h-72 w-72 rounded-full bg-primary/10 blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 left-1/3 -mb-20 h-56 w-56 rounded-full bg-cyan-500/10 blur-3xl pointer-events-none" />
-
-        <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-8">
-          <div className="space-y-3 max-w-2xl">
-            <div className="flex flex-wrap items-center gap-2">
-              <Badge variant="outline" className="border-primary/40 bg-primary/10 text-primary font-bold px-3 py-1 text-xs">
-                {testMeta.badge}
-              </Badge>
-              <Badge variant="secondary" className="font-mono text-xs">
-                {testMeta.officialAuthority}
-              </Badge>
-            </div>
-
-            <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-foreground">
-              Sujets {testMeta.name} — Banque Officielle CBT
+    <div className="space-y-6">
+      {/* 🧭 En-tête Compact & Sélecteurs Rapides de Test & Discipline */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-border/70">
+        <div className="space-y-1">
+          <div className="flex items-center gap-2.5 flex-wrap">
+            <h1 className="font-display text-2xl sm:text-3xl font-black tracking-tight text-foreground">
+              Sessions {testMeta.name}
+              {activeDiscipline === "ee" && " — Expression Écrite"}
+              {activeDiscipline === "eo" && " — Expression Orale"}
             </h1>
-
-            <p className="text-muted-foreground text-sm sm:text-base leading-relaxed">
-              {testMeta.description}
-            </p>
+            <Badge className="bg-primary/10 text-primary border-primary/20 text-xs font-bold">
+              Objectif NCLC 7+ • +50 pts CRS
+            </Badge>
           </div>
-
-          {/* Test Pill Switcher */}
-          <div className="flex flex-col w-full sm:w-auto items-start lg:items-end gap-2.5 shrink-0">
-            <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              Choisir votre examen officiel :
-            </span>
-            <div className="grid grid-cols-3 sm:inline-flex w-full sm:w-auto rounded-2xl border bg-muted/40 p-1 shadow-xs backdrop-blur-md">
-              <button
-                type="button"
-                onClick={() => handleTestChange("tcf")}
-                className={`flex items-center justify-center gap-1.5 rounded-xl px-2 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm font-bold transition-all text-center ${
-                  activeTest === "tcf"
-                    ? "bg-primary text-primary-foreground shadow-md"
-                    : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
-                }`}
-              >
-                <span>🇨🇦 TCF</span>
-                <span className="hidden md:inline">Canada</span>
-                {activeTest === "tcf" && <Sparkles className="h-3 w-3 shrink-0" />}
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleTestChange("tef")}
-                className={`flex items-center justify-center gap-1.5 rounded-xl px-2 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm font-bold transition-all text-center ${
-                  activeTest === "tef"
-                    ? "bg-primary text-primary-foreground shadow-md"
-                    : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
-                }`}
-              >
-                <span>🇨🇦 TEF</span>
-                <span className="hidden md:inline">Canada</span>
-                {activeTest === "tef" && <Sparkles className="h-3 w-3 shrink-0" />}
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleTestChange("ielts")}
-                className={`flex items-center justify-center gap-1.5 rounded-xl px-2 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm font-bold transition-all text-center ${
-                  activeTest === "ielts"
-                    ? "bg-primary text-primary-foreground shadow-md"
-                    : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
-                }`}
-              >
-                <span>🇬🇧 IELTS</span>
-                <span className="hidden md:inline">General</span>
-                {activeTest === "ielts" && <Sparkles className="h-3 w-3 shrink-0" />}
-              </button>
-            </div>
-
-            <div className="flex items-center gap-2 text-xs font-semibold text-primary pt-1">
-              <Zap className="h-3.5 w-3.5 fill-primary" />
-              <span>Objectif {testMeta.nclcTarget} • {testMeta.crsBonusLabel}</span>
-            </div>
-          </div>
+          <p className="text-xs text-muted-foreground">
+            {activeDiscipline === "ee"
+              ? "Préparez vos 3 tâches d'Expression Écrite (60 min) avec évaluation IA officielle FEI."
+              : activeDiscipline === "eo"
+              ? "Simulateur visio IA en direct : pratiquez vos 3 tâches d'Expression Orale."
+              : "Sélectionnez une session officielle pour lancer l'Épreuve Écrite (60 min) ou l'Épreuve Orale (Visio IA)."}
+          </p>
         </div>
 
-        {/* 🇬🇧 IELTS Dual Track Switcher: Section Générale vs Section Académique */}
-        {activeTest === "ielts" && (
-          <div className="mt-6 p-4 rounded-2xl border border-indigo-500/20 bg-indigo-500/5 dark:bg-indigo-950/20 flex flex-col sm:flex-row sm:items-center justify-between gap-4 animate-in fade-in duration-200">
-            <div className="space-y-1">
-              <span className="text-[11px] font-extrabold uppercase tracking-wider text-indigo-600 dark:text-indigo-400 flex items-center gap-1.5">
-                <Sparkles className="h-3.5 w-3.5" />
-                <span>Choix de la Filière IELTS Officielle</span>
-              </span>
-              <p className="text-xs text-muted-foreground">
-                Sélectionnez le format requis par vos démarches : Immigration &amp; Entrée Express ou Études Supérieures.
-              </p>
-            </div>
-
-            <div className="inline-flex items-center p-1 rounded-xl bg-background border border-border/80 shadow-2xs shrink-0">
+        {/* Sélecteurs Rapides : Test [TCF | TEF | IELTS] + Épreuve [Toutes | Écrit | Oral] */}
+        <div className="flex flex-wrap items-center gap-2 self-start sm:self-auto shrink-0">
+          {/* 1. Sélecteur de Test */}
+          <div className="inline-flex items-center p-1 rounded-xl bg-muted/60 border border-border/80 shadow-2xs">
+            {(["tcf", "tef", "ielts"] as TestType[]).map((t) => (
               <button
+                key={t}
                 type="button"
-                onClick={() => {
-                  setIeltsTrack("general");
-                  const genList = rawSeriesList.filter((s) => s.ieltsTrack === "general");
-                  setSelectedSeriesId(genList[0]?.id || "");
-                }}
+                onClick={() => handleTestChange(t)}
                 className={cn(
-                  "px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5",
-                  ieltsTrack === "general"
-                    ? "bg-primary text-white shadow-xs"
+                  "px-3 py-1.5 rounded-lg text-xs font-bold transition-all",
+                  activeTest === t
+                    ? "bg-background text-foreground shadow-xs font-black"
                     : "text-muted-foreground hover:text-foreground"
                 )}
               >
-                <span>🇨🇦 Section Générale</span>
-                <span className="text-[10px] opacity-80">(Express Entry)</span>
+                {t.toUpperCase()}
               </button>
-
-              <button
-                type="button"
-                onClick={() => {
-                  setIeltsTrack("academic");
-                  const acadList = rawSeriesList.filter((s) => s.ieltsTrack === "academic");
-                  setSelectedSeriesId(acadList[0]?.id || "");
-                }}
-                className={cn(
-                  "px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5",
-                  ieltsTrack === "academic"
-                    ? "bg-indigo-600 text-white shadow-xs"
-                    : "text-muted-foreground hover:text-foreground"
-                )}
-              >
-                <span>🎓 Section Académique</span>
-                <span className="text-[10px] opacity-80">(Universités)</span>
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* 🎛️ Filter Bar: Disciplines & View Mode */}
-        <div className="mt-8 pt-6 border-t border-border/70 flex flex-col md:flex-row md:items-center justify-between gap-4">
-          {/* Discipline Filters */}
-          <div className="flex items-center gap-1.5 overflow-x-auto pb-2 scrollbar-none w-full md:flex-wrap md:overflow-visible md:pb-0">
-            <span className="text-xs font-bold text-muted-foreground mr-1.5 hidden md:inline shrink-0">
-              Épreuve :
-            </span>
-            <Button
-              size="sm"
-              variant={activeDiscipline === "all" ? "default" : "outline"}
-              onClick={() => setActiveDiscipline("all")}
-              className={`rounded-full text-xs font-semibold h-8 px-3.5 shrink-0 ${
-                activeDiscipline === "all" ? "shadow-xs" : "border-border/80"
-              }`}
-            >
-              <Layers className="h-3.5 w-3.5 mr-1.5" />
-              <span>Pack Complet</span>
-            </Button>
-            <Button
-              size="sm"
-              variant={activeDiscipline === "ce" ? "default" : "outline"}
-              onClick={() => setActiveDiscipline("ce")}
-              className={`rounded-full text-xs font-semibold h-8 px-3 shrink-0 ${
-                activeDiscipline === "ce" ? "shadow-xs" : "border-border/80"
-              }`}
-            >
-              <BookOpen className="h-3.5 w-3.5 mr-1.5 text-rose-500" />
-              <span className="sm:hidden">CE</span>
-              <span className="hidden sm:inline">Compréhension Écrite (CE)</span>
-            </Button>
-            <Button
-              size="sm"
-              variant={activeDiscipline === "co" ? "default" : "outline"}
-              onClick={() => setActiveDiscipline("co")}
-              className={`rounded-full text-xs font-semibold h-8 px-3 shrink-0 ${
-                activeDiscipline === "co" ? "shadow-xs" : "border-border/80"
-              }`}
-            >
-              <Headphones className="h-3.5 w-3.5 mr-1.5 text-cyan-500" />
-              <span className="sm:hidden">CO</span>
-              <span className="hidden sm:inline">Compréhension Orale (CO)</span>
-            </Button>
-            <Button
-              size="sm"
-              variant={activeDiscipline === "ee" ? "default" : "outline"}
-              onClick={() => setActiveDiscipline("ee")}
-              className={`rounded-full text-xs font-semibold h-8 px-3 shrink-0 ${
-                activeDiscipline === "ee" ? "shadow-xs" : "border-border/80"
-              }`}
-            >
-              <PenTool className="h-3.5 w-3.5 mr-1.5 text-amber-500" />
-              <span className="sm:hidden">EE</span>
-              <span className="hidden sm:inline">Expression Écrite (EE)</span>
-            </Button>
-            <Button
-              size="sm"
-              variant={activeDiscipline === "eo" ? "default" : "outline"}
-              onClick={() => setActiveDiscipline("eo")}
-              className={`rounded-full text-xs font-semibold h-8 px-3 shrink-0 ${
-                activeDiscipline === "eo" ? "shadow-xs" : "border-border/80"
-              }`}
-            >
-              <Mic className="h-3.5 w-3.5 mr-1.5 text-emerald-500" />
-              <span className="sm:hidden">EO</span>
-              <span className="hidden sm:inline">Expression Orale (EO)</span>
-            </Button>
+            ))}
           </div>
 
-          {/* View Mode Toggle */}
-          <div className="flex items-center gap-1 rounded-full border bg-muted/50 p-1 self-start md:self-auto shrink-0">
+          {/* 2. Filtre d'Épreuve Rapide */}
+          <div className="inline-flex items-center p-1 rounded-xl bg-muted/60 border border-border/80 shadow-2xs">
             <button
               type="button"
-              onClick={() => setViewMode("roadmap")}
-              className={`flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold transition-all ${
-                viewMode === "roadmap"
-                  ? "bg-background text-foreground shadow-xs"
+              onClick={() => handleDisciplineChange("all")}
+              className={cn(
+                "px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all",
+                activeDiscipline === "all"
+                  ? "bg-background text-foreground shadow-xs font-black"
                   : "text-muted-foreground hover:text-foreground"
-              }`}
+              )}
             >
-              <Route className="h-3.5 w-3.5 text-primary" />
-              <span>Roadmap Déblocage</span>
+              Toutes
             </button>
             <button
               type="button"
-              onClick={() => setViewMode("grid")}
-              className={`flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold transition-all ${
-                viewMode === "grid"
-                  ? "bg-background text-foreground shadow-xs"
+              onClick={() => handleDisciplineChange("ee")}
+              className={cn(
+                "px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1",
+                activeDiscipline === "ee"
+                  ? "bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/30 shadow-xs font-black"
                   : "text-muted-foreground hover:text-foreground"
-              }`}
+              )}
             >
-              <LayoutGrid className="h-3.5 w-3.5" />
-              <span>Vue Grille</span>
+              <PenTool className="h-3 w-3" />
+              <span>Écrit</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => handleDisciplineChange("eo")}
+              className={cn(
+                "px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1",
+                activeDiscipline === "eo"
+                  ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 shadow-xs font-black"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              <Mic className="h-3 w-3" />
+              <span>Oral</span>
             </button>
           </div>
         </div>
       </div>
 
-      {/* 🚀 MODE 1 : ROADMAP INTERACTIF HORIZONTAL AVEC FLÈCHES DIRECTIONNELLES */}
-      {viewMode === "roadmap" && (
-        <div className="space-y-8">
-          {/* Progression Summary Tracker */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-2xl border bg-card/60 p-4 sm:p-5 text-sm backdrop-blur-md">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary shrink-0">
-                <Flame className="h-5 w-5 fill-primary/20 text-primary" />
-              </div>
-              <div>
-                <p className="font-bold text-foreground">
-                  Parcours de déblocage progressif {testMeta.name}
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  Glissez horizontalement pour explorer la séquence complète de votre apprentissage.
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center gap-4 text-xs font-mono text-muted-foreground">
-              <span>
-                Sujets débloqués :{" "}
-                <strong className="text-foreground">
-                  {seriesList.filter((s) => s.status !== "LOCKED").length} / {seriesList.length}
-                </strong>
-              </span>
-              <span className="h-3 w-px bg-border" />
-              <span className="text-emerald-500 font-bold flex items-center gap-1">
-                <ShieldCheck className="h-3.5 w-3.5" /> Format FEI Validé
-              </span>
-            </div>
+      {/* 🇬🇧 IELTS Dual Track Switcher (si applicable) */}
+      {activeTest === "ielts" && (
+        <div className="p-3 rounded-2xl border border-indigo-500/20 bg-indigo-500/5 dark:bg-indigo-950/20 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+          <span className="font-semibold text-indigo-600 dark:text-indigo-400">
+            Filière IELTS :
+          </span>
+          <div className="inline-flex items-center p-0.5 rounded-lg bg-background border border-border/80 shrink-0">
+            <button
+              type="button"
+              onClick={() => {
+                setIeltsTrack("general");
+                const genList = rawSeriesList.filter((s) => s.ieltsTrack === "general");
+                setSelectedSeriesId(genList[0]?.id || "");
+              }}
+              className={cn(
+                "px-3 py-1 rounded-md text-xs font-bold transition-all",
+                ieltsTrack === "general"
+                  ? "bg-primary text-white shadow-xs"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              🇨🇦 Section Générale (Express Entry)
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setIeltsTrack("academic");
+                const acadList = rawSeriesList.filter((s) => s.ieltsTrack === "academic");
+                setSelectedSeriesId(acadList[0]?.id || "");
+              }}
+              className={cn(
+                "px-3 py-1 rounded-md text-xs font-bold transition-all",
+                ieltsTrack === "academic"
+                  ? "bg-indigo-600 text-white shadow-xs"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              🎓 Section Académique
+            </button>
           </div>
+        </div>
+      )}
 
-          {/* 🛣️ Horizontal Scrollable Quest Board with Directional Connector Arrows */}
-          <div className="relative rounded-3xl border border-border/80 bg-card/40 p-3 sm:p-6 shadow-inner backdrop-blur-xl">
-            {/* Visual swipe cue on mobile */}
-            <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-card/80 to-transparent z-10 rounded-r-3xl md:hidden" />
-            <div className="overflow-x-auto pb-4 scrollbar-thin scroll-smooth snap-x snap-mandatory">
-              <div className="flex items-stretch gap-3 sm:gap-4 min-w-max px-1 sm:px-2 py-2">
-                {seriesList.map((series, idx) => {
-                  const isSelected = selectedSeriesId === series.id;
-                  const isUnlocked = series.status !== "LOCKED";
-                  const isCurrent = isUnlocked && idx === 0;
-                  const isLast = idx === seriesList.length - 1;
-                  const nextSeries = seriesList[idx + 1];
-                  const nextIsUnlocked = nextSeries && nextSeries.status !== "LOCKED";
+      {/* 📋 GRILLE MODERNE & COMPACTE DES SESSIONS */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between text-xs font-mono text-muted-foreground px-1">
+          <span>
+            {seriesList.length} Sessions d&apos;Entraînement ·{" "}
+            <strong className="text-foreground">
+              {seriesList.filter((s) => s.status !== "LOCKED").length} Ouvertes
+            </strong>
+          </span>
+          <span className="text-emerald-500 font-bold flex items-center gap-1">
+            <ShieldCheck className="h-3.5 w-3.5" /> Grille NCLC 7+ Validée
+          </span>
+        </div>
 
-                  return (
-                    <div key={series.id} className="flex items-center shrink-0">
-                      {/* Milestone Card */}
-                      <motion.div
-                        whileHover={{ y: -4, transition: { duration: 0.2 } }}
-                        onClick={() => setSelectedSeriesId(series.id)}
-                        className={`w-[260px] sm:w-80 cursor-pointer rounded-3xl border p-4 sm:p-5 transition-all flex flex-col justify-between select-none snap-start ${
-                          isSelected
-                            ? "border-primary bg-card shadow-2xl ring-2 ring-primary/40"
-                            : isUnlocked
-                            ? "border-border/80 bg-card/85 hover:border-primary/50 hover:bg-card"
-                            : "border-border/40 bg-muted/25 opacity-75 hover:opacity-90"
-                        }`}
-                      >
-                        {/* Top status indicator */}
-                        <div className="flex items-center justify-between gap-2 pb-3">
-                          <span className="font-mono text-xs font-bold text-muted-foreground">
-                            Étape {idx + 1}
-                          </span>
-                          {series.recommended ? (
-                            <Badge className="bg-primary text-primary-foreground text-[10px] font-bold uppercase tracking-wider px-2 py-0">
-                              Recommandée
-                            </Badge>
-                          ) : isUnlocked ? (
-                            <Badge variant="outline" className="border-emerald-500/40 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[10px] font-bold gap-1">
-                              <CheckCircle2 className="h-2.5 w-2.5" /> Débloquée
-                            </Badge>
-                          ) : (
-                            <Badge variant="secondary" className="text-[10px] text-muted-foreground gap-1">
-                              <Lock className="h-2.5 w-2.5" /> Verrouillée
-                            </Badge>
-                          )}
-                        </div>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {seriesList.map((series, idx) => {
+            const isUnlocked = series.status !== "LOCKED";
+            const sessionNum = String(idx + 1).padStart(2, "0");
 
-                        {/* Milestone Node Body */}
-                        <div className="space-y-2.5 py-2">
-                          <div className="flex items-center gap-3">
-                            <div
-                              className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl shadow-xs transition-transform ${
-                                isSelected
-                                  ? "bg-primary text-primary-foreground scale-105 shadow-md"
-                                  : isUnlocked
-                                  ? "bg-primary/10 text-primary"
-                                  : "bg-muted text-muted-foreground"
-                              }`}
-                            >
-                              {idx === 0 ? (
-                                <BookOpen className="h-5 w-5" />
-                              ) : idx === 1 ? (
-                                <Sparkles className="h-5 w-5" />
-                              ) : idx === 2 ? (
-                                <Flame className="h-5 w-5" />
-                              ) : idx === 3 ? (
-                                <Trophy className="h-5 w-5" />
-                              ) : (
-                                <ShieldCheck className="h-5 w-5" />
-                              )}
-                            </div>
+            const eeUrl =
+              series.disciplines.find((d) => d.type === "ee")?.url || `/examens/${series.id}/ee/intro`;
+            const eoUrl =
+              series.disciplines.find((d) => d.type === "eo")?.url || `/examens/${series.id}/eo/intro`;
 
-                            <div>
-                              <h3 className="font-display text-base font-bold text-foreground leading-tight">
-                                Sujet {series.seriesNumber}
-                              </h3>
-                              <span className="text-[11px] font-medium text-muted-foreground block">
-                                {series.levelBadge}
-                              </span>
-                            </div>
-                          </div>
-
-                          <div className="pt-1 flex items-center justify-between">
-                            <span className="inline-flex items-center gap-1 text-xs font-bold text-primary">
-                              🎯 {series.targetNclc}
-                            </span>
-                            <span className="text-[10px] font-mono text-muted-foreground">
-                              +{series.xpReward} XP
-                            </span>
-                          </div>
-                        </div>
-
-                        {/* Progress bar or lock message */}
-                        <div className="pt-3 border-t border-border/60">
-                          {isUnlocked ? (
-                            <div className="space-y-1">
-                              <div className="flex justify-between text-[11px] font-medium text-muted-foreground">
-                                <span>Progression</span>
-                                <span>{series.progressPercent}%</span>
-                              </div>
-                              <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
-                                <div
-                                  className="h-full bg-primary rounded-full transition-all"
-                                  style={{ width: `${Math.max(5, series.progressPercent)}%` }}
-                                />
-                              </div>
-                            </div>
-                          ) : (
-                            <p className="text-[11px] text-muted-foreground line-clamp-1 italic">
-                              {series.unlockCondition || "À débloquer"}
-                            </p>
-                          )}
-                        </div>
-
-                        {/* Active Halo Indicator */}
-                        {isCurrent && (
-                          <span className="absolute -top-1 -right-1 flex h-3 w-3">
-                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
-                            <span className="relative inline-flex rounded-full h-3 w-3 bg-primary" />
-                          </span>
-                        )}
-                      </motion.div>
-
-                      {/* ➔ Directional Glowing Connector Arrow to Next Milestone */}
-                      {!isLast && (
-                        <div className="flex flex-col items-center justify-center shrink-0 px-3 select-none">
-                          <div
-                            className={`flex items-center gap-1 rounded-full px-3 py-1 text-xs font-bold transition-all ${
-                              isUnlocked && nextIsUnlocked
-                                ? "bg-gradient-to-r from-primary/20 via-cyan-500/20 to-primary/20 text-primary border border-primary/30 shadow-xs"
-                                : "bg-muted/40 text-muted-foreground/60 border border-border/40"
-                            }`}
-                          >
-                            <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
-                            <ArrowRight className="h-4 w-4 text-foreground/80" />
-                          </div>
-                          <span className="text-[10px] font-mono text-muted-foreground mt-1">
-                            Sujet {series.seriesNumber} ➔ Sujet {nextSeries.seriesNumber}
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-
-          {/* 🗂️ Interactive Series Detail Panel */}
-          <AnimatePresence mode="wait">
-            {selectedSeries && (
-              <motion.div
-                key={selectedSeries.id}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.25 }}
-                className="rounded-3xl border-2 border-primary/40 bg-gradient-to-br from-card via-card to-primary/[0.03] p-4 sm:p-8 shadow-xl space-y-6"
-              >
-                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 border-b border-border/80 pb-6">
-                  <div className="space-y-2">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <span className="font-mono text-xs font-bold text-primary uppercase tracking-wider">
-                        Sujet Sélectionné
-                      </span>
-                      <Badge variant="outline" className="border-primary/40 bg-primary/10 text-primary font-bold">
-                        {selectedSeries.levelBadge}
-                      </Badge>
-                      <Badge variant="secondary" className="font-mono text-xs">
-                        {selectedSeries.targetNclc}
-                      </Badge>
-                      {selectedSeries.crsBonusPoints && selectedSeries.crsBonusPoints > 0 && (
-                        <Badge className="bg-cyan-500/15 text-cyan-600 dark:text-cyan-400 border border-cyan-500/30 text-xs font-bold">
-                          +{selectedSeries.crsBonusPoints} Points CRS Canada
-                        </Badge>
-                      )}
-                    </div>
-
-                    <h2 className="font-display text-2xl sm:text-3xl font-extrabold text-foreground">
-                      {selectedSeries.title}
-                    </h2>
-                    <p className="text-sm text-muted-foreground max-w-3xl leading-relaxed">
-                      {selectedSeries.description}
-                    </p>
-                  </div>
-
-                  {/* Primary CTA (Respecting Unlocked Status!) */}
-                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shrink-0 w-full sm:w-auto">
-                    {isSelectedUnlocked ? (
-                      <Button
-                        asChild
-                        size="lg"
-                        className="font-bold text-sm sm:text-base shadow-md px-6 bg-primary hover:bg-primary/90 w-full sm:w-auto"
-                      >
-                        <Link href={`/examens/${selectedSeries.id}`}>
-                          <span>Lancer les Épreuves du Sujet</span>
-                          <ArrowRight className="h-5 w-5 ml-2" />
-                        </Link>
-                      </Button>
-                    ) : (
-                      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
-                        <Button
-                          disabled
-                          size="lg"
-                          variant="outline"
-                          className="opacity-70 gap-2 border-border/80 cursor-not-allowed w-full sm:w-auto"
-                        >
-                          <Lock className="h-4 w-4" />
-                          <span>Sujet Verrouillé</span>
-                        </Button>
-                        <Button
-                          size="lg"
-                          onClick={() => handleUnlockSeries(selectedSeries.id)}
-                          className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold gap-2 shadow-md w-full sm:w-auto"
-                        >
-                          <Unlock className="h-4 w-4" />
-                          <span>Simuler le déblocage (Mode Démo)</span>
-                        </Button>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                {/* Lock Requirement Banner if Locked */}
-                {!isSelectedUnlocked && (
-                  <div className="rounded-2xl border border-amber-500/30 bg-amber-500/10 p-4 flex items-start gap-3 text-amber-900 dark:text-amber-200">
-                    <Lock className="h-5 w-5 text-amber-500 shrink-0 mt-0.5" />
-                    <div className="space-y-1">
-                      <p className="text-xs font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400">
-                        Condition de déblocage requise
-                      </p>
-                      <p className="text-xs leading-relaxed">
-                        {selectedSeries.unlockCondition ||
-                          "Validez votre épreuve sur le sujet précédent ou activez votre accès gratuit pour déverrouiller ce palier."}
-                      </p>
-                    </div>
-                  </div>
+            return (
+              <div
+                key={series.id}
+                className={cn(
+                  "group relative flex flex-col justify-between rounded-2xl border p-4 transition-all hover:shadow-md",
+                  isUnlocked
+                    ? "border-border bg-card hover:border-primary/40"
+                    : "border-border/50 bg-muted/20 opacity-80"
                 )}
-
-                {/* Focus Topics Pills */}
-                <div className="space-y-2">
-                  <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
-                    Thématiques clés & pièges abordés dans ce sujet :
-                  </span>
-                  <div className="flex flex-wrap gap-2">
-                    {selectedSeries.focusTopics.map((topic) => (
-                      <span
-                        key={topic}
-                        className="inline-flex items-center gap-1.5 rounded-full border border-border/70 bg-muted/40 px-3 py-1 text-xs font-medium text-foreground/90"
-                      >
-                        <span className="h-1.5 w-1.5 rounded-full bg-primary" />
-                        {topic}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-                {/* 4 Official Disciplines Cards */}
-                <div className="space-y-3 pt-2">
+              >
+                <div className="space-y-3">
+                  {/* Haut de la carte : Numéro Session + Niveau */}
                   <div className="flex items-center justify-between">
-                    <h3 className="font-display text-lg font-bold">
-                      Accès direct par épreuve pour le Sujet {selectedSeries.seriesNumber}
-                    </h3>
-                    <span className="text-xs text-muted-foreground font-mono">
-                      4 simulateurs indépendants
-                    </span>
-                  </div>
-
-                  <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                    {selectedSeries.disciplines
-                      .filter((d) => activeDiscipline === "all" || d.type === activeDiscipline)
-                      .map((d) => {
-                        const Icon =
-                          d.type === "ce"
-                            ? BookOpen
-                            : d.type === "co"
-                            ? Headphones
-                            : d.type === "ee"
-                            ? PenTool
-                            : Mic;
-
-                        const isComingSoon = d.type === "ce" || d.type === "co";
-
-                        return (
-                          <div
-                            key={d.type}
-                            className={`group relative flex flex-col justify-between rounded-2xl border p-5 transition-all hover:-translate-y-1 ${
-                              !isComingSoon
-                                ? "border-emerald-500/40 bg-card shadow-md"
-                                : "border-border/80 bg-muted/20 opacity-85"
-                            }`}
-                          >
-                            <div className="space-y-3">
-                              <div className="flex items-center justify-between">
-                                <div
-                                  className={`flex h-10 w-10 items-center justify-center rounded-xl ${
-                                    d.type === "ce"
-                                      ? "bg-rose-500/15 text-rose-500"
-                                      : d.type === "co"
-                                      ? "bg-cyan-500/15 text-cyan-500"
-                                      : d.type === "ee"
-                                      ? "bg-amber-500/15 text-amber-500"
-                                      : "bg-emerald-500/15 text-emerald-500"
-                                  }`}
-                                >
-                                  <Icon className="h-5 w-5" />
-                                </div>
-                                <Badge
-                                  variant="outline"
-                                  className={`text-[10px] font-bold ${
-                                    isComingSoon
-                                      ? "border-amber-500/40 text-amber-600 dark:text-amber-400 bg-amber-500/10"
-                                      : "border-emerald-500/40 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10"
-                                  }`}
-                                >
-                                  {isComingSoon ? "🔒 Bientôt" : "Disponible (Gratuit)"}
-                                </Badge>
-                              </div>
-
-                              <div>
-                                <h4 className="font-display font-bold text-base text-foreground">
-                                  {d.name}
-                                </h4>
-                                <p className="text-xs text-muted-foreground mt-0.5">
-                                  {isComingSoon ? "Calibrage officiel FEI en cours" : d.questionsOrTasks}
-                                </p>
-                              </div>
-
-                              <p className="flex items-center gap-1.5 text-xs text-muted-foreground font-mono">
-                                <Clock className="h-3.5 w-3.5" />
-                                <span>Durée officielle : {d.duration}</span>
-                              </p>
-                            </div>
-
-                            {isSelectedUnlocked ? (
-                              <Button
-                                asChild
-                                size="sm"
-                                variant={!isComingSoon ? "default" : "outline"}
-                                className={`w-full mt-4 font-bold ${
-                                  !isComingSoon
-                                    ? "bg-primary hover:bg-primary/90 text-white shadow-xs"
-                                    : "border-dashed text-muted-foreground hover:text-foreground"
-                                }`}
-                              >
-                                <Link href={d.url}>
-                                  <span>{isComingSoon ? "Statut de calibrage" : `S'entraîner (${d.duration})`}</span>
-                                </Link>
-                              </Button>
-                            ) : (
-                              <Button
-                                disabled
-                                size="sm"
-                                variant="outline"
-                                className="w-full mt-4 font-semibold opacity-70 gap-1.5"
-                              >
-                                <Lock className="h-3.5 w-3.5" />
-                                <span>Verrouillé</span>
-                              </Button>
-                            )}
-                          </div>
-                        );
-                      })}
-                  </div>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-      )}
-
-      {/* 📋 MODE 2 : VUE GRILLE CATALOGUE STANDARD */}
-      {viewMode === "grid" && (
-        <div className="space-y-8">
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {seriesList.map((series) => {
-              const isUnlocked = series.status !== "LOCKED";
-
-              return (
-                <div
-                  key={series.id}
-                  className={`group relative flex flex-col justify-between rounded-3xl border p-6 transition-all hover:-translate-y-1 ${
-                    series.recommended
-                      ? "border-primary/60 bg-gradient-to-b from-card via-card to-primary/[0.04] shadow-lg"
-                      : isUnlocked
-                      ? "border-border bg-card hover:border-primary/40 hover:shadow-md"
-                      : "border-border/50 bg-muted/20 opacity-80"
-                  }`}
-                >
-                  {series.recommended && (
-                    <span className="absolute -top-3 left-6 inline-flex items-center gap-1 rounded-full bg-primary px-3 py-0.5 text-[11px] font-bold uppercase tracking-wider text-primary-foreground shadow-xs">
-                      <Sparkles className="h-3 w-3" /> Recommandée · Flagship
-                    </span>
-                  )}
-
-                  <div className="space-y-4 pt-1">
-                    <div className="flex items-center justify-between">
-                      <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-                        <BookOpen className="h-6 w-6" />
-                      </div>
-                      <Badge variant={isUnlocked ? "outline" : "secondary"} className="text-xs font-bold">
-                        {series.levelBadge}
-                      </Badge>
-                    </div>
-
-                    <div>
-                      <h3 className="font-display text-xl font-bold leading-snug">
-                        Sujet {series.seriesNumber}
+                    <div className="flex items-center gap-2">
+                      <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/10 font-mono text-xs font-black text-primary">
+                        {sessionNum}
+                      </span>
+                      <h3 className="font-display text-base font-black text-foreground">
+                        Session {sessionNum}
                       </h3>
-                      <p className="text-xs text-muted-foreground mt-0.5">
-                        {series.subtitle}
-                      </p>
                     </div>
-
-                    <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2">
-                      {series.description}
-                    </p>
-
-                    <div className="flex flex-wrap gap-2 pt-1">
-                      <Badge variant="secondary" className="text-[11px] font-mono">
-                        🎯 {series.targetNclc}
-                      </Badge>
-                      <Badge variant="secondary" className="text-[11px] font-mono">
-                        ⚡ +{series.xpReward} XP
-                      </Badge>
-                    </div>
+                    <Badge variant={isUnlocked ? "outline" : "secondary"} className="text-[10px] font-bold">
+                      {series.levelBadge || "NCLC 7+"}
+                    </Badge>
                   </div>
 
-                  <div className="pt-6 border-t border-border/60 mt-4">
-                    {isUnlocked ? (
-                      <Button asChild className="w-full font-bold shadow-xs">
-                        <Link href={series.disciplines[0]?.url || "/examens/demo-101-ce"}>
-                          <span>Lancer le Sujet {series.seriesNumber}</span>
-                          <ArrowRight className="h-4 w-4 ml-1.5" />
-                        </Link>
-                      </Button>
-                    ) : (
-                      <Button
-                        onClick={() => handleUnlockSeries(series.id)}
-                        variant="outline"
-                        className="w-full gap-2 text-primary border-primary/30 hover:bg-primary/10"
-                      >
-                        <Unlock className="h-4 w-4" />
-                        <span>Débloquer le Sujet {series.seriesNumber}</span>
-                      </Button>
-                    )}
+                  {/* Accès direct aux 2 Épreuves de cette Session */}
+                  <div className="space-y-1.5 pt-1">
+                    {/* Épreuve 1 : Expression Écrite */}
+                    <Link
+                      href={isUnlocked ? eeUrl : "#"}
+                      onClick={(e) => {
+                        if (!isUnlocked) {
+                          e.preventDefault();
+                          handleUnlockSeries(series.id);
+                        }
+                      }}
+                      className={cn(
+                        "flex items-center justify-between p-2 rounded-xl border transition-all text-xs font-semibold group/item",
+                        activeDiscipline === "ee"
+                          ? "border-amber-500/60 bg-amber-500/10 text-amber-900 dark:text-amber-200 shadow-xs hover:bg-amber-500/20"
+                          : "border-border/70 bg-muted/30 hover:bg-muted/70 hover:border-amber-500/40 text-foreground",
+                        !isUnlocked && "cursor-pointer opacity-80"
+                      )}
+                    >
+                      <div className="flex items-center gap-2">
+                        <PenTool className="h-3.5 w-3.5 text-amber-500 shrink-0" />
+                        <span className={cn(
+                          "transition-colors",
+                          activeDiscipline === "ee" ? "font-bold text-amber-900 dark:text-amber-200" : "group-hover/item:text-primary"
+                        )}>
+                          {activeDiscipline === "ee" ? "Lancer l'Écrit (60 min)" : "Expression Écrite"}
+                        </span>
+                      </div>
+                      <span className="text-[10px] text-muted-foreground font-mono flex items-center gap-1">
+                        {activeDiscipline === "ee" ? "→" : "60 min"}
+                      </span>
+                    </Link>
+
+                    {/* Épreuve 2 : Expression Orale */}
+                    <Link
+                      href={isUnlocked ? eoUrl : "#"}
+                      onClick={(e) => {
+                        if (!isUnlocked) {
+                          e.preventDefault();
+                          handleUnlockSeries(series.id);
+                        }
+                      }}
+                      className={cn(
+                        "flex items-center justify-between p-2 rounded-xl border transition-all text-xs font-semibold group/item",
+                        activeDiscipline === "eo"
+                          ? "border-emerald-500/60 bg-emerald-500/10 text-emerald-900 dark:text-emerald-200 shadow-xs hover:bg-emerald-500/20"
+                          : "border-border/70 bg-muted/30 hover:bg-muted/70 hover:border-emerald-500/40 text-foreground",
+                        !isUnlocked && "cursor-pointer opacity-80"
+                      )}
+                    >
+                      <div className="flex items-center gap-2">
+                        <Mic className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
+                        <span className={cn(
+                          "transition-colors",
+                          activeDiscipline === "eo" ? "font-bold text-emerald-900 dark:text-emerald-200" : "group-hover/item:text-emerald-600 dark:group-hover/item:text-emerald-400"
+                        )}>
+                          {activeDiscipline === "eo" ? "Lancer la Visio IA" : "Expression Orale"}
+                        </span>
+                      </div>
+                      <span className="text-[10px] text-muted-foreground font-mono flex items-center gap-1">
+                        {activeDiscipline === "eo" ? "→" : "Visio IA"}
+                      </span>
+                    </Link>
                   </div>
                 </div>
-              );
-            })}
-          </div>
+
+                {/* Pied de carte : Récompenses CRS / XP ou Déverrouillage */}
+                <div className="pt-3 border-t border-border/50 mt-3">
+                  {isUnlocked ? (
+                    <div className="flex items-center justify-between text-[11px] text-muted-foreground">
+                      <span className="font-mono text-emerald-600 dark:text-emerald-400 font-bold">
+                        +{series.crsBonusPoints || 50} pts CRS
+                      </span>
+                      <span className="font-mono">+{series.xpReward} XP</span>
+                    </div>
+                  ) : (
+                    <Button
+                      onClick={() => handleUnlockSeries(series.id)}
+                      variant="outline"
+                      size="sm"
+                      className="w-full h-8 text-xs gap-1.5 text-primary border-primary/30 hover:bg-primary/10"
+                    >
+                      <Unlock className="h-3.5 w-3.5" />
+                      <span>Débloquer la Session {sessionNum}</span>
+                    </Button>
+                  )}
+                </div>
+              </div>
+            );
+          })}
         </div>
-      )}
+      </div>
     </div>
   );
 }

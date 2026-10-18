@@ -10,7 +10,6 @@ import { Toaster } from "@/components/ui/sonner";
 import { ToastifyContainer } from "@/components/ui/toastify";
 
 import { JsonLd } from "@/components/seo/json-ld";
-import { CookieConsentBanner } from "@/components/legal/cookie-consent-banner";
 import { NavigationProgressBar } from "@/components/navigation/navigation-progress-bar";
 
 const bricolage = Bricolage_Grotesque({
@@ -129,7 +128,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
           <LanguageProvider>
             <AppShell header={<SiteHeader />}>{children}</AppShell>
-            <CookieConsentBanner />
             <Toaster />
             <ToastifyContainer />
           </LanguageProvider>

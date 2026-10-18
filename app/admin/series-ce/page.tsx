@@ -9,6 +9,7 @@ import {
   Eye,
   EyeOff,
   Sparkles,
+  ExternalLink,
 } from "lucide-react";
 import { AdminShell } from "@/components/admin/admin-shell";
 import { AdminListEmptyState } from "@/components/admin/AdminListEmptyState";
@@ -218,6 +219,18 @@ export default async function SeriesCeListPage({ searchParams }: SeriesCeListPag
 
                         <td className="py-3.5 px-4 text-right">
                           <div className="flex items-center justify-end gap-1.5">
+                            <Button
+                              asChild
+                              variant="ghost"
+                              size="sm"
+                              className="h-8 w-8 p-0 text-muted-foreground hover:text-primary"
+                              title="Voir en vue candidat (Épreuve réelle)"
+                            >
+                              <Link href={`/examens/demo-${series.seriesNumber}-ce`} target="_blank">
+                                <ExternalLink className="h-3.5 w-3.5" />
+                              </Link>
+                            </Button>
+
                             <Button asChild variant="outline" size="sm" className="h-8 gap-1.5 font-bold text-xs">
                               <Link href={`/admin/series-ce/${series.id}/questions`}>
                                 <ListChecks className="h-3.5 w-3.5 text-primary" />

@@ -252,7 +252,7 @@ export function MockExamOrchestrator({
           <div className="relative overflow-hidden rounded-3xl border border-primary/30 bg-gradient-to-br from-card via-card to-primary/5 p-8 sm:p-12 shadow-2xl backdrop-blur-xl">
             <div className="space-y-4 max-w-2xl">
               <Badge className="bg-primary/20 text-primary border-primary/30 font-bold px-3 py-1 text-xs">
-                🇨🇦 Simulation Officielle France Éducation International (FEI)
+                🇨🇦 Simulation Format TCF Canada (NCLC 7+)
               </Badge>
 
               <h1 className="font-display text-3xl sm:text-5xl font-black tracking-tight text-foreground">

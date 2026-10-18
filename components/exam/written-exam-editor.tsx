@@ -14,8 +14,13 @@ import {
   LogOut,
   Pause,
   Play,
+  ArrowLeft,
   ArrowRight,
+  ArrowUp,
+  Download,
+  Printer,
   HelpCircle,
+  History,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -40,9 +45,10 @@ import { formatClock } from "@/components/exam/exam-header";
 import { triggerGlobalLoading } from "@/components/ui/top-body-loader";
 import { CompanionPod } from "@/components/companions/companion-pod";
 import { type CompanionId, DEFAULT_COMPANION_ID } from "@/lib/companions/data";
+import { generateExamReportPdf } from "@/lib/exam/export-pdf";
 import { cn } from "@/lib/utils";
 
-// Palette de caractères accentués et symboles — Conforme FEI & Objectif Canada
+// Palette de caractères accentués et symboles — Standard Clavier Officiel
 const LOWERCASE_CHARS = [
   "é", "è", "ê", "ë", "à", "â", "ç", "ô", "î", "ï", "ù", "û", "œ", "æ",
 ] as const;
@@ -64,12 +70,14 @@ interface WrittenExamEditorProps {
   series: WrittenExamSeries;
   initialMode?: "exam" | "practice";
   initialTaskIndex?: 0 | 1 | 2;
+  autoStart?: boolean;
 }
 
 export function WrittenExamEditor({
   series,
   initialMode = "exam",
   initialTaskIndex = 0,
+  autoStart = false,
 }: WrittenExamEditorProps) {
   const [mode, setMode] = useState<"exam" | "practice">(initialMode);
   const storageKey = `super4c2:written:${series.id}:${mode}`;
@@ -93,6 +101,11 @@ export function WrittenExamEditor({
   const [result, setResult] = useState<WrittenExamResult | null>(null);
   const [practiceSingleResult, setPracticeSingleResult] = useState<TaskEvaluation | null>(null);
 
+  const draftStorageKey = `super4c2:draft:ee:${series.id}`;
+  const [hasDraft, setHasDraft] = useState<boolean>(false);
+  const [isRestoreOpen, setIsRestoreOpen] = useState<boolean>(false);
+  const [isExportingPdf, setIsExportingPdf] = useState<boolean>(false);
+
   const [isSubmitOpen, setIsSubmitOpen] = useState<boolean>(false);
   const [isExitOpen, setIsExitOpen] = useState<boolean>(false);
   const [hydrated, setHydrated] = useState<boolean>(false);
@@ -111,35 +124,96 @@ export function WrittenExamEditor({
       const savedCompanion = localStorage.getItem("super4c2:user_companion") as CompanionId;
       if (savedCompanion) setUserCompanionId(savedCompanion);
 
+      // Vérifier s'il existe un brouillon sauvegardé pour cette session
+      const draftRaw = localStorage.getItem(draftStorageKey);
+      if (draftRaw) {
+        try {
+          const draftParsed = JSON.parse(draftRaw);
+          if (
+            draftParsed?.texts &&
+            Array.isArray(draftParsed.texts) &&
+            draftParsed.texts.some((t: string) => t && t.trim().length > 0)
+          ) {
+            setHasDraft(true);
+          }
+        } catch {}
+      }
+
+      const isViewResults =
+        typeof window !== "undefined" &&
+        new URLSearchParams(window.location.search).get("view") === "results";
+
       const saved = localStorage.getItem(storageKey);
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (parsed.texts) setTexts(parsed.texts);
-        if (parsed.activeTaskIndex !== undefined) setActiveTaskIndex(parsed.activeTaskIndex);
-        if (parsed.deadline && parsed.deadline > Date.now()) {
-          setDeadline(parsed.deadline);
-          setRemaining(Math.max(0, Math.round((parsed.deadline - Date.now()) / 1000)));
-        } else {
-          setDeadline(Date.now() + totalDuration * 1000);
-          setRemaining(totalDuration);
-        }
-        if (parsed.isFinished) {
+
+        // Si l'utilisateur consulte explicitement ses anciens résultats avec view=results
+        if (isViewResults && parsed.isFinished && parsed.result) {
           setIsFinished(true);
           finishedRef.current = true;
-          if (parsed.result) setResult(parsed.result);
+          setResult(parsed.result);
           if (parsed.practiceSingleResult) setPracticeSingleResult(parsed.practiceSingleResult);
           if (parsed.autoSubmitted) setAutoSubmitted(parsed.autoSubmitted);
+          if (parsed.texts) setTexts(parsed.texts);
+          if (parsed.activeTaskIndex !== undefined) setActiveTaskIndex(parsed.activeTaskIndex);
+        } else if (autoStart) {
+          // Démarrage explicite d'un nouvel examen : reset total et démarrage immédiat de l'épreuve
+          try {
+            localStorage.removeItem(storageKey);
+          } catch {}
+          const newDeadline = Date.now() + totalDuration * 1000;
+          setDeadline(newDeadline);
+          setRemaining(totalDuration);
+          setIsFinished(false);
+          finishedRef.current = false;
+          setResult(null);
+          setPracticeSingleResult(null);
+          setAutoSubmitted(false);
+          setTexts(["", "", ""]);
+          setActiveTaskIndex(initialTaskIndex);
+        } else {
+          // Accès standard à l'examen : TOUJOURS prêt à composer (Tâche 1, 2, 3)
+          if (parsed.texts && Array.isArray(parsed.texts)) setTexts(parsed.texts);
+          if (parsed.activeTaskIndex !== undefined) setActiveTaskIndex(parsed.activeTaskIndex);
+
+          // Si le chrono sauvegardé est encore valide dans le futur, on le reprend ; sinon on donne le temps complet
+          if (parsed.deadline && parsed.deadline > Date.now()) {
+            setDeadline(parsed.deadline);
+            setRemaining(Math.max(0, Math.round((parsed.deadline - Date.now()) / 1000)));
+          } else {
+            const newDeadline = Date.now() + totalDuration * 1000;
+            setDeadline(newDeadline);
+            setRemaining(totalDuration);
+          }
+
+          setIsFinished(false);
+          finishedRef.current = false;
+          setResult(null);
+          setPracticeSingleResult(null);
+          setAutoSubmitted(false);
         }
       } else {
-        setDeadline(Date.now() + totalDuration * 1000);
+        const newDeadline = Date.now() + totalDuration * 1000;
+        setDeadline(newDeadline);
         setRemaining(totalDuration);
+        setIsFinished(false);
+        finishedRef.current = false;
+        setResult(null);
+        setPracticeSingleResult(null);
+        setAutoSubmitted(false);
       }
     } catch {
-      setDeadline(Date.now() + totalDuration * 1000);
+      const newDeadline = Date.now() + totalDuration * 1000;
+      setDeadline(newDeadline);
       setRemaining(totalDuration);
+      setIsFinished(false);
+      finishedRef.current = false;
+      setResult(null);
+      setPracticeSingleResult(null);
+      setAutoSubmitted(false);
     }
     setHydrated(true);
-  }, [storageKey, totalDuration]);
+  }, [storageKey, totalDuration, autoStart, initialTaskIndex]);
 
   // Sauvegarde continue avec télémétrie visuelle
   useEffect(() => {
@@ -183,8 +257,58 @@ export function WrittenExamEditor({
     autoSubmitted,
   ]);
 
+  // Sauvegarde continue du brouillon non soumis dans localStorage
+  useEffect(() => {
+    if (!hydrated || isFinished) return;
+    const hasAnyContent = texts.some((t) => t && t.trim().length > 0);
+    if (hasAnyContent) {
+      try {
+        localStorage.setItem(
+          draftStorageKey,
+          JSON.stringify({ texts, savedAt: Date.now() })
+        );
+        setHasDraft(true);
+      } catch {}
+    }
+  }, [texts, hydrated, isFinished, draftStorageKey]);
+
+  const handleRestoreDraft = () => {
+    try {
+      const draftRaw = localStorage.getItem(draftStorageKey);
+      if (draftRaw) {
+        const draftParsed = JSON.parse(draftRaw);
+        if (draftParsed?.texts && Array.isArray(draftParsed.texts)) {
+          setTexts(draftParsed.texts);
+          setIsRestoreOpen(false);
+          setHasDraft(false);
+        }
+      }
+    } catch {}
+  };
+
+  const handleDownloadPdf = async () => {
+    if (!result) return;
+    try {
+      setIsExportingPdf(true);
+      await generateExamReportPdf({
+        series,
+        result,
+        texts,
+      });
+    } catch (err) {
+      console.error("Échec génération PDF personnalisé, bascule impression :", err);
+      window.print();
+    } finally {
+      setIsExportingPdf(false);
+    }
+  };
+
   // Évaluation : Globale ou Tâche par Tâche
   const handleSubmit = useCallback(async () => {
+    try {
+      localStorage.removeItem(draftStorageKey);
+      setHasDraft(false);
+    } catch {}
     finishedRef.current = true;
     setIsFinished(true);
     setIsEvaluating(true);
@@ -254,6 +378,8 @@ export function WrittenExamEditor({
     if (!hydrated || isFinished || isTimerPaused) return;
 
     const tick = () => {
+      if (!deadline || deadline <= 0) return;
+
       const left = Math.max(0, Math.round((deadline - Date.now()) / 1000));
       setRemaining(left);
 
@@ -368,172 +494,84 @@ export function WrittenExamEditor({
 
   return (
     <div className="flex h-screen flex-col bg-background select-none">
-      {/* 🏛️ BARRE D'EN-TÊTE OFFICIELLE CBT */}
-      <header className="flex h-16 shrink-0 items-center justify-between gap-4 border-b bg-card px-4 sm:px-6">
-        <div className="min-w-0">
-          <div className="flex items-center gap-2">
-            <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">
-              TCF Canada — Expression Écrite
-            </p>
-
-            {/* Commutateur de Mode : Examen Strict vs Entraînement Tâche par Tâche */}
-            <button
-              type="button"
-              onClick={handleToggleMode}
-              className={cn(
-                "inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold transition-all border shadow-2xs",
-                mode === "practice"
-                  ? "bg-amber-500/15 text-amber-700 dark:text-amber-400 border-amber-500/30 hover:bg-amber-500/25"
-                  : "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/30 hover:bg-blue-500/20"
-              )}
-              title="Cliquer pour basculer entre le Mode Examen (60 min) et le Mode Entraînement Tâche par Tâche"
-            >
-              {mode === "practice" ? (
-                <>
-                  <Sparkles className="h-3 w-3 text-amber-500" />
-                  <span>Mode Entraînement (Tâche par Tâche)</span>
-                </>
-              ) : (
-                <>
-                  <span className="inline-block h-1.5 w-1.5 rounded-full bg-blue-500 animate-pulse" />
-                  <span>Mode Examen Blanc (60 min)</span>
-                </>
-              )}
-            </button>
-          </div>
-          <h1 className="font-display text-base font-bold sm:text-lg truncate">{series.title}</h1>
-        </div>
-
-        {/* ⏱️ Minuteur numérique + Contrôles */}
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-1.5">
-            <div
-              role="timer"
-              className={cn(
-                "flex items-center gap-2 rounded-full border px-3 sm:px-4 py-1.5 font-mono text-base sm:text-lg font-bold tabular-nums transition-colors shadow-2xs",
-                isTimerPaused && "border-amber-500/50 bg-amber-500/10 text-amber-600",
-                !isTimerPaused && urgent && "border-orange-500/50 bg-orange-500/10 text-orange-600",
-                !isTimerPaused && critical && "animate-pulse border-red-500/60 bg-red-500/10 text-red-600",
-                !isTimerPaused && !urgent && !critical && "border-border/80 bg-background text-foreground"
-              )}
-            >
-              <Clock className="h-4 w-4" />
-              <span>{isTimerPaused ? "PAUSE" : formatClock(remaining)}</span>
-            </div>
-
-            {/* Bouton Pause en mode entraînement */}
-            {mode === "practice" && !isFinished && (
-              <button
-                type="button"
-                onClick={() => setIsTimerPaused(!isTimerPaused)}
-                className={cn(
-                  "flex h-8 w-8 items-center justify-center rounded-full border transition-all",
-                  isTimerPaused
-                    ? "bg-amber-500 text-white border-amber-600 shadow-sm"
-                    : "bg-muted/60 text-muted-foreground hover:text-foreground hover:bg-muted"
-                )}
-                title={isTimerPaused ? "Reprendre le chronomètre" : "Mettre en pause le chronomètre"}
-              >
-                {isTimerPaused ? <Play className="h-3.5 w-3.5 fill-current" /> : <Pause className="h-3.5 w-3.5" />}
-              </button>
-            )}
-          </div>
-
-          {/* Badge d'autosave continu */}
-          <div className="hidden lg:flex items-center gap-1.5 text-xs text-muted-foreground border rounded-full px-3 py-1 bg-muted/30">
-            <span
-              className={cn(
-                "h-2 w-2 rounded-full",
-                saveStatus === "saving" ? "bg-amber-500 animate-pulse" : "bg-emerald-500"
-              )}
-            />
-            <span className="font-mono text-[11px]">
-              {saveStatus === "saving"
-                ? "Sauvegarde..."
-                : lastSavedAt
-                ? `Sauvegardé à ${lastSavedAt}`
-                : "Sauvegarde auto active"}
-            </span>
-          </div>
-        </div>
-
-        {/* Actions : Quitter & Soumettre */}
-        <div className="flex items-center gap-2">
+      {/* 🏛️ BARRE D'EN-TÊTE STRICTEMENT ÉPURÉE : RETOURNER • CHRONOMÈTRE • SOUMETTRE */}
+      <header className="flex h-14 shrink-0 items-center justify-between gap-4 border-b bg-card px-4 sm:px-6">
+        {/* 1. Bouton Retourner (avec flèche) */}
+        <div className="flex items-center">
           <Button
-            variant="ghost"
+            asChild
+            variant="outline"
             size="sm"
-            onClick={() => setIsExitOpen(true)}
-            className="text-xs text-muted-foreground hover:text-foreground gap-1.5"
-            title="Quitter la salle d'examen"
+            className="rounded-full gap-2 px-3.5 h-8 border-border/80 bg-background/80 hover:bg-muted font-bold text-xs shadow-2xs group shrink-0"
           >
-            <LogOut className="h-4 w-4" />
-            <span className="hidden sm:inline">Quitter</span>
+            <Link href={`/examens/${series.id}/ee/intro`}>
+              <ArrowLeft className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-1 text-primary" />
+              <span>Retourner</span>
+            </Link>
           </Button>
+        </div>
 
+        {/* 2. Chronomètre officiel strict (60:00) */}
+        <div className="flex items-center">
+          <div
+            role="timer"
+            className={cn(
+              "flex items-center gap-2 rounded-full border px-4 py-1 font-mono text-sm sm:text-base font-bold tabular-nums transition-colors shadow-2xs",
+              urgent && "border-orange-500/50 bg-orange-500/10 text-orange-600",
+              critical && "animate-pulse border-red-500/60 bg-red-500/10 text-red-600",
+              !urgent && !critical && "border-border/80 bg-background text-foreground"
+            )}
+          >
+            <Clock className="h-4 w-4 text-muted-foreground" />
+            <span>{formatClock(remaining)}</span>
+          </div>
+        </div>
+
+        {/* 3. Bouton Soumettre */}
+        <div className="flex items-center gap-2 shrink-0">
           {!isFinished ? (
-            <Button onClick={() => setIsSubmitOpen(true)} className="gap-2">
-              <Send className="h-4 w-4" />
-              {mode === "practice" ? "Évaluer cette tâche" : "Soumettre l'épreuve"}
+            <Button
+              onClick={() => setIsSubmitOpen(true)}
+              className="rounded-full gap-2 px-4 h-8 font-bold bg-brand-crimson hover:bg-brand-crimson/90 text-white shadow-xs text-xs"
+            >
+              <Send className="h-3.5 w-3.5" />
+              <span>Soumettre</span>
             </Button>
           ) : (
-            <Button variant="outline" onClick={handleRestart} className="gap-2">
-              <RotateCcw className="h-4 w-4" />
-              Recommencer
-            </Button>
+            <>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => window.print()}
+                className="rounded-full gap-2 font-bold text-xs shadow-2xs hover:bg-muted h-8"
+                title="Télécharger ou imprimer mon rapport d'évaluation FEI"
+              >
+                <Download className="h-3.5 w-3.5 text-primary" />
+                <span className="hidden sm:inline">Télécharger (PDF)</span>
+              </Button>
+              <Button variant="outline" size="sm" onClick={handleRestart} className="rounded-full gap-2 h-8 text-xs">
+                <RotateCcw className="h-3.5 w-3.5" />
+                <span>Recommencer</span>
+              </Button>
+            </>
           )}
         </div>
       </header>
 
-      {/* 📊 BARRE DU TEMPS VISUELLE OFFICIELLE CBT */}
+      {/* Barre de progression fine du chronomètre */}
       {!isFinished && (
-        <div className="relative w-full border-b bg-card">
-          {/* Piste de progression du temps */}
-          <div className="relative h-1.5 w-full bg-slate-200 dark:bg-slate-800 overflow-hidden">
-            <div
-              className={cn(
-                "h-full transition-all duration-1000 ease-linear shadow-xs",
-                remaining > totalDuration * 0.25
-                  ? "bg-gradient-to-r from-emerald-500 via-teal-500 to-blue-600"
-                  : remaining > 60
-                  ? "bg-gradient-to-r from-amber-500 to-orange-500"
-                  : "bg-gradient-to-r from-red-600 to-rose-600 animate-pulse"
-              )}
-              style={{ width: `${progressPercent}%` }}
-            />
-          </div>
-
-          {/* Bandeau de télémétrie du temps */}
-          <div className="flex items-center justify-between px-4 sm:px-6 py-1 text-[11px] font-mono font-medium text-muted-foreground bg-muted/20">
-            <div className="flex items-center gap-2">
-              <span
-                className={cn(
-                  "font-bold tabular-nums",
-                  remaining <= 60
-                    ? "text-red-600 animate-pulse"
-                    : remaining <= totalDuration * 0.25
-                    ? "text-amber-600"
-                    : "text-foreground"
-                )}
-              >
-                Temps restant : {formatClock(remaining)}
-              </span>
-              <span>•</span>
-              <span>
-                Écoulé : {formatClock(elapsedSeconds)} / {formatClock(totalDuration)}
-              </span>
-            </div>
-
-            <div className="flex items-center gap-3">
-              {mode === "practice" ? (
-                <span className="text-[10px] font-bold text-amber-700 dark:text-amber-400 bg-amber-500/15 px-2 py-0.5 rounded-full border border-amber-500/30">
-                  Tâche {activeTaskIndex + 1} ({Math.round(totalDuration / 60)} min conseillées)
-                </span>
-              ) : (
-                <span className="text-[10px] text-muted-foreground">Épreuve globale (60 min)</span>
-              )}
-              <span className="tabular-nums font-semibold">{Math.round(progressPercent)}%</span>
-            </div>
-          </div>
+        <div className="relative h-1 w-full bg-slate-200 dark:bg-slate-800 overflow-hidden">
+          <div
+            className={cn(
+              "h-full transition-all duration-1000 ease-linear",
+              remaining > totalDuration * 0.25
+                ? "bg-gradient-to-r from-emerald-500 via-teal-500 to-blue-600"
+                : remaining > 60
+                ? "bg-gradient-to-r from-amber-500 to-orange-500"
+                : "bg-gradient-to-r from-red-600 to-rose-600 animate-pulse"
+            )}
+            style={{ width: `${progressPercent}%` }}
+          />
         </div>
       )}
 
@@ -579,7 +617,7 @@ export function WrittenExamEditor({
           </div>
         </div>
       ) : isFinished ? (
-        <div className="flex-1 overflow-y-auto p-6 sm:p-8 space-y-8 max-w-5xl mx-auto w-full">
+        <div id="exam-report-container" className="flex-1 overflow-y-auto p-6 sm:p-8 space-y-8 max-w-5xl mx-auto w-full">
           {mode === "practice" && practiceSingleResult ? (
             /* Bilan Tâche Unique (Mode Entraînement) */
             <div className="space-y-6">
@@ -684,7 +722,7 @@ export function WrittenExamEditor({
                   </div>
                 </div>
 
-                <div className="pt-4 flex items-center justify-between">
+                <div className="pt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <p className="text-sm font-medium text-foreground">
                     {result.crsPointsUnlocked > 0 ? (
                       <span className="text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-1.5">
@@ -698,6 +736,27 @@ export function WrittenExamEditor({
                       </span>
                     )}
                   </p>
+
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    disabled={isExportingPdf}
+                    onClick={handleDownloadPdf}
+                    className="rounded-full gap-2 font-bold text-xs shadow-2xs hover:bg-muted shrink-0"
+                  >
+                    {isExportingPdf ? (
+                      <>
+                        <div className="h-3.5 w-3.5 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                        <span>Génération du PDF...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Download className="h-3.5 w-3.5 text-primary" />
+                        <span>Télécharger mon Bilan (PDF)</span>
+                      </>
+                    )}
+                  </Button>
                 </div>
               </div>
 
@@ -732,36 +791,26 @@ export function WrittenExamEditor({
               {series.tasks.map((task, idx) => {
                 const count = countWordsFei(texts[idx] || "");
                 const active = activeTaskIndex === idx;
-                const reqMinutes = Math.round(TASK_PRACTICE_DURATIONS[idx as 0 | 1 | 2] / 60);
 
                 return (
                   <button
                     key={task.taskNumber}
                     type="button"
-                    onClick={() => {
-                      if (mode === "practice") {
-                        handleSelectPracticeTask(idx as 0 | 1 | 2);
-                      } else {
-                        setActiveTaskIndex(idx as 0 | 1 | 2);
-                      }
-                    }}
+                    onClick={() => setActiveTaskIndex(idx as 0 | 1 | 2)}
                     className={cn(
-                      "flex items-center gap-2 rounded-xl px-3.5 py-1.5 text-xs font-semibold transition-all select-none border",
+                      "flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition-all select-none border",
                       active
-                        ? "bg-card text-foreground border-primary shadow-2xs"
+                        ? "bg-card text-foreground border-primary shadow-xs ring-1 ring-primary/20"
                         : "bg-transparent text-muted-foreground border-transparent hover:bg-muted"
                     )}
                   >
-                    <BookOpen className="h-3.5 w-3.5" />
+                    <BookOpen className="h-3.5 w-3.5 text-primary" />
                     <span>Tâche {task.taskNumber}</span>
-                    <span className="text-[10px] text-muted-foreground hidden sm:inline">
-                      (~{reqMinutes}m)
-                    </span>
                     <span
                       className={cn(
-                        "font-mono text-[11px] rounded px-1.5 py-0.5",
+                        "font-mono text-[11px] rounded px-1.5 py-0.5 ml-1",
                         count >= task.minWords && count <= task.maxWords
-                          ? "bg-emerald-500/20 text-emerald-600 dark:text-emerald-400"
+                          ? "bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-bold"
                           : "bg-muted text-muted-foreground"
                       )}
                     >
@@ -771,13 +820,6 @@ export function WrittenExamEditor({
                 );
               })}
             </div>
-
-            {mode === "practice" && (
-              <span className="text-[11px] text-amber-700 dark:text-amber-400 font-medium hidden md:inline-flex items-center gap-1">
-                <HelpCircle className="h-3.5 w-3.5" />
-                Mode Tâche par Tâche : évaluez chaque tâche séparément avec son temps requis
-              </span>
-            )}
           </div>
 
           {/* 🪟 ÉCRAN SCINDÉ : SUJET À GAUCHE, ÉDITEUR À DROITE */}
@@ -830,26 +872,27 @@ export function WrittenExamEditor({
                 />
               </div>
 
-              {/* ⌨️ CLAVIER VIRTUEL COMPLET (Conforme Objectif Canada & France Éducation International) */}
+              {/* ⌨️ CLAVIER VIRTUEL COMPLET */}
               <div className="p-2.5 rounded-xl border bg-muted/30 space-y-2">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-1.5">
                     <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                      Caractères Accentués (FEI) :
+                      Caractères Accentués :
                     </span>
-                    {/* Commutateur Majuscules / Minuscules */}
+                    {/* Commutateur Majuscules / Minuscules (Style clavier mobile avec flèche Shift) */}
                     <button
                       type="button"
                       onClick={() => setIsCapsActive(!isCapsActive)}
                       className={cn(
-                        "h-6 px-2 rounded-md border text-[10px] font-bold transition-all shadow-2xs select-none",
+                        "h-6 px-2.5 rounded-md border text-[10px] font-bold transition-all shadow-2xs select-none flex items-center gap-1",
                         isCapsActive
-                          ? "bg-primary text-white border-primary"
-                          : "bg-card text-foreground hover:bg-muted"
+                          ? "bg-primary text-white border-primary shadow-xs ring-2 ring-primary/20"
+                          : "bg-card text-foreground hover:bg-muted border-border"
                       )}
-                      title="Basculer entre minuscules et majuscules (Caps)"
+                      title="Basculer entre minuscules et majuscules (Touche Shift)"
                     >
-                      {isCapsActive ? "MAJ (Activé)" : "a / A"}
+                      <ArrowUp className={cn("h-3 w-3 transition-transform", isCapsActive && "stroke-[3]")} />
+                      <span>{isCapsActive ? "MAJ" : "Min"}</span>
                     </button>
                   </div>
                   <span className="text-[10px] text-muted-foreground font-mono hidden sm:inline">
@@ -1007,17 +1050,75 @@ export function WrittenExamEditor({
             )}
           </div>
 
-          <DialogFooter>
+          {/* ⚠️ AVERTISSEMENT ACTION IRRÉVERSIBLE DEMANDÉ PAR L'UTILISATEUR */}
+          <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-3 text-xs text-red-700 dark:text-red-300 flex items-start gap-2.5 font-medium">
+            <AlertTriangle className="h-4 w-4 shrink-0 text-red-600 mt-0.5" />
+            <span>
+              <strong>Attention, action irréversible :</strong> une fois votre épreuve transmise, vous ne pourrez plus modifier vos textes. Votre copie sera immédiatement transmise au jury IA pour notation finale officielle FEI.
+            </span>
+          </div>
+
+          <DialogFooter className="gap-2 sm:gap-0 pt-2">
             <Button variant="outline" onClick={() => setIsSubmitOpen(false)}>
               Continuer à rédiger
             </Button>
             <Button
+              className="bg-brand-crimson hover:bg-brand-crimson/90 text-white font-bold"
               onClick={() => {
                 setIsSubmitOpen(false);
                 handleSubmit();
               }}
             >
               Confirmer et évaluer
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* 🔄 BOUTON FLOTTANT DE RESTAURATION DU BROUILLON (Format Objectif Canada) */}
+      {hasDraft && !isFinished && !isEvaluating && (
+        <button
+          type="button"
+          onClick={() => setIsRestoreOpen(true)}
+          className="fixed bottom-6 left-6 z-40 group flex items-center gap-2 rounded-full border border-primary/30 bg-card/95 hover:bg-card px-3.5 py-2 shadow-xl hover:shadow-2xl transition-all duration-200 text-xs font-bold text-foreground hover:border-primary backdrop-blur-md animate-in fade-in slide-in-from-bottom-3"
+          title="Restaurer votre travail précédent"
+        >
+          <History className="h-4 w-4 text-primary group-hover:rotate-[-45deg] transition-transform duration-300" />
+          <span>Restaurer mon brouillon</span>
+          <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+        </button>
+      )}
+
+      {/* 🔄 DIALOGUE DE RESTAURATION DU BROUILLON */}
+      <Dialog open={isRestoreOpen} onOpenChange={setIsRestoreOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 font-display text-lg">
+              <History className="h-5 w-5 text-primary" />
+              Restaurer votre travail précédent ?
+            </DialogTitle>
+            <DialogDescription className="space-y-2 pt-2 text-sm text-muted-foreground">
+              Un brouillon sauvegardé automatiquement a été détecté pour cette session. Voulez-vous récupérer vos réponses pour les 3 tâches ?
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-3 text-xs text-amber-800 dark:text-amber-300 flex items-start gap-2.5 font-medium">
+            <AlertTriangle className="h-4 w-4 shrink-0 text-amber-600 mt-0.5" />
+            <span>
+              <strong>Attention, action irréversible :</strong> la restauration remplacera définitivement tout le contenu actuellement saisi dans vos tâches par votre brouillon précédent.
+            </span>
+          </div>
+
+          <DialogFooter className="gap-2 sm:gap-0 pt-3">
+            <Button variant="outline" onClick={() => setIsRestoreOpen(false)}>
+              Ignorer
+            </Button>
+            <Button
+              onClick={handleRestoreDraft}
+              className="bg-primary hover:bg-primary/90 text-white gap-2 font-bold"
+            >
+              <RotateCcw className="h-4 w-4" />
+              Restaurer mes réponses
             </Button>
           </DialogFooter>
         </DialogContent>

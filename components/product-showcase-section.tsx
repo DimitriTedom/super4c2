@@ -309,7 +309,7 @@ export function ProductShowcaseSection() {
               <span className="h-3 w-3 rounded-full bg-emerald-500 inline-block shadow-xs" />
             </div>
             <span className="font-mono text-slate-400 pl-2 text-[11px] hidden sm:inline">
-              Super4C2 CBT Engine v3.4 • France Éducation International
+              Super4C2 CBT Engine v3.4 • Conforme Grille NCLC 7+
             </span>
           </div>
 

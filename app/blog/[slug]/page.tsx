@@ -9,7 +9,7 @@ import {
   Sparkles,
   User,
 } from "lucide-react";
-import { getBlogPost, BLOG_POSTS } from "@/lib/blog/mock-posts";
+import { getSingleBlogPost, listAllBlogPosts } from "@/lib/blog/blog-service";
 import { Button } from "@/components/ui/button";
 import { ShimmerButton } from "@/components/ui/shimmer-button";
 import { cn } from "@/lib/utils";
@@ -20,7 +20,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const post = getBlogPost(slug);
+  const post = await getSingleBlogPost(slug);
   if (!post) return { title: "Article non trouvé — Super4C2" };
 
   return {
@@ -36,14 +36,15 @@ export default async function BlogPostPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const post = getBlogPost(slug);
+  const post = await getSingleBlogPost(slug);
 
   if (!post) {
     notFound();
   }
 
-  // Articles recommandés (les autres articles de la liste)
-  const relatedPosts = BLOG_POSTS.filter((p) => p.slug !== post.slug).slice(0, 2);
+  // Articles recommandés
+  const allPosts = await listAllBlogPosts();
+  const relatedPosts = allPosts.filter((p) => p.slug !== post.slug).slice(0, 2);
 
   return (
     <article className="mx-auto max-w-4xl space-y-10 py-6">

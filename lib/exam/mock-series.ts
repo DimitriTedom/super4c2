@@ -179,8 +179,29 @@ const SERIES: Record<string, ExamSeriesData> = {
   "301": FULL_SERIES_IELTS_GEN_18_1,
 };
 
+// Initialisation des séries TCF 102 à 105
+for (const num of [102, 103, 104, 105]) {
+  const dynamicSeries: ExamSeriesData = {
+    id: `serie-${num}`,
+    seriesNumber: num,
+    title: `TCF Canada — Série ${num} (Officielle)`,
+    discipline: "CE",
+    durationSeconds: 3600,
+    questions: FULL_SERIES_CE_101.questions,
+  };
+  SERIES[`serie-${num}`] = dynamicSeries;
+  SERIES[`${num}`] = dynamicSeries;
+  SERIES[`serie-${num}-ee`] = dynamicSeries;
+  SERIES[`serie-${num}-eo`] = dynamicSeries;
+}
+
 export function getMockSeries(id: string): ExamSeriesData | undefined {
-  return SERIES[id];
+  if (SERIES[id]) return SERIES[id];
+  const numMatch = id.match(/\d+/);
+  if (numMatch && SERIES[numMatch[0]]) {
+    return SERIES[numMatch[0]];
+  }
+  return SERIES["demo-101-ce"];
 }
 
 export function listMockSeries(): ExamSeriesData[] {

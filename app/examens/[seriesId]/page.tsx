@@ -58,11 +58,11 @@ export default async function SeriesDisciplineSelectorPage({
           <div className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-bold uppercase tracking-wider text-primary">
             <ShieldCheck className="h-3.5 w-3.5" />{" "}
             {isIelts
-              ? "🇬🇧 Simulateur Officiel Cambridge English · IELTS General Training"
-              : "🇨🇦 Simulateur Officiel FEI · Nouveau Format TCF Canada"}
+              ? "🇬🇧 Préparation IELTS General Training"
+              : "🇨🇦 Préparation Format TCF Canada"}
           </div>
           <h1 className="font-display text-2xl sm:text-4xl font-extrabold tracking-tight">
-            {isIelts ? series.title : `Vous êtes sur le point de commencer le Sujet ${series.seriesNumber || 101}`}
+            {isIelts ? series.title : `Vous êtes sur le point de commencer l'Examen ${series.seriesNumber || 1}`}
           </h1>
           <p className="text-base text-muted-foreground max-w-2xl">
             {isIelts
@@ -178,7 +178,7 @@ export default async function SeriesDisciplineSelectorPage({
 
           <div className="pt-6">
             <Button asChild size="lg" className="w-full bg-brand-crimson hover:bg-brand-crimson-dark text-white font-bold shadow-md">
-              <Link href={`/examens/${series.id}/ee/intro`}>
+              <Link href={`/examens/${seriesId}/ee/intro`}>
                 <span>Démarrer l&apos;Atelier d&apos;Écriture</span>
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
@@ -232,7 +232,7 @@ export default async function SeriesDisciplineSelectorPage({
 
           <div className="pt-6">
             <Button asChild size="lg" className="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold shadow-md">
-              <Link href={`/examens/${series.id}/eo/intro`}>
+              <Link href={`/examens/${seriesId}/eo/intro`}>
                 <span>Démarrer l&apos;Épreuve Orale</span>
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>

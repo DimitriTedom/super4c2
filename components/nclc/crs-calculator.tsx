@@ -5,8 +5,29 @@ import Link from "next/link";
 import { ArrowRight, CheckCircle2, Flame, Mail, Loader2, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { subscribePublicNewsletterAction } from "@/app/admin/newsletter/actions";
+import { captureLeadAction } from "@/app/admin/newsletter/actions";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { cn } from "@/lib/utils";
+
+const DIAL_CODES = [
+  { code: "+237", label: "🇨🇲 +237" },
+  { code: "+221", label: "🇸🇳 +221" },
+  { code: "+225", label: "🇨🇮 +225" },
+  { code: "+212", label: "🇲🇦 +212" },
+  { code: "+213", label: "🇩🇿 +213" },
+  { code: "+216", label: "🇹🇳 +216" },
+  { code: "+243", label: "🇨🇩 +243" },
+  { code: "+241", label: "🇬🇦 +241" },
+  { code: "+224", label: "🇬🇳 +224" },
+  { code: "+33", label: "🇫🇷 +33" },
+  { code: "+1", label: "🇨🇦 +1" },
+];
 
 // Points officiels Entrée Express IRCC (sans conjoint)
 const POINTS_PAR_NCLC: Record<number, number> = {
@@ -29,6 +50,9 @@ export function CrsCalculator() {
 
   // État capture lead rapport email
   const [email, setEmail] = useState<string>("");
+  const [name, setName] = useState<string>("");
+  const [phone, setPhone] = useState<string>("");
+  const [dialCode, setDialCode] = useState<string>("+237");
   const [reportSent, setReportSent] = useState<boolean>(false);
   const [isPending, startTransition] = useTransition();
 
@@ -69,13 +93,25 @@ export function CrsCalculator() {
       toast.error("Veuillez saisir une adresse e-mail valide.");
       return;
     }
+    const localDigits = phone.replace(/\D/g, "").replace(/^0+/, "");
+    if (localDigits.length < 6) {
+      toast.error("Veuillez saisir votre numéro WhatsApp pour recevoir le rapport.");
+      return;
+    }
 
     startTransition(async () => {
       const source = `crs_calculator_${totalCrsPoints}pts_${allNclc7Plus ? "nclc7_atteint" : "seuil_incomplet"}`;
-      const res = await subscribePublicNewsletterAction(email, source);
+      const res = await captureLeadAction({
+        email,
+        name,
+        phone: `${dialCode}${localDigits}`,
+        source,
+        crsScore: totalCrsPoints,
+        nclcProfile: `CE${ceLevel}-CO${coLevel}-EE${eeLevel}-EO${eoLevel}`,
+      });
       if (res.ok) {
         setReportSent(true);
-        toast.success("Votre bilan d'admissibilité Entrée Express vous a été envoyé !");
+        toast.success("Demande enregistrée ! Votre bilan arrive sur WhatsApp.");
       } else {
         toast.error(res.error || "Une erreur est survenue lors de l'envoi.");
       }
@@ -246,18 +282,19 @@ export function CrsCalculator() {
             </p>
           </div>
 
-          {/* 📩 Boîte de Capture Lead — Rapport & Plan d'Action par Email */}
-          <div className="rounded-xl border border-primary/25 bg-gradient-to-b from-primary/[0.04] to-card p-4 sm:p-5 space-y-3">
+          {/* Capture Lead — Diagnostic personnalisé WhatsApp + Email */}
+          <div className="rounded-xl border border-emerald-500/30 bg-gradient-to-b from-emerald-500/[0.06] to-card p-4 sm:p-5 space-y-3">
             <div className="flex items-start gap-2.5">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary shrink-0 mt-0.5">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-500/15 text-emerald-600 shrink-0 mt-0.5">
                 <Mail className="h-4 w-4" />
               </div>
               <div className="space-y-0.5">
                 <h3 className="font-display text-xs sm:text-sm font-bold text-foreground">
-                  Recevoir mon Bilan d&apos;Admissibilité par Email
+                  Recevoir mon Diagnostic CRS Personnalisé sur WhatsApp
                 </h3>
                 <p className="text-[11px] text-muted-foreground leading-relaxed">
-                  Recevez gratuitement la synthèse de vos <strong>+{totalCrsPoints} points CRS</strong>, l&apos;analyse de vos seuils et la feuille de route NCLC 7.
+                  Gratuit : votre score de <strong>{totalCrsPoints} pts</strong>, les 3 actions les plus rapides pour gagner des points,
+                  votre feuille de route NCLC 7 et les alertes des prochains tirages Entrée Express.
                 </p>
               </div>
             </div>
@@ -266,51 +303,82 @@ export function CrsCalculator() {
               <div className="rounded-lg border border-emerald-500/30 bg-emerald-500/10 p-3 text-xs text-emerald-800 dark:text-emerald-300 space-y-1">
                 <div className="flex items-center gap-1.5 font-bold">
                   <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
-                  <span>Rapport d&apos;admissibilité programmé !</span>
+                  <span>Demande enregistrée !</span>
                 </div>
                 <p className="text-[11px] text-muted-foreground">
-                  Un email récapitulatif a été adressé à <strong>{email}</strong>. Vérifiez vos spams si besoin.
+                  Votre diagnostic sera envoyé sur <strong>{dialCode} {phone}</strong> et à <strong>{email}</strong>.
                 </p>
                 <button
                   type="button"
                   onClick={() => setReportSent(false)}
                   className="text-[10px] text-primary hover:underline font-semibold block pt-1"
                 >
-                  Envoyer à une autre adresse email →
+                  Modifier mes coordonnées →
                 </button>
               </div>
             ) : (
               <form onSubmit={handleSendReport} className="space-y-2">
-                <div className="relative">
+                <input
+                  type="text"
+                  autoComplete="name"
+                  placeholder="Votre prénom"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="h-10 w-full rounded-xl border bg-background px-3.5 text-xs text-foreground placeholder:text-muted-foreground/70 focus:outline-none focus:ring-2 focus:ring-primary shadow-2xs"
+                />
+                <div className="flex gap-2">
+                  <Select value={dialCode} onValueChange={setDialCode}>
+                    <SelectTrigger className="h-10 w-[110px] shrink-0 rounded-xl text-xs">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {DIAL_CODES.map((d) => (
+                        <SelectItem key={d.code} value={d.code} className="text-xs">
+                          {d.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                   <input
-                    type="email"
+                    type="tel"
+                    inputMode="tel"
+                    autoComplete="tel-national"
                     required
-                    placeholder="votre.email@gmail.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Numéro WhatsApp"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
                     className="h-10 w-full rounded-xl border bg-background px-3.5 text-xs text-foreground placeholder:text-muted-foreground/70 focus:outline-none focus:ring-2 focus:ring-primary shadow-2xs"
                   />
                 </div>
+                <input
+                  type="email"
+                  required
+                  autoComplete="email"
+                  placeholder="votre.email@gmail.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="h-10 w-full rounded-xl border bg-background px-3.5 text-xs text-foreground placeholder:text-muted-foreground/70 focus:outline-none focus:ring-2 focus:ring-primary shadow-2xs"
+                />
                 <Button
                   type="submit"
                   size="sm"
                   disabled={isPending}
-                  className="w-full bg-primary hover:bg-primary-dark text-white font-bold text-xs h-9 shadow-xs gap-1.5"
+                  className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs h-10 shadow-xs gap-1.5"
                 >
                   {isPending ? (
                     <>
                       <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                      <span>Envoi du rapport en cours...</span>
+                      <span>Envoi en cours...</span>
                     </>
                   ) : (
                     <>
                       <Sparkles className="h-3.5 w-3.5" />
-                      <span>Envoyer mon Rapport &amp; Guide NCLC 7 Gratuit</span>
+                      <span>Recevoir mon diagnostic gratuit</span>
                     </>
                   )}
                 </Button>
                 <p className="text-[10px] text-muted-foreground text-center">
-                  Garanti sans spam. Vos données restent strictement confidentielles.
+                  Pas de spam. Désinscription en un message. Vos données restent confidentielles.
                 </p>
               </form>
             )}

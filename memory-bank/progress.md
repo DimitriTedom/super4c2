@@ -1,3 +1,109 @@
+- [x] **Épuration Dashboard Candidat — Retrait du Cockpit Analytique FEI & Trajectoire C2 :**
+  - Suppression de l'onglet « Analytique FEI » et du composant lourd `AnalyticsBreakdown` dans [components/dashboard/dashboard-pro-view.tsx](file:///d:/SnowDev/Documents/super4c2/components/dashboard/dashboard-pro-view.tsx).
+  - Élimination de la surcharge cognitive pour les candidats en phase d'apprentissage.
+  - Recentrage exclusif du tableau de bord sur les deux vues essentielles : **Vue Cockpit** (lancement direct des sessions, compagnon, KPIs) et **Historique & Corrections** (tableau des sessions, consultation détaillée des rédactions, barème officiel sur 20 par critère FEI, Magic Rewrite C2 et export PDF).
+  - Compilation TypeScript validée avec 0 erreur (`npx tsc --noEmit`).
+- [x] **Moteur de Conversion Leads WhatsApp-First & Connectivité Totale Admin-Utilisateur :**
+  - **Capture Leads WhatsApp sur le Calculateur CRS (`components/nclc/crs-calculator.tsx`) :** Formulaire de conversion à haute valeur ajoutée (*« Recevoir mon Diagnostic CRS Personnalisé sur WhatsApp »*) capturant le Prénom, l'indicatif international (🇨🇲 +237, 🇸🇳 +221, 🇨🇮 +225, 🇲🇦 +212, 🇩🇿 +213, 🇹🇳 +216, 🇨🇩 +243, 🇫🇷 +33, 🇨🇦 +1...), le numéro WhatsApp et l'email avec le score calculé et le profil NCLC.
+  - **Prisma Schema & Base PostgreSQL (`NewsletterSubscriber`) :** Ajout des colonnes `phone`, `name`, `crsScore`, `nclcProfile`. Synchronisation DB (`prisma db push`) et génération Prisma Client (`prisma generate`).
+  - **Gestion Back-Office & Relance Directe (`app/admin/newsletter/page.tsx`, export CSV) :** Tableau d'abonnés enrichi avec colonnes Nom, bouton direct vert WhatsApp (`https://wa.me/...`) pour contacter le candidat en 1 clic, diagnostic CRS, recherche multi-champs (email, nom, téléphone) et export CSV complet.
+  - **Connectivité Totale Admin ↔ Public (Blog, Séries) :**
+    - Création de `lib/blog/blog-service.ts` reliant `prisma.blogPost` aux pages publiques `/blog` et `/blog/[slug]`.
+    - Boutons d'aperçu direct candidat (`ExternalLink`) ajoutés dans les tables d'administration des séries écrites (`/admin/series-ee`) et séries de compréhension (`/admin/series-ce`).
+  - **Remplacement Shadcn UI (`components/dashboard/attempt-history-table.tsx`) :** Remplacement de tous les `<select>` natifs par les composants Shadcn UI (`Select`, `SelectTrigger`, `SelectValue`, `SelectContent`, `SelectItem`).
+  - **Sanitizer Vectoriel PDF (`lib/exam/export-pdf.ts`) :** Déploiement de `sanitizePdfText` traduisant tous les caractères hors WinAnsi (`✓`, `•`, `—`, `’`, etc.), assurant 100% de validité à l'ouverture du PDF.
+  - **Redirection Dynamique Magic Link (`app/auth/actions.ts`) :** Détection automatique du protocole et de l'hôte via les en-têtes HTTP pour éviter les retours vers `localhost:3000`.
+  - **Validation TypeScript :** `npx tsc --noEmit` exécuté avec **0 erreur**.
+- [x] **Hub Historique & Corrections « Studio » (spec : `docs/specs/attempt-history-studio.md`) :**
+  - `components/dashboard/attempt-history-table.tsx` : recherche, filtres épreuve + palier NCLC, tri date/note/NCLC, pagination 5/10/25/50 avec pied « 1–10 sur N », actions par ligne (Voir, PDF, Refaire), états vide / aucun résultat.
+  - Page de détail `app/dashboard/historique/[attemptId]` (protégée par `userId`, route `demo` pour l'exemple) + `attempt-detail-view.tsx` (onglets Tâche 1/2/3, rédaction, grille FEI, Magic Rewrite C2, export PDF).
+  - Helpers partagés `lib/dashboard/attempt-utils.ts` (parsing défensif, démo) et `attempt-export.ts`. Ancienne modale `attempt-detail-modal.tsx` supprimée.
+  - À faire : détail CE/CO question par question (grille 1–39, filtre « mes erreurs ») une fois les réponses QCM persistées. `npx tsc --noEmit` OK.
+- [x] **Refonte Complète du Dashboard Candidat Pro, Fiabilisation PDF & Suite Analytique FEI (`app/dashboard/page.tsx`, `export-pdf.ts` & `analytics-breakdown.tsx`) :**
+  - **Fiabilisation 100% de l'Export PDF :** Éradication du basculement sur `window.print()` causé par des exceptions DOM. Remplacement par un moteur vectoriel `jsPDF` autonome qui génère et télécharge immédiatement un rapport officiel A4 multi-pages même pour les cas atypiques (tentative à 0 mot, barèmes partiels).
+  - **Exploration Concurrent (Objectif Canada) :** Audit de `dashboard/tcfhistory` montrant l'absence totale d'analytique pédagogique chez le concurrent (simple carte "score global" et tableau brut).
+  - **Suite Analytique Avancée Super4C2 :**
+    - Courbe chronologique de progression avec ligne de démarcation officielle NCLC 7 (10/20).
+    - Matrice d'équilibre des 4 épreuves TCF Canada (EE, EO, CE, CO) requise par IRCC.
+    - Simulateur d'impact CRS Entrée Express avec comparaison des seuils d'extraction francophones (~410-435 pts).
+    - Radar/Diagnostic des 4 critères FEI sur 20 avec identification automatisée du point fort et du goulot d'étranglement.
+  - **Suppression du Bruit Marketing Obsolète :** Retrait complet du bandeau promotionnel « Période de Lancement : Accès 100% Gratuit & Illimité » et des badges « 100% Gratuit ».
+  - **Validation TypeScript :** `npx tsc --noEmit` validé avec succès (0 erreur).
+- [x] **Refonte Compacte du Catalogue d'Examens & Format « Session » (`exam-roadmap-board.tsx` & `app/examens/page.tsx`) :**
+  - **Synonyme Officiel (« Session XX ») :** Remplacement de la dénomination concurrente « Série » par le terme standard de France Éducation International « Session » (**Session 01**, **Session 02**, etc.).
+  - **Condensation Drastique du Header « Pack TCF Canada » (Capture 2) :** Remplacement du bloc imposant (~400px) par un bandeau élégant (~65px) combinant titre, badge CRS (+50 pts) et sélecteur de test rapide (TCF, TEF, IELTS).
+  - **Suppression du Pré-Filtrage d'Épreuves Isolé (Capture 1) :** Plus besoin de filtrer avant d'explorer. Les deux épreuves clés (**✍️ Expression Écrite - 60 min** et **🎙️ Expression Orale - Visio IA**) sont intégrées directement au sein de chaque carte de Session.
+  - **Empreinte Verticale Réduite de 60% :** Cartes de session condensées (~160px), organisées en grille responsive 4 colonnes, éliminant le défilement fastidieux pour les candidats.
+  - **Nettoyage du Catalogue :** Suppression de la section dupliquée `Packs Expressions Uniquement (EE & EO)` en bas de page.
+  - **Harmonisation des CTAs de la Hero (`app/page.tsx`) :** Remplacement des 3 boutons hétérogènes par un CTA unique `ShimmerButton` : « Choisir ma Session d'Examen → » menant à `/examens` avec micro-badges `TCF • TEF • IELTS`, nettoyé des imports inutilisés (`InteractiveHoverButton`).
+  - **Correction du Blocage Nav Mobile (`floating-community-button.tsx`) :** Le bouton flottant rouge « Communauté VIP » qui recouvrait l'onglet « Compte » sur petits écrans a été masqué sur mobile (`hidden lg:flex`), repositionné à gauche sur desktop sans conflit avec le Coach IA, et désactivé sur la page `/communaute`.
+  - **Sauvegarde/Restauration EE & Exportation PDF (`written-exam-editor.tsx` & `lib/exam/export-pdf.ts`) :**
+    - Système de sauvegarde en continu dans le `localStorage` avec bouton flottant de restauration en bas à gauche (`History`).
+    - Modale de restauration et modale de soumission enrichies de l'avertissement d'action irréversible.
+    - Exportation de bilan personnalisée haute fidélité via `jspdf` et `html2canvas` (remplacement de `window.print`).
+    - Sélecteur de discipline `[Toutes | Écrit | Oral]` et surbrillance automatique des cartes de session.
+    - Mise à jour des liens du tableau de bord (`app/dashboard/page.tsx`) et de la navbar (`components/site-nav.tsx`) pour diriger précisément vers les sessions EE et EO.
+  - **Validation TypeScript :** `npx tsc --noEmit` validé avec succès (0 erreur).
+- [x] **Suppression du Bloc « Pourquoi notre parcours de déblocage garantit votre succès » (`app/examens/page.tsx`) :**
+  - Retrait intégral de la section avec les 3 cartes (01 Écran Scindé, 02 Décodage des Pièges, 03 Seuil NCLC 7 Automatisé) qui alourdissait le catalogue `/examens` avec du texte superflu.
+  - Nettoyage des imports inutilisés (`ShieldCheck`).
+- [x] **Élimination de l'Auto-Soumission Fantôme, Apparition Directe des Tâches & Épuration Nav :**
+  - **Suppression du bouton « Accès Gratuit » de la navigation (`components/site-nav.tsx`) :** Retrait de la pastille verte redondante de la barre de navigation.
+  - **Résolution du bug d'évaluation affichée à l'ouverture de l'examen (`components/exam/written-exam-editor.tsx`) :**
+    - Correction de la condition de décompte du timer `tick()` qui, lorsque `deadline` était temporairement à 0, auto-soumettait une copie vide (0 mots, 6/20) immédiatement à l'ouverture.
+    - Blocage total de l'écran des résultats lors de l'accès à l'examen (seul le paramètre explicite `?view=results` permet de consulter un rapport passé).
+    - **Affichage Direct & Immédiat des 3 Tâches :** Dès le clic sur « Démarrer l'examen », la page affiche directement l'espace de travail avec les onglets Tâche 1, Tâche 2, Tâche 3, le sujet officiel, le clavier d'accents et la zone de rédaction.
+    - **En-tête Strict à 3 Éléments :** Uniquement `← Retourner`, le chronomètre officiel `60:00`, et le bouton `Soumettre`. Élimination de la barre télémétrique intermédiaire superflue.
+  - **Validation TypeScript :** `npx tsc --noEmit` validé avec succès (0 erreur).
+- [x] **Restauration de la Vitrine Interactive, Épuration du Compteur Stats & Déverrouillage d'Examen 1 :**
+  - **Correction du verrouillage d'Examen 1 (`components/exam/exam-roadmap-board.tsx`) :** Examen 1 (`tcf-blanc-1`) n'était pas déverrouillé par défaut en raison d'une vérification restrictive dans `seriesList`. Ajout de `tcf-blanc-1` dans la liste par défaut et prise en compte native de `status: "UNLOCKED"`. Examen 1 est désormais **déverrouillé par défaut** avec boutons directs d'écriture et d'oral.
+  - **Suppression du bloc de statistiques (`NumberTicker`) :** Retrait de la section à 4 chiffres animés de la homepage en accord avec la capture de l'utilisateur.
+  - **Restauration de `ProductShowcaseSection` :** Repositionné directement sous la Hero pour permettre aux visiteurs de tester immédiatement le simulateur officiel sans friction.
+  - **Condensation du CTA Final :** Remplacement du bloc surchargé par un CTA compact, percutant et centré sur l'action (+50 points CRS).
+  - **Réorganisation Didactique de la Homepage :** Ordre logique fluide : Hero -> Vitrine Interactive CBT -> Constat 4C2 -> Démo Magic Rewrite -> 4 Épreuves Cartes 3D -> Comparatif -> Témoignages -> FAQ -> CTA Final.
+  - **Validation TypeScript :** `npx tsc --noEmit` validé avec succès (0 erreur).
+- [x] **Simplification Radicale des Cartes (Examen 1, 2, 3...) & Refonte Écran Intro EE (Audio Supérieur PTT-WA0006) :**
+  - **Catalogue d'Examens (`components/exam/exam-roadmap-board.tsx`) :**
+    - Titres de cartes simplifiés en **« Examen 1 »**, **« Examen 2 »**, **« Examen 3 »**, **« Examen 4 »**, **« Examen 5 »** (suppression des désignations *Série 101*, *Série 102*).
+    - Retrait définitif du badge bandeau *« Recommandée · Flagship »* et des pavés de texte descriptifs verbeux sous chaque carte pour une interface ultra-épurée.
+    - Bouton d'action direct : *« Lancer l'Épreuve Écrite (Examen N) »* ou *« Lancer l'Épreuve Orale (Examen N) »*.
+  - **Écran d'Introduction de l'Expression Écrite (`app/examens/[seriesId]/ee/intro/page.tsx`) :**
+    - Positionnement en haut à gauche d'un bouton dédié avec flèche : **« ← Précédent »** pour revenir instantanément au catalogue de l'épreuve (`/examens?discipline=ee`).
+    - Harmonisation du bouton **« ← Précédent »** sur le hub de méthodologie (`ee/methodologie`) et l'introduction orale (`eo/intro`).
+    - Suppression intégrale et définitive de toute mention de concurrents (*Objectif Canada*).
+    - Intégration des deux blocs côte-à-côte demandés : **« 1. Relire la Méthodologie »** (menant au hub complet `ee/methodologie`) et **« 2. Démarrer l'Examen (60:00) »** (lançant l'épreuve chronométrée).
+  - **Clavier Virtuel & Espace d'Examen Sans Distraction (`components/exam/written-exam-editor.tsx`) :**
+    - **Apparition Directe de Tâche 1, Tâche 2 et Tâche 3 :** Suppression du verrouillage sur d'anciens résultats en localStorage lors de l'accès à l'examen. L'espace de travail est immédiatement affiché avec les 3 tâches prêtes à être composées.
+    - **Page Ultra-Épurée :** Conservation exclusive du bouton `← Retourner`, du chronomètre officiel 60:00, du bouton `Soumettre`, et de l'espace de travail (sujet à gauche, éditeur avec compteur de mots et clavier d'accents à droite).
+    - Commutateur Shift interactif avec icône `ArrowUp` (`MAJ` / `Min`) façon clavier mobile tactile pour insérer facilement les capitales accentuées (`É`, `È`, `À`, `Ç`, `Œ`, `Æ`) sur QWERTY.
+  - **Épuration UX & Conversions Clés Déployées :**
+    - Suppression de la modale de consentement aux cookies (`CookieConsentBanner`) dans `layout.tsx` (absence de cookies de pistage publicitaire, conformité via le lien footer `/cookies`).
+    - Élimination du sélecteur de langue inutile « CA FR » dans `SiteHeader`.
+    - Bouton officiel « Télécharger mon Bilan (PDF) » ajouté sur l'écran d'évaluation d'Expression Écrite.
+    - Vitrine interactive « Avant / Après Magic Rewrite » (`MagicRewriteShowcase`) intégrée sur la page d'accueil pour les Tâches 1, 2 et 3.
+  - **Validation TypeScript Globale :** `npx tsc --noEmit` passé à 100% sans aucune erreur.
+- [x] **Restructuration de la Navigation en 2 Blocs Clairs & Harmonisation « Pack TCF Canada » (Demande Hiérarchique) :**
+  - Refonte complète de la barre de navigation desktop (`components/site-nav.tsx`) et mobile (`components/mobile-nav.tsx`) en accord avec les directives du supérieur :
+    - **Bloc 1 (Priorité #1) : « Expressions (EE & EO) »** avec carreau n°1 pour l'Expression Écrite (*bête noire des candidats*, 3 tâches, Magic Rewrite C1/C2) et carreau n°2 pour l'Expression Orale (*simulateur visio IA* avec M. Laurent), plus lien direct vers le catalogue.
+    - **Bloc 2 : « Compréhensions (CE & CO) »** avec notice explicative transparente sur la gratuité des QCM en ligne (TV5Monde, RFI) et le respect de la propriété intellectuelle, réaffirmant la valeur ajoutée de Super4C2 sur les épreuves de production.
+    - **Bloc 3 : « Outils & CRS »** (Calculateur NCLC +50 pts, Carnet d'Erreurs SRS, Sujets Récents).
+    - **Bloc 4 : « Ressources »** (Blog, Communauté VIP, Contact).
+  - Suppression des mentions d'affiliation juridique à risque (*France Éducation International*, *Standard Fédéral Officiel*) sur la page `/examens` au profit de l'intitulé neutre et clair : **« Pack TCF Canada »** et badge **« Grille NCLC 7+ Validée »**.
+  - Élimination intégrale du code mort de la roadmap horizontale dans `components/exam/exam-roadmap-board.tsx`, consolidant définitivement la vue grille exclusive.
+  - Validation TypeScript intégrale sans aucune erreur (`npx tsc --noEmit` : 0 erreur).
+- [x] **Priorisation des Épreuves Actives : EE & EO en 1ère Position, Gel de CE & CO ("Coming Soon") :**
+  - Réorganisation de la barre de filtres du simulateur (`ExamRoadmapBoard`) : Expression Écrite (`EE`) et Expression Orale (`EO`) sont positionnées en tête (1ère et 2ème place), directement visibles sur mobile sans nécessité de scroll horizontal.
+  - Gel strict des modules de Compréhension Écrite (`CE`) et Compréhension Orale (`CO`) avec état `disabled`, bordure en tiretés, icône cadenas et badge d'avertissement `🔒 Bientôt (Coming Soon)`.
+  - Tri dynamique des 4 cartes d'épreuves de chaque sujet assurant la prééminence de EE et EO, et remplacement des boutons de lancement CE/CO par des boutons désactivés `🔒 Bientôt disponible` pour éliminer toute navigation vers des épreuves en cours de calibrage.
+  - Sécurisation du routage par URL avec repli automatique vers `ee` si `?discipline=ce` ou `?discipline=co` est fourni.
+- [x] **Catalogue Multi-Séries EE & EO en Base PostgreSQL (Séries 101 à 105, 30 Sujets FEI Réels) :**
+  - Arrêt des conteneurs tiers `dimitri-snowdev` et démarrage sain des conteneurs locaux du projet : `super4c2-db` (PostgreSQL 17 sur port 5434), `super4c2-studio` (port 3002) et `super4c2-meta` (port 8080).
+  - Ajout des modèles `OralSeries` et `OralTask` dans `prisma/schema.prisma` et application immédiate via `npx prisma db push`.
+  - Insertion en base de données PostgreSQL de 5 séries d'Expression Écrite (15 tâches FEI avec modèles C1/C2 Magic Rewrite) et 5 séries d'Expression Orale (15 tâches d'entretien et jeux de rôle M. Laurent) via `prisma/seed-multi-series.ts`.
+  - Implémentation des services de données réels `lib/exam/written-service.ts` et `lib/exam/oral-service.ts` avec requêtes directes Prisma et résolution universelle d'alias.
+  - Câblage complet des routes candidates `/examens/[seriesId]/ee`, `/examens/[seriesId]/ee/intro`, `/examens/[seriesId]/eo`, `/examens/[seriesId]/eo/intro`, et `/api/ai/evaluate-written`.
+  - Connexion des 5 séries sur le parcours interactif `ExamRoadmapBoard` avec conservation stricte de la série sélectionnée.
+  - Typage TypeScript strict (`npx tsc --noEmit` : 0 erreur).
 - [x] **Cockpit d'Examen Sans Défilement (Zero-Scroll 100vh) & Design Orbital Circulaire :**
   - Architecture côte-à-côte à hauteur d'écran stricte (`h-screen overflow-hidden`) conforme aux standards officiels FEI (suppression totale de la barre de défilement).
   - Panneau gauche (5 cols) avec l'orbe circulaire de l'examinateur (`w-36 h-36 md:w-40 md:h-40 rounded-full`), anneaux réactifs et spectre audio compact.

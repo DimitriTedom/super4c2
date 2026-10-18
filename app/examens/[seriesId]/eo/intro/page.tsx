@@ -3,7 +3,7 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { CheckCircle2, Mic, MessageSquare, ArrowLeft, Headphones } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { getOralSeries } from "@/lib/exam/mock-oral-series";
+import { getOralSeries } from "@/lib/exam/oral-service";
 import { OralHardwareCheck } from "@/components/exam/oral-hardware-check";
 
 export const metadata = { title: "Consignes & Calibrage de l'Expression Orale — TCF Canada" };
@@ -14,7 +14,7 @@ export default async function OralIntroPage({
   params: Promise<{ seriesId: string }>;
 }) {
   const { seriesId } = await params;
-  const series = getOralSeries(seriesId);
+  const series = await getOralSeries(seriesId);
 
   if (!series) notFound();
 
@@ -51,10 +51,10 @@ export default async function OralIntroPage({
           </div>
         </div>
 
-        <Button variant="ghost" size="sm" asChild className="gap-2 text-muted-foreground hover:text-foreground">
-          <Link href="/examens">
-            <ArrowLeft className="h-4 w-4" />
-            <span>Catalogue</span>
+        <Button variant="outline" size="sm" asChild className="rounded-full gap-2 px-3.5 h-8 border-border/80 font-bold text-xs shadow-2xs group">
+          <Link href="/examens?discipline=eo">
+            <ArrowLeft className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-1 text-primary" />
+            <span>Précédent</span>
           </Link>
         </Button>
       </div>

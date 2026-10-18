@@ -1,6 +1,6 @@
 "use server";
 
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { z } from "zod";
 
 import { prisma } from "@/lib/prisma";
@@ -8,6 +8,17 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { signInSchema, signUpSchema } from "@/lib/validations";
 
 const DEMO_USER_ID = "00000000-0000-0000-0000-000000000001";
+
+async function resolveOrigin(): Promise<string> {
+  const h = await headers();
+  const host = h.get("x-forwarded-host") ?? h.get("host");
+  if (host) {
+    const proto = h.get("x-forwarded-proto") ?? (host.startsWith("localhost") ? "http" : "https");
+    return `${proto}://${host}`;
+  }
+  const envUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.NEXT_PUBLIC_SITE_URL;
+  return (envUrl || "http://localhost:3000").replace(/\/$/, "");
+}
 
 export async function signInDemoCandidateAction(next?: string) {
   const cookieStore = await cookies();
@@ -122,10 +133,13 @@ export async function signUpAction(input: z.infer<typeof signUpSchema> & { next?
   const supabase = await createSupabaseServerClient();
   if (supabase) {
     try {
+      const origin = await resolveOrigin();
+      const nextPath = input.next || "/dashboard";
       const { data, error } = await supabase.auth.signUp({
         email: parsed.data.email,
         password: parsed.data.password,
         options: {
+          emailRedirectTo: `${origin}/auth/callback?next=${encodeURIComponent(nextPath)}`,
           data: {
             displayName: parsed.data.displayName?.trim() || null,
           },

@@ -156,7 +156,46 @@ model WrittenTask {
 }
 
 // ============================================
-// 4. TENTATIVES & RÉSULTATS CANDIDATS
+// 4. EXAMEN CBT : EXPRESSION ORALE (3 TÂCHES FEI)
+// ============================================
+
+model OralSeries {
+  id              String      @id @default(cuid())
+  seriesNumber    Int         @unique
+  title           String
+  examType        ExamType    @default(TCF_CANADA)
+  durationSeconds Int         @default(720) // ~12 minutes
+  isPublished     Boolean     @default(true)
+  isFreeDemo      Boolean     @default(false)
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  tasks           OralTask[]
+
+  @@map("oral_series")
+}
+
+model OralTask {
+  id               String      @id @default(cuid())
+  seriesId         String
+  series           OralSeries  @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+  taskNumber       Int         // 1, 2, 3
+  type             String      // "task1_presentation", "task2_roleplay", "task3_opinion"
+  title            String      // Ex: "Tâche 1 : Entretien dirigé sans préparation"
+  durationSeconds  Int         // 120, 210, 270
+  examinerPrompt   String      @db.Text
+  roleplayScenario Json?       // Détails du scénario de jeu de rôle pour l'examinateur IA
+
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+
+  @@unique([seriesId, taskNumber])
+  @@index([seriesId, taskNumber])
+  @@map("oral_tasks")
+}
+
+// ============================================
+// 5. TENTATIVES & RÉSULTATS CANDIDATS
 // ============================================
 
 model UserAttempt {
@@ -263,6 +302,10 @@ model NewsletterSubscriber {
   isActive       Boolean   @default(true)
   subscribedAt   DateTime  @default(now())
   unsubscribedAt DateTime?
+  phone          String?   // Format international E.164 (ex: +237612345678), WhatsApp-first
+  name           String?
+  crsScore       Int?      // Score CRS estimé au moment de la capture
+  nclcProfile    String?   // Ex: "CE7-CO7-EE5-EO5"
 
   @@map("newsletter_subscribers")
   @@index([email])

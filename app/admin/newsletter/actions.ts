@@ -6,39 +6,67 @@ import { prisma } from "@/lib/prisma";
 import { toOptionalString } from "@/lib/admin-crud-utils";
 import { withToastQuery } from "@/lib/toast-navigation";
 
-export async function subscribePublicNewsletterAction(email: string, source = "public_site") {
-  const cleanEmail = email?.trim().toLowerCase();
-  if (!cleanEmail || !cleanEmail.includes("@")) {
+export interface PublicLeadInput {
+  email: string;
+  phone?: string;
+  name?: string;
+  source?: string;
+  crsScore?: number;
+  nclcProfile?: string;
+}
+
+function normalizePhone(raw?: string): string | null {
+  if (!raw) return null;
+  const digits = raw.replace(/[^\d+]/g, "");
+  const normalized = digits.startsWith("+") ? digits : `+${digits.replace(/^00/, "")}`;
+  const len = normalized.replace(/\D/g, "").length;
+  return len >= 8 && len <= 15 ? normalized : null;
+}
+
+export async function captureLeadAction(input: PublicLeadInput) {
+  const cleanEmail = input.email?.trim().toLowerCase();
+  if (!cleanEmail || !/^\S+@\S+\.\S+$/.test(cleanEmail)) {
     return { ok: false as const, error: "Veuillez renseigner une adresse e-mail valide." };
   }
+  const phone = normalizePhone(input.phone);
+  if (input.phone && !phone) {
+    return { ok: false as const, error: "Numéro WhatsApp invalide (ex : +237 6XX XX XX XX)." };
+  }
+  const source = input.source || "public_site";
+  const name = input.name?.trim() || null;
 
-  const existing = await prisma.newsletterSubscriber.findUnique({
+  const existing = await prisma.newsletterSubscriber.findUnique({ where: { email: cleanEmail } });
+
+  await prisma.newsletterSubscriber.upsert({
     where: { email: cleanEmail },
+    update: {
+      isActive: true,
+      unsubscribedAt: null,
+      ...(phone ? { phone } : {}),
+      ...(name ? { name } : {}),
+      ...(input.crsScore != null ? { crsScore: input.crsScore } : {}),
+      ...(input.nclcProfile ? { nclcProfile: input.nclcProfile } : {}),
+    },
+    create: {
+      email: cleanEmail,
+      source,
+      isActive: true,
+      phone,
+      name,
+      crsScore: input.crsScore ?? null,
+      nclcProfile: input.nclcProfile ?? null,
+    },
   });
 
-  if (existing) {
-    if (!existing.isActive) {
-      await prisma.newsletterSubscriber.update({
-        where: { email: cleanEmail },
-        data: { isActive: true, unsubscribedAt: null },
-      });
-    }
-  } else {
-    await prisma.newsletterSubscriber.create({
-      data: {
-        email: cleanEmail,
-        source,
-        isActive: true,
-      },
-    });
-
-    // Notify Super Admin
+  if (!existing || (phone && !existing.phone)) {
     await prisma.notification.create({
       data: {
         recipient: "ADMIN",
-        title: "📬 Nouvel Abonné Newsletter",
-        message: `${cleanEmail} s'est abonné via la source "${source}".`,
-        type: "SYSTEM",
+        title: phone ? "📲 Nouveau lead WhatsApp" : "📬 Nouvel Abonné Newsletter",
+        message: `${name ? name + " — " : ""}${cleanEmail}${phone ? " · " + phone : ""} via "${source}"${
+          input.crsScore != null ? ` (CRS ${input.crsScore})` : ""
+        }.`,
+        type: "LEAD",
         link: "/admin/newsletter",
         isRead: false,
       },
@@ -47,6 +75,10 @@ export async function subscribePublicNewsletterAction(email: string, source = "p
 
   revalidatePath("/admin/newsletter");
   return { ok: true as const };
+}
+
+export async function subscribePublicNewsletterAction(email: string, source = "public_site") {
+  return captureLeadAction({ email, source });
 }
 
 export async function addSubscriberAction(formData: FormData) {

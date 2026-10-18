@@ -43,16 +43,20 @@ export function SiteNav() {
   }, []);
 
   const isHomeActive = pathname === "/";
-  const isExamActive = pathname.startsWith("/examens");
+  const isExpressionsActive =
+    pathname.startsWith("/examens") &&
+    !pathname.includes("discipline=ce") &&
+    !pathname.includes("discipline=co");
+  const isComprehensionsActive =
+    pathname.includes("discipline=ce") || pathname.includes("discipline=co");
   const isToolsActive =
     pathname.startsWith("/nclc-calculator") ||
     pathname.startsWith("/carnet-erreurs") ||
-    pathname.startsWith("/test-gratuit");
+    pathname.startsWith("/sujets-recents");
   const isResourcesActive =
     pathname.startsWith("/blog") ||
     pathname.startsWith("/communaute") ||
     pathname.startsWith("/contact");
-  const isPricingActive = pathname === "/tarifs";
 
   return (
     <nav
@@ -63,7 +67,7 @@ export function SiteNav() {
       <Link
         href="/"
         className={cn(
-          "rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all",
+          "rounded-full px-3 py-1.5 text-xs font-semibold transition-all",
           isHomeActive
             ? "text-foreground bg-background shadow-xs font-bold"
             : "text-muted-foreground hover:text-foreground hover:bg-background/60"
@@ -72,101 +76,133 @@ export function SiteNav() {
         Accueil
       </Link>
 
-      {/* 2. Groupe : Examens & Séries */}
+      {/* 2. BLOC 1 PRIORITAIRE : Expressions (Écrite & Orale) */}
       <div className="relative">
         <button
           type="button"
-          onClick={() => setOpenMenu(openMenu === "examens" ? null : "examens")}
+          onClick={() => setOpenMenu(openMenu === "expressions" ? null : "expressions")}
           className={cn(
             "rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all inline-flex items-center gap-1.5",
-            isExamActive
+            isExpressionsActive || openMenu === "expressions"
               ? "text-foreground bg-background shadow-xs font-bold"
               : "text-muted-foreground hover:text-foreground hover:bg-background/60"
           )}
         >
-          <span>Séries & Examens</span>
+          <span className="relative flex h-1.5 w-1.5">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-crimson opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-brand-crimson"></span>
+          </span>
+          <span>Expressions (EE & EO)</span>
           <ChevronDown
             className={cn(
               "h-3 w-3 transition-transform duration-200",
-              openMenu === "examens" && "rotate-180 text-primary"
+              openMenu === "expressions" && "rotate-180 text-primary"
             )}
           />
         </button>
 
         <AnimatePresence>
-          {openMenu === "examens" && (
+          {openMenu === "expressions" && (
             <motion.div
               initial={{ opacity: 0, y: 8, scale: 0.98 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 8, scale: 0.98 }}
               transition={{ duration: 0.18 }}
-              className="absolute left-0 top-full mt-2 w-80 rounded-2xl border border-border/80 bg-background/95 p-3 shadow-2xl backdrop-blur-xl z-50 space-y-1"
+              className="absolute left-0 top-full mt-2 w-[520px] rounded-2xl border border-border/80 bg-background/95 p-3.5 shadow-2xl backdrop-blur-xl z-50 space-y-3"
             >
-              <div className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                Séries Officielles Par Examen
+              <div className="flex items-center justify-between px-1">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                  Cœur de préparation • Clé des +50 Pts CRS
+                </span>
+                <span className="rounded-full bg-brand-crimson/10 border border-brand-crimson/30 px-2 py-0.5 text-[9px] font-black text-brand-crimson uppercase tracking-wider">
+                  Priorité Candidats
+                </span>
               </div>
 
-              <Link
-                href="/examens?test=tcf"
-                className="flex items-start gap-3 rounded-xl p-2.5 hover:bg-muted/70 transition-colors group"
-              >
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
-                  <span className="text-xs font-bold">TCF</span>
-                </div>
-                <div>
-                  <div className="text-xs font-bold text-foreground flex items-center gap-1.5">
-                    <span>TCF Canada</span>
-                    <span className="rounded bg-primary/10 px-1 py-0.2 text-[9px] font-bold text-primary">
-                      Fédéral
-                    </span>
+              {/* Carreaux des 2 Expressions */}
+              <div className="grid grid-cols-2 gap-2.5">
+                {/* Carreau 1 : Expression Écrite (EE) - Bête noire */}
+                <Link
+                  href="/examens?discipline=ee"
+                  className="flex flex-col justify-between rounded-xl border border-border/70 bg-card/60 hover:bg-card hover:border-brand-crimson/40 p-3 transition-all group shadow-2xs hover:shadow-md"
+                >
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-crimson/10 p-1 group-hover:scale-105 transition-transform">
+                        <Image
+                          src="/brand/icons-3d/expression-ecrite-pen.png"
+                          alt="Expression Écrite"
+                          width={32}
+                          height={32}
+                          className="h-7 w-7 object-contain drop-shadow-sm"
+                        />
+                      </div>
+                      <span className="rounded-full bg-amber-500/15 border border-amber-500/30 px-1.5 py-0.5 text-[9px] font-bold text-amber-600 dark:text-amber-400">
+                        Bête Noire #1
+                      </span>
+                    </div>
+                    <div>
+                      <h4 className="text-xs font-bold text-foreground group-hover:text-brand-crimson transition-colors">
+                        Expression Écrite (EE)
+                      </h4>
+                      <p className="text-[11px] text-muted-foreground mt-1 leading-snug">
+                        Les 3 tâches d&apos;examen, chrono officiel 60 min, notation par critères et Magic Rewrite C1/C2.
+                      </p>
+                    </div>
                   </div>
-                  <p className="text-[11px] text-muted-foreground">
-                    Séries 101 à 105 • Paliers NCLC 5 à 10+ (+50 pts CRS)
-                  </p>
-                </div>
-              </Link>
-
-              <Link
-                href="/examens?test=tef"
-                className="flex items-start gap-3 rounded-xl p-2.5 hover:bg-muted/70 transition-colors group"
-              >
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 group-hover:bg-cyan-500 group-hover:text-white transition-colors">
-                  <span className="text-xs font-bold">TEF</span>
-                </div>
-                <div>
-                  <div className="text-xs font-bold text-foreground flex items-center gap-1.5">
-                    <span>TEF Canada (CCI)</span>
+                  <div className="mt-3 pt-2 border-t border-border/60 flex items-center justify-between text-[11px] font-bold text-brand-crimson">
+                    <span>Sessions Écrites (60 min)</span>
+                    <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-1" />
                   </div>
-                  <p className="text-[11px] text-muted-foreground">
-                    Séries 201 à 203 • Format officiel Chambre de Commerce Paris
-                  </p>
-                </div>
-              </Link>
+                </Link>
 
-              <Link
-                href="/examens?test=ielts"
-                className="flex items-start gap-3 rounded-xl p-2.5 hover:bg-muted/70 transition-colors group"
-              >
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400 group-hover:bg-amber-500 group-hover:text-white transition-colors">
-                  <span className="text-xs font-bold">IEL</span>
-                </div>
-                <div>
-                  <div className="text-xs font-bold text-foreground">
-                    IELTS General Training
+                {/* Carreau 2 : Expression Orale (EO) - Visio IA */}
+                <Link
+                  href="/examens?discipline=eo"
+                  className="flex flex-col justify-between rounded-xl border border-border/70 bg-card/60 hover:bg-card hover:border-emerald-500/40 p-3 transition-all group shadow-2xs hover:shadow-md"
+                >
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-500/10 p-1 group-hover:scale-105 transition-transform">
+                        <Image
+                          src="/brand/icons-3d/expression-orale-microphone.png"
+                          alt="Expression Orale"
+                          width={32}
+                          height={32}
+                          className="h-7 w-7 object-contain drop-shadow-sm"
+                        />
+                      </div>
+                      <span className="rounded-full bg-emerald-500/15 border border-emerald-500/30 px-1.5 py-0.5 text-[9px] font-bold text-emerald-600 dark:text-emerald-400">
+                        Visio IA Directe
+                      </span>
+                    </div>
+                    <div>
+                      <h4 className="text-xs font-bold text-foreground group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+                        Expression Orale (EO)
+                      </h4>
+                      <p className="text-[11px] text-muted-foreground mt-1 leading-snug">
+                        Simulateur visio avec l&apos;examinateur IA M. Laurent. Pratiquez vos 3 tâches orales en direct.
+                      </p>
+                    </div>
                   </div>
-                  <p className="text-[11px] text-muted-foreground">
-                    British Council / IDP • Objectif CLB 9 (8777)
-                  </p>
-                </div>
-              </Link>
+                  <div className="mt-3 pt-2 border-t border-border/60 flex items-center justify-between text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
+                    <span>Sessions Orales (Visio IA)</span>
+                    <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-1" />
+                  </div>
+                </Link>
+              </div>
 
-              <div className="border-t border-border/60 my-1 pt-1">
+              {/* Bandeau d'accès à toutes les Sessions */}
+              <div className="pt-2 border-t border-border/60">
                 <Link
                   href="/examens"
-                  className="flex items-center justify-between rounded-xl px-3 py-2 text-xs font-bold text-primary hover:bg-primary/10 transition-colors"
+                  className="flex items-center justify-between rounded-xl px-3 py-2 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent hover:from-primary/15 hover:via-primary/10 border border-primary/20 text-xs font-bold text-primary transition-all group"
                 >
-                  <span>Voir le catalogue complet des séries</span>
-                  <Zap className="h-3 w-3" />
+                  <div className="flex items-center gap-2">
+                    <Zap className="h-3.5 w-3.5 text-primary shrink-0" />
+                    <span>Voir toutes les Sessions d&apos;Entraînement</span>
+                  </div>
+                  <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
                 </Link>
               </div>
             </motion.div>
@@ -174,264 +210,215 @@ export function SiteNav() {
         </AnimatePresence>
       </div>
 
-      {/* 3. Groupe : Simulateurs & IA */}
+      {/* 3. BLOC 2 : Compréhensions (CE & CO) — Information & Droits d'Auteur */}
       <div className="relative">
         <button
           type="button"
-          onClick={() => setOpenMenu(openMenu === "simulateurs" ? null : "simulateurs")}
+          onClick={() => setOpenMenu(openMenu === "comprehensions" ? null : "comprehensions")}
           className={cn(
             "rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all inline-flex items-center gap-1.5",
-            isToolsActive
+            isComprehensionsActive || openMenu === "comprehensions"
               ? "text-foreground bg-background shadow-xs font-bold"
               : "text-muted-foreground hover:text-foreground hover:bg-background/60"
           )}
         >
-          <span>Simulateurs & IA</span>
+          <span>Compréhensions (CE & CO)</span>
           <ChevronDown
             className={cn(
               "h-3 w-3 transition-transform duration-200",
-              openMenu === "simulateurs" && "rotate-180 text-primary"
+              openMenu === "comprehensions" && "rotate-180 text-primary"
             )}
           />
         </button>
 
         <AnimatePresence>
-          {openMenu === "simulateurs" && (
+          {openMenu === "comprehensions" && (
             <motion.div
               initial={{ opacity: 0, y: 8, scale: 0.98 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 8, scale: 0.98 }}
               transition={{ duration: 0.18 }}
-              className="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-[590px] lg:w-[620px] rounded-2xl border border-border/80 bg-background/95 p-3.5 shadow-2xl backdrop-blur-xl z-50"
+              className="absolute left-0 top-full mt-2 w-[460px] rounded-2xl border border-border/80 bg-background/95 p-4 shadow-2xl backdrop-blur-xl z-50 space-y-3"
             >
-              <div className="grid grid-cols-2 gap-3">
-                {/* Colonne 1 : Les 4 Épreuves CBT */}
-                <div className="space-y-1">
-                  <div className="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-muted-foreground flex items-center justify-between">
-                    <span>Épreuves Officielles CBT</span>
-                    <span className="rounded bg-primary/10 px-1 py-0.2 text-[9px] font-bold text-primary">
-                      FEI Standard
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                  Compréhension Écrite &amp; Orale (QCM)
+                </span>
+                <span className="rounded-full bg-cyan-500/10 border border-cyan-500/30 px-2 py-0.5 text-[9px] font-bold text-cyan-600 dark:text-cyan-400">
+                  Démarche Transparente
+                </span>
+              </div>
+
+              {/* Note explicative sur les droits d'auteur & gratuité des QCM */}
+              <div className="rounded-xl border border-border/70 bg-muted/40 p-3 space-y-1.5 text-xs">
+                <div className="font-semibold text-foreground flex items-center gap-1.5">
+                  <BookOpen className="h-3.5 w-3.5 text-primary" />
+                  <span>Pourquoi privilégier les Expressions ?</span>
+                </div>
+                <p className="text-[11px] text-muted-foreground leading-relaxed">
+                  Les QCM de compréhension (CE et CO) sont déjà accessibles gratuitement sur de nombreuses plateformes publiques (ex. TV5Monde, RFI).
+                  Par respect strict des droits d&apos;auteur et pour maximiser votre investissement temps, Super4C2 focalise sa technologie IA sur les épreuves de production (Écrite et Orale), là où se joue l&apos;obtention des paliers NCLC 7 à 10.
+                </p>
+              </div>
+
+              {/* Statut des modules QCM Super4C2 */}
+              <div className="grid grid-cols-2 gap-2 text-xs">
+                <div className="rounded-xl border border-border/60 bg-card/40 p-2.5 space-y-1 opacity-80">
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold text-[11px] text-foreground">Compréhension Écrite</span>
+                    <span className="rounded bg-amber-500/15 text-amber-600 dark:text-amber-400 px-1 text-[9px] font-bold">
+                      Bientôt
                     </span>
                   </div>
-
-                  <Link
-                    href="/examens"
-                    className="flex items-start gap-2.5 rounded-xl p-2 hover:bg-muted/70 transition-colors group opacity-85"
-                  >
-                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-amber-500/10 p-1 group-hover:scale-105 transition-transform">
-                      <Image
-                        src="/brand/icons-3d/comprehension-ecrite-book.png"
-                        alt="CE"
-                        width={32}
-                        height={32}
-                        className="h-6 w-6 object-contain drop-shadow-sm"
-                      />
-                    </div>
-                    <div>
-                      <div className="text-xs font-bold text-foreground flex items-center gap-1.5">
-                        <span>Compréhension Écrite (CE)</span>
-                        <span className="rounded bg-amber-500/15 border border-amber-500/30 px-1 py-0.2 text-[9px] font-bold text-amber-600 dark:text-amber-400">
-                          Bientôt
-                        </span>
-                      </div>
-                      <p className="text-[11px] text-muted-foreground leading-snug">
-                        Calibrage officiel FEI 39Q en cours de finalisation
-                      </p>
-                    </div>
-                  </Link>
-
-                  <Link
-                    href="/examens"
-                    className="flex items-start gap-2.5 rounded-xl p-2 hover:bg-muted/70 transition-colors group opacity-85"
-                  >
-                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-amber-500/10 p-1 group-hover:scale-105 transition-transform">
-                      <Image
-                        src="/brand/icons-3d/comprehension-orale-headphones.png"
-                        alt="CO"
-                        width={32}
-                        height={32}
-                        className="h-6 w-6 object-contain drop-shadow-sm"
-                      />
-                    </div>
-                    <div>
-                      <div className="text-xs font-bold text-foreground flex items-center gap-1.5">
-                        <span>Compréhension Orale (CO)</span>
-                        <span className="rounded bg-amber-500/15 border border-amber-500/30 px-1 py-0.2 text-[9px] font-bold text-amber-600 dark:text-amber-400">
-                          Bientôt
-                        </span>
-                      </div>
-                      <p className="text-[11px] text-muted-foreground leading-snug">
-                        Lecteur CBT audio studio en calibrage final
-                      </p>
-                    </div>
-                  </Link>
-
-                  <Link
-                    href="/examens/demo-101-ce/eo/intro"
-                    className="flex items-start gap-2.5 rounded-xl p-2 hover:bg-muted/70 transition-colors group bg-emerald-500/[0.04] border border-emerald-500/20"
-                  >
-                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-emerald-500/10 p-1 group-hover:scale-105 transition-transform">
-                      <Image
-                        src="/brand/icons-3d/expression-orale-microphone.png"
-                        alt="EO"
-                        width={32}
-                        height={32}
-                        className="h-6 w-6 object-contain drop-shadow-sm"
-                      />
-                    </div>
-                    <div>
-                      <div className="text-xs font-bold text-foreground flex items-center gap-1.5">
-                        <span>Expression Orale IA</span>
-                        <span className="rounded bg-emerald-500/15 border border-emerald-500/30 px-1 py-0.2 text-[9px] font-bold text-emerald-600 dark:text-emerald-400">
-                          Disponible
-                        </span>
-                      </div>
-                      <p className="text-[11px] text-muted-foreground leading-snug">
-                        Examinateur IA M. Laurent & studio visio officiel
-                      </p>
-                    </div>
-                  </Link>
-
-                  <Link
-                    href="/examens/demo-101-ee/intro"
-                    className="flex items-start gap-2.5 rounded-xl p-2 hover:bg-muted/70 transition-colors group bg-emerald-500/[0.04] border border-emerald-500/20"
-                  >
-                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#E51A31]/10 p-1 group-hover:scale-105 transition-transform">
-                      <Image
-                        src="/brand/icons-3d/expression-ecrite-pen.png"
-                        alt="EE"
-                        width={32}
-                        height={32}
-                        className="h-6 w-6 object-contain drop-shadow-sm"
-                      />
-                    </div>
-                    <div>
-                      <div className="text-xs font-bold text-foreground flex items-center gap-1.5">
-                        <span>Expression Écrite FEI</span>
-                        <span className="rounded bg-emerald-500/15 border border-emerald-500/30 px-1 py-0.2 text-[9px] font-bold text-emerald-600 dark:text-emerald-400">
-                          Disponible
-                        </span>
-                      </div>
-                      <p className="text-[11px] text-muted-foreground leading-snug">
-                        3 tâches, notation officielle & Magic Rewrite C1/C2
-                      </p>
-                    </div>
-                  </Link>
+                  <p className="text-[10px] text-muted-foreground">
+                    Calibrage pédagogique 39Q en cours de finalisation.
+                  </p>
                 </div>
 
-                {/* Colonne 2 : Accélérateurs NCLC 7+ & Outils */}
-                <div className="space-y-1 flex flex-col justify-between">
-                  <div className="space-y-1">
-                    <div className="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-muted-foreground flex items-center justify-between">
-                      <span>Accélérateurs & Outils</span>
-                      <span className="rounded bg-emerald-500/10 px-1 py-0.2 text-[9px] font-bold text-emerald-600 dark:text-emerald-400">
-                        +50 Pts
-                      </span>
-                    </div>
-
-                    <Link
-                      href="/nclc-calculator"
-                      className="flex items-start gap-2.5 rounded-xl p-2 hover:bg-muted/70 transition-colors group"
-                    >
-                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-emerald-500/10 p-1 group-hover:scale-105 transition-transform">
-                        <Image
-                          src="/brand/icons-3d/crs-calculator-compass.png"
-                          alt="CRS"
-                          width={32}
-                          height={32}
-                          className="h-6 w-6 object-contain drop-shadow-sm"
-                        />
-                      </div>
-                      <div>
-                        <div className="text-xs font-bold text-foreground flex items-center gap-1.5">
-                          <span>Calculateur NCLC & CRS</span>
-                          <span className="text-[9px] text-emerald-600 dark:text-emerald-400 font-bold">
-                            +50 pts
-                          </span>
-                        </div>
-                        <p className="text-[11px] text-muted-foreground leading-snug">
-                          Simulez vos points bonus Entrée Express Canada
-                        </p>
-                      </div>
-                    </Link>
-
-                    <Link
-                      href="/carnet-erreurs"
-                      className="flex items-start gap-2.5 rounded-xl p-2 hover:bg-muted/70 transition-colors group"
-                    >
-                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-purple-500/10 p-1 group-hover:scale-105 transition-transform">
-                        <Image
-                          src="/brand/icons-3d/srs-memory-vault.png"
-                          alt="SRS"
-                          width={32}
-                          height={32}
-                          className="h-6 w-6 object-contain drop-shadow-sm"
-                        />
-                      </div>
-                      <div>
-                        <div className="text-xs font-bold text-foreground">
-                          Carnet d&apos;Erreurs SRS
-                        </div>
-                        <p className="text-[11px] text-muted-foreground leading-snug">
-                          Répétition espacée scientifique pour ancrer vos pièges
-                        </p>
-                      </div>
-                    </Link>
-
-                    <Link
-                      href="/sujets-recents"
-                      className="flex items-start gap-2.5 rounded-xl p-2 hover:bg-muted/70 transition-colors group"
-                    >
-                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-blue-500/10 p-1 group-hover:scale-105 transition-transform">
-                        <Image
-                          src="/brand/icons-3d/radar-recent-topics.png"
-                          alt="Sujets Récents"
-                          width={32}
-                          height={32}
-                          className="h-6 w-6 object-contain drop-shadow-sm"
-                        />
-                      </div>
-                      <div>
-                        <div className="text-xs font-bold text-foreground flex items-center gap-1.5">
-                          <span>Sujets Récents Examens</span>
-                          <span className="rounded bg-blue-500/10 px-1 py-0.2 text-[9px] font-bold text-blue-600 dark:text-blue-400">
-                            Radar
-                          </span>
-                        </div>
-                        <p className="text-[11px] text-muted-foreground leading-snug">
-                          Questions réelles tombées ces dernières semaines
-                        </p>
-                      </div>
-                    </Link>
+                <div className="rounded-xl border border-border/60 bg-card/40 p-2.5 space-y-1 opacity-80">
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold text-[11px] text-foreground">Compréhension Orale</span>
+                    <span className="rounded bg-amber-500/15 text-amber-600 dark:text-amber-400 px-1 text-[9px] font-bold">
+                      Bientôt
+                    </span>
                   </div>
-
-                  <div className="pt-2 border-t border-border/60">
-                    <Link
-                      href="/examens"
-                      className="flex items-center justify-between rounded-xl px-2.5 py-2 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent hover:from-primary/15 hover:via-primary/10 border border-primary/20 text-xs font-bold text-primary transition-all group"
-                    >
-                      <div className="flex items-center gap-1.5">
-                        <Zap className="h-3.5 w-3.5 text-primary shrink-0" />
-                        <span>Simulateur Complet Multidiscipline</span>
-                      </div>
-                      <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
-                    </Link>
-                  </div>
+                  <p className="text-[10px] text-muted-foreground">
+                    Lecteur audio studio en cours de calibrage.
+                  </p>
                 </div>
+              </div>
+
+              <div className="pt-2 border-t border-border/60 flex items-center justify-between">
+                <Link
+                  href="/blog"
+                  className="text-xs font-semibold text-primary hover:underline flex items-center gap-1"
+                >
+                  <span>Lire nos guides stratégiques pour les QCM</span>
+                  <ArrowRight className="h-3 w-3" />
+                </Link>
               </div>
             </motion.div>
           )}
         </AnimatePresence>
       </div>
 
-      {/* 4. Groupe : Ressources */}
+      {/* 4. BLOC 3 : Outils CRS Canada */}
+      <div className="relative">
+        <button
+          type="button"
+          onClick={() => setOpenMenu(openMenu === "outils" ? null : "outils")}
+          className={cn(
+            "rounded-full px-3 py-1.5 text-xs font-semibold transition-all inline-flex items-center gap-1.5",
+            isToolsActive || openMenu === "outils"
+              ? "text-foreground bg-background shadow-xs font-bold"
+              : "text-muted-foreground hover:text-foreground hover:bg-background/60"
+          )}
+        >
+          <span>Outils &amp; CRS</span>
+          <ChevronDown
+            className={cn(
+              "h-3 w-3 transition-transform duration-200",
+              openMenu === "outils" && "rotate-180 text-primary"
+            )}
+          />
+        </button>
+
+        <AnimatePresence>
+          {openMenu === "outils" && (
+            <motion.div
+              initial={{ opacity: 0, y: 8, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 8, scale: 0.98 }}
+              transition={{ duration: 0.18 }}
+              className="absolute left-0 top-full mt-2 w-72 rounded-2xl border border-border/80 bg-background/95 p-3 shadow-2xl backdrop-blur-xl z-50 space-y-1"
+            >
+              <Link
+                href="/nclc-calculator"
+                className="flex items-start gap-2.5 rounded-xl p-2.5 hover:bg-muted/70 transition-colors group"
+              >
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-emerald-500/10 p-1 group-hover:scale-105 transition-transform">
+                  <Image
+                    src="/brand/icons-3d/crs-calculator-compass.png"
+                    alt="CRS"
+                    width={32}
+                    height={32}
+                    className="h-6 w-6 object-contain drop-shadow-sm"
+                  />
+                </div>
+                <div>
+                  <div className="text-xs font-bold text-foreground flex items-center gap-1.5">
+                    <span>Calculateur NCLC &amp; CRS</span>
+                    <span className="text-[9px] text-emerald-600 dark:text-emerald-400 font-bold">
+                      +50 pts
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-muted-foreground leading-snug">
+                    Simulez votre bonus de points Entrée Express Canada
+                  </p>
+                </div>
+              </Link>
+
+              <Link
+                href="/carnet-erreurs"
+                className="flex items-start gap-2.5 rounded-xl p-2.5 hover:bg-muted/70 transition-colors group"
+              >
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-purple-500/10 p-1 group-hover:scale-105 transition-transform">
+                  <Image
+                    src="/brand/icons-3d/srs-memory-vault.png"
+                    alt="SRS"
+                    width={32}
+                    height={32}
+                    className="h-6 w-6 object-contain drop-shadow-sm"
+                  />
+                </div>
+                <div>
+                  <div className="text-xs font-bold text-foreground">
+                    Carnet d&apos;Erreurs SRS
+                  </div>
+                  <p className="text-[11px] text-muted-foreground leading-snug">
+                    Répétition espacée pour éliminer définitivement vos pièges
+                  </p>
+                </div>
+              </Link>
+
+              <Link
+                href="/sujets-recents"
+                className="flex items-start gap-2.5 rounded-xl p-2.5 hover:bg-muted/70 transition-colors group"
+              >
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-blue-500/10 p-1 group-hover:scale-105 transition-transform">
+                  <Image
+                    src="/brand/icons-3d/radar-recent-topics.png"
+                    alt="Sujets Récents"
+                    width={32}
+                    height={32}
+                    className="h-6 w-6 object-contain drop-shadow-sm"
+                  />
+                </div>
+                <div>
+                  <div className="text-xs font-bold text-foreground flex items-center gap-1.5">
+                    <span>Radar Sujets Récents</span>
+                    <span className="rounded bg-blue-500/10 px-1 py-0.2 text-[9px] font-bold text-blue-600 dark:text-blue-400">
+                      Veille
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-muted-foreground leading-snug">
+                    Retours des candidats sur les sujets tombés
+                  </p>
+                </div>
+              </Link>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+
+      {/* 5. BLOC 4 : Ressources */}
       <div className="relative">
         <button
           type="button"
           onClick={() => setOpenMenu(openMenu === "ressources" ? null : "ressources")}
           className={cn(
-            "rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all inline-flex items-center gap-1.5",
-            isResourcesActive
+            "rounded-full px-3 py-1.5 text-xs font-semibold transition-all inline-flex items-center gap-1.5",
+            isResourcesActive || openMenu === "ressources"
               ? "text-foreground bg-background shadow-xs font-bold"
               : "text-muted-foreground hover:text-foreground hover:bg-background/60"
           )}
@@ -469,10 +456,10 @@ export function SiteNav() {
                 </div>
                 <div>
                   <div className="text-xs font-bold text-foreground">
-                    Blog & Stratégies
+                    Blog &amp; Stratégies
                   </div>
                   <p className="text-[11px] text-muted-foreground">
-                    Guides d&apos;examen, pièges FEI & retours d&apos;expérience
+                    Méthodologie C1/C2, barèmes &amp; retours d&apos;expérience
                   </p>
                 </div>
               </Link>
@@ -495,7 +482,7 @@ export function SiteNav() {
                     Communauté VIP
                   </div>
                   <p className="text-[11px] text-muted-foreground">
-                    Canal Telegram alertes sujets récents & entraide
+                    Canal Telegram alertes sujets récents &amp; entraide
                   </p>
                 </div>
               </Link>
@@ -509,10 +496,10 @@ export function SiteNav() {
                 </div>
                 <div>
                   <div className="text-xs font-bold text-foreground">
-                    Conciergerie & Contact
+                    Conciergerie &amp; Contact
                   </div>
                   <p className="text-[11px] text-muted-foreground">
-                    Support prioritaire & assistance candidats 7j/7
+                    Support prioritaire &amp; assistance candidats 7j/7
                   </p>
                 </div>
               </Link>
@@ -520,21 +507,6 @@ export function SiteNav() {
           )}
         </AnimatePresence>
       </div>
-
-      {/* 5. Accès 100% Gratuit */}
-      <Link
-        href="/dashboard"
-        className={cn(
-          "rounded-full px-3 py-1.5 text-xs font-bold transition-all flex items-center gap-1.5",
-          "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20 border border-emerald-500/30"
-        )}
-      >
-        <span className="relative flex h-2 w-2">
-          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-          <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-        </span>
-        <span>Accès 100% Gratuit</span>
-      </Link>
     </nav>
   );
 }

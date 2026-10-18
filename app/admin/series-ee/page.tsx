@@ -9,6 +9,7 @@ import {
   EyeOff,
   Clock,
   ListOrdered,
+  ExternalLink,
 } from "lucide-react";
 import { Prisma } from "@prisma/client";
 import { AdminShell } from "@/components/admin/admin-shell";
@@ -270,6 +271,18 @@ export default async function SeriesEePage({ searchParams }: SeriesEePageProps) 
 
                         <td className="py-3.5 px-4 text-right">
                           <div className="flex items-center justify-end gap-1">
+                            <Button
+                              asChild
+                              variant="ghost"
+                              size="sm"
+                              className="h-8 w-8 p-0 text-muted-foreground hover:text-primary"
+                              title="Voir en vue candidat (Épreuve réelle)"
+                            >
+                              <Link href={`/examens/${series.seriesNumber}/ee/intro`} target="_blank">
+                                <ExternalLink className="h-3.5 w-3.5" />
+                              </Link>
+                            </Button>
+
                             <Button
                               asChild
                               variant="ghost"
