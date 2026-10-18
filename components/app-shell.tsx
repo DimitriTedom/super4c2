@@ -10,7 +10,6 @@ import { MobileNavBar } from "@/components/mobile-nav";
 import { AiChatWidget } from "@/components/ai/ai-chat-widget";
 import { ScrollProgress } from "@/components/ui/scroll-progress";
 import { ScrollToTop } from "@/components/ui/scroll-to-top";
-import { FloatingCommunityButton } from "@/components/community/floating-community-button";
 import { NewcomerGuideModal } from "@/components/onboarding/newcomer-guide-modal";
 
 /** Les écrans d'examen en direct (/examens/<id>/ce|co|ee|eo|examen-blanc) sont en plein écran officiel sans barre de navigation */
@@ -109,7 +108,6 @@ export function AppShell({ header, children }: AppShellProps) {
       <SiteFooter />
       <MobileNavBar />
       <AiChatWidget />
-      <FloatingCommunityButton />
       <NewcomerGuideModal />
       <ScrollToTop />
     </div>
