@@ -36,9 +36,8 @@
     - Fenêtre modale animée en 2 étapes affichée automatiquement si l'utilisateur n'a pas encore configuré sa date d'examen ou son objectif NCLC.
     - Sélection intuitive des paliers NCLC (+50 à +62 pts CRS) et sélection de la date d'examen avec raccourcis (1 mois, 2 mois, 3 mois).
     - Sauvegarde via `PATCH /api/account/profile` et mémoïsation dans `localStorage`.
-  - **Connexion Sociale Google OAuth (`components/auth/google-button.tsx`) :**
-    - Bouton officiel "Continuer avec Google" avec logo SVG vectoriel et séparateur visuel.
-    - Intégré dans `LoginForm` et `RegisterForm`, amorçant le flux PKCE standard Supabase.
+  - **Authentification par E-mail Prioritaire :**
+    - Suite à la demande utilisateur, les boutons Google OAuth ont été retirés de `LoginForm` et `RegisterForm` pour focaliser l'expérience sur l'e-mail/mot de passe et Magic Link sécurisés.
 - **Validation :** `npx tsc --noEmit` validé avec 0 erreur.
 
 ### 0.0l. Synchronisation Auth Multi-Onglets, Bouton Retour Profil & Carnet SRS Vierge Multi-Tenant

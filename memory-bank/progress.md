@@ -5,7 +5,7 @@
   - **Sécurisation Maximale de l'Espace Admin (`/admin`) :** Révocation du cookie forgeable `super4c2_admin_token`, authentification par identifiants réels avec restriction d'accès aux seuls comptes autorisés via `app_metadata.role` ou `ADMIN_EMAILS`, filtrage par middleware.
   - **Cycle de Vie du Compte & Conformité RGPD (`/account`) :** Changement d'adresse e-mail avec validation, déconnexion de tous les appareils simultanément (`scope: 'global'`), suppression définitive et irréversible du compte avec saisie de confirmation.
   - **Modal d'Onboarding Interactif :** Guide d'accueil animé en 2 étapes (`FirstLoginSetupModal`) pour configurer le palier NCLC visé (+50 pts CRS) et la date d'examen.
-  - **Connexion Sociale Google OAuth :** Bouton `GoogleButton` conforme aux normes Google, intégré sur la connexion et l'inscription avec flux PKCE Supabase standard.
+  - **Authentification par E-mail Prioritaire :** Focus exclusif sur l'authentification e-mail / mot de passe et validation Magic Link (boutons Google retirés des formulaires de connexion et d'inscription).
   - **Validation :** 0 erreur TypeScript (`npx tsc --noEmit`).
 - [x] **Synchronisation Auth Multi-Onglets, Bouton Retour Profil & Carnet SRS Vierge Multi-Tenant :**
   - **Gestion de Session & Redirection Auth :** `LoginPage` et `RegisterPage` redirigent directement les utilisateurs connectés vers `/dashboard` (ou `next`). Le `middleware.ts` bloque l'accès aux formulaires si une session active existe.

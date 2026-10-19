@@ -22,7 +22,6 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
-import { AuthDivider, GoogleButton } from "@/components/auth/google-button";
 
 type Values = z.infer<typeof signUpSchema>;
 
@@ -88,9 +87,6 @@ export function RegisterForm() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <GoogleButton next={next} label="S'inscrire avec Google" />
-        <AuthDivider label="ou avec votre e-mail" />
-
         {/* Email */}
         <FormField
           control={form.control}

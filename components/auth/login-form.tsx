@@ -29,7 +29,6 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
-import { AuthDivider, GoogleButton } from "@/components/auth/google-button";
 import { ResendConfirmationButton } from "@/components/auth/resend-confirmation-button";
 
 type Values = z.infer<typeof signInSchema>;
@@ -147,9 +146,6 @@ export function LoginForm() {
             <ResendConfirmationButton email={watchedEmail} next={next} />
           </div>
         )}
-
-        <GoogleButton next={next} />
-        <AuthDivider label="ou avec votre e-mail" />
 
         {/* Email Field */}
         <FormField
