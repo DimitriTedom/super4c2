@@ -2,6 +2,24 @@
 
 ## 0. Déploiement Production Vercel & Moteur de Conversion
 
+### 0.0n. Cloisonnement Multi-Tenant des Notifications & Refonte UX Onboarding Option 1
+- **Demande Utilisateur :**
+  1. Refondre le modal d'onboarding post-authentification selon l'Option 1 recommandée (1 seul écran net, boutons et pastilles clairs, skip explicite sans ambiguïté).
+  2. Implémenter la Priorité 1 du système de notifications : sécurisation et cloisonnement multi-tenant étanche par utilisateur.
+- **Réalisations & Améliorations Apportées :**
+  - **Refonte UX de l'Onboarding (`components/onboarding/first-login-setup-modal.tsx`) :**
+    - Condensation sur 1 seul écran synthétique sans étape successive bloquante.
+    - Sélection immédiate du palier NCLC visé (7, 8, 9, 10 avec mise en avant du bonus CRS fédéral).
+    - Sélection ergonomique de la date d'examen : *Dans 1 mois (Urgence)*, *Dans 2 mois (Idéal)*, *Dans 3 mois*, *Date exacte* (avec calendrier) ou *Pas encore fixé (décision plus tard)*.
+    - Bouton d'action principal dynamique : **« Valider mon objectif »** et bouton tertiaire **« Passer et aller au tableau de bord » (Skip)** explicite.
+  - **Cloisonnement Multi-Tenant des Notifications (`lib/notifications/actions.ts`, `components/notifications/notification-bell.tsx`) :**
+    - Récupération systématique de la session Supabase authentifiée dans les Server Actions.
+    - **Candidats :** Filtrage strict `where: { recipient: "CANDIDATE", OR: [{ userId: user.id }, { userId: null }] }`. Aucun candidat ne peut voir ou marquer comme lues les notifications d'un autre utilisateur.
+    - **Sécurité Admin :** Protection absolue de l'accès aux notifications administratives (`recipient === "ADMIN"`). Si l'utilisateur n'est pas vérifié par `isAdminUser(user)`, retour immédiat d'une liste vide (protection contre l'énumération et fuite d'informations).
+    - **Gestion & Suppression :** Ajout de `deleteNotificationAction` avec vérification stricte de propriété (`userId === user.id` pour candidats ou administrateur vérifié) et bouton de suppression discret sur chaque notification dans le menu déroulant.
+    - **Purge des Mocks :** Élimination définitive de la fonction `seedDemoNotifications` qui injectait des notifications démo orphelines.
+- **Validation :** `npx tsc --noEmit` validé avec 0 erreur.
+
 ### 0.0m. Système Complet de Gestion des Utilisateurs, Sécurité Admin, Cycle de Vie RGPD & Connexion Sociale
 - **Demande Utilisateur :**
   1. Implémenter l'ensemble des fonctionnalités manquantes du système d'authentification et de gestion des utilisateurs.

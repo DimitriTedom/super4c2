@@ -1,3 +1,10 @@
+- [x] **Cloisonnement Multi-Tenant des Notifications & Refonte UX Onboarding Option 1 :**
+  - **Refonte Onboarding Option 1 :** Écran unique condensé, sélection directe NCLC 7/8/9/10, choix d'échéance fluide (*1 mois, 2 mois, 3 mois, date personnalisée ou pas encore fixé*) et bouton *Skip* explicite.
+  - **Cloisonnement Multi-Tenant Strict :** Les requêtes `getNotificationsAction` filtrent désormais rigoureusement par `userId: user.id` du candidat connecté. Zéro partage de données entre comptes.
+  - **Protection des Notifications Admin :** Vérification stricte via `isAdminUser(user)` empêchant tout utilisateur non accrédité de visualiser les alertes administratives (`recipient === "ADMIN"`).
+  - **Suppression Individuelle :** Action `deleteNotificationAction` avec vérification de propriété et bouton poubelle discret au survol.
+  - **Éradication des Faux Mocks :** Suppression définitive de `seedDemoNotifications`.
+  - **Validation :** 0 erreur TypeScript (`npx tsc --noEmit`).
 - [x] **Système Complet de Gestion des Utilisateurs, Sécurité Admin, Cycle de Vie RGPD & Connexion Sociale :**
   - **Renvoi d'E-mail de Confirmation :** Action serveur `resendConfirmationAction` et composant `ResendConfirmationButton` avec timer 60s pour prévenir le spam et sécuriser la validation des comptes.
   - **Page Dédiée Réinitialisation de Mot de Passe (`/auth/reset-password`) :** Flux sécurisé avec `ResetPasswordForm`, double validation du mot de passe et redirection vers le dashboard.

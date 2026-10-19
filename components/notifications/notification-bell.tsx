@@ -17,8 +17,10 @@ import {
   getNotificationsAction,
   markNotificationAsReadAction,
   markAllNotificationsAsReadAction,
+  deleteNotificationAction,
   type NotificationItem,
 } from "@/lib/notifications/actions";
+import { Trash2 } from "lucide-react";
 
 interface NotificationBellProps {
   recipient?: "CANDIDATE" | "ADMIN";
@@ -86,6 +88,17 @@ export function NotificationBell({
       await markAllNotificationsAsReadAction(recipient);
       setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
       setUnreadCount(0);
+    });
+  };
+
+  const handleDelete = (id: string) => {
+    startTransition(async () => {
+      await deleteNotificationAction(id);
+      setNotifications((prev) => prev.filter((n) => n.id !== id));
+      setUnreadCount((prev) => {
+        const target = notifications.find((n) => n.id === id);
+        return target && !target.isRead ? Math.max(0, prev - 1) : prev;
+      });
     });
   };
 
@@ -252,6 +265,16 @@ export function NotificationBell({
                           Marquer comme lu
                         </button>
                       )}
+
+                      <button
+                        type="button"
+                        onClick={() => handleDelete(notif.id)}
+                        className="ml-auto opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-destructive transition-opacity"
+                        title="Supprimer cette notification"
+                        aria-label="Supprimer cette notification"
+                      >
+                        <Trash2 className="h-3 w-3" />
+                      </button>
                     </div>
                   </div>
                 </div>

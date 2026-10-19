@@ -3,6 +3,8 @@
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { NotificationType } from "@prisma/client";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { isAdminUser } from "@/lib/admin/auth";
 
 export interface NotificationItem {
   id: string;
@@ -15,6 +17,11 @@ export interface NotificationItem {
   createdAt: Date;
 }
 
+/**
+ * Récupère les notifications de façon strictement cloisonnée et sécurisée.
+ * - Candidat : Uniquement ses propres notifications (userId) et les annonces générales diffusées (userId: null).
+ * - Admin : Uniquement si l'utilisateur est authentifié et vérifié comme administrateur de confiance.
+ */
 export async function getNotificationsAction(options?: {
   recipient?: "CANDIDATE" | "ADMIN";
   unreadOnly?: boolean;
@@ -22,26 +29,61 @@ export async function getNotificationsAction(options?: {
   const recipient = options?.recipient || "CANDIDATE";
 
   try {
-    const whereClause: {
-      recipient: string;
-      isRead?: boolean;
-    } = {
-      recipient,
-    };
+    const supabase = await createSupabaseServerClient();
+    const user = supabase ? (await supabase.auth.getUser()).data.user : null;
 
-    if (options?.unreadOnly) {
-      whereClause.isRead = false;
+    if (recipient === "ADMIN") {
+      // Sécurité stricte : Aucun visiteur ou candidat ne peut espionner les alertes admin
+      if (!user || !isAdminUser(user)) {
+        return { notifications: [], unreadCount: 0 };
+      }
+
+      const whereClause = {
+        recipient: "ADMIN",
+        ...(options?.unreadOnly ? { isRead: false } : {}),
+      };
+
+      const [notifications, unreadCount] = await Promise.all([
+        prisma.notification.findMany({
+          where: whereClause,
+          orderBy: { createdAt: "desc" },
+          take: 30,
+        }),
+        prisma.notification.count({
+          where: { recipient: "ADMIN", isRead: false },
+        }),
+      ]);
+
+      return {
+        notifications: notifications.map((n) => ({
+          ...n,
+          recipient: n.recipient as "CANDIDATE" | "ADMIN",
+        })),
+        unreadCount,
+      };
     }
+
+    // Espace Candidat : Utilisateur authentifié requis pour voir ses alertes personnelles
+    if (!user) {
+      return { notifications: [], unreadCount: 0 };
+    }
+
+    const whereClause = {
+      recipient: "CANDIDATE",
+      OR: [{ userId: user.id }, { userId: null }],
+      ...(options?.unreadOnly ? { isRead: false } : {}),
+    };
 
     const [notifications, unreadCount] = await Promise.all([
       prisma.notification.findMany({
         where: whereClause,
         orderBy: { createdAt: "desc" },
-        take: 20,
+        take: 30,
       }),
       prisma.notification.count({
         where: {
-          recipient,
+          recipient: "CANDIDATE",
+          OR: [{ userId: user.id }, { userId: null }],
           isRead: false,
         },
       }),
@@ -63,28 +105,113 @@ export async function getNotificationsAction(options?: {
   }
 }
 
+/**
+ * Marque une notification comme lue en vérifiant les droits d'accès du demandeur.
+ */
 export async function markNotificationAsReadAction(id: string) {
   if (!id) return { ok: false };
 
-  await prisma.notification.update({
-    where: { id },
-    data: { isRead: true },
-  });
+  try {
+    const supabase = await createSupabaseServerClient();
+    const user = supabase ? (await supabase.auth.getUser()).data.user : null;
+    if (!user) return { ok: false, error: "Non autorisé" };
 
-  revalidatePath("/", "layout");
-  return { ok: true };
+    const notif = await prisma.notification.findUnique({ where: { id } });
+    if (!notif) return { ok: false, error: "Notification introuvable" };
+
+    if (notif.recipient === "ADMIN" && !isAdminUser(user)) {
+      return { ok: false, error: "Accès refusé" };
+    }
+
+    if (notif.recipient === "CANDIDATE" && notif.userId && notif.userId !== user.id) {
+      return { ok: false, error: "Accès refusé" };
+    }
+
+    await prisma.notification.update({
+      where: { id },
+      data: { isRead: true },
+    });
+
+    revalidatePath("/", "layout");
+    return { ok: true };
+  } catch (err) {
+    console.error("[Notifications] Erreur markNotificationAsReadAction:", err);
+    return { ok: false };
+  }
 }
 
+/**
+ * Marque toutes les notifications du demandeur comme lues de façon cloisonnée.
+ */
 export async function markAllNotificationsAsReadAction(recipient: "CANDIDATE" | "ADMIN" = "CANDIDATE") {
-  await prisma.notification.updateMany({
-    where: { recipient, isRead: false },
-    data: { isRead: true },
-  });
+  try {
+    const supabase = await createSupabaseServerClient();
+    const user = supabase ? (await supabase.auth.getUser()).data.user : null;
+    if (!user) return { ok: false };
 
-  revalidatePath("/", "layout");
-  return { ok: true };
+    if (recipient === "ADMIN") {
+      if (!isAdminUser(user)) return { ok: false };
+      await prisma.notification.updateMany({
+        where: { recipient: "ADMIN", isRead: false },
+        data: { isRead: true },
+      });
+    } else {
+      // Cloisonnement strict : n'affecte que les notifications du candidat connecté
+      await prisma.notification.updateMany({
+        where: {
+          recipient: "CANDIDATE",
+          isRead: false,
+          OR: [{ userId: user.id }, { userId: null }],
+        },
+        data: { isRead: true },
+      });
+    }
+
+    revalidatePath("/", "layout");
+    return { ok: true };
+  } catch (err) {
+    console.error("[Notifications] Erreur markAllNotificationsAsReadAction:", err);
+    return { ok: false };
+  }
 }
 
+/**
+ * Supprime définitivement une notification appartenant à l'utilisateur.
+ */
+export async function deleteNotificationAction(id: string) {
+  if (!id) return { ok: false };
+
+  try {
+    const supabase = await createSupabaseServerClient();
+    const user = supabase ? (await supabase.auth.getUser()).data.user : null;
+    if (!user) return { ok: false, error: "Non autorisé" };
+
+    const notif = await prisma.notification.findUnique({ where: { id } });
+    if (!notif) return { ok: false, error: "Notification introuvable" };
+
+    if (notif.recipient === "ADMIN" && !isAdminUser(user)) {
+      return { ok: false, error: "Accès refusé" };
+    }
+
+    if (notif.recipient === "CANDIDATE" && notif.userId && notif.userId !== user.id) {
+      return { ok: false, error: "Accès refusé" };
+    }
+
+    await prisma.notification.delete({
+      where: { id },
+    });
+
+    revalidatePath("/", "layout");
+    return { ok: true };
+  } catch (err) {
+    console.error("[Notifications] Erreur deleteNotificationAction:", err);
+    return { ok: false };
+  }
+}
+
+/**
+ * Crée une notification ciblée (par exemple pour un candidat spécifique ou les administrateurs).
+ */
 export async function createNotificationAction(data: {
   recipient: "CANDIDATE" | "ADMIN";
   title: string;
@@ -107,72 +234,4 @@ export async function createNotificationAction(data: {
 
   revalidatePath("/", "layout");
   return { ok: true, id: created.id };
-}
-
-async function seedDemoNotifications(recipient: "CANDIDATE" | "ADMIN") {
-  if (recipient === "CANDIDATE") {
-    await prisma.notification.createMany({
-      data: [
-        {
-          recipient: "CANDIDATE",
-          title: "🎯 Objectif NCLC 7 Activé (+50 pts CRS)",
-          message: "Votre simulateur d'entraînement TCF Canada est configuré pour le seuil critique B2-C1.",
-          type: "SYSTEM",
-          link: "/nclc-calculator",
-          isRead: false,
-          createdAt: new Date(Date.now() - 1000 * 60 * 15), // 15 mins ago
-        },
-        {
-          recipient: "CANDIDATE",
-          title: "📖 Série 101 Compréhension Écrite Prête",
-          message: "39 questions authentiques FEI avec décodage des pièges et chrono 60 min.",
-          type: "EXAM",
-          link: "/examens/demo-101/ce",
-          isRead: false,
-          createdAt: new Date(Date.now() - 1000 * 60 * 60 * 2), // 2 hours ago
-        },
-        {
-          recipient: "CANDIDATE",
-          title: "🧠 Carnet d'Erreurs SRS : Répétition Espacée",
-          message: "N'oubliez pas de réviser vos fautes à J+1 et J+3 pour ancrer le lexique.",
-          type: "SRS",
-          link: "/carnet-erreurs",
-          isRead: true,
-          createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24), // 1 day ago
-        },
-      ],
-    });
-  } else {
-    await prisma.notification.createMany({
-      data: [
-        {
-          recipient: "ADMIN",
-          title: "⚡ Nouveau Lead Conciergerie (Urgence Examen)",
-          message: "Un candidat avec passation dans < 7 jours demande un accompagnement accéléré.",
-          type: "LEAD",
-          link: "/admin/leads",
-          isRead: false,
-          createdAt: new Date(Date.now() - 1000 * 60 * 10),
-        },
-        {
-          recipient: "ADMIN",
-          title: "📬 Nouvel Abonné Newsletter TCF",
-          message: "Un nouvel utilisateur a rejoint la veille des nouveaux sujets d'examen.",
-          type: "SYSTEM",
-          link: "/admin/newsletter",
-          isRead: false,
-          createdAt: new Date(Date.now() - 1000 * 60 * 45),
-        },
-        {
-          recipient: "ADMIN",
-          title: "📊 Série 101 CE Validée en Base",
-          message: "39 questions conformes au barème officiel France Éducation International.",
-          type: "EXAM",
-          link: "/admin/series-ce",
-          isRead: true,
-          createdAt: new Date(Date.now() - 1000 * 60 * 60 * 5),
-        },
-      ],
-    });
-  }
 }
