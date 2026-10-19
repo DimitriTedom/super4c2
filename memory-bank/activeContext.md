@@ -2,6 +2,33 @@
 
 ## 0. Déploiement Production Vercel & Moteur de Conversion
 
+### 0.0q. Module Complet de Gestion Back-Office de l'Expression Orale (Option 1 : `/admin/series-eo`)
+- **Demande Utilisateur :** Implémenter l'Option 1 : création et gestion complète des Séries d'Expression Orale (EO) et de leurs 3 tâches officielles FEI dans le back-office administrateur.
+- **Réalisations & Architecture Déployée :**
+  - **Catalogue & Liste Principale (`app/admin/series-eo/page.tsx`, `app/admin/series-eo/actions.ts`) :**
+    - 4 KPI cards exécutifs (Total Séries EO, Publiées, Pass Démo Gratuite, Format 3 Tâches FEI).
+    - Moteur de recherche et filtres par statut (Toutes, Publiées, Brouillons).
+    - Actions rapides : bascule immédiate en brouillon/publié (`toggleOralSeriesPublishAction`), suppression définitive avec dialogue de confirmation sécurisé (`deleteOralSeriesAction`).
+    - Pagination serveur dynamique avec `AdminTablePagination`.
+  - **Création & Édition de Séries EO (`app/admin/series-eo/ajouter/page.tsx`, `app/admin/series-eo/[id]/page.tsx`) :**
+    - Calcul automatique du numéro de série suggéré (ex: 101, 102).
+    - Configuration du titre, type d'épreuve (TCF Canada, TEF Canada), durée officielle en minutes (12 min = 720s) et drapeaux de visibilité (publiée, démo gratuite).
+  - **Gestion des 3 Tâches Orales FEI (`app/admin/series-eo/[id]/tasks/`) :**
+    - Actions serveur complètes (`actions.ts` : `upsertOralTaskAction`, `deleteOralTaskAction`) avec gestion des scénarios de jeu de rôle JSON et revalidation de cache.
+    - Vue d'ensemble visuelle des 3 tâches FEI (`page.tsx`) avec statuts prêts vs non configurés et durées standard réglementaires (Tâche 1 : 120s, Tâche 2 : 210s, Tâche 3 : 270s).
+    - Pages d'ajout et d'édition (`ajouter/page.tsx`, `[taskId]/page.tsx`).
+  - **Composant Interactif Avancé & Simulateur Vocal (`components/admin/oral-task-form.tsx`) :**
+    - Double mode : **Éditeur de Tâche** et **Aperçu Simulateur Vocal IA (CBT)**.
+    - Presets complets pour le format FEI TCF Canada :
+      - *Tâche 1 : Entretien dirigé sans préparation (120 s, A1-B1)* avec directives d'accueil chaleureux et questions de présentation.
+      - *Tâche 2 : Exercice en interaction / Jeu de rôle (210 s, B1-B2)* avec configuration du scénario (situation, rôle candidat, rôle examinateur IA, consignes).
+      - *Tâche 3 : Expression d'un point de vue (270 s, B2-C2)* avec directives d'écoute active et question de relance contradictoire à mi-parcours.
+    - Simulateur live affichant l'écran CBT du candidat avec barre d'état du microphone, chronomètre officiel et directives injectées dans le modèle vocal d'évaluation.
+  - **Navigation & Identité Visuelle (`components/admin/admin-shell.tsx`, `components/admin/AdminListEmptyState.tsx`) :**
+    - Ajout de l'entrée « Séries Expression Orale » avec icône `Mic` dans le groupe *Épreuves CBT (MVP)* de la barre latérale desktop et gestion du fil d'Ariane.
+    - Ajout du type `"series-eo"` et icône `Mic` dans `AdminListEmptyState`.
+- **Validation :** `npx tsc --noEmit` validé avec 0 erreur.
+
 ### 0.0p. Vidage des Notifications Archivées & Ergonomie du Centre de Notifications
 - **Demande Utilisateur :** Implémenter la Priorité 3 du système de notifications : suppression individuelle et vidage en masse des notifications archivées/lues pour candidats et administrateurs.
 - **Réalisations & Améliorations Apportées :**

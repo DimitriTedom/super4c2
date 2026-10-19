@@ -11,12 +11,14 @@ import {
   Plus,
   Settings2,
   PenTool,
+  Mic,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 type EmptyKind =
   | "series-ce"
   | "series-ee"
+  | "series-eo"
   | "blog"
   | "faqs"
   | "testimonials"
@@ -45,6 +47,8 @@ export function AdminListEmptyState({
         return <BookOpen className="h-8 w-8 text-primary" />;
       case "series-ee":
         return <PenTool className="h-8 w-8 text-primary" />;
+      case "series-eo":
+        return <Mic className="h-8 w-8 text-primary" />;
       case "blog":
         return <FolderKanban className="h-8 w-8 text-primary" />;
       case "faqs":

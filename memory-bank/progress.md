@@ -1,3 +1,10 @@
+- [x] **Module Complet de Gestion Back-Office de l'Expression Orale (Option 1 : `/admin/series-eo`) :**
+  - **Catalogue & Liste Principale :** 4 KPI cards (Total, Publiées, Pass Démo, Format 3 Tâches FEI), recherche plein-texte, filtre par statut, bascule de statut en 1 clic et suppression sécurisée avec dialogue de confirmation.
+  - **Création & Édition de Séries EO :** Calcul de numéro automatique, configuration de la durée officielle (12 min / 720s), du titre, du type d'épreuve et de la visibilité.
+  - **Gestion des 3 Tâches Orales FEI :** Vue d'ensemble des 3 tâches par série avec statuts en direct, actions d'upsert et de suppression, configuration du scénario de jeu de rôle (contexte, rôle candidat, rôle examinateur IA, consignes).
+  - **Éditeur Avancé & Simulateur Vocal CBT :** Formulaire interactif à deux onglets (Éditeur de Tâche et Simulateur Vocal IA) avec presets complets FEI (Tâche 1 Entretien 120s, Tâche 2 Jeu de rôle 210s, Tâche 3 Point de vue 270s).
+  - **Intégration Navigation :** Ajout de la ressource dans `AdminShell` (icône `Mic`, groupe Épreuves CBT) et fil d'Ariane.
+  - **Validation :** 0 erreur TypeScript (`npx tsc --noEmit`).
 - [x] **Vidage des Notifications Archivées & Ergonomie du Centre de Notifications :**
   - **Vidage en Masse :** Action serveur `clearReadNotificationsAction` purgeant les notifications lues de façon strictement cloisonnée par utilisateur.
   - **Suppression Individuelle & UI :** Bouton « Vider lues » dans le menu déroulant, suppression au survol et retours instantanés par toasts Sonner.

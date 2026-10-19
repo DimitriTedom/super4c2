@@ -7,6 +7,7 @@ import {
   LayoutDashboard,
   BookOpen,
   PenTool,
+  Mic,
   FolderKanban,
   CircleHelp,
   MessageSquareQuote,
@@ -42,6 +43,7 @@ const navItems = [
     links: [
       { href: "/admin/series-ce", label: "Séries Compréhension Écrite", icon: BookOpen },
       { href: "/admin/series-ee", label: "Séries Expression Écrite", icon: PenTool },
+      { href: "/admin/series-eo", label: "Séries Expression Orale", icon: Mic },
     ],
   },
   {
@@ -111,6 +113,7 @@ export function AdminShell({ children }: AdminShellProps) {
     if (pathname.startsWith("/admin/users")) return { title: "Candidats inscrits", section: "Supervision" };
     if (pathname.startsWith("/admin/series-ce")) return { title: "Compréhension Écrite", section: "Épreuves CBT" };
     if (pathname.startsWith("/admin/series-ee")) return { title: "Expression Écrite", section: "Épreuves CBT" };
+    if (pathname.startsWith("/admin/series-eo")) return { title: "Expression Orale", section: "Épreuves CBT" };
     if (pathname.startsWith("/admin/blog")) return { title: "Blog & SEO", section: "Marketing" };
     if (pathname.startsWith("/admin/faqs")) return { title: "FAQs", section: "Contenu" };
     if (pathname.startsWith("/admin/temoignages")) return { title: "Témoignages", section: "Marketing" };
