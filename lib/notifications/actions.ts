@@ -210,6 +210,40 @@ export async function deleteNotificationAction(id: string) {
 }
 
 /**
+ * Supprime en masse toutes les notifications déjà lues pour le demandeur connecté.
+ */
+export async function clearReadNotificationsAction(recipient: "CANDIDATE" | "ADMIN" = "CANDIDATE") {
+  try {
+    const supabase = await createSupabaseServerClient();
+    const user = supabase ? (await supabase.auth.getUser()).data.user : null;
+    if (!user) return { ok: false, count: 0 };
+
+    if (recipient === "ADMIN") {
+      if (!isAdminUser(user)) return { ok: false, count: 0 };
+      const { count } = await prisma.notification.deleteMany({
+        where: { recipient: "ADMIN", isRead: true },
+      });
+      revalidatePath("/", "layout");
+      return { ok: true, count };
+    }
+
+    const { count } = await prisma.notification.deleteMany({
+      where: {
+        recipient: "CANDIDATE",
+        userId: user.id,
+        isRead: true,
+      },
+    });
+
+    revalidatePath("/", "layout");
+    return { ok: true, count };
+  } catch (err) {
+    console.error("[Notifications] Erreur clearReadNotificationsAction:", err);
+    return { ok: false, count: 0 };
+  }
+}
+
+/**
  * Crée une notification ciblée (par exemple pour un candidat spécifique ou les administrateurs).
  */
 export async function createNotificationAction(data: {

@@ -18,9 +18,11 @@ import {
   markNotificationAsReadAction,
   markAllNotificationsAsReadAction,
   deleteNotificationAction,
+  clearReadNotificationsAction,
   type NotificationItem,
 } from "@/lib/notifications/actions";
 import { Trash2 } from "lucide-react";
+import { toast } from "sonner";
 
 interface NotificationBellProps {
   recipient?: "CANDIDATE" | "ADMIN";
@@ -88,6 +90,7 @@ export function NotificationBell({
       await markAllNotificationsAsReadAction(recipient);
       setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
       setUnreadCount(0);
+      toast.success("Toutes les notifications ont été marquées comme lues.");
     });
   };
 
@@ -99,6 +102,17 @@ export function NotificationBell({
         const target = notifications.find((n) => n.id === id);
         return target && !target.isRead ? Math.max(0, prev - 1) : prev;
       });
+      toast.success("Notification supprimée.");
+    });
+  };
+
+  const handleClearRead = () => {
+    startTransition(async () => {
+      const res = await clearReadNotificationsAction(recipient);
+      if (res.ok) {
+        setNotifications((prev) => prev.filter((n) => !n.isRead));
+        toast.success(`${res.count} notification(s) archivée(s) supprimée(s).`);
+      }
     });
   };
 
@@ -164,17 +178,32 @@ export function NotificationBell({
               </span>
             </div>
 
-            {unreadCount > 0 && (
-              <button
-                type="button"
-                onClick={handleMarkAllRead}
-                disabled={isPending}
-                className="flex items-center gap-1 text-[11px] font-medium text-primary hover:underline transition-colors"
-              >
-                <CheckCheck className="h-3.5 w-3.5" />
-                <span>Tout lire</span>
-              </button>
-            )}
+            <div className="flex items-center gap-2">
+              {unreadCount > 0 && (
+                <button
+                  type="button"
+                  onClick={handleMarkAllRead}
+                  disabled={isPending}
+                  className="flex items-center gap-1 text-[11px] font-medium text-primary hover:underline transition-colors"
+                >
+                  <CheckCheck className="h-3.5 w-3.5" />
+                  <span>Tout lire</span>
+                </button>
+              )}
+
+              {notifications.some((n) => n.isRead) && (
+                <button
+                  type="button"
+                  onClick={handleClearRead}
+                  disabled={isPending}
+                  className="flex items-center gap-1 text-[11px] font-medium text-muted-foreground hover:text-destructive transition-colors"
+                  title="Supprimer toutes les notifications déjà lues"
+                >
+                  <Trash2 className="h-3 w-3" />
+                  <span>Vider lues</span>
+                </button>
+              )}
+            </div>
           </div>
 
           {/* Filter Pills */}

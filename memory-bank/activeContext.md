@@ -2,6 +2,19 @@
 
 ## 0. Déploiement Production Vercel & Moteur de Conversion
 
+### 0.0p. Vidage des Notifications Archivées & Ergonomie du Centre de Notifications
+- **Demande Utilisateur :** Implémenter la Priorité 3 du système de notifications : suppression individuelle et vidage en masse des notifications archivées/lues pour candidats et administrateurs.
+- **Réalisations & Améliorations Apportées :**
+  - **Vidage en Masse Sécurisé (`lib/notifications/actions.ts`) :**
+    - Action serveur `clearReadNotificationsAction(recipient)`.
+    - Côté candidat : supprime exclusivement les notifications où `recipient === "CANDIDATE"`, `isRead === true` et `userId === user.id`. Aucun impact sur les autres comptes.
+    - Côté administrateur : requiert la validation `isAdminUser(user)` et purge les alertes administratives lues.
+  - **Interface Utilisateur Avancée (`components/notifications/notification-bell.tsx`) :**
+    - Ajout du bouton d'action **« Vider lues »** dans l'en-tête du popover dès que des notifications archivées existent.
+    - Bouton de suppression individuelle (icône corbeille) au survol de chaque carte de notification.
+    - Notifications de confirmation immédiates avec Sonner toasts (*« Notification supprimée »*, *« X notification(s) archivée(s) supprimée(s) »*).
+- **Validation :** `npx tsc --noEmit` validé avec 0 erreur.
+
 ### 0.0o. Automatisation des Déclencheurs de Notifications (Triggers Métier Réels)
 - **Demande Utilisateur :** Implémenter la Priorité 2 du système de notifications : création et déclenchement automatique de notifications réelles lors des simulations d'examens et des actions clés.
 - **Réalisations & Améliorations Apportées :**

@@ -1,3 +1,7 @@
+- [x] **Vidage des Notifications Archivées & Ergonomie du Centre de Notifications :**
+  - **Vidage en Masse :** Action serveur `clearReadNotificationsAction` purgeant les notifications lues de façon strictement cloisonnée par utilisateur.
+  - **Suppression Individuelle & UI :** Bouton « Vider lues » dans le menu déroulant, suppression au survol et retours instantanés par toasts Sonner.
+  - **Validation :** 0 erreur TypeScript (`npx tsc --noEmit`).
 - [x] **Automatisation des Déclencheurs de Notifications (Triggers Métier Réels) :**
   - **Fin de Simulation CBT (CE/CO) :** Notification personnelle candidate avec score échelonné (/699), NCLC, déblocage CRS (+50 pts) et lien direct vers le rapport `/dashboard/historique/${attemptId}`, plus notification de monitoring admin.
   - **Correction IA Expression Écrite :** Notification candidate immédiate avec note sur 20, niveau NCLC et lien vers le débriefing des critères FEI.
