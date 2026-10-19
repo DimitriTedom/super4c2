@@ -1,3 +1,12 @@
+- [x] **Système Complet de Gestion des Utilisateurs, Sécurité Admin, Cycle de Vie RGPD & Connexion Sociale :**
+  - **Renvoi d'E-mail de Confirmation :** Action serveur `resendConfirmationAction` et composant `ResendConfirmationButton` avec timer 60s pour prévenir le spam et sécuriser la validation des comptes.
+  - **Page Dédiée Réinitialisation de Mot de Passe (`/auth/reset-password`) :** Flux sécurisé avec `ResetPasswordForm`, double validation du mot de passe et redirection vers le dashboard.
+  - **Gestion des Candidats Back-Office (`/admin/users`) :** Page serveur avec recherche full-text, pagination, association du profil candidat et comptage du nombre de simulations effectuées.
+  - **Sécurisation Maximale de l'Espace Admin (`/admin`) :** Révocation du cookie forgeable `super4c2_admin_token`, authentification par identifiants réels avec restriction d'accès aux seuls comptes autorisés via `app_metadata.role` ou `ADMIN_EMAILS`, filtrage par middleware.
+  - **Cycle de Vie du Compte & Conformité RGPD (`/account`) :** Changement d'adresse e-mail avec validation, déconnexion de tous les appareils simultanément (`scope: 'global'`), suppression définitive et irréversible du compte avec saisie de confirmation.
+  - **Modal d'Onboarding Interactif :** Guide d'accueil animé en 2 étapes (`FirstLoginSetupModal`) pour configurer le palier NCLC visé (+50 pts CRS) et la date d'examen.
+  - **Connexion Sociale Google OAuth :** Bouton `GoogleButton` conforme aux normes Google, intégré sur la connexion et l'inscription avec flux PKCE Supabase standard.
+  - **Validation :** 0 erreur TypeScript (`npx tsc --noEmit`).
 - [x] **Synchronisation Auth Multi-Onglets, Bouton Retour Profil & Carnet SRS Vierge Multi-Tenant :**
   - **Gestion de Session & Redirection Auth :** `LoginPage` et `RegisterPage` redirigent directement les utilisateurs connectés vers `/dashboard` (ou `next`). Le `middleware.ts` bloque l'accès aux formulaires si une session active existe.
   - **Écoute Temps Réel Inter-Onglets :** `LoginForm` et `RegisterForm` écoutent `supabase.auth.onAuthStateChange`, permettant à l'onglet initial d'être automatiquement redirigé dès qu'un Magic Link est validé dans un autre onglet.

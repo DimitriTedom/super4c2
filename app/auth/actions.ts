@@ -7,6 +7,14 @@ import { prisma } from "@/lib/prisma";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { syncPrismaUser } from "@/lib/supabase/sync-user";
 import { signInSchema, signUpSchema } from "@/lib/validations";
+import { isAdminUser } from "@/lib/admin/auth";
+
+function safeNext(next: string | undefined | null, fallback = "/dashboard"): string {
+  if (!next || !next.startsWith("/") || next.startsWith("//") || next.startsWith("/\\")) {
+    return fallback;
+  }
+  return next;
+}
 
 async function resolveOrigin(): Promise<string> {
   // En production, ne JAMAIS renvoyer localhost
@@ -92,26 +100,9 @@ export async function signInAction(input: z.infer<typeof signInSchema> & { next?
         user.user_metadata?.displayName || user.email?.split("@")[0] || null
       );
 
-      // Si l'utilisateur est Super Admin, initialiser la session d'administration
-      const isSuperAdmin =
-        user.user_metadata?.role === "SUPER_ADMIN" ||
-        user.app_metadata?.role === "SUPER_ADMIN" ||
-        user.email === "admin@super4c2.com";
-
-      if (isSuperAdmin) {
-        cookieStore.set("super4c2_admin_token", `admin-exec-session-${Date.now()}`, {
-          path: "/",
-          httpOnly: false,
-          sameSite: "lax",
-          maxAge: 60 * 60 * 24,
-        });
-
-        const target = input.next && input.next !== "/dashboard" ? input.next : "/admin";
-        return { ok: true as const, redirectTo: target };
-      }
     }
 
-    return { ok: true as const, redirectTo: input.next ?? "/dashboard" };
+    return { ok: true as const, redirectTo: safeNext(input.next) };
   } catch (err: unknown) {
     const error = err as Error;
     return {
@@ -138,7 +129,7 @@ export async function signUpAction(input: z.infer<typeof signUpSchema> & { next?
 
   try {
     const origin = await resolveOrigin();
-    const nextPath = input.next || "/dashboard";
+    const nextPath = safeNext(input.next);
     const { data, error } = await supabase.auth.signUp({
       email: parsed.data.email.trim().toLowerCase(),
       password: parsed.data.password,
@@ -183,7 +174,7 @@ export async function signUpAction(input: z.infer<typeof signUpSchema> & { next?
       // Si la session n'est pas établie immédiatement (confirmation par e-mail requise par Supabase)
       if (!data.session) {
         const loginTarget = input.next
-          ? `/auth/login?registered=pending_confirmation&next=${encodeURIComponent(input.next)}`
+          ? `/auth/login?registered=pending_confirmation&next=${encodeURIComponent(safeNext(input.next))}`
           : "/auth/login?registered=pending_confirmation";
         return {
           ok: true as const,
@@ -193,7 +184,7 @@ export async function signUpAction(input: z.infer<typeof signUpSchema> & { next?
         };
       }
 
-      return { ok: true as const, redirectTo: input.next || "/dashboard" };
+      return { ok: true as const, redirectTo: safeNext(input.next) };
     }
 
     return { ok: false as const, error: "Impossible de créer le compte. Veuillez réessayer." };
@@ -213,7 +204,7 @@ export async function resetPasswordForEmailAction(email: string) {
   }
   const origin = await resolveOrigin();
   const { error } = await supabase.auth.resetPasswordForEmail(email.trim().toLowerCase(), {
-    redirectTo: `${origin}/auth/callback?next=/account`,
+    redirectTo: `${origin}/auth/callback?next=${encodeURIComponent("/auth/reset-password")}`,
   });
   if (error) {
     return { ok: false as const, error: error.message };
@@ -234,4 +225,53 @@ export async function updatePasswordAction(newPassword: string) {
     return { ok: false as const, error: error.message };
   }
   return { ok: true as const, message: "Votre mot de passe a été mis à jour avec succès." };
+}
+
+export async function resendConfirmationAction(email: string, next?: string) {
+  const parsed = z.string().email().safeParse(email.trim().toLowerCase());
+  if (!parsed.success) {
+    return { ok: false as const, error: "Adresse e-mail invalide." };
+  }
+  const supabase = await createSupabaseServerClient();
+  if (!supabase) {
+    return { ok: false as const, error: "Configuration Supabase manquante." };
+  }
+  const origin = await resolveOrigin();
+  const { error } = await supabase.auth.resend({
+    type: "signup",
+    email: parsed.data,
+    options: {
+      emailRedirectTo: `${origin}/auth/callback?next=${encodeURIComponent(safeNext(next))}`,
+    },
+  });
+  if (error) {
+    return { ok: false as const, error: error.message };
+  }
+  return {
+    ok: true as const,
+    message: "Un nouvel e-mail de confirmation vient de vous être envoyé.",
+  };
+}
+
+export async function adminSignInAction(input: { email: string; password: string; next?: string }) {
+  const parsed = signInSchema.safeParse({ email: input.email, password: input.password });
+  if (!parsed.success) {
+    return { ok: false as const, error: "Identifiants invalides." };
+  }
+  const supabase = await createSupabaseServerClient();
+  if (!supabase) {
+    return { ok: false as const, error: "Configuration Supabase manquante." };
+  }
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email: parsed.data.email.trim().toLowerCase(),
+    password: parsed.data.password,
+  });
+  if (error || !data?.user) {
+    return { ok: false as const, error: "Identifiants incorrects ou accès refusé." };
+  }
+  if (!isAdminUser(data.user)) {
+    await supabase.auth.signOut();
+    return { ok: false as const, error: "Identifiants incorrects ou accès refusé." };
+  }
+  return { ok: true as const, redirectTo: safeNext(input.next, "/admin") };
 }

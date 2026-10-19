@@ -29,6 +29,8 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
+import { AuthDivider, GoogleButton } from "@/components/auth/google-button";
+import { ResendConfirmationButton } from "@/components/auth/resend-confirmation-button";
 
 type Values = z.infer<typeof signInSchema>;
 
@@ -37,6 +39,7 @@ export function LoginForm() {
   const searchParams = useSearchParams();
   const next = searchParams.get("next") ?? "/dashboard";
   const isPendingConfirmation = searchParams.get("registered") === "pending_confirmation";
+  const isLinkExpired = searchParams.get("error") === "link_expired";
   const [showPassword, setShowPassword] = React.useState(false);
   const [resetDialogOpen, setResetDialogOpen] = React.useState(false);
   const [resetEmail, setResetEmail] = React.useState("");
@@ -75,6 +78,7 @@ export function LoginForm() {
     resolver: zodResolver(signInSchema),
     defaultValues: { email: "", password: "" },
   });
+  const watchedEmail = form.watch("email");
 
   const [pending, startTransition] = React.useTransition();
 
@@ -119,7 +123,7 @@ export function LoginForm() {
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         {/* Bandeau d'invitation à valider le lien dans la boîte mail */}
         {isPendingConfirmation && (
-          <div className="rounded-2xl border border-amber-500/40 bg-amber-500/10 p-4 text-xs text-amber-900 dark:text-amber-200 space-y-1.5 shadow-xs">
+          <div className="rounded-2xl border border-amber-500/40 bg-amber-500/10 p-4 text-xs text-amber-900 dark:text-amber-200 space-y-2 shadow-xs">
             <p className="font-bold text-sm flex items-center gap-2 text-amber-700 dark:text-amber-300">
               <Mail className="h-4 w-4 shrink-0" />
               Lien de confirmation envoyé !
@@ -127,8 +131,25 @@ export function LoginForm() {
             <p className="leading-relaxed">
               Votre compte a été créé avec succès. Veuillez ouvrir l&apos;e-mail reçu et cliquer sur le lien de confirmation avant de vous connecter.
             </p>
+            <ResendConfirmationButton email={watchedEmail} next={next} />
           </div>
         )}
+
+        {isLinkExpired && !isPendingConfirmation && (
+          <div className="rounded-2xl border border-destructive/40 bg-destructive/10 p-4 text-xs text-destructive space-y-2">
+            <p className="font-bold text-sm flex items-center gap-2">
+              <ShieldAlert className="h-4 w-4 shrink-0" />
+              Lien invalide ou expiré
+            </p>
+            <p className="leading-relaxed">
+              Ce lien a déjà été utilisé ou a expiré. Saisissez votre e-mail ci-dessous pour en recevoir un nouveau.
+            </p>
+            <ResendConfirmationButton email={watchedEmail} next={next} />
+          </div>
+        )}
+
+        <GoogleButton next={next} />
+        <AuthDivider label="ou avec votre e-mail" />
 
         {/* Email Field */}
         <FormField

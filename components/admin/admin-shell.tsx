@@ -34,6 +34,7 @@ const navItems = [
     group: "Supervision",
     links: [
       { href: "/admin", label: "Vue d'ensemble", icon: LayoutDashboard },
+      { href: "/admin/users", label: "Candidats inscrits", icon: Users },
     ],
   },
   {
@@ -97,19 +98,17 @@ export function AdminShell({ children }: AdminShellProps) {
   }, [pathname]);
 
   const handleAdminLogout = () => {
-    document.cookie = "super4c2_admin_token=; path=/; max-age=0; expires=Thu, 01 Jan 1970 00:00:00 GMT";
-    if (typeof window !== "undefined") {
-      localStorage.removeItem("super4c2_admin_user");
-    }
     toast.info("Déconnexion réussie", {
       description: "Vous avez quitté l'espace d'administration sécurisé.",
     });
-    router.push("/admin/login");
+    // La route /logout invalide la session Supabase côté serveur
+    window.location.href = "/logout";
   };
 
   // Calcul du titre et fil d'Ariane
   const breadcrumbInfo = useMemo(() => {
     if (pathname === "/admin") return { title: "Tableau de Bord Exécutif", section: "Supervision" };
+    if (pathname.startsWith("/admin/users")) return { title: "Candidats inscrits", section: "Supervision" };
     if (pathname.startsWith("/admin/series-ce")) return { title: "Compréhension Écrite", section: "Épreuves CBT" };
     if (pathname.startsWith("/admin/series-ee")) return { title: "Expression Écrite", section: "Épreuves CBT" };
     if (pathname.startsWith("/admin/blog")) return { title: "Blog & SEO", section: "Marketing" };

@@ -2,6 +2,45 @@
 
 ## 0. Déploiement Production Vercel & Moteur de Conversion
 
+### 0.0m. Système Complet de Gestion des Utilisateurs, Sécurité Admin, Cycle de Vie RGPD & Connexion Sociale
+- **Demande Utilisateur :**
+  1. Implémenter l'ensemble des fonctionnalités manquantes du système d'authentification et de gestion des utilisateurs.
+  2. Ajouter le bouton « Renvoyer l'e-mail de confirmation » avec cooldown.
+  3. Créer une page dédiée `/auth/reset-password` pour la saisie du nouveau mot de passe.
+  4. Créer la page d'administration `/admin/users` listant les candidats réels inscrits.
+  5. Implémenter l'onboarding initial à la première connexion (modal interactif de fixation de date d'examen et d'objectif NCLC).
+  6. Cycle de vie du compte sur `/account` (modification d'adresse e-mail, déconnexion de tous les appareils, suppression de compte RGPD).
+  7. Sécurisation stricte de l'espace Super Admin (éradication du cookie forgeable `super4c2_admin_token`, authentification par identifiants réels et vérification stricte `app_metadata.role` / `ADMIN_EMAILS`).
+  8. Bouton de connexion sociale Google OAuth sur les formulaires de connexion et d'inscription.
+- **Réalisations & Améliorations Apportées :**
+  - **Renvoi d'E-mail de Confirmation (`components/auth/resend-confirmation-button.tsx`, `app/auth/actions.ts`) :**
+    - Action serveur `resendConfirmationAction` avec résolution automatique d'origine et appel à `supabase.auth.resend({ type: 'signup', ... })`.
+    - Bouton interactif avec décompte de 60 secondes pour éviter le spam, intégré dans le bandeau de confirmation d'inscription et le bandeau de lien expiré.
+  - **Page Dédiée de Réinitialisation de Mot de Passe (`app/auth/reset-password/page.tsx`, `components/auth/reset-password-form.tsx`) :**
+    - `resetPasswordForEmailAction` redirige vers `/auth/callback?next=/auth/reset-password`.
+    - Vérification de la session, double champ mot de passe avec validation de longueur minimale (8 car.) et retour visuel.
+  - **Console d'Administration des Candidats (`app/admin/users/page.tsx`, `components/admin/admin-shell.tsx`) :**
+    - Page serveur paginée requêtant les utilisateurs réels via Prisma (`user.findMany` avec relation `profile` et comptage de tentatives `_count.attempts`).
+    - Moteur de recherche par nom et e-mail.
+    - Ajout du lien dans la navigation latérale et le fil d'Ariane de `AdminShell`.
+  - **Sécurisation de l'Espace Super Admin (`lib/admin/auth.ts`, `app/admin/login/page.tsx`, `middleware.ts`, `app/auth/actions.ts`) :**
+    - Élimination intégrale du faux système de jeton démo `super4c2_admin_token` et de l'authentification basée sur `user_metadata` (vulnérable à l'escalade de privilèges).
+    - Validation stricte `isAdminUser` basée uniquement sur `app_metadata.role === 'SUPER_ADMIN'` ou la liste `ADMIN_EMAILS` (e-mails vérifiés).
+    - Formulaire d'authentification admin officiel (`AdminLoginPage`) branché sur `adminSignInAction`.
+    - Protection au niveau du middleware (pages redirigées vers `/admin/login?next=...`, requêtes API rejetées avec statut 401/403).
+  - **Cycle de Vie du Compte & RGPD (`components/account/account-lifecycle.tsx`, `app/account/actions.ts`) :**
+    - Modification d'e-mail avec e-mail de validation (`changeEmailAction`).
+    - Révocation globale des sessions actives sur tous les appareils (`signOutEverywhereAction` avec `scope: 'global'`).
+    - Suppression définitive du compte (`deleteAccountAction`) avec saisie obligatoire de « SUPPRIMER », appel à la fonction `delete_own_account` et purge du cache local.
+  - **Modal d'Onboarding Initial (`components/onboarding/first-login-setup-modal.tsx`, `app/dashboard/page.tsx`) :**
+    - Fenêtre modale animée en 2 étapes affichée automatiquement si l'utilisateur n'a pas encore configuré sa date d'examen ou son objectif NCLC.
+    - Sélection intuitive des paliers NCLC (+50 à +62 pts CRS) et sélection de la date d'examen avec raccourcis (1 mois, 2 mois, 3 mois).
+    - Sauvegarde via `PATCH /api/account/profile` et mémoïsation dans `localStorage`.
+  - **Connexion Sociale Google OAuth (`components/auth/google-button.tsx`) :**
+    - Bouton officiel "Continuer avec Google" avec logo SVG vectoriel et séparateur visuel.
+    - Intégré dans `LoginForm` et `RegisterForm`, amorçant le flux PKCE standard Supabase.
+- **Validation :** `npx tsc --noEmit` validé avec 0 erreur.
+
 ### 0.0l. Synchronisation Auth Multi-Onglets, Bouton Retour Profil & Carnet SRS Vierge Multi-Tenant
 - **Demande Utilisateur :**
   1. Lors de la validation d'un compte par Magic Link dans un nouvel onglet, l'ancien onglet restait figé sur le formulaire d'authentification et ne redirigeait pas vers le dashboard lors d'un rechargement.

@@ -18,20 +18,7 @@ const RequestSchema = z.object({
 
 export async function POST(req: NextRequest) {
   try {
-    // Vérification de sécurité Admin (Cookie de session admin ou header de test)
-    const adminToken = req.cookies.get("super4c2_admin_token")?.value;
-    const authHeader = req.headers.get("authorization");
-    if (!adminToken && (!authHeader || !authHeader.includes("Bearer"))) {
-      // Pour les tests en dev local, on autorise si NEXT_PUBLIC_APP_URL est localhost
-      const host = req.headers.get("host") || "";
-      const isLocalDev = host.includes("localhost") || host.includes("127.0.0.1");
-      if (!isLocalDev) {
-        return NextResponse.json(
-          { error: "Accès refusé. Session administrateur requise." },
-          { status: 401 }
-        );
-      }
-    }
+    // L'accès administrateur est vérifié côté serveur par le middleware (session Supabase + rôle de confiance).
 
     const body = await req.json();
     const parsed = RequestSchema.safeParse(body);

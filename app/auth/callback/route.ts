@@ -20,6 +20,7 @@ export async function GET(request: Request) {
       : (process.env.NEXT_PUBLIC_APP_URL || url.origin || "https://super4c2.vercel.app");
 
   const supabase = await createSupabaseServerClient();
+  let success = false;
   if (supabase) {
     try {
       let authUser = null;
@@ -37,6 +38,7 @@ export async function GET(request: Request) {
       }
 
       if (authUser) {
+        success = true;
         await syncPrismaUser(
           authUser.id,
           authUser.email ?? "",
@@ -48,5 +50,11 @@ export async function GET(request: Request) {
     }
   }
 
-  return NextResponse.redirect(new URL(next, origin));
+  if (!success) {
+    return NextResponse.redirect(new URL("/auth/login?error=link_expired", origin));
+  }
+
+  const safeNext =
+    next.startsWith("/") && !next.startsWith("//") && !next.startsWith("/\\") ? next : "/dashboard";
+  return NextResponse.redirect(new URL(safeNext, origin));
 }

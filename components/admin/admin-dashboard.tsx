@@ -104,26 +104,10 @@ export function AdminDashboard({
   const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(null);
   const [pendingHref, setPendingHref] = useState<string | null>(null);
 
-  // Vérification de la session Super Admin côté client
-  useEffect(() => {
-    if (typeof document !== "undefined") {
-      const hasAdminToken = document.cookie
-        .split("; ")
-        .some((row) => row.startsWith("super4c2_admin_token="));
-      if (!hasAdminToken) {
-        router.push("/admin/login");
-      }
-    }
-  }, [router]);
-
+  // L'accès /admin est protégé côté serveur par le middleware (session Supabase + rôle).
   const handleAdminLogout = () => {
-    document.cookie =
-      "super4c2_admin_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC; SameSite=Lax";
-    if (typeof window !== "undefined") {
-      localStorage.removeItem("super4c2_admin_user");
-    }
     toast.info("Session administrateur déconnectée.");
-    router.push("/admin/login");
+    window.location.href = "/logout";
   };
 
   // 1. KPI Metric Cards (Connectés à la base de données réelle)

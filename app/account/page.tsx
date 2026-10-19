@@ -19,6 +19,7 @@ import { prisma } from "@/lib/prisma";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { ProfileEditForm } from "@/components/account/profile-edit-form";
 import { SecurityPasswordForm } from "@/components/account/security-password-form";
+import { AccountLifecycle } from "@/components/account/account-lifecycle";
 
 export const metadata = {
   title: "Mon Compte — Espace Candidat | Super4C2",
@@ -130,7 +131,7 @@ export default async function AccountPage() {
               <span className="font-bold text-emerald-600">+50 à +62 points</span>
             </div>
             <div className="flex items-center justify-between py-1 border-b border-border/50">
-              <span className="text-muted-foreground">Date officielle :</span>
+              <span className="text-muted-foreground">Date d&apos;examen :</span>
               <span className="font-semibold">
                 {dbUser?.profile?.examDate
                   ? new Date(dbUser.profile.examDate).toLocaleDateString("fr-FR", {
@@ -175,7 +176,7 @@ export default async function AccountPage() {
               <span className="font-semibold">Pack Entraînement TCF Canada</span>
             </div>
             <div className="flex items-center justify-between py-1 border-b border-border/50">
-              <span className="text-muted-foreground">Simulateur CBT officiel :</span>
+              <span className="text-muted-foreground">Simulateur CBT :</span>
               <span className="font-semibold text-emerald-600">Accès illimité</span>
             </div>
             <div className="flex items-center justify-between py-1 border-b border-border/50">
@@ -200,6 +201,9 @@ export default async function AccountPage() {
           </div>
         </div>
       </div>
+
+      {/* Cycle de vie du compte : e-mail, sessions, suppression (RGPD) */}
+      <AccountLifecycle userId={user.id} currentEmail={user.email || ""} />
 
       {/* Quick Access Shortcuts */}
       <div className="rounded-3xl border bg-muted/20 p-6 space-y-4">

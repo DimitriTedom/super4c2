@@ -12,6 +12,8 @@ export const metadata = {
     "Votre centre de pilotage personnalisé pour réussir le TCF Canada C2 : Historique de corrections, statistiques de compétences FEI et admissibilité Entrée Express (+50 pts CRS).",
 };
 
+import { FirstLoginSetupModal } from "@/components/onboarding/first-login-setup-modal";
+
 export default async function DashboardPage() {
   const supabase = await createSupabaseServerClient();
   const user = supabase ? (await supabase.auth.getUser()).data.user : null;
@@ -20,12 +22,18 @@ export default async function DashboardPage() {
     redirect("/auth/login?next=/dashboard");
   }
 
-  // Récupération de l'historique complet des tentatives de l'utilisateur
-  const rawAttempts = await prisma.userAttempt.findMany({
-    where: { userId: user.id },
-    orderBy: { createdAt: "desc" },
-    take: 50,
-  });
+  // Récupération du profil candidat et de l'historique complet des tentatives
+  const [dbUser, rawAttempts] = await Promise.all([
+    prisma.user.findUnique({
+      where: { id: user.id },
+      include: { profile: true },
+    }),
+    prisma.userAttempt.findMany({
+      where: { userId: user.id },
+      orderBy: { createdAt: "desc" },
+      take: 50,
+    }),
+  ]);
 
   const attempts: UserAttemptFull[] = rawAttempts.map((a) => ({
     id: a.id,
@@ -41,6 +49,7 @@ export default async function DashboardPage() {
   }));
 
   const userDisplayName =
+    dbUser?.profile?.displayName ||
     user.user_metadata?.displayName ||
     user.user_metadata?.full_name ||
     user.email?.split("@")[0] ||
@@ -50,6 +59,12 @@ export default async function DashboardPage() {
 
   return (
     <div className="container mx-auto max-w-7xl px-4 sm:px-6 py-6">
+      <FirstLoginSetupModal
+        userId={user.id}
+        initialDisplayName={userDisplayName}
+        hasExamDate={Boolean(dbUser?.profile?.examDate)}
+        initialTargetNclc={dbUser?.profile?.targetNclc ?? 7}
+      />
       <DashboardProView
         userDisplayName={userDisplayName}
         userEmail={userEmail}

@@ -1,10 +1,11 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
-import { updateSession } from "@/lib/supabase/middleware";
+import { updateSessionWithUser } from "@/lib/supabase/middleware";
+import { isAdminUser } from "@/lib/admin/auth";
 
 export async function middleware(request: NextRequest) {
-  const response = await updateSession(request);
+  const { response, user } = await updateSessionWithUser(request);
 
   const pathname = request.nextUrl.pathname;
 
@@ -18,30 +19,33 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(callbackUrl);
   }
 
-  // 0b. Si l'utilisateur possède déjà une session active et visite les pages d'authentification
-  if (pathname === "/auth/login" || pathname === "/auth/register") {
-    const hasSbCookie = request.cookies.getAll().some(
-      (c) => c.name.startsWith("sb-") && c.name.endsWith("-auth-token")
-    );
-    if (hasSbCookie) {
-      const nextParam = request.nextUrl.searchParams.get("next");
-      const target =
-        nextParam && nextParam.startsWith("/") && !nextParam.startsWith("/auth")
-          ? nextParam
-          : "/dashboard";
-      const redirectUrl = request.nextUrl.clone();
-      redirectUrl.pathname = target;
-      redirectUrl.search = "";
-      return NextResponse.redirect(redirectUrl);
-    }
+  // 0b. Utilisateur DÉJÀ authentifié (session vérifiée côté serveur) sur les pages d'auth -> dashboard.
+  // On s'appuie sur l'utilisateur vérifié (et non sur la simple présence d'un cookie) pour éviter toute boucle de redirection avec un cookie expiré.
+  if ((pathname === "/auth/login" || pathname === "/auth/register") && user) {
+    const nextParam = request.nextUrl.searchParams.get("next");
+    const target =
+      nextParam && nextParam.startsWith("/") && !nextParam.startsWith("//") && !nextParam.startsWith("/auth")
+        ? nextParam
+        : "/dashboard";
+    const redirectUrl = request.nextUrl.clone();
+    redirectUrl.pathname = target;
+    redirectUrl.search = "";
+    return NextResponse.redirect(redirectUrl);
   }
 
-  // 1. Back-Office & Super Admin Gate
-  if (pathname.startsWith("/admin") && pathname !== "/admin/login") {
-    const adminToken = request.cookies.get("super4c2_admin_token")?.value;
-    if (!adminToken) {
+  // 1. Back-Office & Super Admin Gate — vérifié côté serveur (session Supabase + rôle de confiance)
+  const isAdminApi = pathname.startsWith("/api/admin");
+  if ((pathname.startsWith("/admin") && pathname !== "/admin/login") || isAdminApi) {
+    if (!isAdminUser(user)) {
+      if (isAdminApi) {
+        return NextResponse.json(
+          { error: "Accès refusé. Session administrateur requise." },
+          { status: user ? 403 : 401 }
+        );
+      }
       const adminLoginUrl = request.nextUrl.clone();
       adminLoginUrl.pathname = "/admin/login";
+      adminLoginUrl.search = "";
       adminLoginUrl.searchParams.set("next", pathname);
       return NextResponse.redirect(adminLoginUrl);
     }
