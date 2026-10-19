@@ -294,11 +294,15 @@ export async function adminSignInAction(input: { email: string; password: string
     password: parsed.data.password,
   });
   if (error || !data?.user) {
-    return { ok: false as const, error: "Identifiants incorrects ou accès refusé." };
+    const msg = error?.message?.toLowerCase() || "";
+    if (msg.includes("email not confirmed")) {
+      return { ok: false as const, error: "Adresse e-mail non confirmée." };
+    }
+    return { ok: false as const, error: "Adresse e-mail ou mot de passe incorrect." };
   }
   if (!isAdminUser(data.user)) {
     await supabase.auth.signOut();
-    return { ok: false as const, error: "Identifiants incorrects ou accès refusé." };
+    return { ok: false as const, error: "Ce compte ne dispose pas des privilèges administrateur nécessaires." };
   }
   return { ok: true as const, redirectTo: safeNext(input.next, "/admin") };
 }
