@@ -18,6 +18,8 @@ export const metadata = {
   title: "Modifier une Série EE — Back-Office | Super4C2",
 };
 
+export const dynamic = "force-dynamic";
+
 interface EditWrittenSeriesPageProps {
   params: Promise<{ id: string }>;
 }

@@ -36,26 +36,51 @@ function normalizeWrittenSeriesPayload(formData: FormData) {
 }
 
 export async function createWrittenSeriesAction(formData: FormData) {
-  const payload = normalizeWrittenSeriesPayload(formData);
+  let createdId: string | null = null;
+  let createdNumber: number | null = null;
 
-  const existing = await prisma.writtenSeries.findUnique({
-    where: { seriesNumber: payload.seriesNumber },
-  });
+  try {
+    const payload = normalizeWrittenSeriesPayload(formData);
 
-  if (existing) {
-    throw new Error(`Une série d'Expression Écrite portant le numéro ${payload.seriesNumber} existe déjà.`);
+    const existing = await prisma.writtenSeries.findUnique({
+      where: { seriesNumber: payload.seriesNumber },
+    });
+
+    if (existing) {
+      redirect(
+        withToastQuery("/admin/series-ee/ajouter", {
+          title: "Numéro déjà existant",
+          message: `Une série d'Expression Écrite portant le numéro ${payload.seriesNumber} existe déjà. Choisissez un autre numéro.`,
+          variant: "error",
+        })
+      );
+    }
+
+    const created = await prisma.writtenSeries.create({
+      data: payload,
+    });
+    createdId = created.id;
+    createdNumber = created.seriesNumber;
+  } catch (error: any) {
+    if (error?.digest?.startsWith("NEXT_REDIRECT")) {
+      throw error;
+    }
+    console.error("Erreur création série EE :", error);
+    redirect(
+      withToastQuery("/admin/series-ee/ajouter", {
+        title: "Erreur de création",
+        message: error?.message || "Impossible de créer la série d'Expression Écrite.",
+        variant: "error",
+      })
+    );
   }
-
-  const created = await prisma.writtenSeries.create({
-    data: payload,
-  });
 
   revalidatePath("/admin/series-ee");
   revalidatePath("/examens");
   redirect(
-    withToastQuery(`/admin/series-ee/${created.id}/tasks`, {
+    withToastQuery(`/admin/series-ee/${createdId}/tasks`, {
       title: "Série EE créée",
-      message: `La Série ${created.seriesNumber} a été créée. Vous pouvez maintenant configurer les 3 tâches.`,
+      message: `La Série ${createdNumber} a été créée. Vous pouvez maintenant configurer les 3 tâches.`,
       variant: "success",
     })
   );

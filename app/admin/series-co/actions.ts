@@ -27,39 +27,58 @@ function normalizeSeriesCoPayload(formData: FormData) {
 }
 
 export async function createSeriesCoAction(formData: FormData) {
-  const payload = normalizeSeriesCoPayload(formData);
+  let createdId: string | null = null;
+  let createdNumber: number | null = null;
 
-  // Vérifier si le numéro existe déjà pour COMPREHENSION_ORALE
-  const existing = await prisma.examSeries.findUnique({
-    where: {
-      examType_discipline_seriesNumber: {
-        examType: "TCF_CANADA",
-        discipline: "COMPREHENSION_ORALE",
-        seriesNumber: payload.seriesNumber,
+  try {
+    const payload = normalizeSeriesCoPayload(formData);
+
+    // Vérifier si le numéro existe déjà pour COMPREHENSION_ORALE
+    const existing = await prisma.examSeries.findUnique({
+      where: {
+        examType_discipline_seriesNumber: {
+          examType: "TCF_CANADA",
+          discipline: "COMPREHENSION_ORALE",
+          seriesNumber: payload.seriesNumber,
+        },
       },
-    },
-  });
+    });
 
-  if (existing) {
+    if (existing) {
+      redirect(
+        withToastQuery("/admin/series-co/ajouter", {
+          title: "Numéro déjà existant",
+          message: `La série de Compréhension Orale ${payload.seriesNumber} existe déjà. Choisissez un autre numéro.`,
+          variant: "error",
+        })
+      );
+    }
+
+    const created = await prisma.examSeries.create({
+      data: payload,
+    });
+    createdId = created.id;
+    createdNumber = created.seriesNumber;
+  } catch (error: any) {
+    if (error?.digest?.startsWith("NEXT_REDIRECT")) {
+      throw error;
+    }
+    console.error("Erreur création série CO :", error);
     redirect(
       withToastQuery("/admin/series-co/ajouter", {
-        title: "Numéro déjà existant",
-        message: `La série de Compréhension Orale ${payload.seriesNumber} existe déjà. Choisissez un autre numéro.`,
+        title: "Erreur de création",
+        message: error?.message || "Impossible de créer la série d'Écoute.",
         variant: "error",
       })
     );
   }
 
-  const created = await prisma.examSeries.create({
-    data: payload,
-  });
-
   revalidatePath("/admin/series-co");
   revalidatePath("/examens");
   redirect(
-    withToastQuery(`/admin/series-co/${created.id}/questions`, {
-      title: "Série CO créée (Coming Soon)",
-      message: `La Série ${created.seriesNumber} a été créée. Vous pouvez désormais ajouter les pistes audio et les 39 questions QCM.`,
+    withToastQuery(`/admin/series-co/${createdId}/questions`, {
+      title: "Série CO créée",
+      message: `La Série ${createdNumber} a été créée. Vous pouvez désormais ajouter les pistes audio et les 39 questions QCM.`,
       variant: "success",
     })
   );

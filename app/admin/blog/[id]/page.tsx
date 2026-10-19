@@ -8,6 +8,8 @@ export const metadata = {
   title: "Modifier un Article — Back-Office | Super4C2",
 };
 
+export const dynamic = "force-dynamic";
+
 interface EditBlogPostPageProps {
   params: Promise<{ id: string }>;
 }

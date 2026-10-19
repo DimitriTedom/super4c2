@@ -10,6 +10,8 @@ export const metadata = {
   title: "Créer une Série CO — Back-Office | Super4C2",
 };
 
+export const dynamic = "force-dynamic";
+
 export default async function AddSeriesCoPage() {
   let suggestedNumber = 101;
   try {

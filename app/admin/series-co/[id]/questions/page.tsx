@@ -21,6 +21,8 @@ export const metadata = {
   title: "Questions de Compréhension Orale (CO) — Back-Office | Super4C2",
 };
 
+export const dynamic = "force-dynamic";
+
 interface CoQuestionsManagerPageProps {
   params: Promise<{ id: string }>;
 }

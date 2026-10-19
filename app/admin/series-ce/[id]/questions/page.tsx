@@ -19,6 +19,8 @@ export const metadata = {
   title: "Gestion des 39 Questions CE — Back-Office | Super4C2",
 };
 
+export const dynamic = "force-dynamic";
+
 interface QuestionsManagerPageProps {
   params: Promise<{ id: string }>;
 }

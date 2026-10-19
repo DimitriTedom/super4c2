@@ -6,6 +6,8 @@ export const metadata = {
   title: "Ajouter une FAQ — Back-Office | Super4C2",
 };
 
+export const dynamic = "force-dynamic";
+
 export default function AddFaqPage() {
   return (
     <AdminShell>

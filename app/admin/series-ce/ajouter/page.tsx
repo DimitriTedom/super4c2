@@ -9,6 +9,8 @@ export const metadata = {
   title: "Créer une Série CE — Back-Office | Super4C2",
 };
 
+export const dynamic = "force-dynamic";
+
 export default function AjouterSeriesCePage() {
   return (
     <AdminShell>

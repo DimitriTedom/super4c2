@@ -20,6 +20,8 @@ export const metadata = {
   title: "Tâches d'Expression Écrite — Back-Office | Super4C2",
 };
 
+export const dynamic = "force-dynamic";
+
 interface WrittenTasksPageProps {
   params: Promise<{ id: string }>;
 }

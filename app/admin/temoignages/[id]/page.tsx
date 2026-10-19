@@ -8,6 +8,8 @@ export const metadata = {
   title: "Modifier un Témoignage — Back-Office | Super4C2",
 };
 
+export const dynamic = "force-dynamic";
+
 interface EditTestimonialPageProps {
   params: Promise<{ id: string }>;
 }

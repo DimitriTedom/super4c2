@@ -27,39 +27,58 @@ function normalizeSeriesCePayload(formData: FormData) {
 }
 
 export async function createSeriesCeAction(formData: FormData) {
-  const payload = normalizeSeriesCePayload(formData);
+  let createdId: string | null = null;
+  let createdNumber: number | null = null;
 
-  // Vérifier si le numéro existe déjà
-  const existing = await prisma.examSeries.findUnique({
-    where: {
-      examType_discipline_seriesNumber: {
-        examType: "TCF_CANADA",
-        discipline: "COMPREHENSION_ECRITE",
-        seriesNumber: payload.seriesNumber,
+  try {
+    const payload = normalizeSeriesCePayload(formData);
+
+    // Vérifier si le numéro existe déjà
+    const existing = await prisma.examSeries.findUnique({
+      where: {
+        examType_discipline_seriesNumber: {
+          examType: "TCF_CANADA",
+          discipline: "COMPREHENSION_ECRITE",
+          seriesNumber: payload.seriesNumber,
+        },
       },
-    },
-  });
+    });
 
-  if (existing) {
+    if (existing) {
+      redirect(
+        withToastQuery("/admin/series-ce/ajouter", {
+          title: "Numéro déjà existant",
+          message: `La série CE ${payload.seriesNumber} existe déjà. Choisissez un autre numéro.`,
+          variant: "error",
+        })
+      );
+    }
+
+    const created = await prisma.examSeries.create({
+      data: payload,
+    });
+    createdId = created.id;
+    createdNumber = created.seriesNumber;
+  } catch (error: any) {
+    if (error?.digest?.startsWith("NEXT_REDIRECT")) {
+      throw error;
+    }
+    console.error("Erreur création série CE :", error);
     redirect(
       withToastQuery("/admin/series-ce/ajouter", {
-        title: "Numéro déjà existant",
-        message: `La série CE ${payload.seriesNumber} existe déjà. Choisissez un autre numéro.`,
+        title: "Erreur de création",
+        message: error?.message || "Impossible de créer la série de Lecture.",
         variant: "error",
       })
     );
   }
 
-  const created = await prisma.examSeries.create({
-    data: payload,
-  });
-
   revalidatePath("/admin/series-ce");
   revalidatePath("/examens");
   redirect(
-    withToastQuery(`/admin/series-ce/${created.id}/questions`, {
+    withToastQuery(`/admin/series-ce/${createdId}/questions`, {
       title: "Série CE créée",
-      message: `La Série ${created.seriesNumber} a été créée. Vous pouvez désormais ajouter les 39 questions.`,
+      message: `La Série ${createdNumber} a été créée. Vous pouvez désormais ajouter les 39 questions.`,
       variant: "success",
     })
   );

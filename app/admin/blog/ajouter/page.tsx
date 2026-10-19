@@ -6,6 +6,8 @@ export const metadata = {
   title: "Rédiger un Article — Back-Office | Super4C2",
 };
 
+export const dynamic = "force-dynamic";
+
 export default function AddBlogPostPage() {
   return (
     <AdminShell>

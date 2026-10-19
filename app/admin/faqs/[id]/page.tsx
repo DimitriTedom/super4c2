@@ -8,6 +8,8 @@ export const metadata = {
   title: "Modifier une FAQ — Back-Office | Super4C2",
 };
 
+export const dynamic = "force-dynamic";
+
 interface EditFaqPageProps {
   params: Promise<{ id: string }>;
 }
