@@ -2,6 +2,31 @@
 
 ## 0. Déploiement Production Vercel & Moteur de Conversion
 
+### 0.0v. Résolution Crash `/admin/series-eo/ajouter`, Fiche Candidat Enrichie, Actions en Batch & Capture WhatsApp Newsletter
+- **Demande Utilisateur :**
+  1. Il manque les actions en batch sur la gestion des utilisateurs (`/admin/users`).
+  2. La fiche candidat doit fournir un MAX d'informations pédagogiques et d'immigration.
+  3. La newsletter doit aussi collecter et fournir les numéros de téléphone WhatsApp.
+  4. Crash en production sur `https://super4c2.vercel.app/admin/series-eo/ajouter` (Code incident : 476212408).
+- **Diagnostics & Résolutions Techniques :**
+  - **Origine du Crash EO en Production :** Les tables relationnelles `public.oral_series` et `public.oral_tasks` existaient dans `prisma/schema.prisma` mais n'avaient jamais été créées en DDL dans la base de données Supabase Cloud de production (`mjsnrdjdazghksvpsbgm`). Toute requête sur ces tables provoquait un crash PostgreSQL immédiat.
+  - **Correction DDL Appliquée :** Exécution SQL de création des tables `oral_series` et `oral_tasks` avec clés étrangères, contraintes d'unicité, indexes et cascade.
+  - **Protection Fail-Safe des Actions EO :** Sécurisation de `createOralSeriesAction`, `updateOralSeriesAction`, `deleteOralSeriesAction` avec blocs `try / catch` et préservation de `NEXT_REDIRECT`. Ajout de `export const dynamic = "force-dynamic"` sur les pages EO.
+  - **Actions en Batch sur les Candidats (`components/admin/user-list-client.tsx`) :**
+    - Cases à cocher pour sélection individuelle et « Tout sélectionner ».
+    - Barre flottante d'actions en lot : Export CSV de la sélection, Copie groupée de tous les emails, et Rédaction groupée (`mailto:`).
+  - **Fiche Candidat Enrichie au MAX (`UserListClient`) :**
+    - Répartition détaillée par épreuve : Lecture (CE), Écoute (CO), Rédaction (EE), Oral (EO).
+    - Diagnostic d'admissibilité Canada : Seuil NCLC 7 validé (+50 pts CRS) vs En cours.
+    - Historique des simulations passées avec notes /20 ou /39, score échelonné (/699) et palier NCLC.
+    - Coordonnées de contact : Email, Téléphone WhatsApp avec lien direct `https://wa.me/...` et Pays.
+    - Raccourci vers toutes les copies d'examen du candidat.
+  - **Capture & Gestion du Téléphone WhatsApp dans la Newsletter :**
+    - Intégration du champ WhatsApp dans le formulaire public (`components/newsletter-card.tsx`).
+    - Intégration du champ WhatsApp et du Nom dans le formulaire d'ajout manuel back-office (`app/admin/newsletter/page.tsx`).
+    - Mise à jour de l'action serveur `addSubscriberAction` pour persister le numéro WhatsApp.
+- **Validation :** `npx tsc --noEmit` avec 0 erreur.
+
 ### 0.0u. Assainissement & Refonte Intuitive de la Vue Admin (Zéro Jargon, Éradication B2B & Résilience)
 - **Demande Utilisateur :**
   1. Supprimer tout ce qui a rapport avec le B2B, les cohortes, et les licences B2B dans la vue admin.

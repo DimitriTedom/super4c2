@@ -77,12 +77,15 @@ export async function captureLeadAction(input: PublicLeadInput) {
   return { ok: true as const };
 }
 
-export async function subscribePublicNewsletterAction(email: string, source = "public_site") {
-  return captureLeadAction({ email, source });
+export async function subscribePublicNewsletterAction(email: string, source = "public_site", phone?: string) {
+  return captureLeadAction({ email, source, phone });
 }
 
 export async function addSubscriberAction(formData: FormData) {
   const email = toOptionalString(formData.get("email"))?.toLowerCase();
+  const name = toOptionalString(formData.get("name"));
+  const rawPhone = toOptionalString(formData.get("phone"));
+  const phone = normalizePhone(rawPhone || undefined);
   const source = toOptionalString(formData.get("source")) || "admin_manual";
 
   if (!email || !email.includes("@")) {
@@ -94,16 +97,21 @@ export async function addSubscriberAction(formData: FormData) {
   });
 
   if (existing) {
-    if (!existing.isActive) {
-      await prisma.newsletterSubscriber.update({
-        where: { email },
-        data: { isActive: true, unsubscribedAt: null },
-      });
-    }
+    await prisma.newsletterSubscriber.update({
+      where: { email },
+      data: {
+        isActive: true,
+        unsubscribedAt: null,
+        ...(name ? { name } : {}),
+        ...(phone ? { phone } : {}),
+      },
+    });
   } else {
     await prisma.newsletterSubscriber.create({
       data: {
         email,
+        name,
+        phone,
         source,
         isActive: true,
       },

@@ -17,6 +17,8 @@ export const metadata = {
   title: "Créer une Série EO — Back-Office | Super4C2",
 };
 
+export const dynamic = "force-dynamic";
+
 export default async function AddOralSeriesPage() {
   let suggestedNumber = 101;
   try {

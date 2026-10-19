@@ -51,7 +51,22 @@ export default async function AdminUsersPage({ searchParams }: UsersPageProps) {
         orderBy: { createdAt: "desc" },
         skip: (currentPage - 1) * PAGE_SIZE,
         take: PAGE_SIZE,
-        include: { profile: true, _count: { select: { attempts: true } } },
+        include: {
+          profile: true,
+          attempts: {
+            select: {
+              id: true,
+              discipline: true,
+              rawScore: true,
+              tcfScaledScore: true,
+              nclcLevel: true,
+              crsPointsUnlocked: true,
+              createdAt: true,
+            },
+            orderBy: { createdAt: "desc" },
+          },
+          _count: { select: { attempts: true } },
+        },
       }),
     ]);
     total = t;
@@ -77,6 +92,15 @@ export default async function AdminUsersPage({ searchParams }: UsersPageProps) {
     phone: u.profile?.phone || null,
     country: u.profile?.country || null,
     attemptsCount: u._count.attempts,
+    attempts: (u.attempts || []).map((a: any) => ({
+      id: a.id,
+      discipline: a.discipline,
+      rawScore: a.rawScore,
+      tcfScaledScore: a.tcfScaledScore,
+      nclcLevel: a.nclcLevel,
+      crsPointsUnlocked: a.crsPointsUnlocked,
+      createdAt: a.createdAt,
+    })),
     isAdmin: adminEmails.includes(u.email.toLowerCase()),
   }));
 

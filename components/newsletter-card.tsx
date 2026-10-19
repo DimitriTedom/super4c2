@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 
 export function NewsletterCard({ source = "footer" }: { source?: string }) {
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [subscribed, setSubscribed] = useState(false);
   const [pending, startTransition] = useTransition();
 
@@ -19,7 +20,7 @@ export function NewsletterCard({ source = "footer" }: { source?: string }) {
     }
 
     startTransition(async () => {
-      const res = await subscribePublicNewsletterAction(email, source);
+      const res = await subscribePublicNewsletterAction(email, source, phone.trim() || undefined);
       if (res.ok) {
         setSubscribed(true);
         toast.success("Vous êtes inscrit à la lettre d'information Super4C2 !");
@@ -39,34 +40,46 @@ export function NewsletterCard({ source = "footer" }: { source?: string }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-2">
-      <div className="relative flex items-center">
-        <Mail className="absolute left-3.5 h-4 w-4 text-muted-foreground" />
-        <input
-          type="email"
-          required
-          placeholder="votre-email@exemple.com"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="h-10 w-full rounded-xl border bg-background/80 pl-10 pr-24 text-xs shadow-xs focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary placeholder:text-muted-foreground/70"
-        />
-        <Button
-          type="submit"
-          size="sm"
-          disabled={pending}
-          className="absolute right-1 h-8 rounded-lg bg-primary hover:bg-primary-dark font-semibold text-white px-3 text-xs"
-        >
-          {pending ? (
-            <span className="h-3 w-3 animate-spin rounded-full border border-white border-t-transparent" />
-          ) : (
-            <span className="flex items-center gap-1">
-              Rejoindre <ArrowRight className="h-3 w-3" />
-            </span>
-          )}
-        </Button>
+    <form onSubmit={handleSubmit} className="space-y-2.5">
+      <div className="space-y-2">
+        <div className="relative flex items-center">
+          <Mail className="absolute left-3.5 h-4 w-4 text-muted-foreground" />
+          <input
+            type="email"
+            required
+            placeholder="votre-email@exemple.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="h-10 w-full rounded-xl border bg-background/80 pl-10 pr-3 text-xs shadow-xs focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary placeholder:text-muted-foreground/70"
+          />
+        </div>
+
+        <div className="relative flex items-center">
+          <input
+            type="tel"
+            placeholder="Numéro WhatsApp (ex: +33... ou +237...)"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            className="h-10 w-full rounded-xl border bg-background/80 px-3.5 pr-24 text-xs shadow-xs focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary placeholder:text-muted-foreground/70"
+          />
+          <Button
+            type="submit"
+            size="sm"
+            disabled={pending}
+            className="absolute right-1 h-8 rounded-lg bg-primary hover:bg-primary-dark font-semibold text-white px-3 text-xs"
+          >
+            {pending ? (
+              <span className="h-3 w-3 animate-spin rounded-full border border-white border-t-transparent" />
+            ) : (
+              <span className="flex items-center gap-1">
+                Rejoindre <ArrowRight className="h-3 w-3" />
+              </span>
+            )}
+          </Button>
+        </div>
       </div>
       <p className="text-[10px] text-muted-foreground">
-        Aucun spam. Désinscription possible en 1 clic à tout moment.
+        Aucun spam. Recevez nos nouveaux sujets et alertes par e-mail et WhatsApp.
       </p>
     </form>
   );

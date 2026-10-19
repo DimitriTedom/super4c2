@@ -22,6 +22,8 @@ export const metadata = {
   title: "Tâches d'Expression Orale — Back-Office | Super4C2",
 };
 
+export const dynamic = "force-dynamic";
+
 interface OralTasksPageProps {
   params: Promise<{ id: string }>;
 }

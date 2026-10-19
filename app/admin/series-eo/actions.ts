@@ -36,47 +36,82 @@ function normalizeOralSeriesPayload(formData: FormData) {
 }
 
 export async function createOralSeriesAction(formData: FormData) {
-  const payload = normalizeOralSeriesPayload(formData);
+  let createdId: string | null = null;
+  let createdNumber: number | null = null;
 
-  const existing = await prisma.oralSeries.findUnique({
-    where: { seriesNumber: payload.seriesNumber },
-  });
+  try {
+    const payload = normalizeOralSeriesPayload(formData);
 
-  if (existing) {
+    const existing = await prisma.oralSeries.findUnique({
+      where: { seriesNumber: payload.seriesNumber },
+    });
+
+    if (existing) {
+      redirect(
+        withToastQuery("/admin/series-eo/ajouter", {
+          title: "Numéro déjà existant",
+          message: `Une série d'Expression Orale portant le numéro ${payload.seriesNumber} existe déjà. Choisissez un autre numéro.`,
+          variant: "error",
+        })
+      );
+    }
+
+    const created = await prisma.oralSeries.create({
+      data: payload,
+    });
+    createdId = created.id;
+    createdNumber = created.seriesNumber;
+  } catch (error: any) {
+    if (error?.digest?.startsWith("NEXT_REDIRECT")) {
+      throw error;
+    }
+    console.error("Erreur création série EO :", error);
     redirect(
       withToastQuery("/admin/series-eo/ajouter", {
-        title: "Numéro déjà existant",
-        message: `Une série d'Expression Orale portant le numéro ${payload.seriesNumber} existe déjà. Choisissez un autre numéro.`,
+        title: "Erreur de création",
+        message: error?.message || "Impossible de créer la série d'Expression Orale.",
         variant: "error",
       })
     );
   }
 
-  const created = await prisma.oralSeries.create({
-    data: payload,
-  });
-
   revalidatePath("/admin/series-eo");
   revalidatePath("/examens");
   redirect(
-    withToastQuery(`/admin/series-eo/${created.id}/tasks`, {
+    withToastQuery(`/admin/series-eo/${createdId}/tasks`, {
       title: "Série EO créée",
-      message: `La Série ${created.seriesNumber} a été créée. Vous pouvez maintenant configurer les 3 tâches orales FEI.`,
+      message: `La Série ${createdNumber} a été créée. Vous pouvez maintenant configurer les 3 tâches orales FEI.`,
       variant: "success",
     })
   );
 }
 
 export async function updateOralSeriesAction(formData: FormData) {
+  let updatedNumber: number | null = null;
   const id = toOptionalString(formData.get("id"));
   if (!id) throw new Error("Identifiant de série invalide.");
 
-  const payload = normalizeOralSeriesPayload(formData);
+  try {
+    const payload = normalizeOralSeriesPayload(formData);
 
-  const updated = await prisma.oralSeries.update({
-    where: { id },
-    data: payload,
-  });
+    const updated = await prisma.oralSeries.update({
+      where: { id },
+      data: payload,
+    });
+    updatedNumber = updated.seriesNumber;
+  } catch (error: any) {
+    if (error?.digest?.startsWith("NEXT_REDIRECT")) {
+      throw error;
+    }
+    console.error("Erreur mise à jour série EO :", error);
+    redirect(
+      withToastQuery(`/admin/series-eo/${id}`, {
+        title: "Erreur de mise à jour",
+        message: error?.message || "Impossible de mettre à jour la série.",
+        variant: "error",
+      })
+    );
+  }
 
   revalidatePath("/admin/series-eo");
   revalidatePath(`/admin/series-eo/${id}`);
@@ -84,7 +119,7 @@ export async function updateOralSeriesAction(formData: FormData) {
   redirect(
     withToastQuery("/admin/series-eo", {
       title: "Série EO mise à jour",
-      message: `La Série ${updated.seriesNumber} a été enregistrée avec succès.`,
+      message: `La Série ${updatedNumber} a été enregistrée avec succès.`,
       variant: "success",
     })
   );
@@ -94,33 +129,71 @@ export async function deleteOralSeriesAction(formData: FormData) {
   const id = toOptionalString(formData.get("id"));
   if (!id) throw new Error("Identifiant de série manquant.");
 
-  const deleted = await prisma.oralSeries.delete({
-    where: { id },
-  });
+  let deletedNumber: number | null = null;
+  let deletedTitle: string = "";
+
+  try {
+    const deleted = await prisma.oralSeries.delete({
+      where: { id },
+    });
+    deletedNumber = deleted.seriesNumber;
+    deletedTitle = deleted.title;
+  } catch (error: any) {
+    if (error?.digest?.startsWith("NEXT_REDIRECT")) {
+      throw error;
+    }
+    console.error("Erreur suppression série EO :", error);
+    redirect(
+      withToastQuery("/admin/series-eo", {
+        title: "Erreur de suppression",
+        message: error?.message || "Impossible de supprimer la série.",
+        variant: "error",
+      })
+    );
+  }
 
   revalidatePath("/admin/series-eo");
   revalidatePath("/examens");
   redirect(
     withToastQuery("/admin/series-eo", {
       title: "Série EO supprimée",
-      message: `La Série ${deleted.seriesNumber} (${deleted.title}) et ses tâches ont été supprimées.`,
+      message: `La Série ${deletedNumber} (${deletedTitle}) et ses tâches ont été supprimées.`,
       variant: "success",
     })
   );
 }
 
 export async function toggleOralSeriesPublishAction(id: string, currentStatus: boolean) {
-  const updated = await prisma.oralSeries.update({
-    where: { id },
-    data: { isPublished: !currentStatus },
-  });
+  let isPublished = false;
+  let seriesNumber = 0;
+
+  try {
+    const updated = await prisma.oralSeries.update({
+      where: { id },
+      data: { isPublished: !currentStatus },
+    });
+    isPublished = updated.isPublished;
+    seriesNumber = updated.seriesNumber;
+  } catch (error: any) {
+    if (error?.digest?.startsWith("NEXT_REDIRECT")) {
+      throw error;
+    }
+    console.error("Erreur bascule statut série EO :", error);
+    redirect(
+      withToastQuery("/admin/series-eo", {
+        title: "Erreur",
+        message: "Impossible de modifier le statut de publication.",
+        variant: "error",
+      })
+    );
+  }
 
   revalidatePath("/admin/series-eo");
   revalidatePath("/examens");
   redirect(
     withToastQuery("/admin/series-eo", {
-      title: updated.isPublished ? "Série publiée" : "Série passée en brouillon",
-      message: `La Série ${updated.seriesNumber} est désormais ${updated.isPublished ? "accessible aux candidats" : "masquée"}.`,
+      title: isPublished ? "Série publiée" : "Série passée en brouillon",
+      message: `La Série ${seriesNumber} est désormais ${isPublished ? "accessible aux candidats" : "masquée"}.`,
       variant: "success",
     })
   );

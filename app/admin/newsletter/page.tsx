@@ -144,16 +144,31 @@ export default async function AdminNewsletterPage({
         <div className="rounded-xl border bg-card p-4 shadow-sm">
           <h2 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-3 flex items-center gap-1.5">
             <Plus className="h-3.5 w-3.5 text-primary" />
-            Ajouter un Abonné Manuellement
+            Ajouter un Abonné Manuellement (avec WhatsApp)
           </h2>
-          <form action={addSubscriberAction} className="flex flex-col sm:flex-row gap-3">
+          <form action={addSubscriberAction} className="grid grid-cols-1 sm:grid-cols-4 gap-3">
+            <Input
+              type="text"
+              name="name"
+              placeholder="Nom du candidat"
+              className="text-xs"
+            />
             <Input
               type="email"
               name="email"
               placeholder="adresse-email@exemple.com"
               required
-              className="flex-1"
+              className="text-xs"
             />
+            <div className="relative">
+              <Phone className="absolute left-3 top-2.5 h-3.5 w-3.5 text-muted-foreground" />
+              <Input
+                type="tel"
+                name="phone"
+                placeholder="WhatsApp (ex: +237 6... ou +33...)"
+                className="pl-9 text-xs"
+              />
+            </div>
             <input type="hidden" name="source" value="admin_manual" />
             <Button type="submit" className="gap-2 shrink-0">
               <Plus className="h-4 w-4" />

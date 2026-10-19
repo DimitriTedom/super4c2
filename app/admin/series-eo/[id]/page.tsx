@@ -18,6 +18,8 @@ export const metadata = {
   title: "Modifier une Série EO — Back-Office | Super4C2",
 };
 
+export const dynamic = "force-dynamic";
+
 interface EditOralSeriesPageProps {
   params: Promise<{ id: string }>;
 }
