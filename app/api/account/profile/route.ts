@@ -57,6 +57,27 @@ export async function PATCH(req: NextRequest) {
       },
     });
 
+    if (parsedExamDate) {
+      try {
+        await prisma.notification.create({
+          data: {
+            recipient: "CANDIDATE",
+            userId: user.id,
+            title: "📅 Échéance d'examen programmée",
+            message: `Votre compte à rebours est calibré pour le ${parsedExamDate.toLocaleDateString("fr-FR", {
+              day: "numeric",
+              month: "long",
+              year: "numeric",
+            })}. Vos révisions prioritaires sont actives sur votre tableau de bord.`,
+            type: "SYSTEM",
+            link: "/dashboard",
+          },
+        });
+      } catch {
+        // Non bloquant
+      }
+    }
+
     return NextResponse.json({ ok: true, profile });
   } catch (error) {
     console.error("Erreur lors de la mise à jour du profil :", error);

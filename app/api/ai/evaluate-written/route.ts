@@ -297,35 +297,56 @@ export async function POST(req: Request) {
         // Fallback anonyme
       }
 
-      await prisma.userAttempt.create({
-        data: {
-          userId,
-          discipline: "EXPRESSION_ECRITE",
-          seriesId: null,
-          rawScore: Math.round(result.totalScore),
-          tcfScaledScore: result.tcfScaledScore,
-          nclcLevel: result.nclcLevel,
-          crsPointsUnlocked: result.crsPointsUnlocked,
-          answers: texts,
-          feedback: JSON.parse(JSON.stringify(result)),
-          completedAt: new Date(),
-        },
-      });
-    } catch (e) {
-      console.warn("Échec sauvegarde userAttempt EE :", e);
-    }
+      let createdAttemptId: string | null = null;
+      try {
+        const attempt = await prisma.userAttempt.create({
+          data: {
+            userId,
+            discipline: "EXPRESSION_ECRITE",
+            seriesId: null,
+            rawScore: Math.round(result.totalScore),
+            tcfScaledScore: result.tcfScaledScore,
+            nclcLevel: result.nclcLevel,
+            crsPointsUnlocked: result.crsPointsUnlocked,
+            answers: texts,
+            feedback: JSON.parse(JSON.stringify(result)),
+            completedAt: new Date(),
+          },
+        });
+        createdAttemptId = attempt.id;
+      } catch (e) {
+        console.warn("Échec sauvegarde userAttempt EE :", e);
+      }
 
-    // Notification in-app automatique pour le candidat
-    try {
-      await createNotificationAction({
-        recipient: "CANDIDATE",
-        title: `Évaluation Expression Écrite terminée (${result.totalScore}/20)`,
-        message: `Votre copie (${series.title}) a été analysée avec succès. Niveau estimé : NCLC ${result.nclcLevel} (${result.tcfScaledScore} pts, +${result.crsPointsUnlocked} pts CRS).`,
-        type: "EXAM",
-        link: `/examens/${series.id}/ee`,
-      });
-    } catch {
-      // Non bloquant
+      // Notifications in-app automatiques
+      try {
+        if (userId) {
+          await createNotificationAction({
+            recipient: "CANDIDATE",
+            userId,
+            title:
+              result.crsPointsUnlocked > 0
+                ? `🎉 Expression Écrite : NCLC ${result.nclcLevel} (+50 pts CRS)`
+                : `Correction Expression Écrite (${result.totalScore}/20)`,
+            message: `Votre copie (${series.title}) a été corrigée selon la grille FEI. Cliquez pour consulter l'analyse détaillée critère par critère et la réécriture C2.`,
+            type: "EXAM",
+            link: createdAttemptId ? `/dashboard/historique/${createdAttemptId}` : `/examens/${series.id}/ee`,
+          });
+        }
+
+        // Notification de suivi pour l'administration
+        await createNotificationAction({
+          recipient: "ADMIN",
+          title: `✍️ Correction IA Expression Écrite (${result.totalScore}/20)`,
+          message: `Série : ${series.title} · Niveau : NCLC ${result.nclcLevel} (${result.tcfScaledScore} pts).`,
+          type: "EXAM",
+          link: "/admin",
+        });
+      } catch {
+        // Non bloquant
+      }
+    } catch (dbErr) {
+      console.warn("Échec sauvegarde / notifications EE :", dbErr);
     }
 
     return NextResponse.json({ ok: true, result });

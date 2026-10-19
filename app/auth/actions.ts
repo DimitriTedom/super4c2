@@ -171,6 +171,33 @@ export async function signUpAction(input: z.infer<typeof signUpSchema> & { next?
         parsed.data.displayName
       );
 
+      // Déclencheurs automatiques de notifications
+      try {
+        await Promise.all([
+          prisma.notification.create({
+            data: {
+              recipient: "CANDIDATE",
+              userId: user.id,
+              title: "🇨🇦 Bienvenue sur Super4C2 !",
+              message: "Votre simulateur CBT est prêt. Lancez votre première simulation pour calibrer votre niveau NCLC.",
+              type: "SYSTEM",
+              link: "/examens",
+            },
+          }),
+          prisma.notification.create({
+            data: {
+              recipient: "ADMIN",
+              title: "👤 Nouveau Candidat Inscrit",
+              message: `${parsed.data.displayName || parsed.data.email} vient de créer son compte candidat.`,
+              type: "SYSTEM",
+              link: "/admin/users",
+            },
+          }),
+        ]);
+      } catch (notifErr) {
+        console.warn("[SignUp Notif Error]:", notifErr);
+      }
+
       // Si la session n'est pas établie immédiatement (confirmation par e-mail requise par Supabase)
       if (!data.session) {
         const loginTarget = input.next

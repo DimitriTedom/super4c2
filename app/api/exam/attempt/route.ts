@@ -44,6 +44,7 @@ export async function POST(req: Request) {
     } = parsed.data;
 
     let attemptId = "offline-" + Date.now();
+    let userId: string | null = null;
     try {
       // Vérifier si une ExamSeries correspond à ce seriesId pour la clé étrangère
       let validSeriesId: string | null = null;
@@ -58,7 +59,6 @@ export async function POST(req: Request) {
       }
 
       // Associer l'utilisateur authentifié s'il est connecté
-      let userId: string | null = null;
       try {
         const { createSupabaseServerClient } = await import("@/lib/supabase/server");
         const supabase = await createSupabaseServerClient();
@@ -110,12 +110,29 @@ export async function POST(req: Request) {
         : ` Niveau NCLC ${nclcLevel} atteint.`;
 
     try {
+      if (userId) {
+        await createNotificationAction({
+          recipient: "CANDIDATE",
+          userId,
+          title:
+            crsPointsUnlocked > 0
+              ? `🎉 Palier NCLC ${nclcLevel} Validé (+50 pts CRS)`
+              : `Simulation ${label} enregistrée`,
+          message: `Score : ${rawScore} pts (${tcfScaledScore}/699 pts).${crsMessage}`,
+          type: "EXAM",
+          link: attemptId ? `/dashboard/historique/${attemptId}` : "/dashboard",
+        });
+      }
+
+      // Notification informative pour l'administration
       await createNotificationAction({
-        recipient: "CANDIDATE",
-        title: `Tentative ${label} enregistrée`,
-        message: `Score : ${rawScore} pts (${tcfScaledScore}/699).${crsMessage}`,
+        recipient: "ADMIN",
+        title: `📊 Simulation CBT Terminée (${label})`,
+        message: `Résultat : ${rawScore} pts (${tcfScaledScore}/699 pts) · Niveau NCLC ${nclcLevel}.${
+          crsPointsUnlocked > 0 ? " (+50 pts CRS acquis)" : ""
+        }`,
         type: "EXAM",
-        link: "/dashboard",
+        link: "/admin",
       });
     } catch {
       // Notification non bloquante

@@ -1,3 +1,9 @@
+- [x] **Automatisation des Déclencheurs de Notifications (Triggers Métier Réels) :**
+  - **Fin de Simulation CBT (CE/CO) :** Notification personnelle candidate avec score échelonné (/699), NCLC, déblocage CRS (+50 pts) et lien direct vers le rapport `/dashboard/historique/${attemptId}`, plus notification de monitoring admin.
+  - **Correction IA Expression Écrite :** Notification candidate immédiate avec note sur 20, niveau NCLC et lien vers le débriefing des critères FEI.
+  - **Inscription & Bienvenue :** Notification d'accueil personnalisée pour le candidat et alerte admin en temps réel.
+  - **Planification Examen :** Notification confirmant la prise en compte de la date cible et l'activation des rappels prioritaires.
+  - **Validation :** 0 erreur TypeScript (`npx tsc --noEmit`).
 - [x] **Cloisonnement Multi-Tenant des Notifications & Refonte UX Onboarding Option 1 :**
   - **Refonte Onboarding Option 1 :** Écran unique condensé, sélection directe NCLC 7/8/9/10, choix d'échéance fluide (*1 mois, 2 mois, 3 mois, date personnalisée ou pas encore fixé*) et bouton *Skip* explicite.
   - **Cloisonnement Multi-Tenant Strict :** Les requêtes `getNotificationsAction` filtrent désormais rigoureusement par `userId: user.id` du candidat connecté. Zéro partage de données entre comptes.

@@ -2,6 +2,23 @@
 
 ## 0. Déploiement Production Vercel & Moteur de Conversion
 
+### 0.0o. Automatisation des Déclencheurs de Notifications (Triggers Métier Réels)
+- **Demande Utilisateur :** Implémenter la Priorité 2 du système de notifications : création et déclenchement automatique de notifications réelles lors des simulations d'examens et des actions clés.
+- **Réalisations & Améliorations Apportées :**
+  - **Fin de Simulation CBT (Compréhension Écrite & Orale - `app/api/exam/attempt/route.ts`) :**
+    - Notification personnelle envoyée au candidat avec son score échelonné (/699), son niveau NCLC et la mention explicite du bonus CRS (+50 pts) si NCLC >= 7.
+    - Lien direct vers le rapport d'analyse et le carnet de fautes (`/dashboard/historique/${attemptId}`).
+    - Notification d'activité envoyée automatiquement aux administrateurs pour suivi des passages en temps réel.
+  - **Correction IA Expression Écrite (`app/api/ai/evaluate-written/route.ts`) :**
+    - Notification personnelle générée à la fin de l'évaluation FEI avec la note (/20), le palier NCLC estimé et le lien vers la grille détaillée et la réécriture C2.
+    - Notification de suivi transmise à l'administration.
+  - **Bienvenue & Inscription Candidat (`app/auth/actions.ts`) :**
+    - Notification d'accueil personnalisée injectée dans l'espace du nouveau candidat avec lien vers le catalogue d'épreuves.
+    - Alerte instantanée créée pour les administrateurs avec le nom/e-mail du nouvel inscrit.
+  - **Programmation de l'Échéance d'Examen (`app/api/account/profile/route.ts`) :**
+    - Notification de confirmation automatique lors de l'enregistrement de la date de passation avec confirmation de l'activation des rappels prioritaires.
+- **Validation :** `npx tsc --noEmit` validé avec 0 erreur.
+
 ### 0.0n. Cloisonnement Multi-Tenant des Notifications & Refonte UX Onboarding Option 1
 - **Demande Utilisateur :**
   1. Refondre le modal d'onboarding post-authentification selon l'Option 1 recommandée (1 seul écran net, boutons et pastilles clairs, skip explicite sans ambiguïté).
