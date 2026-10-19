@@ -2,6 +2,22 @@
 
 ## 0. Déploiement Production Vercel & Moteur de Conversion
 
+### 0.0t. Résolution Authentification Admin & Refonte Formulaire `/admin/login`
+- **Demande Utilisateur :**
+  1. Le mot de passe admin ne fonctionnait pas (« Identifiants incorrects ou accès refusé »).
+  2. Textes peu lisibles en mode sombre sur le formulaire de connexion admin.
+  3. Absence de l'icône oeil ("eye") pour dévoiler/masquer le mot de passe.
+- **Diagnostic Technique Réalisé :**
+  - **Erreur GoTrue Supabase identifiée dans les logs Auth :** `Scan error on column index 3, name "confirmation_token": converting NULL to string is unsupported` (HTTP 500 `unexpected_failure`). Lors de requêtes antérieures sur `auth.users`, les tokens de sécurité (`confirmation_token`, `recovery_token`, etc.) avaient été initialisés à `NULL` au lieu de chaînes vides `""`, provoquant un crash interne du driver Go de Supabase Auth lors de la recherche du compte.
+  - **Correction en base PostgreSQL Supabase :** Exécution d'un `UPDATE auth.users` assignant `COALESCE(token, '')` pour tous les champs tokens sur le compte `admin@super4c2.com`.
+  - **Test automatique :** Script Node d'authentification exécuté avec succès : `User ID: 808f6c0f-cd4d-468f-8ba8-d459eaf79c14, Role: SUPER_ADMIN`.
+- **Améliorations UI & Dark Mode (`app/admin/login/page.tsx`) :**
+  - Bouton interactif toggle mot de passe avec icônes `Eye` et `EyeOff` (`lucide-react`).
+  - Correction du contraste : labels en `text-slate-200`, textes explicatifs en `text-slate-300`, inputs sombres `bg-slate-950/80` et `border-slate-700/80` avec `text-white`.
+  - Règle `[color-scheme:dark]` et styling anti-autofill (`[&:-webkit-autofill]:[box-shadow:0_0_0_1000px_#090d1a_inset] [&:-webkit-autofill]:[-webkit-text-fill-color:#ffffff]`) pour éviter le fond bleu clair natif des navigateurs.
+  - Messages d'erreur explicites dans `app/auth/actions.ts` (`adminSignInAction`).
+- **Validation :** `npx tsc --noEmit` avec 0 erreur, commit et push sur `main` (`0002d3b`).
+
 ### 0.0s. Console de Supervision des Tentatives & Copies Candidats (Option C : `/admin/tentatives`)
 - **Demande Utilisateur :** Implémenter l'Option C : tableau de bord exécutif de supervision des simulations et copies réelles des candidats avec composants Shadcn UI.
 - **Réalisations & Architecture Déployée :**
