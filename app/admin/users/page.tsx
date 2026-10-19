@@ -5,6 +5,7 @@ import { AdminShell } from "@/components/admin/admin-shell";
 import { Button } from "@/components/ui/button";
 import { AdminTablePagination } from "@/components/admin/AdminTablePagination";
 import { AdminExportButton } from "@/components/admin/admin-export-button";
+import { UserListClient } from "@/components/admin/user-list-client";
 import { prisma } from "@/lib/prisma";
 
 export const metadata = {
@@ -62,12 +63,32 @@ export default async function AdminUsersPage({ searchParams }: UsersPageProps) {
 
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
-  const exportUsers = users.map((u) => ({
+  const adminEmails = (process.env.ADMIN_EMAILS ?? "admin@super4c2.com")
+    .split(",")
+    .map((e) => e.trim().toLowerCase());
+
+  const userRows = users.map((u) => ({
+    id: u.id,
     email: u.email,
-    nom: u.profile?.displayName || "Candidat",
-    nclc: u.profile?.targetNclc != null ? `NCLC ${u.profile.targetNclc}` : "Non spécifié",
-    examen: u.profile?.examDate ? new Date(u.profile.examDate).toLocaleDateString("fr-FR") : "Non fixée",
-    tentatives: u._count.attempts,
+    createdAt: u.createdAt,
+    displayName: u.profile?.displayName || null,
+    targetNclc: u.profile?.targetNclc ?? 7,
+    examDate: u.profile?.examDate || null,
+    phone: u.profile?.phone || null,
+    country: u.profile?.country || null,
+    attemptsCount: u._count.attempts,
+    isAdmin: adminEmails.includes(u.email.toLowerCase()),
+  }));
+
+  const exportUsers = userRows.map((u) => ({
+    role: u.isAdmin ? "Super Admin" : "Candidat",
+    nom: u.displayName || "Candidat",
+    email: u.email,
+    telephone: u.phone || "Non renseigné",
+    pays: u.country || "Non spécifié",
+    nclc: `NCLC ${u.targetNclc}`,
+    examen: u.examDate ? new Date(u.examDate).toLocaleDateString("fr-FR") : "Non fixée",
+    tentatives: u.attemptsCount,
     inscription: new Date(u.createdAt).toLocaleDateString("fr-FR"),
   }));
 
@@ -90,8 +111,11 @@ export default async function AdminUsersPage({ searchParams }: UsersPageProps) {
               filename={`candidats-super4c2-${new Date().toISOString().slice(0, 10)}`}
               data={exportUsers}
               columns={[
+                { key: "role", label: "Rôle" },
                 { key: "nom", label: "Nom" },
                 { key: "email", label: "Email" },
+                { key: "telephone", label: "Téléphone" },
+                { key: "pays", label: "Pays" },
                 { key: "nclc", label: "Niveau NCLC visé" },
                 { key: "examen", label: "Date d'examen prévue" },
                 { key: "tentatives", label: "Nombre de simulations" },
@@ -122,52 +146,8 @@ export default async function AdminUsersPage({ searchParams }: UsersPageProps) {
           </div>
         )}
 
-        <div className="overflow-x-auto rounded-2xl border bg-card shadow-xs">
-          <table className="w-full text-left text-sm">
-            <thead className="bg-muted/40 text-[11px] uppercase tracking-wider text-muted-foreground border-b">
-              <tr>
-                <th className="px-4 py-3 font-semibold">Candidat</th>
-                <th className="px-4 py-3 font-semibold">Inscription</th>
-                <th className="px-4 py-3 font-semibold">
-                  <span className="inline-flex items-center gap-1">
-                    <Target className="h-3 w-3" /> NCLC visé
-                  </span>
-                </th>
-                <th className="px-4 py-3 font-semibold">
-                  <span className="inline-flex items-center gap-1">
-                    <CalendarClock className="h-3 w-3" /> Examen
-                  </span>
-                </th>
-                <th className="px-4 py-3 text-right font-semibold">Tentatives</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y">
-              {users.length === 0 ? (
-                <tr>
-                  <td colSpan={5} className="px-4 py-12 text-center text-muted-foreground">
-                    {query ? "Aucun candidat ne correspond à cette recherche." : "Aucun candidat inscrit pour le moment."}
-                  </td>
-                </tr>
-              ) : (
-                users.map((u) => (
-                  <tr key={u.id} className="hover:bg-muted/30 transition-colors">
-                    <td className="px-4 py-3">
-                      <div className="font-semibold">{u.profile?.displayName || u.email.split("@")[0]}</div>
-                      <div className="text-xs text-muted-foreground">{u.email}</div>
-                    </td>
-                    <td className="px-4 py-3 whitespace-nowrap text-muted-foreground">{formatDate(u.createdAt)}</td>
-                    <td className="px-4 py-3 font-mono text-xs font-bold text-primary">
-                      NCLC {u.profile?.targetNclc ?? 7}+
-                    </td>
-                    <td className="px-4 py-3 whitespace-nowrap text-muted-foreground">
-                      {formatDate(u.profile?.examDate)}
-                    </td>
-                    <td className="px-4 py-3 text-right font-mono font-semibold">{u._count.attempts}</td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+        <div className="rounded-2xl border bg-card shadow-xs overflow-hidden">
+          <UserListClient users={userRows} query={query} />
 
           {/* Pied de tableau avec AdminTablePagination */}
           <AdminTablePagination
