@@ -2,17 +2,14 @@
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import {
-  Sparkles,
-  Calendar,
   Target,
-  ArrowRight,
-  ArrowLeft,
+  Calendar,
   CheckCircle2,
-  Trophy,
-  Clock,
+  ArrowRight,
+  HelpCircle,
+  Sparkles,
   X,
   Compass,
 } from "lucide-react";
@@ -35,11 +32,13 @@ interface FirstLoginSetupModalProps {
 }
 
 const NCLC_GOALS = [
-  { level: 7, label: "NCLC 7 (B2 Avancé)", bonus: "+50 pts CRS", desc: "Seuil critique fédéral Entrée Express" },
-  { level: 8, label: "NCLC 8 (C1 Intermédiaire)", bonus: "+56 pts CRS", desc: "Profil prioritaire tirages ciblés" },
-  { level: 9, label: "NCLC 9 (C1 Avancé)", bonus: "+62 pts CRS", desc: "Score maximisé pour candidat seul" },
-  { level: 10, label: "NCLC 10 (C2 Maîtrise)", bonus: "Score Max", desc: "Bilinguisme parfait garanti" },
+  { level: 7, label: "NCLC 7", sub: "B2 Avancé", bonus: "+50 pts CRS", desc: "Seuil critique fédéral" },
+  { level: 8, label: "NCLC 8", sub: "C1 Interm.", bonus: "+56 pts CRS", desc: "Tirages ciblés" },
+  { level: 9, label: "NCLC 9", sub: "C1 Avancé", bonus: "+62 pts CRS", desc: "Score maximisé" },
+  { level: 10, label: "NCLC 10", sub: "C2 Expert", bonus: "Max CRS", desc: "Bilinguisme parfait" },
 ];
+
+type DateMode = "1_month" | "2_months" | "3_months" | "custom" | "unknown";
 
 export function FirstLoginSetupModal({
   userId,
@@ -49,47 +48,53 @@ export function FirstLoginSetupModal({
 }: FirstLoginSetupModalProps) {
   const router = useRouter();
   const [open, setOpen] = React.useState(false);
-  const [step, setStep] = React.useState<1 | 2>(1);
-  const [displayName, setDisplayName] = React.useState(initialDisplayName || "");
   const [targetNclc, setTargetNclc] = React.useState<number>(initialTargetNclc);
-  const [examDate, setExamDate] = React.useState<string>("");
+  const [dateMode, setDateMode] = React.useState<DateMode>("2_months");
+  const [customDate, setCustomDate] = React.useState<string>("");
   const [isSubmitting, setIsSubmitting] = React.useState(false);
 
   React.useEffect(() => {
-    // Vérifier si déjà dismissé ou si la date d'examen est déjà configurée
     const dismissed = localStorage.getItem(`super4c2:onboarding_dismissed:${userId}`);
     if (!dismissed && !hasExamDate) {
-      // Petite temporisation pour une ouverture fluide après le premier rendu
-      const timer = setTimeout(() => setOpen(true), 600);
+      const timer = setTimeout(() => setOpen(true), 500);
       return () => clearTimeout(timer);
     }
   }, [userId, hasExamDate]);
 
-  const handleDismiss = () => {
+  const handleSkip = () => {
     try {
       localStorage.setItem(`super4c2:onboarding_dismissed:${userId}`, "true");
     } catch {
-      // localStorage indisponible
+      // Ignored if local storage unavailable
     }
     setOpen(false);
+    toast.info("Étape passée", {
+      description: "Vous pourrez définir votre date et votre objectif à tout moment sur votre profil.",
+    });
   };
 
-  const setQuickDate = (months: number) => {
+  const computeSelectedDate = (): string | undefined => {
+    if (dateMode === "unknown") return undefined;
+    if (dateMode === "custom") {
+      return customDate ? new Date(customDate).toISOString() : undefined;
+    }
     const d = new Date();
+    const months = dateMode === "1_month" ? 1 : dateMode === "2_months" ? 2 : 3;
     d.setMonth(d.getMonth() + months);
-    setExamDate(d.toISOString().split("T")[0]);
+    return d.toISOString();
   };
 
   const handleSave = async () => {
     setIsSubmitting(true);
     try {
+      const computedDate = computeSelectedDate();
+
       const res = await fetch("/api/account/profile", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          displayName: displayName.trim() || undefined,
           targetNclc,
-          examDate: examDate ? new Date(examDate).toISOString() : undefined,
+          examDate: computedDate,
         }),
       });
 
@@ -101,11 +106,11 @@ export function FirstLoginSetupModal({
       try {
         localStorage.setItem(`super4c2:onboarding_dismissed:${userId}`, "true");
       } catch {
-        // localStorage indisponible
+        // Ignored
       }
 
       toast.success("Objectif enregistré avec succès !", {
-        description: `Votre plan de travail personnalisé vers le NCLC ${targetNclc} est prêt.`,
+        description: `Simulateur calibré sur NCLC ${targetNclc}. Bon entraînement !`,
       });
 
       setOpen(false);
@@ -119,233 +124,189 @@ export function FirstLoginSetupModal({
   };
 
   return (
-    <Dialog open={open} onOpenChange={(val) => !val && handleDismiss()}>
-      <DialogContent className="sm:max-w-xl p-0 overflow-hidden rounded-3xl border border-border/80 bg-background/95 backdrop-blur-xl shadow-2xl">
-        {/* En-tête avec dégradé subtil */}
+    <Dialog open={open} onOpenChange={(val) => !val && handleSkip()}>
+      <DialogContent className="sm:max-w-lg p-0 overflow-hidden rounded-3xl border border-border/80 bg-background/95 backdrop-blur-xl shadow-2xl">
+        {/* Header Premium avec bouton Skip haut droit */}
         <div className="relative px-6 pt-6 pb-4 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent border-b border-border/60">
           <div className="flex items-center justify-between">
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-xs font-bold text-primary">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-[11px] font-bold text-primary">
               <Compass className="h-3.5 w-3.5" />
-              Configuration initiale • Étape {step}/2
+              Personnalisation rapide
             </span>
             <button
-              onClick={handleDismiss}
-              className="text-muted-foreground hover:text-foreground text-xs font-medium transition-colors"
+              onClick={handleSkip}
+              className="text-muted-foreground hover:text-foreground text-xs font-semibold px-2 py-1 rounded-lg hover:bg-muted/60 transition-colors"
             >
-              Passer pour l&apos;instant
+              Passer (Skip)
             </button>
           </div>
-          <DialogTitle className="mt-3 font-display text-xl sm:text-2xl font-black tracking-tight">
-            Bienvenue sur Super4C2 ! 🇨🇦
+          <DialogTitle className="mt-2.5 font-display text-xl sm:text-2xl font-black tracking-tight">
+            Bienvenue sur Super4C2 🇨🇦
           </DialogTitle>
-          <DialogDescription className="text-xs sm:text-sm text-muted-foreground mt-1">
-            Personnalisez votre simulateur en 30 secondes pour calibrer vos épreuves CBT et vos alertes NCLC.
+          <DialogDescription className="text-xs text-muted-foreground mt-1">
+            Calibrez votre plan d&apos;entraînement en 20 secondes. Tout est modifiable plus tard sur votre profil.
           </DialogDescription>
         </div>
 
-        {/* Corps avec transition animée */}
-        <div className="p-6">
-          <AnimatePresence mode="wait">
-            {step === 1 ? (
-              <motion.div
-                key="step-1"
-                initial={{ opacity: 0, x: -15 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 15 }}
-                transition={{ duration: 0.2 }}
-                className="space-y-4"
-              >
-                <div className="space-y-1.5">
-                  <label htmlFor="onboarding-name" className="text-xs font-semibold text-foreground">
-                    Comment préférez-vous qu&apos;on vous appelle ?
-                  </label>
-                  <Input
-                    id="onboarding-name"
-                    value={displayName}
-                    onChange={(e) => setDisplayName(e.target.value)}
-                    placeholder="Votre prénom ou nom d'usage"
-                    className="h-11 rounded-xl"
-                  />
-                </div>
+        {/* Corps - 1 seul écran synthétique */}
+        <div className="p-6 space-y-5">
+          {/* 1. Choix du palier NCLC */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <label className="text-xs font-bold text-foreground flex items-center gap-1.5">
+                <Target className="h-4 w-4 text-primary" />
+                1. Votre objectif linguistique (Entrée Express)
+              </label>
+              <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
+                Bonus fédéral
+              </span>
+            </div>
 
-                <div className="space-y-2 pt-1">
-                  <div className="flex items-center justify-between">
-                    <label className="text-xs font-semibold text-foreground flex items-center gap-1.5">
-                      <Target className="h-4 w-4 text-primary" />
-                      Quel est votre palier NCLC visé ?
-                    </label>
-                    <span className="text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
-                      Entrée Express Fédérale
-                    </span>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                    {NCLC_GOALS.map((goal) => {
-                      const isSelected = targetNclc === goal.level;
-                      return (
-                        <button
-                          key={goal.level}
-                          type="button"
-                          onClick={() => setTargetNclc(goal.level)}
-                          className={`text-left p-3 rounded-2xl border transition-all relative ${
-                            isSelected
-                              ? "border-primary bg-primary/10 shadow-xs ring-2 ring-primary/20"
-                              : "border-border/60 hover:border-border hover:bg-muted/40"
-                          }`}
-                        >
-                          <div className="flex items-center justify-between">
-                            <span className="font-bold text-xs">{goal.label}</span>
-                            <span className="text-[10px] font-extrabold px-1.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 border border-emerald-500/20">
-                              {goal.bonus}
-                            </span>
-                          </div>
-                          <p className="text-[11px] text-muted-foreground mt-1 leading-snug">
-                            {goal.desc}
-                          </p>
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                <div className="pt-4 flex justify-end">
-                  <Button
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              {NCLC_GOALS.map((goal) => {
+                const isSelected = targetNclc === goal.level;
+                return (
+                  <button
+                    key={goal.level}
                     type="button"
-                    onClick={() => setStep(2)}
-                    className="gap-2 h-11 px-5 rounded-xl font-bold"
+                    onClick={() => setTargetNclc(goal.level)}
+                    className={`text-left p-2.5 rounded-2xl border transition-all relative ${
+                      isSelected
+                        ? "border-primary bg-primary/10 shadow-xs ring-2 ring-primary/20"
+                        : "border-border/60 hover:border-border hover:bg-muted/40"
+                    }`}
                   >
-                    Suivant : Date d&apos;examen
-                    <ArrowRight className="h-4 w-4" />
-                  </Button>
-                </div>
-              </motion.div>
-            ) : (
-              <motion.div
-                key="step-2"
-                initial={{ opacity: 0, x: 15 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -15 }}
-                transition={{ duration: 0.2 }}
-                className="space-y-5"
+                    <div className="flex items-center justify-between">
+                      <span className="font-extrabold text-xs">{goal.label}</span>
+                      {isSelected && <CheckCircle2 className="h-3.5 w-3.5 text-primary shrink-0" />}
+                    </div>
+                    <div className="text-[10px] text-muted-foreground mt-0.5">{goal.sub}</div>
+                    <div className="mt-1 text-[10px] font-black text-emerald-600 dark:text-emerald-400">
+                      {goal.bonus}
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* 2. Échéance d'examen */}
+          <div className="space-y-2.5">
+            <label className="text-xs font-bold text-foreground flex items-center gap-1.5">
+              <Calendar className="h-4 w-4 text-primary" />
+              2. Date prévisionnelle de passage (TCF / TEF)
+            </label>
+
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+              <button
+                type="button"
+                onClick={() => setDateMode("1_month")}
+                className={`py-2 px-3 text-xs rounded-xl border text-center font-medium transition-all ${
+                  dateMode === "1_month"
+                    ? "border-primary bg-primary/10 text-primary font-bold shadow-xs"
+                    : "border-border/60 hover:bg-muted/40 text-muted-foreground"
+                }`}
               >
-                <div className="space-y-2">
-                  <label htmlFor="onboarding-date" className="text-xs font-semibold text-foreground flex items-center gap-1.5">
-                    <Calendar className="h-4 w-4 text-primary" />
-                    Quand prévoyez-vous de passer votre test (TCF / TEF) ?
-                  </label>
-                  <p className="text-xs text-muted-foreground">
-                    Cette date calibre votre compte à rebours et active les révisions SRS prioritaires.
-                  </p>
-                  <Input
-                    id="onboarding-date"
-                    type="date"
-                    value={examDate}
-                    onChange={(e) => setExamDate(e.target.value)}
-                    className="h-11 rounded-xl"
-                    min={new Date().toISOString().split("T")[0]}
-                  />
-                </div>
+                Dans 1 mois (Urgence)
+              </button>
+              <button
+                type="button"
+                onClick={() => setDateMode("2_months")}
+                className={`py-2 px-3 text-xs rounded-xl border text-center font-medium transition-all ${
+                  dateMode === "2_months"
+                    ? "border-primary bg-primary/10 text-primary font-bold shadow-xs"
+                    : "border-border/60 hover:bg-muted/40 text-muted-foreground"
+                }`}
+              >
+                Dans 2 mois (Idéal)
+              </button>
+              <button
+                type="button"
+                onClick={() => setDateMode("3_months")}
+                className={`py-2 px-3 text-xs rounded-xl border text-center font-medium transition-all ${
+                  dateMode === "3_months"
+                    ? "border-primary bg-primary/10 text-primary font-bold shadow-xs"
+                    : "border-border/60 hover:bg-muted/40 text-muted-foreground"
+                }`}
+              >
+                Dans 3 mois
+              </button>
+              <button
+                type="button"
+                onClick={() => setDateMode("custom")}
+                className={`py-2 px-3 text-xs rounded-xl border text-center font-medium transition-all ${
+                  dateMode === "custom"
+                    ? "border-primary bg-primary/10 text-primary font-bold shadow-xs"
+                    : "border-border/60 hover:bg-muted/40 text-muted-foreground"
+                }`}
+              >
+                Date exacte...
+              </button>
+              <button
+                type="button"
+                onClick={() => setDateMode("unknown")}
+                className={`col-span-2 sm:col-span-2 py-2 px-3 text-xs rounded-xl border text-center font-medium transition-all ${
+                  dateMode === "unknown"
+                    ? "border-primary bg-primary/10 text-primary font-bold shadow-xs"
+                    : "border-border/60 hover:bg-muted/40 text-muted-foreground"
+                }`}
+              >
+                Pas encore fixé (décision plus tard)
+              </button>
+            </div>
 
-                <div className="space-y-1.5">
-                  <span className="text-[11px] font-medium text-muted-foreground">
-                    Raccourcis rapides d&apos;échéance :
-                  </span>
-                  <div className="flex flex-wrap gap-2">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setQuickDate(1)}
-                      className="rounded-xl text-xs h-8"
-                    >
-                      Dans 1 mois (Urgence)
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setQuickDate(2)}
-                      className="rounded-xl text-xs h-8"
-                    >
-                      Dans 2 mois (Recommandé)
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setQuickDate(3)}
-                      className="rounded-xl text-xs h-8"
-                    >
-                      Dans 3 mois
-                    </Button>
-                  </div>
-                </div>
-
-                <div className="rounded-2xl border border-border/80 bg-muted/30 p-3.5 space-y-1 text-xs">
-                  <div className="flex items-center gap-1.5 font-semibold text-foreground">
-                    <CheckCircle2 className="h-4 w-4 text-emerald-500" />
-                    Récapitulatif de votre objectif
-                  </div>
-                  <p className="text-muted-foreground">
-                    Palier : <strong className="text-foreground">NCLC {targetNclc}</strong> (+50 pts CRS) •{" "}
-                    Échéance :{" "}
-                    <strong className="text-foreground">
-                      {examDate
-                        ? new Date(examDate).toLocaleDateString("fr-FR", {
-                            day: "numeric",
-                            month: "long",
-                            year: "numeric",
-                          })
-                        : "À définir plus tard"}
-                    </strong>
-                  </p>
-                </div>
-
-                <div className="pt-2 flex items-center justify-between">
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    onClick={() => setStep(1)}
-                    disabled={isSubmitting}
-                    className="gap-2 rounded-xl text-xs"
-                  >
-                    <ArrowLeft className="h-4 w-4" />
-                    Retour
-                  </Button>
-
-                  <div className="flex items-center gap-2">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={handleDismiss}
-                      disabled={isSubmitting}
-                      className="rounded-xl text-xs"
-                    >
-                      Plus tard
-                    </Button>
-                    <Button
-                      type="button"
-                      onClick={handleSave}
-                      disabled={isSubmitting}
-                      className="gap-2 h-11 px-5 rounded-xl font-bold"
-                    >
-                      {isSubmitting ? (
-                        <>
-                          <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                          Enregistrement...
-                        </>
-                      ) : (
-                        <>
-                          Valider mon objectif
-                          <CheckCircle2 className="h-4 w-4" />
-                        </>
-                      )}
-                    </Button>
-                  </div>
-                </div>
-              </motion.div>
+            {/* Input spécifique si date exacte */}
+            {dateMode === "custom" && (
+              <div className="pt-1">
+                <Input
+                  type="date"
+                  value={customDate}
+                  onChange={(e) => setCustomDate(e.target.value)}
+                  min={new Date().toISOString().split("T")[0]}
+                  className="h-10 rounded-xl"
+                  placeholder="Sélectionnez le jour de votre test"
+                />
+              </div>
             )}
-          </AnimatePresence>
+
+            {dateMode === "unknown" && (
+              <p className="text-[11px] text-muted-foreground italic bg-muted/30 p-2.5 rounded-xl border border-border/40">
+                💡 Vous pourrez vous entraîner librement et ajouter votre date dès que votre centre agréé vous aura confirmé votre inscription.
+              </p>
+            )}
+          </div>
+
+          {/* Actions : CTA primaire et Skip explicite */}
+          <div className="pt-3 border-t border-border/60 flex flex-col-reverse sm:flex-row items-center justify-between gap-2.5">
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={handleSkip}
+              disabled={isSubmitting}
+              className="w-full sm:w-auto text-xs text-muted-foreground hover:text-foreground h-10 rounded-xl"
+            >
+              Passer et aller au tableau de bord
+            </Button>
+
+            <Button
+              type="button"
+              onClick={handleSave}
+              disabled={isSubmitting || (dateMode === "custom" && !customDate)}
+              className="w-full sm:w-auto h-11 px-6 rounded-xl font-bold gap-2 shadow-xs"
+            >
+              {isSubmitting ? (
+                <>
+                  <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                  Enregistrement...
+                </>
+              ) : (
+                <>
+                  Valider mon objectif
+                  <ArrowRight className="h-4 w-4" />
+                </>
+              )}
+            </Button>
+          </div>
         </div>
       </DialogContent>
     </Dialog>
