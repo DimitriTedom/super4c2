@@ -45,14 +45,18 @@ export default async function AdminPage() {
     });
 
     // 3. Décompte réel des tables de contenu
-    const [faqsCount, testimonialsCount, leadsCount, blogCount, seriesCount] =
+    const [faqsCount, testimonialsCount, leadsCount, blogCount, examSeriesCount, writtenSeriesCount, oralSeriesCount] =
       await Promise.all([
         prisma.faq.count(),
         prisma.testimonial.count(),
         prisma.contactLead.count(),
         prisma.blogPost.count(),
         prisma.examSeries.count(),
+        prisma.writtenSeries.count(),
+        prisma.oralSeries.count(),
       ]);
+
+    const seriesCount = examSeriesCount + writtenSeriesCount + oralSeriesCount;
 
     // Calcul des KPI en direct
     const totalCandidates = users.length;

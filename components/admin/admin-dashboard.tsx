@@ -231,18 +231,21 @@ export function AdminDashboard({
                   {!sidebarCollapsed && <span>Vue d&apos;ensemble</span>}
                 </button>
 
-                <button
-                  onClick={() => setCurrentTab("students")}
-                  className={`w-full flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-semibold transition-all ${
-                    currentTab === "students"
-                      ? "bg-primary text-primary-foreground shadow-xs font-bold"
-                      : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                  } ${sidebarCollapsed ? "justify-center px-2" : ""}`}
+                <Link
+                  href="/admin/users"
+                  onClick={() => setPendingHref("/admin/users")}
+                  className={`flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-semibold text-muted-foreground hover:bg-muted hover:text-foreground transition-all ${
+                    sidebarCollapsed ? "justify-center px-2" : ""
+                  }`}
                   title={sidebarCollapsed ? "Candidats inscrits" : undefined}
                 >
-                  <Users className="h-4 w-4 shrink-0" />
+                  {pendingHref === "/admin/users" ? (
+                    <Loader2 className="h-4 w-4 shrink-0 animate-spin text-brand-crimson" />
+                  ) : (
+                    <Users className="h-4 w-4 shrink-0 text-primary" />
+                  )}
                   {!sidebarCollapsed && <span>Candidats inscrits</span>}
-                </button>
+                </Link>
 
                 <Link
                   href="/admin/tentatives"
@@ -437,6 +440,15 @@ export function AdminDashboard({
                 >
                   <PenTool className="h-3.5 w-3.5 text-primary" />
                   <span>Tester Expression Écrite</span>
+                  <ArrowUpRight className="h-3 w-3 ml-auto opacity-70" />
+                </Link>
+                <Link
+                  href="/examens/101/eo/intro"
+                  target="_blank"
+                  className="flex items-center gap-2 rounded-lg px-3 py-1.5 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+                >
+                  <Mic className="h-3.5 w-3.5 text-primary" />
+                  <span>Tester Oral &amp; Visio IA</span>
                   <ArrowUpRight className="h-3 w-3 ml-auto opacity-70" />
                 </Link>
                 <Link
@@ -799,13 +811,15 @@ export function AdminDashboard({
                       </p>
                     </div>
                     <Button
+                      asChild
                       variant="ghost"
                       size="sm"
-                      onClick={() => setCurrentTab("students")}
                       className="gap-1 text-xs text-primary font-bold"
                     >
-                      <span>Voir la liste complète</span>
-                      <ArrowRight className="h-3.5 w-3.5" />
+                      <Link href="/admin/users">
+                        <span>Voir la liste complète</span>
+                        <ArrowRight className="h-3.5 w-3.5" />
+                      </Link>
                     </Button>
                   </div>
 
