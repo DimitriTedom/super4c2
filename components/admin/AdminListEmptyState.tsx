@@ -12,11 +12,13 @@ import {
   Settings2,
   PenTool,
   Mic,
+  Headphones,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 type EmptyKind =
   | "series-ce"
+  | "series-co"
   | "series-ee"
   | "series-eo"
   | "blog"
@@ -45,6 +47,8 @@ export function AdminListEmptyState({
     switch (kind) {
       case "series-ce":
         return <BookOpen className="h-8 w-8 text-primary" />;
+      case "series-co":
+        return <Headphones className="h-8 w-8 text-primary" />;
       case "series-ee":
         return <PenTool className="h-8 w-8 text-primary" />;
       case "series-eo":

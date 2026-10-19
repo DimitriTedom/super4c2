@@ -8,6 +8,8 @@ import {
   BookOpen,
   PenTool,
   Mic,
+  Headphones,
+  GraduationCap,
   FolderKanban,
   CircleHelp,
   MessageSquareQuote,
@@ -30,11 +32,24 @@ interface AdminShellProps {
   children: ReactNode;
 }
 
-const navItems = [
+interface NavLinkItem {
+  href: string;
+  label: string;
+  icon: React.ComponentType<{ className?: string }>;
+  badge?: string;
+}
+
+interface NavGroupItem {
+  group: string;
+  links: NavLinkItem[];
+}
+
+const navItems: NavGroupItem[] = [
   {
     group: "Supervision",
     links: [
       { href: "/admin", label: "Vue d'ensemble", icon: LayoutDashboard },
+      { href: "/admin/tentatives", label: "Tentatives & Copies", icon: GraduationCap },
       { href: "/admin/users", label: "Candidats inscrits", icon: Users },
     ],
   },
@@ -42,6 +57,7 @@ const navItems = [
     group: "Épreuves CBT (MVP)",
     links: [
       { href: "/admin/series-ce", label: "Séries Compréhension Écrite", icon: BookOpen },
+      { href: "/admin/series-co", label: "Séries Compréhension Orale", icon: Headphones, badge: "Coming Soon" },
       { href: "/admin/series-ee", label: "Séries Expression Écrite", icon: PenTool },
       { href: "/admin/series-eo", label: "Séries Expression Orale", icon: Mic },
     ],
@@ -110,8 +126,10 @@ export function AdminShell({ children }: AdminShellProps) {
   // Calcul du titre et fil d'Ariane
   const breadcrumbInfo = useMemo(() => {
     if (pathname === "/admin") return { title: "Tableau de Bord Exécutif", section: "Supervision" };
+    if (pathname.startsWith("/admin/tentatives")) return { title: "Tentatives & Copies Candidats", section: "Supervision" };
     if (pathname.startsWith("/admin/users")) return { title: "Candidats inscrits", section: "Supervision" };
     if (pathname.startsWith("/admin/series-ce")) return { title: "Compréhension Écrite", section: "Épreuves CBT" };
+    if (pathname.startsWith("/admin/series-co")) return { title: "Compréhension Orale (Coming Soon)", section: "Épreuves CBT" };
     if (pathname.startsWith("/admin/series-ee")) return { title: "Expression Écrite", section: "Épreuves CBT" };
     if (pathname.startsWith("/admin/series-eo")) return { title: "Expression Orale", section: "Épreuves CBT" };
     if (pathname.startsWith("/admin/blog")) return { title: "Blog & SEO", section: "Marketing" };
@@ -201,6 +219,11 @@ export function AdminShell({ children }: AdminShellProps) {
                       )}
                       {!sidebarCollapsed && (
                         <span className="truncate flex-1">{link.label}</span>
+                      )}
+                      {!sidebarCollapsed && link.badge && (
+                        <span className="text-[9px] font-mono font-bold uppercase px-1.5 py-0.5 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 shrink-0">
+                          {link.badge}
+                        </span>
                       )}
                       {!sidebarCollapsed && isPending && (
                         <span className="text-[10px] font-normal text-brand-crimson animate-pulse">

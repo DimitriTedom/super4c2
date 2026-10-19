@@ -1,3 +1,12 @@
+- [x] **Console de Supervision des Tentatives & Copies Candidats (Option C : `/admin/tentatives`) :**
+  - **Dashboard Exécutif Shadcn UI :** 4 KPI Cards (Total simulations, Réussite NCLC 7+, Score Moyen Échelonné /699, Nouvelles copies 24h), filtres interactifs par discipline et palier NCLC, recherche plein-texte et pagination serveur.
+  - **Dialogue Modal d'Inspection Pédagogique :** Composant Shadcn `Dialog` pour auditer le texte exact des rédactions candidat, le décompte de mots, la grille critériée FEI sur 20 et le modèle Magic Rewrite C2.
+  - **Validation :** 0 erreur TypeScript (`npx tsc --noEmit`).
+- [x] **Module de Gestion Back-Office de la Compréhension Orale Étiqueté "Coming Soon" (Option B : `/admin/series-co`) :**
+  - **Bannière Stratégique & Badges "Coming Soon" :** Encart d'avertissement et badges ambrés *Coming Soon* sur la liste et dans la navigation latérale.
+  - **Catalogue & Supervision CO :** 4 KPI cards, recherche, filtres et actions de publication.
+  - **Gestion des 39 Questions d'Écoute :** Formulaire avancé `CoQuestionForm` avec lecteur audio Play/Pause, transcription de dialogue, distracteurs et analyse des pièges auditifs.
+  - **Validation :** 0 erreur TypeScript (`npx tsc --noEmit`).
 - [x] **Module Complet de Gestion Back-Office de l'Expression Orale (Option 1 : `/admin/series-eo`) :**
   - **Catalogue & Liste Principale :** 4 KPI cards (Total, Publiées, Pass Démo, Format 3 Tâches FEI), recherche plein-texte, filtre par statut, bascule de statut en 1 clic et suppression sécurisée avec dialogue de confirmation.
   - **Création & Édition de Séries EO :** Calcul de numéro automatique, configuration de la durée officielle (12 min / 720s), du titre, du type d'épreuve et de la visibilité.

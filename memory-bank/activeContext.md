@@ -2,6 +2,45 @@
 
 ## 0. Déploiement Production Vercel & Moteur de Conversion
 
+### 0.0s. Console de Supervision des Tentatives & Copies Candidats (Option C : `/admin/tentatives`)
+- **Demande Utilisateur :** Implémenter l'Option C : tableau de bord exécutif de supervision des simulations et copies réelles des candidats avec composants Shadcn UI.
+- **Réalisations & Architecture Déployée :**
+  - **Dashboard Exécutif Shadcn UI (`app/admin/tentatives/page.tsx`) :**
+    - 4 KPI Cards interactives : Simulations Passées, Taux de Réussite NCLC 7+ (+50 pts CRS), Score Moyen Échelonné (/699 FEI), et Nouvelles Copies des Dernières 24h.
+    - Filtre par discipline : `Toutes`, `✍️ Écrit`, `🎙️ Oral`, `📖 CE`, `🎧 CO`.
+    - Filtre par palier NCLC : `Tous NCLC`, `NCLC 7+ (Seuil fédéral CRS)`, `< NCLC 7`.
+    - Moteur de recherche plein-texte sur le nom du candidat, l'adresse e-mail ou l'ID de session.
+    - Tableau détaillé avec avatar, nom/email, discipline, score brut, score TCF, badge de palier NCLC, bonus CRS, date et pagination serveur.
+  - **Dialogue Modal d'Inspection Pédagogique (`components/admin/attempt-inspect-dialog.tsx`) :**
+    - Composant Shadcn `Dialog` d'audit en profondeur d'une copie :
+      - Pour l'Expression Écrite : onglets Tâche 1, 2, 3 avec affichage du texte réel rédigé par le candidat, décompte de mots, grille critériée FEI (Adéquation, Cohérence, Lexique, Morphosyntaxe sur 5 avec retours) et modèle Magic Rewrite C2.
+      - Pour les autres épreuves : détails des réponses, score brut et retour de l'IA.
+  - **Actions & Sécurité (`app/admin/tentatives/actions.ts`) :**
+    - Suppression sécurisée des tentatives de test via `deleteAttemptAction` avec dialogue de confirmation `ConfirmActionDialog`.
+  - **Navigation (`components/admin/admin-shell.tsx`) :**
+    - Ajout du lien « Tentatives & Copies » avec l'icône `GraduationCap` dans le groupe *Supervision*.
+- **Validation :** 0 erreur TypeScript (`npx tsc --noEmit`).
+
+### 0.0r. Module de Gestion Back-Office de la Compréhension Orale Étiqueté "Coming Soon" (Option B : `/admin/series-co`)
+- **Demande Utilisateur :** Implémenter l'Option B : création et gestion des Séries de Compréhension Orale (CO) avec pistes audios et 39 questions, en les marquant explicitement avec le badge "Coming Soon".
+- **Réalisations & Architecture Déployée :**
+  - **Bannière Stratégique & Badges "Coming Soon" (`app/admin/series-co/page.tsx`) :**
+    - Encart d'information haute visibilité expliquant le calibrage technique préliminaire de l'épreuve d'écoute avant ouverture publique.
+    - Badge ambré *Coming Soon* sur chaque série du tableau.
+    - Badge *Coming Soon* dans la barre de navigation latérale de l'administration.
+  - **Catalogue & Supervision CO :**
+    - 4 KPIs : Total Séries CO, Séries prêtes, Accès Démo, Format Officiel FEI (39 QCM, 35 min d'écoute).
+    - Moteur de recherche, filtres (Toutes, Publiées, Brouillons), pagination et bascule de publication en 1 clic.
+  - **Formulaires de Séries CO (`ajouter/page.tsx`, `[id]/page.tsx`, `actions.ts`) :**
+    - Création et modification de séries `COMPREHENSION_ORALE` avec durée officielle de 35 min (2100 s).
+  - **Gestion des 39 Questions d'Écoute & Pistes Audio (`[id]/questions/`) :**
+    - Actions serveur dédiées (`upsertCoQuestionAction`, `deleteCoQuestionAction`).
+    - Tableau des questions avec indicateur de présence de fichier audio, transcription et niveau CECRL.
+    - Formulaire avancé `CoQuestionForm` (`components/admin/co-question-form.tsx`) avec lecteur de test audio interactif (Play/Pause), transcription textuelle, distracteurs et analyse des pièges auditifs.
+  - **Navigation & Empty State :**
+    - Ajout de l'icône `Headphones` et du type `"series-co"` dans `AdminListEmptyState` et `AdminShell`.
+- **Validation :** 0 erreur TypeScript (`npx tsc --noEmit`).
+
 ### 0.0q. Module Complet de Gestion Back-Office de l'Expression Orale (Option 1 : `/admin/series-eo`)
 - **Demande Utilisateur :** Implémenter l'Option 1 : création et gestion complète des Séries d'Expression Orale (EO) et de leurs 3 tâches officielles FEI dans le back-office administrateur.
 - **Réalisations & Architecture Déployée :**
