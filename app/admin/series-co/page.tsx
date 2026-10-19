@@ -60,40 +60,62 @@ export default async function SeriesCoPage({ searchParams }: SeriesCoPageProps) 
     ...(status === "draft" && { isPublished: false }),
   };
 
-  const totalItems = await prisma.examSeries.count({ where: whereClause });
-  const pagination = getAdminPagination(totalItems, rawPage, 10);
+  let totalItems = 0;
+  let totalPublished = 0;
+  let totalDemo = 0;
+  let seriesList: any[] = [];
+  let dbError: string | null = null;
 
-  const seriesList = await prisma.examSeries.findMany({
-    where: whereClause,
-    orderBy: { seriesNumber: "asc" },
-    skip: pagination.skip,
-    take: pagination.pageSize,
-    include: {
-      _count: {
-        select: { questions: true },
+  try {
+    const [tItems, tPub, tDem] = await Promise.all([
+      prisma.examSeries.count({ where: whereClause }),
+      prisma.examSeries.count({
+        where: {
+          examType: "TCF_CANADA",
+          discipline: "COMPREHENSION_ORALE",
+          isPublished: true,
+        },
+      }),
+      prisma.examSeries.count({
+        where: {
+          examType: "TCF_CANADA",
+          discipline: "COMPREHENSION_ORALE",
+          isFreeDemo: true,
+        },
+      }),
+    ]);
+    totalItems = tItems;
+    totalPublished = tPub;
+    totalDemo = tDem;
+
+    const paginationData = getAdminPagination(totalItems, rawPage, 10);
+
+    seriesList = await prisma.examSeries.findMany({
+      where: whereClause,
+      orderBy: { seriesNumber: "asc" },
+      skip: paginationData.skip,
+      take: paginationData.pageSize,
+      include: {
+        _count: {
+          select: { questions: true },
+        },
       },
-    },
-  });
+    });
+  } catch (error) {
+    console.error("Erreur chargement séries CO :", error);
+    dbError = "Impossible de récupérer les séries en direct. Veuillez vérifier la connexion base de données.";
+  }
 
-  const totalPublished = await prisma.examSeries.count({
-    where: {
-      examType: "TCF_CANADA",
-      discipline: "COMPREHENSION_ORALE",
-      isPublished: true,
-    },
-  });
-
-  const totalDemo = await prisma.examSeries.count({
-    where: {
-      examType: "TCF_CANADA",
-      discipline: "COMPREHENSION_ORALE",
-      isFreeDemo: true,
-    },
-  });
+  const pagination = getAdminPagination(totalItems, rawPage, 10);
 
   return (
     <AdminShell>
       <div className="space-y-6">
+        {dbError && (
+          <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-4 text-xs text-amber-800 dark:text-amber-200">
+            {dbError}
+          </div>
+        )}
         {/* COMING SOON STRATEGIC BANNER */}
         <div className="rounded-2xl border border-amber-500/30 bg-amber-500/10 p-4 sm:p-5 text-amber-900 dark:text-amber-200 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="flex items-start gap-3">

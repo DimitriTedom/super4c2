@@ -46,30 +46,30 @@ interface NavGroupItem {
 
 const navItems: NavGroupItem[] = [
   {
-    group: "Supervision",
+    group: "Suivi des Candidats",
     links: [
       { href: "/admin", label: "Vue d'ensemble", icon: LayoutDashboard },
-      { href: "/admin/tentatives", label: "Tentatives & Copies", icon: GraduationCap },
+      { href: "/admin/tentatives", label: "Copies & Examens passés", icon: GraduationCap },
       { href: "/admin/users", label: "Candidats inscrits", icon: Users },
     ],
   },
   {
-    group: "Épreuves CBT (MVP)",
+    group: "Sujets d'Examens",
     links: [
-      { href: "/admin/series-ce", label: "Séries Compréhension Écrite", icon: BookOpen },
-      { href: "/admin/series-co", label: "Séries Compréhension Orale", icon: Headphones, badge: "Coming Soon" },
-      { href: "/admin/series-ee", label: "Séries Expression Écrite", icon: PenTool },
-      { href: "/admin/series-eo", label: "Séries Expression Orale", icon: Mic },
+      { href: "/admin/series-ce", label: "Lecture (Compréhension Écrite)", icon: BookOpen },
+      { href: "/admin/series-co", label: "Écoute (Compréhension Orale)", icon: Headphones, badge: "Bientôt" },
+      { href: "/admin/series-ee", label: "Rédaction (Expression Écrite)", icon: PenTool },
+      { href: "/admin/series-eo", label: "Oral & Visio (Expression Orale)", icon: Mic },
     ],
   },
   {
-    group: "Marketing & Acquisition",
+    group: "Site & Communication",
     links: [
-      { href: "/admin/blog", label: "Blog & Guides SEO", icon: FolderKanban },
-      { href: "/admin/faqs", label: "Questions Fréquentes (FAQs)", icon: CircleHelp },
-      { href: "/admin/temoignages", label: "Témoignages Candidats", icon: MessageSquareQuote },
+      { href: "/admin/blog", label: "Articles de Blog & Guides", icon: FolderKanban },
+      { href: "/admin/faqs", label: "Questions fréquentes (FAQ)", icon: CircleHelp },
+      { href: "/admin/temoignages", label: "Avis des candidats", icon: MessageSquareQuote },
       { href: "/admin/newsletter", label: "Abonnés Newsletter", icon: Mail },
-      { href: "/admin/leads", label: "Demandes & Conciergerie", icon: Users },
+      { href: "/admin/leads", label: "Demandes de contact", icon: Users },
     ],
   },
 ];
@@ -125,23 +125,23 @@ export function AdminShell({ children }: AdminShellProps) {
 
   // Calcul du titre et fil d'Ariane
   const breadcrumbInfo = useMemo(() => {
-    if (pathname === "/admin") return { title: "Tableau de Bord Exécutif", section: "Supervision" };
-    if (pathname.startsWith("/admin/tentatives")) return { title: "Tentatives & Copies Candidats", section: "Supervision" };
-    if (pathname.startsWith("/admin/users")) return { title: "Candidats inscrits", section: "Supervision" };
-    if (pathname.startsWith("/admin/series-ce")) return { title: "Compréhension Écrite", section: "Épreuves CBT" };
-    if (pathname.startsWith("/admin/series-co")) return { title: "Compréhension Orale (Coming Soon)", section: "Épreuves CBT" };
-    if (pathname.startsWith("/admin/series-ee")) return { title: "Expression Écrite", section: "Épreuves CBT" };
-    if (pathname.startsWith("/admin/series-eo")) return { title: "Expression Orale", section: "Épreuves CBT" };
-    if (pathname.startsWith("/admin/blog")) return { title: "Blog & SEO", section: "Marketing" };
-    if (pathname.startsWith("/admin/faqs")) return { title: "FAQs", section: "Contenu" };
-    if (pathname.startsWith("/admin/temoignages")) return { title: "Témoignages", section: "Marketing" };
-    if (pathname.startsWith("/admin/newsletter")) return { title: "Newsletter", section: "Marketing" };
-    if (pathname.startsWith("/admin/leads")) return { title: "Conciergerie & Leads", section: "Relations" };
-    return { title: "Console Direction", section: "Admin" };
+    if (pathname === "/admin") return { title: "Tableau de Bord", section: "Suivi des Candidats" };
+    if (pathname.startsWith("/admin/tentatives")) return { title: "Copies & Examens passés", section: "Suivi des Candidats" };
+    if (pathname.startsWith("/admin/users")) return { title: "Candidats inscrits", section: "Suivi des Candidats" };
+    if (pathname.startsWith("/admin/series-ce")) return { title: "Épreuves de Lecture (CE)", section: "Sujets d'Examens" };
+    if (pathname.startsWith("/admin/series-co")) return { title: "Épreuves d'Écoute (CO)", section: "Sujets d'Examens" };
+    if (pathname.startsWith("/admin/series-ee")) return { title: "Épreuves de Rédaction (EE)", section: "Sujets d'Examens" };
+    if (pathname.startsWith("/admin/series-eo")) return { title: "Épreuves d'Oral (EO)", section: "Sujets d'Examens" };
+    if (pathname.startsWith("/admin/blog")) return { title: "Articles de Blog & Guides", section: "Site & Communication" };
+    if (pathname.startsWith("/admin/faqs")) return { title: "Questions fréquentes (FAQ)", section: "Site & Communication" };
+    if (pathname.startsWith("/admin/temoignages")) return { title: "Avis des candidats", section: "Site & Communication" };
+    if (pathname.startsWith("/admin/newsletter")) return { title: "Abonnés Newsletter", section: "Site & Communication" };
+    if (pathname.startsWith("/admin/leads")) return { title: "Demandes de contact", section: "Site & Communication" };
+    return { title: "Administration", section: "Super4C2" };
   }, [pathname]);
 
   return (
-    <div className="flex h-screen w-screen overflow-hidden bg-background text-foreground font-sans antialiased">
+    <div className="flex h-screen w-full overflow-hidden bg-background text-foreground font-sans antialiased">
       <Suspense fallback={null}>
         <ToastQueryListener />
       </Suspense>
@@ -243,15 +243,17 @@ export function AdminShell({ children }: AdminShellProps) {
                   Accès Public & Simulations
                 </span>
                 <Link
-                  href="/examens/demo-101-ce/ce"
+                  href="/examens/101/ee/intro"
+                  target="_blank"
                   className="flex items-center gap-2 rounded-lg px-3 py-1.5 text-xs text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
                 >
-                  <BookOpen className="h-3.5 w-3.5 text-primary" />
-                  <span>Tester CBT 101 CE (60 min)</span>
+                  <PenTool className="h-3.5 w-3.5 text-primary" />
+                  <span>Tester Expression Écrite</span>
                   <ArrowUpRight className="h-3 w-3 ml-auto opacity-70" />
                 </Link>
                 <Link
                   href="/"
+                  target="_blank"
                   className="flex items-center gap-2 rounded-lg px-3 py-1.5 text-xs text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
                 >
                   <ExternalLink className="h-3.5 w-3.5" />
@@ -269,17 +271,13 @@ export function AdminShell({ children }: AdminShellProps) {
             <div className="flex items-center justify-between font-semibold">
               <span className="flex items-center gap-1.5">
                 <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-                PostgreSQL Local :5434
+                Supabase PostgreSQL
               </span>
-              <span className="text-emerald-700 dark:text-emerald-400 font-mono">Connecté</span>
-            </div>
-            <div className="flex items-center justify-between text-muted-foreground">
-              <span>Studio Web :3002</span>
-              <span className="font-mono">Prêt</span>
+              <span className="text-emerald-700 dark:text-emerald-400 font-mono text-[10px]">Cloud Actif</span>
             </div>
             <div className="pt-1.5 border-t text-[10px] text-muted-foreground flex items-center justify-between">
-              <span>Super4C2 Enterprise</span>
-              <span className="text-primary font-bold">Établissements</span>
+              <span>Super4C2 Plateforme</span>
+              <span className="text-primary font-bold">TCF &amp; TEF Canada</span>
             </div>
           </div>
         )}

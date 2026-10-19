@@ -79,15 +79,9 @@ export function AppShell({ header, children }: AppShellProps) {
     );
   }
 
-  // 3. Espace Administration sécurisé
+  // 3. Espace Administration sécurisé (L'admin gère son propre plein écran sans widgets parasites)
   if (isAdmin) {
-    return (
-      <div className="min-h-screen flex flex-col bg-background">
-        <ScrollProgress />
-        {children}
-        <ScrollToTop />
-      </div>
-    );
+    return <>{children}</>;
   }
 
   // 4. Site public & Portail candidat standard (Dashboard, Méthodologie, Blog, Simulateur, etc.)

@@ -77,20 +77,22 @@ export default function AdminOverviewLoading() {
               ))}
             </div>
 
-            {/* Large Table / Cohort Cards Skeleton */}
-            <div className="rounded-2xl border bg-card p-6 shadow-xs space-y-4 animate-pulse">
-              <div className="flex items-center justify-between border-b pb-4">
+            {/* Active Modules and Live Activity Skeleton */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div className="lg:col-span-2 rounded-2xl border bg-card p-6 shadow-xs space-y-4 animate-pulse">
                 <div className="h-6 w-48 rounded bg-muted" />
-                <div className="h-8 w-28 rounded-lg bg-muted" />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+                  <div className="h-36 rounded-xl border bg-muted/30 p-4 space-y-3" />
+                  <div className="h-36 rounded-xl border bg-muted/30 p-4 space-y-3" />
+                </div>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
-                {Array.from({ length: 4 }).map((_, i) => (
-                  <div key={i} className="h-40 rounded-xl border bg-muted/30 p-4 space-y-3">
-                    <div className="h-5 w-3/4 rounded bg-muted" />
-                    <div className="h-4 w-1/2 rounded bg-muted/60" />
-                    <div className="h-8 w-full rounded bg-muted/40 mt-4" />
-                  </div>
-                ))}
+              <div className="rounded-2xl border bg-card p-6 shadow-xs space-y-4 animate-pulse">
+                <div className="h-6 w-36 rounded bg-muted" />
+                <div className="space-y-3 pt-2">
+                  {Array.from({ length: 4 }).map((_, i) => (
+                    <div key={i} className="h-12 rounded-lg bg-muted/30" />
+                  ))}
+                </div>
               </div>
             </div>
           </div>

@@ -94,7 +94,7 @@ export function LeadListClient({
         : leads;
 
     downloadCsv(
-      `demandes-conciergerie-${new Date().toISOString().slice(0, 10)}`,
+      `demandes-contact-${new Date().toISOString().slice(0, 10)}`,
       itemsToExport.map((l) => ({
         id: l.id,
         nom: l.name,
@@ -128,7 +128,7 @@ export function LeadListClient({
         description={
           searchQuery || intentFilter || statusFilter
             ? "Aucune demande ne correspond à vos filtres actuels."
-            : "La boîte de réception de la conciergerie est vide. Les messages envoyés depuis le formulaire de contact apparaîtront ici."
+            : "La boîte de réception des messages est vide. Les messages envoyés depuis le formulaire de contact apparaîtront ici."
         }
       />
     );

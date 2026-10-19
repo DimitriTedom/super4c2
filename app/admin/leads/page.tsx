@@ -17,7 +17,7 @@ import { toOptionalString } from "@/lib/admin-crud-utils";
 import { LeadStatus } from "@prisma/client";
 
 export const metadata = {
-  title: "Demandes & Conciergerie Candidat — Back-Office | Super4C2",
+  title: "Demandes de Contact — Back-Office | Super4C2",
 };
 
 interface LeadsPageProps {
@@ -33,7 +33,6 @@ const INTENTS = [
   { value: "Toutes", label: "Toutes les demandes" },
   { value: "CANDIDATE", label: "Candidats TCF" },
   { value: "URGENT", label: "Urgences Examen" },
-  { value: "B2B", label: "Partenariats / Écoles" },
   { value: "TECH", label: "Support Technique" },
 ];
 
@@ -66,26 +65,39 @@ export default async function AdminLeadsPage({ searchParams }: LeadsPageProps) {
       : {}),
   };
 
-  const [
-    totalCount,
-    nouveauCount,
-    enCoursCount,
-    resoluCount,
-  ] = await Promise.all([
-    prisma.contactLead.count({ where: whereClause }),
-    prisma.contactLead.count({ where: { status: "NOUVEAU" } }),
-    prisma.contactLead.count({ where: { status: "EN_COURS" } }),
-    prisma.contactLead.count({ where: { status: "RESOLU" } }),
-  ]);
+  let totalCount = 0;
+  let nouveauCount = 0;
+  let enCoursCount = 0;
+  let resoluCount = 0;
+  let leads: any[] = [];
+  let dbError: string | null = null;
+
+  try {
+    const [tCount, nCount, eCount, rCount] = await Promise.all([
+      prisma.contactLead.count({ where: whereClause }),
+      prisma.contactLead.count({ where: { status: "NOUVEAU" } }),
+      prisma.contactLead.count({ where: { status: "EN_COURS" } }),
+      prisma.contactLead.count({ where: { status: "RESOLU" } }),
+    ]);
+    totalCount = tCount;
+    nouveauCount = nCount;
+    enCoursCount = eCount;
+    resoluCount = rCount;
+
+    const pagination = getAdminPagination(totalCount, page, 10);
+
+    leads = await prisma.contactLead.findMany({
+      where: whereClause,
+      orderBy: { createdAt: "desc" },
+      skip: pagination.skip,
+      take: pagination.pageSize,
+    });
+  } catch (error) {
+    console.error("Erreur lors de la récupération des leads :", error);
+    dbError = "Impossible de récupérer les demandes en direct. Veuillez vérifier la connexion base de données.";
+  }
 
   const pagination = getAdminPagination(totalCount, page, 10);
-
-  const leads = await prisma.contactLead.findMany({
-    where: whereClause,
-    orderBy: { createdAt: "desc" },
-    skip: pagination.skip,
-    take: pagination.pageSize,
-  });
 
   return (
     <AdminShell>
@@ -95,13 +107,19 @@ export default async function AdminLeadsPage({ searchParams }: LeadsPageProps) {
           <div>
             <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
               <Users className="h-6 w-6 text-primary" />
-              Demandes de Contact & Conciergerie Candidat
+              Demandes de Contact
             </h1>
             <p className="text-sm text-muted-foreground mt-1">
-              Gérez les demandes d&apos;accompagnement sur-mesure, urgences d&apos;inscription et questions des candidats.
+              Gérez les demandes d&apos;accompagnement, urgences d&apos;examen et messages envoyés par les candidats.
             </p>
           </div>
         </div>
+
+        {dbError && (
+          <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-4 text-xs text-amber-800 dark:text-amber-200">
+            {dbError}
+          </div>
+        )}
 
         {/* Statistiques Rapides */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">

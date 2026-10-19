@@ -78,19 +78,35 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
     whereClause.isPublished = false;
   }
 
-  const totalItems = await prisma.blogPost.count({ where: whereClause });
-  const pagination = getAdminPagination(totalItems, rawPage, 10);
+  let totalItems = 0;
+  let posts: any[] = [];
+  let dbError: string | null = null;
 
-  const posts = await prisma.blogPost.findMany({
-    where: whereClause,
-    orderBy: [{ featured: "desc" }, { publishedAt: "desc" }],
-    skip: pagination.skip,
-    take: pagination.pageSize,
-  });
+  try {
+    totalItems = await prisma.blogPost.count({ where: whereClause });
+    const paginationData = getAdminPagination(totalItems, rawPage, 10);
+
+    posts = await prisma.blogPost.findMany({
+      where: whereClause,
+      orderBy: [{ featured: "desc" }, { publishedAt: "desc" }],
+      skip: paginationData.skip,
+      take: paginationData.pageSize,
+    });
+  } catch (error) {
+    console.error("Erreur chargement des articles de blog :", error);
+    dbError = "Impossible de récupérer les articles en direct. Veuillez vérifier la connexion base de données.";
+  }
+
+  const pagination = getAdminPagination(totalItems, rawPage, 10);
 
   return (
     <AdminShell>
       <div className="space-y-6">
+        {dbError && (
+          <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-4 text-xs text-amber-800 dark:text-amber-200">
+            {dbError}
+          </div>
+        )}
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b pb-4">
           <div>

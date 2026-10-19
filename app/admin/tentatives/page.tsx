@@ -18,6 +18,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ConfirmActionDialog } from "@/components/admin/ConfirmActionDialog";
 import { AdminTablePagination } from "@/components/admin/AdminTablePagination";
+import { AdminExportButton } from "@/components/admin/admin-export-button";
 import { AttemptInspectDialog } from "@/components/admin/attempt-inspect-dialog";
 import { getAdminPagination } from "@/lib/admin-pagination";
 import { toOptionalString } from "@/lib/admin-crud-utils";
@@ -59,45 +60,66 @@ export default async function TentativesPage({ searchParams }: TentativesPagePro
     }),
   };
 
-  const totalItems = await prisma.userAttempt.count({ where: whereClause });
-  const pagination = getAdminPagination(totalItems, rawPage, 10);
+  let totalItems = 0;
+  let attempts: any[] = [];
+  let totalAllAttempts = 0;
+  let totalNclc7Plus = 0;
+  let successRate = 0;
+  let avgScaledScore = 0;
+  let recent24h = 0;
+  let dbError: string | null = null;
 
-  const attempts = await prisma.userAttempt.findMany({
-    where: whereClause,
-    orderBy: { createdAt: "desc" },
-    skip: pagination.skip,
-    take: pagination.pageSize,
-    include: {
-      user: {
+  try {
+    totalItems = await prisma.userAttempt.count({ where: whereClause });
+    const paginationData = getAdminPagination(totalItems, rawPage, 10);
+
+    const [attList, tAll, tNclc7, avgData, r24] = await Promise.all([
+      prisma.userAttempt.findMany({
+        where: whereClause,
+        orderBy: { createdAt: "desc" },
+        skip: paginationData.skip,
+        take: paginationData.pageSize,
         include: {
-          profile: true,
+          user: {
+            include: {
+              profile: true,
+            },
+          },
         },
-      },
-    },
-  });
+      }),
+      prisma.userAttempt.count(),
+      prisma.userAttempt.count({
+        where: { nclcLevel: { gte: 7 } },
+      }),
+      prisma.userAttempt.aggregate({
+        _avg: { tcfScaledScore: true },
+      }),
+      prisma.userAttempt.count({
+        where: { createdAt: { gte: new Date(Date.now() - 24 * 60 * 60 * 1000) } },
+      }),
+    ]);
 
-  // Global KPIs across the entire platform
-  const totalAllAttempts = await prisma.userAttempt.count();
-  const totalNclc7Plus = await prisma.userAttempt.count({
-    where: { nclcLevel: { gte: 7 } },
-  });
-  const successRate = totalAllAttempts > 0
-    ? Math.round((totalNclc7Plus / totalAllAttempts) * 100)
-    : 0;
+    attempts = attList;
+    totalAllAttempts = tAll;
+    totalNclc7Plus = tNclc7;
+    successRate = totalAllAttempts > 0 ? Math.round((totalNclc7Plus / totalAllAttempts) * 100) : 0;
+    avgScaledScore = Math.round(avgData._avg.tcfScaledScore ?? 0);
+    recent24h = r24;
+  } catch (error) {
+    console.error("Erreur chargement des tentatives :", error);
+    dbError = "Impossible de récupérer les tentatives en direct. Veuillez vérifier la connexion base de données.";
+  }
 
-  const avgScaledScoreData = await prisma.userAttempt.aggregate({
-    _avg: { tcfScaledScore: true },
-  });
-  const avgScaledScore = Math.round(avgScaledScoreData._avg.tcfScaledScore ?? 0);
-
-  const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
-  const recent24h = await prisma.userAttempt.count({
-    where: { createdAt: { gte: oneDayAgo } },
-  });
+  const pagination = getAdminPagination(totalItems, rawPage, 10);
 
   return (
     <AdminShell>
       <div className="space-y-6">
+        {dbError && (
+          <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-4 text-xs text-amber-800 dark:text-amber-200">
+            {dbError}
+          </div>
+        )}
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b pb-5">
           <div>
@@ -111,6 +133,33 @@ export default async function TentativesPage({ searchParams }: TentativesPagePro
             <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">
               Supervisez les simulations passées, examinez les rédactions réelles et auditez les évaluations IA.
             </p>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <AdminExportButton
+              filename={`tentatives-copies-${new Date().toISOString().slice(0, 10)}`}
+              data={attempts.map((a) => ({
+                candidat: a.user?.profile?.displayName || a.user?.email || "Candidat",
+                email: a.user?.email || "",
+                discipline: a.discipline,
+                scoreBrut: a.rawScore,
+                scoreTCF: a.tcfScaledScore,
+                niveauNCLC: `NCLC ${a.nclcLevel}`,
+                pointsCRS: a.crsPointsUnlocked,
+                date: new Date(a.createdAt).toLocaleString("fr-FR"),
+              }))}
+              columns={[
+                { key: "candidat", label: "Candidat" },
+                { key: "email", label: "Email" },
+                { key: "discipline", label: "Discipline" },
+                { key: "scoreBrut", label: "Score Brut" },
+                { key: "scoreTCF", label: "Score TCF (/699)" },
+                { key: "niveauNCLC", label: "Niveau NCLC" },
+                { key: "pointsCRS", label: "Points CRS Canada" },
+                { key: "date", label: "Date de Passation" },
+              ]}
+              label="Exporter les Copies (CSV)"
+            />
           </div>
         </div>
 

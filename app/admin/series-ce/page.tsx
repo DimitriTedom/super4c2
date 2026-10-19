@@ -14,9 +14,11 @@ import {
 import { AdminShell } from "@/components/admin/admin-shell";
 import { AdminListEmptyState } from "@/components/admin/AdminListEmptyState";
 import { ConfirmActionDialog } from "@/components/admin/ConfirmActionDialog";
+import { AdminTablePagination } from "@/components/admin/AdminTablePagination";
 import { AiSeriesGeneratorDialog } from "@/components/admin/ai-series-generator-dialog";
 import { Button } from "@/components/ui/button";
 import { prisma } from "@/lib/prisma";
+import { getAdminPagination } from "@/lib/admin-pagination";
 import { deleteSeriesCeAction, toggleSeriesCePublishAction } from "./actions";
 
 export const metadata = {
@@ -24,12 +26,13 @@ export const metadata = {
 };
 
 interface SeriesCeListPageProps {
-  searchParams: Promise<{ search?: string }>;
+  searchParams: Promise<{ search?: string; page?: string }>;
 }
 
 export default async function SeriesCeListPage({ searchParams }: SeriesCeListPageProps) {
   const params = await searchParams;
   const search = params.search?.trim() ?? "";
+  const page = params.page;
 
   const where = {
     discipline: "COMPREHENSION_ECRITE" as const,
@@ -45,20 +48,37 @@ export default async function SeriesCeListPage({ searchParams }: SeriesCeListPag
       : {}),
   };
 
-  const seriesList = await prisma.examSeries.findMany({
-    where,
-    include: {
-      _count: {
-        select: { questions: true },
-      },
-    },
-    orderBy: { seriesNumber: "asc" },
-  });
+  let totalItems = 0;
+  let seriesList: any[] = [];
+  let nextSeriesNumber = 101;
+  let dbError: string | null = null;
 
-  const nextSeriesNumber =
-    seriesList.length > 0
-      ? Math.max(...seriesList.map((s) => s.seriesNumber)) + 1
-      : 102;
+  try {
+    totalItems = await prisma.examSeries.count({ where });
+    const paginationData = getAdminPagination(totalItems, page, 10);
+
+    seriesList = await prisma.examSeries.findMany({
+      where,
+      include: {
+        _count: {
+          select: { questions: true },
+        },
+      },
+      orderBy: { seriesNumber: "asc" },
+      skip: paginationData.skip,
+      take: paginationData.pageSize,
+    });
+
+    nextSeriesNumber =
+      seriesList.length > 0
+        ? Math.max(...seriesList.map((s) => s.seriesNumber)) + 1
+        : 101;
+  } catch (error) {
+    console.error("Erreur chargement séries CE :", error);
+    dbError = "Impossible de récupérer les séries en direct. Veuillez vérifier la connexion base de données.";
+  }
+
+  const pagination = getAdminPagination(totalItems, page, 10);
 
   return (
     <AdminShell>
@@ -266,6 +286,19 @@ export default async function SeriesCeListPage({ searchParams }: SeriesCeListPag
                 </tbody>
               </table>
             </div>
+
+            <AdminTablePagination
+              currentPage={pagination.currentPage}
+              totalPages={pagination.totalPages}
+              basePath="/admin/series-ce"
+              search={search || undefined}
+            />
+          </div>
+        )}
+
+        {dbError && (
+          <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-4 text-xs text-amber-800 dark:text-amber-200">
+            {dbError}
           </div>
         )}
       </div>

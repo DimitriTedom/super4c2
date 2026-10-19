@@ -1,3 +1,9 @@
+- [x] **Assainissement de la Vue Admin, Éradication B2B/Cohortes, Pagination & Résilience Base :**
+  - **Éradication Totale du B2B :** Suppression de tous les types `Cohort`, onglets `cohorts` et `licenses`, faux élèves et fausses écoles dans `AdminDashboard` et `AdminPage`.
+  - **Pieds de Tableau pour la Pagination :** Ajout de `AdminTablePagination` dans `AdminDashboard` (candidats), `app/admin/series-ce/page.tsx` et uniformisation dans `app/admin/users/page.tsx`.
+  - **Résilience Base de Données (Anti-Crash `app/error.tsx`) :** Protection par `try / catch` et bandeau d'avertissement gracieux dans toutes les pages d'administration.
+  - **Liens Menus Corrigés :** Remplacement des routes brisées vers les simulateurs par les accès directs aux épreuves actives.
+  - **Validation :** 0 erreur TypeScript (`npx tsc --noEmit`).
 - [x] **Console de Supervision des Tentatives & Copies Candidats (Option C : `/admin/tentatives`) :**
   - **Dashboard Exécutif Shadcn UI :** 4 KPI Cards (Total simulations, Réussite NCLC 7+, Score Moyen Échelonné /699, Nouvelles copies 24h), filtres interactifs par discipline et palier NCLC, recherche plein-texte et pagination serveur.
   - **Dialogue Modal d'Inspection Pédagogique :** Composant Shadcn `Dialog` pour auditer le texte exact des rédactions candidat, le décompte de mots, la grille critériée FEI sur 20 et le modèle Magic Rewrite C2.

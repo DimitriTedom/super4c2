@@ -235,8 +235,8 @@ export function NotificationBell({
           {/* Notifications List */}
           <div className="max-h-72 overflow-y-auto space-y-2 divide-y divide-border/40 pt-1 -mx-2 px-2 scrollbar-thin">
             {displayedNotifications.length === 0 ? (
-              <div className="py-8 text-center text-xs text-muted-foreground">
-                <Info className="mx-auto mb-2 h-6 w-6 text-muted-foreground/40" />
+              <div className="py-6 text-center text-xs text-muted-foreground space-y-2">
+                <Info className="mx-auto h-6 w-6 text-muted-foreground/40" />
                 <p>Aucune notification pour le moment.</p>
               </div>
             ) : (

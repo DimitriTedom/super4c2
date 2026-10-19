@@ -2,6 +2,49 @@
 
 ## 0. Déploiement Production Vercel & Moteur de Conversion
 
+### 0.0u. Assainissement & Refonte Intuitive de la Vue Admin (Zéro Jargon, Éradication B2B & Résilience)
+- **Demande Utilisateur :**
+  1. Supprimer tout ce qui a rapport avec le B2B, les cohortes, et les licences B2B dans la vue admin.
+  2. Ajouter les pieds de tableau pour la pagination sur toutes les listes administratives.
+  3. Diagnostiquer l'absence de répercussion sur la vue admin en prod (explication : code local non encore pushé sur git).
+  4. Conserver et simplifier l'audit du composant "CBT en direct" pour un administrateur non-technique ne maîtrisant pas le jargon spécialisé.
+  5. Épurer l'ensemble de la vue admin pour la rendre 100% intuitive.
+- **Réalisations & Améliorations Apportées :**
+  - **Éradication Totale du B2B & des Faux Mocks (`components/admin/admin-dashboard.tsx`, `app/admin/page.tsx`, `app/admin/loading.tsx`) :**
+    - Suppression complète des types `Cohort`, des onglets `cohorts` et `licenses`, des barres de progression de cohortes fictives et du filtre `activeOrg` (B2B/B2C).
+    - Recentrage du dashboard sur les métriques réelles des candidats et les épreuves actives avec empty-state bienveillant.
+    - Retrait de la catégorie B2B dans le formulaire de conciergerie (`app/admin/leads/page.tsx`).
+    - Épuration des squelettes de chargement dans `app/admin/loading.tsx`.
+  - **Refonte Sémantique & Éradication du Jargon Technique / Immigration :**
+    - Suppression des acronymes opaques : `CBT` -> `Simulations` / `Examens Blancs`, `CRS +50` -> `Objectif Canada Validé`, `Format FEI` -> `Normes Officielles`.
+    - Les 4 cartes de KPI parlent désormais un langage humain : *Candidats Inscrits*, *Taux de Réussite Canada (B2/C1)*, *Examens Blancs Passés*, *Score Moyen en Lecture*.
+    - Refonte du widget "Activité en Direct" -> **"Examens en Direct"** : affichage lisible du nom du candidat, de l'épreuve passée en clair (*Rédaction*, *Oral Visio IA*, *Lecture*), de la note obtenue, d'un badge clair (*Objectif Validé* vs *En progression*), et d'un lien direct vers *« Voir toutes les copies rendues »*.
+    - Requalification de la navigation latérale en 3 pôles évidents :
+      - 📊 **Suivi des Candidats :** *Vue d'ensemble*, *Candidats inscrits*, *Copies & Examens passés*.
+      - 📝 **Sujets d'Examens :** *Lecture (CE)*, *Écoute (CO)*, *Rédaction (EE)*, *Oral & Visio (EO)*.
+      - 📢 **Site & Communication :** *Articles de Blog & Guides*, *Questions fréquentes (FAQ)*, *Avis des candidats*, *Abonnés Newsletter*, *Demandes de contact*.
+  - **Pieds de Tableau, Outils d'Exportation CSV & Actions en Batch :**
+    - Création du composant réutilisable `AdminExportButton` (`components/admin/admin-export-button.tsx`) avec encodage UTF-8 BOM pour tableurs (Excel, Sheets).
+    - Intégration sur la table des candidats inscrits (`app/admin/users/page.tsx`), les copies d'examen (`app/admin/tentatives/page.tsx`) et la newsletter.
+    - Maintien des batch actions (sélection multiple, suppression en lot, changement de statut) sur `/admin/leads`.
+  - **Résolution Définitive de l'Extrême Overflow en Y et Scrollbar en X :**
+    - Suppression de l'enveloppe parasite `min-h-screen flex flex-col` et des widgets publics (`ScrollProgress`, `ScrollToTop`) pour toutes les routes `isAdmin` dans `components/app-shell.tsx`.
+    - Remplacement des classes `w-screen` (`100vw` qui débordait sous Windows avec scrollbar) par `w-full` dans `AdminShell` et `AdminDashboard`.
+    - Hauteur de l'écran strictement verrouillée à `h-screen overflow-hidden` avec scroll interne maîtrisé dans `main`.
+  - **Simplification de la Cloche de Notifications (`NotificationBell`) & Purge des Mocks :**
+    - Suppression du bouton de test et de l'action `sendAdminTestNotificationAction` pour conserver un composant sobre, propre et minimaliste sans artifice.
+    - Purge intégrale des mock data dans Supabase Cloud (`public.notifications` avec recipient = 'ADMIN' et `public.contact_leads`).
+  - **Requalification de "Demandes & Conciergerie" -> "Demandes de Contact" :**
+    - Renommage unifié dans `app/admin/leads/page.tsx`, `components/admin/lead-list-client.tsx`, `components/admin/admin-shell.tsx` et `components/admin/admin-dashboard.tsx`.
+    - Nommage propre des exports CSV : `demandes-contact-YYYY-MM-DD.csv`.
+  - **Certification Haute Fidélité des Exports CSV & PDF :**
+    - **Exports CSV :** Encodage universel UTF-8 BOM (`\uFEFF`) et séparateur point-virgule (`;`) garantissant l'affichage sans bavure des accents dans Excel, Google Sheets et Numbers. Appliqué sur toutes les tables admin (utilisateurs, copies d'examen, newsletter, demandes de contact).
+    - **Rapports PDF Candidat (`lib/exam/export-pdf.ts` & `lib/dashboard/attempt-export.ts`) :** Moteur vectoriel direct `jsPDF` avec bandeau officiel Super4C2 écarlate `#E51A31`, normes FEI 2026, 4 cartes de métriques de score (/20, /699, NCLC 4-12, +50 pts CRS), analyse de volume de mots, grille officielle FEI détaillée, modèles Magic Rewrite C2 et pagination multi-pages.
+  - **Résolution Définitive des Crashes de Menus & Robustesse (`app/error.tsx`) :**
+    - **Origine du crash (`Code incident : 3617587624`) :** Les sous-pages de l'admin interrogeaient Prisma sans `try / catch`.
+    - **Architecture Défensive Fail-Safe :** Chaque page admin dispose désormais d'un bloc `try / catch` gracieux affichant un bandeau d'avertissement clair (`dbError`) sans jamais faire planter la navigation.
+- **Validation :** `npx tsc --noEmit` validé avec 0 erreur.
+
 ### 0.0t. Résolution Authentification Admin & Refonte Formulaire `/admin/login`
 - **Demande Utilisateur :**
   1. Le mot de passe admin ne fonctionnait pas (« Identifiants incorrects ou accès refusé »).

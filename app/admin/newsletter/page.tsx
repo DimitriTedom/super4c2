@@ -77,23 +77,42 @@ export default async function AdminNewsletterPage({
       : {}),
   };
 
-  const [totalCount, activeCount] = await Promise.all([
-    prisma.newsletterSubscriber.count({ where: whereClause }),
-    prisma.newsletterSubscriber.count({ where: { isActive: true } }),
-  ]);
+  let totalCount = 0;
+  let activeCount = 0;
+  let subscribers: any[] = [];
+  let dbError: string | null = null;
+
+  try {
+    const [tCount, aCount] = await Promise.all([
+      prisma.newsletterSubscriber.count({ where: whereClause }),
+      prisma.newsletterSubscriber.count({ where: { isActive: true } }),
+    ]);
+    totalCount = tCount;
+    activeCount = aCount;
+
+    const paginationData = getAdminPagination(totalCount, page, 15);
+
+    subscribers = await prisma.newsletterSubscriber.findMany({
+      where: whereClause,
+      orderBy: { subscribedAt: "desc" },
+      skip: paginationData.skip,
+      take: paginationData.pageSize,
+    });
+  } catch (error) {
+    console.error("Erreur chargement de la newsletter :", error);
+    dbError = "Impossible de récupérer les abonnés en direct. Veuillez vérifier la connexion base de données.";
+  }
 
   const pagination = getAdminPagination(totalCount, page, 15);
-
-  const subscribers = await prisma.newsletterSubscriber.findMany({
-    where: whereClause,
-    orderBy: { subscribedAt: "desc" },
-    skip: pagination.skip,
-    take: pagination.pageSize,
-  });
 
   return (
     <AdminShell>
       <div className="space-y-6">
+        {dbError && (
+          <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-4 text-xs text-amber-800 dark:text-amber-200">
+            {dbError}
+          </div>
+        )}
         {/* Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b pb-4">
           <div>

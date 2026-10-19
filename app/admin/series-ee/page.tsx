@@ -60,28 +60,39 @@ export default async function SeriesEePage({ searchParams }: SeriesEePageProps) 
     whereClause.isPublished = false;
   }
 
-  const totalItems = await prisma.writtenSeries.count({ where: whereClause });
-  const pagination = getAdminPagination(totalItems, rawPage, 10);
+  let totalItems = 0;
+  let seriesList: any[] = [];
+  let dbError: string | null = null;
 
-  const seriesList = await prisma.writtenSeries.findMany({
-    where: whereClause,
-    orderBy: { seriesNumber: "asc" },
-    skip: pagination.skip,
-    take: pagination.pageSize,
-    include: {
-      _count: {
-        select: { tasks: true },
-      },
-      tasks: {
-        select: {
-          taskNumber: true,
-          minWords: true,
-          maxWords: true,
+  try {
+    totalItems = await prisma.writtenSeries.count({ where: whereClause });
+    const paginationData = getAdminPagination(totalItems, rawPage, 10);
+
+    seriesList = await prisma.writtenSeries.findMany({
+      where: whereClause,
+      orderBy: { seriesNumber: "asc" },
+      skip: paginationData.skip,
+      take: paginationData.pageSize,
+      include: {
+        _count: {
+          select: { tasks: true },
         },
-        orderBy: { taskNumber: "asc" },
+        tasks: {
+          select: {
+            taskNumber: true,
+            minWords: true,
+            maxWords: true,
+          },
+          orderBy: { taskNumber: "asc" },
+        },
       },
-    },
-  });
+    });
+  } catch (error) {
+    console.error("Erreur chargement séries EE :", error);
+    dbError = "Impossible de récupérer les séries en direct. Veuillez vérifier la connexion base de données.";
+  }
+
+  const pagination = getAdminPagination(totalItems, rawPage, 10);
 
   return (
     <AdminShell>
@@ -110,6 +121,12 @@ export default async function SeriesEePage({ searchParams }: SeriesEePageProps) 
             </Button>
           </div>
         </div>
+
+        {dbError && (
+          <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-4 text-xs text-amber-800 dark:text-amber-200">
+            {dbError}
+          </div>
+        )}
 
         {/* Filters */}
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">

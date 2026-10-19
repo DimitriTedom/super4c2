@@ -3,6 +3,8 @@ import { Search, Users as UsersIcon, CalendarClock, Target } from "lucide-react"
 
 import { AdminShell } from "@/components/admin/admin-shell";
 import { Button } from "@/components/ui/button";
+import { AdminTablePagination } from "@/components/admin/AdminTablePagination";
+import { AdminExportButton } from "@/components/admin/admin-export-button";
 import { prisma } from "@/lib/prisma";
 
 export const metadata = {
@@ -11,7 +13,7 @@ export const metadata = {
 
 export const dynamic = "force-dynamic";
 
-const PAGE_SIZE = 50;
+const PAGE_SIZE = 15;
 
 interface UsersPageProps {
   searchParams: Promise<{ q?: string; page?: string }>;
@@ -36,30 +38,43 @@ export default async function AdminUsersPage({ searchParams }: UsersPageProps) {
       }
     : {};
 
-  const [total, users] = await Promise.all([
-    prisma.user.count({ where }),
-    prisma.user.findMany({
-      where,
-      orderBy: { createdAt: "desc" },
-      skip: (currentPage - 1) * PAGE_SIZE,
-      take: PAGE_SIZE,
-      include: { profile: true, _count: { select: { attempts: true } } },
-    }),
-  ]);
+  let total = 0;
+  let users: any[] = [];
+  let dbError: string | null = null;
+
+  try {
+    const [t, uList] = await Promise.all([
+      prisma.user.count({ where }),
+      prisma.user.findMany({
+        where,
+        orderBy: { createdAt: "desc" },
+        skip: (currentPage - 1) * PAGE_SIZE,
+        take: PAGE_SIZE,
+        include: { profile: true, _count: { select: { attempts: true } } },
+      }),
+    ]);
+    total = t;
+    users = uList;
+  } catch (error) {
+    console.error("Erreur lors du chargement des candidats :", error);
+    dbError = "Impossible de récupérer les candidats en direct. Veuillez vérifier la connexion base de données.";
+  }
 
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
-  const buildHref = (p: number) => {
-    const params = new URLSearchParams();
-    if (query) params.set("q", query);
-    if (p > 1) params.set("page", String(p));
-    const s = params.toString();
-    return s ? `/admin/users?${s}` : "/admin/users";
-  };
+
+  const exportUsers = users.map((u) => ({
+    email: u.email,
+    nom: u.profile?.displayName || "Candidat",
+    nclc: u.profile?.targetNclc != null ? `NCLC ${u.profile.targetNclc}` : "Non spécifié",
+    examen: u.profile?.examDate ? new Date(u.profile.examDate).toLocaleDateString("fr-FR") : "Non fixée",
+    tentatives: u._count.attempts,
+    inscription: new Date(u.createdAt).toLocaleDateString("fr-FR"),
+  }));
 
   return (
     <AdminShell>
       <div className="mx-auto max-w-6xl space-y-6 p-4 sm:p-8">
-        <header className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <header className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between border-b pb-4">
           <div className="space-y-1">
             <h1 className="font-display text-2xl font-extrabold tracking-tight flex items-center gap-2">
               <UsersIcon className="h-6 w-6 text-primary" />
@@ -70,26 +85,46 @@ export default async function AdminUsersPage({ searchParams }: UsersPageProps) {
             </p>
           </div>
 
-          <form action="/admin/users" method="GET" className="flex w-full gap-2 sm:w-auto">
-            <div className="relative flex-1 sm:w-72">
-              <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-              <input
-                name="q"
-                defaultValue={query}
-                placeholder="Rechercher un nom ou e-mail…"
-                aria-label="Rechercher un candidat"
-                className="h-9 w-full rounded-lg border bg-background pl-9 pr-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
-              />
-            </div>
-            <Button type="submit" size="sm">
-              Rechercher
-            </Button>
-          </form>
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
+            <AdminExportButton
+              filename={`candidats-super4c2-${new Date().toISOString().slice(0, 10)}`}
+              data={exportUsers}
+              columns={[
+                { key: "nom", label: "Nom" },
+                { key: "email", label: "Email" },
+                { key: "nclc", label: "Niveau NCLC visé" },
+                { key: "examen", label: "Date d'examen prévue" },
+                { key: "tentatives", label: "Nombre de simulations" },
+                { key: "inscription", label: "Date d'inscription" },
+              ]}
+            />
+            <form action="/admin/users" method="GET" className="flex w-full gap-2 sm:w-auto">
+              <div className="relative flex-1 sm:w-64">
+                <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                <input
+                  name="q"
+                  defaultValue={query}
+                  placeholder="Rechercher un nom ou e-mail…"
+                  aria-label="Rechercher un candidat"
+                  className="h-9 w-full rounded-lg border bg-background pl-9 pr-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                />
+              </div>
+              <Button type="submit" size="sm">
+                Rechercher
+              </Button>
+            </form>
+          </div>
         </header>
+
+        {dbError && (
+          <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-4 text-xs text-amber-800 dark:text-amber-200">
+            {dbError}
+          </div>
+        )}
 
         <div className="overflow-x-auto rounded-2xl border bg-card shadow-xs">
           <table className="w-full text-left text-sm">
-            <thead className="bg-muted/40 text-[11px] uppercase tracking-wider text-muted-foreground">
+            <thead className="bg-muted/40 text-[11px] uppercase tracking-wider text-muted-foreground border-b">
               <tr>
                 <th className="px-4 py-3 font-semibold">Candidat</th>
                 <th className="px-4 py-3 font-semibold">Inscription</th>
@@ -133,27 +168,15 @@ export default async function AdminUsersPage({ searchParams }: UsersPageProps) {
               )}
             </tbody>
           </table>
-        </div>
 
-        {totalPages > 1 && (
-          <nav className="flex items-center justify-between text-sm" aria-label="Pagination">
-            <span className="text-muted-foreground">
-              Page {currentPage} / {totalPages}
-            </span>
-            <div className="flex gap-2">
-              {currentPage > 1 && (
-                <Button asChild variant="outline" size="sm">
-                  <Link href={buildHref(currentPage - 1)}>Précédent</Link>
-                </Button>
-              )}
-              {currentPage < totalPages && (
-                <Button asChild variant="outline" size="sm">
-                  <Link href={buildHref(currentPage + 1)}>Suivant</Link>
-                </Button>
-              )}
-            </div>
-          </nav>
-        )}
+          {/* Pied de tableau avec AdminTablePagination */}
+          <AdminTablePagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            basePath="/admin/users"
+            search={query || undefined}
+          />
+        </div>
       </div>
     </AdminShell>
   );

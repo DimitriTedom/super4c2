@@ -58,37 +58,58 @@ export default async function SeriesEoPage({ searchParams }: SeriesEoPageProps) 
     whereClause.isPublished = false;
   }
 
-  const totalItems = await prisma.oralSeries.count({ where: whereClause });
-  const pagination = getAdminPagination(totalItems, rawPage, 10);
+  let totalItems = 0;
+  let totalPublished = 0;
+  let totalFreeDemos = 0;
+  let seriesList: any[] = [];
+  let dbError: string | null = null;
 
-  const seriesList = await prisma.oralSeries.findMany({
-    where: whereClause,
-    orderBy: { seriesNumber: "asc" },
-    skip: pagination.skip,
-    take: pagination.pageSize,
-    include: {
-      _count: {
-        select: { tasks: true },
-      },
-      tasks: {
-        select: {
-          taskNumber: true,
-          type: true,
-          durationSeconds: true,
+  try {
+    const [tItems, tPub, tFree] = await Promise.all([
+      prisma.oralSeries.count({ where: whereClause }),
+      prisma.oralSeries.count({ where: { isPublished: true } }),
+      prisma.oralSeries.count({ where: { isFreeDemo: true } }),
+    ]);
+    totalItems = tItems;
+    totalPublished = tPub;
+    totalFreeDemos = tFree;
+
+    const paginationData = getAdminPagination(totalItems, rawPage, 10);
+
+    seriesList = await prisma.oralSeries.findMany({
+      where: whereClause,
+      orderBy: { seriesNumber: "asc" },
+      skip: paginationData.skip,
+      take: paginationData.pageSize,
+      include: {
+        _count: {
+          select: { tasks: true },
         },
-        orderBy: { taskNumber: "asc" },
+        tasks: {
+          select: {
+            taskNumber: true,
+            type: true,
+            durationSeconds: true,
+          },
+          orderBy: { taskNumber: "asc" },
+        },
       },
-    },
-  });
+    });
+  } catch (error) {
+    console.error("Erreur chargement séries EO :", error);
+    dbError = "Impossible de récupérer les séries orales en direct. Veuillez vérifier la connexion base de données.";
+  }
 
-  const [totalPublished, totalFreeDemos] = await Promise.all([
-    prisma.oralSeries.count({ where: { isPublished: true } }),
-    prisma.oralSeries.count({ where: { isFreeDemo: true } }),
-  ]);
+  const pagination = getAdminPagination(totalItems, rawPage, 10);
 
   return (
     <AdminShell>
       <div className="space-y-6">
+        {dbError && (
+          <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-4 text-xs text-amber-800 dark:text-amber-200">
+            {dbError}
+          </div>
+        )}
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b pb-4">
           <div>

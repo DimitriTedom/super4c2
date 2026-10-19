@@ -32,7 +32,7 @@ export async function GET() {
       `"${s.unsubscribedAt ? s.unsubscribedAt.toISOString() : ""}"`,
     ]);
 
-    const csvContent = [headers.join(","), ...rows.map((r) => r.join(","))].join("\n");
+    const csvContent = "\uFEFF" + [headers.join(";"), ...rows.map((r) => r.join(";"))].join("\r\n");
 
     const dateStr = new Date().toISOString().split("T")[0];
     const filename = `super4c2-newsletter-subscribers-${dateStr}.csv`;
