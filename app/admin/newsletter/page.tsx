@@ -16,17 +16,12 @@ import {
 import { AdminShell } from "@/components/admin/admin-shell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ConfirmActionDialog } from "@/components/admin/ConfirmActionDialog";
 import { AdminTablePagination } from "@/components/admin/AdminTablePagination";
-import { AdminListEmptyState } from "@/components/admin/AdminListEmptyState";
+import { NewsletterListClient } from "@/components/admin/newsletter-list-client";
 import { prisma } from "@/lib/prisma";
 import { getAdminPagination } from "@/lib/admin-pagination";
 import { toOptionalString } from "@/lib/admin-crud-utils";
-import {
-  addSubscriberAction,
-  deleteSubscriberAction,
-  toggleSubscriberStatusAction,
-} from "./actions";
+import { addSubscriberAction } from "./actions";
 
 export const metadata = {
   title: "Abonnés Newsletter — Back-Office | Super4C2",
@@ -268,186 +263,27 @@ export default async function AdminNewsletterPage({
           </div>
         </div>
 
-        {/* Table des Abonnés */}
-        {subscribers.length === 0 ? (
-          <AdminListEmptyState
-            kind="newsletter"
-            title="Aucun abonné trouvé"
-            description={
-              searchQuery || sourceFilter || status
-                ? "Aucun e-mail ne correspond à votre filtre de recherche actuel."
-                : "La base d'abonnés est actuellement vide. Les inscriptions s'ajouteront automatiquement via le footer et le simulateur NCLC."
-            }
-          />
-        ) : (
-          <div className="rounded-xl border bg-card shadow-sm overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm text-left">
-                <thead className="bg-muted/40 text-xs uppercase text-muted-foreground font-semibold border-b">
-                  <tr>
-                    <th className="px-4 py-3">Candidat</th>
-                    <th className="px-4 py-3">WhatsApp / Téléphone</th>
-                    <th className="px-4 py-3">Diagnostic CRS</th>
-                    <th className="px-4 py-3">Origine / Source</th>
-                    <th className="px-4 py-3">Date</th>
-                    <th className="px-4 py-3 text-center">Statut</th>
-                    <th className="px-4 py-3 text-right">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y">
-                  {subscribers.map((s) => {
-                    const cleanDigits = (s.phone || "").replace(/\D/g, "");
-                    const waLink = cleanDigits ? `https://wa.me/${cleanDigits}` : null;
-                    return (
-                      <tr
-                        key={s.id}
-                        className="hover:bg-muted/30 transition-colors"
-                      >
-                        <td className="px-4 py-3">
-                          <div className="space-y-0.5">
-                            {s.name && (
-                              <p className="font-semibold text-foreground text-xs">
-                                {s.name}
-                              </p>
-                            )}
-                            <span className="text-xs text-muted-foreground font-mono block">
-                              {s.email}
-                            </span>
-                          </div>
-                        </td>
+        {/* Table interactive avec Sélection Multiple & Actions en Lot */}
+        <NewsletterListClient
+          subscribers={subscribers.map((s) => ({
+            id: s.id,
+            email: s.email,
+            name: s.name,
+            phone: s.phone,
+            source: s.source,
+            isActive: s.isActive,
+            subscribedAt: s.subscribedAt,
+            crsScore: s.crsScore,
+            nclcProfile: s.nclcProfile,
+          }))}
+          searchQuery={searchQuery ?? undefined}
+          sourceFilter={sourceFilter ?? undefined}
+          statusFilter={status ?? undefined}
+        />
 
-                        <td className="px-4 py-3">
-                          {s.phone ? (
-                            waLink ? (
-                              <a
-                                href={waLink}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20 border border-emerald-500/30 transition-colors"
-                                title="Ouvrir la conversation WhatsApp"
-                              >
-                                <MessageCircle className="h-3.5 w-3.5 fill-current" />
-                                <span>{s.phone}</span>
-                              </a>
-                            ) : (
-                              <span className="text-xs font-mono text-muted-foreground">
-                                {s.phone}
-                              </span>
-                            )
-                          ) : (
-                            <span className="text-xs text-muted-foreground/60 italic">
-                              Non renseigné
-                            </span>
-                          )}
-                        </td>
-
-                        <td className="px-4 py-3">
-                          {s.crsScore != null ? (
-                            <div className="space-y-0.5">
-                              <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-primary/10 text-primary">
-                                +{s.crsScore} pts CRS
-                              </span>
-                              {s.nclcProfile && (
-                                <span className="text-[10px] text-muted-foreground block font-mono">
-                                  {s.nclcProfile}
-                                </span>
-                              )}
-                            </div>
-                          ) : (
-                            <span className="text-xs text-muted-foreground/60 italic">—</span>
-                          )}
-                        </td>
-
-                        <td className="px-4 py-3">
-                          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-muted text-muted-foreground">
-                            {s.source}
-                          </span>
-                        </td>
-
-                        <td className="px-4 py-3 text-xs text-muted-foreground">
-                          {new Date(s.subscribedAt).toLocaleDateString("fr-FR", {
-                            day: "numeric",
-                            month: "short",
-                            year: "numeric",
-                          })}
-                        </td>
-
-                        <td className="px-4 py-3 text-center">
-                          <span
-                            className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold ${
-                              s.isActive
-                                ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
-                                : "bg-zinc-500/10 text-zinc-600 dark:text-zinc-400"
-                            }`}
-                          >
-                            {s.isActive ? (
-                              <>
-                                <CheckCircle2 className="h-3 w-3" />
-                                Actif
-                              </>
-                            ) : (
-                              <>
-                                <XCircle className="h-3 w-3" />
-                                Désinscrit
-                              </>
-                            )}
-                          </span>
-                        </td>
-
-                        <td className="px-4 py-3 text-right">
-                        <div className="flex items-center justify-end gap-1">
-                          {/* Toggle Active / Unsubscribe */}
-                          <form action={toggleSubscriberStatusAction}>
-                            <input type="hidden" name="id" value={s.id} />
-                            <Button
-                              type="submit"
-                              variant="ghost"
-                              size="icon"
-                              className="h-8 w-8 text-muted-foreground hover:text-foreground"
-                              title={
-                                s.isActive
-                                  ? "Marquer comme désinscrit"
-                                  : "Réactiver l'abonnement"
-                              }
-                            >
-                              {s.isActive ? (
-                                <EyeOff className="h-4 w-4" />
-                              ) : (
-                                <Eye className="h-4 w-4" />
-                              )}
-                            </Button>
-                          </form>
-
-                          <form id={`del-sub-${s.id}`} action={deleteSubscriberAction}>
-                            <input type="hidden" name="id" value={s.id} />
-                          </form>
-
-                          <ConfirmActionDialog
-                            trigger={
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive"
-                                title="Supprimer l'abonné"
-                              >
-                                <Trash2 className="h-3.5 w-3.5" />
-                              </Button>
-                            }
-                            title="Supprimer cet abonné ?"
-                            description={`Êtes-vous sûr de vouloir supprimer définitivement ${s.email} de la base de données ?`}
-                            confirmLabel="Supprimer"
-                            formId={`del-sub-${s.id}`}
-                          />
-                        </div>
-                      </td>
-                    </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-
-            {/* Pagination */}
+        {/* Pagination du Tableau */}
+        {subscribers.length > 0 && (
+          <div className="rounded-xl border bg-card shadow-xs overflow-hidden">
             <AdminTablePagination
               currentPage={pagination.currentPage}
               totalPages={pagination.totalPages}

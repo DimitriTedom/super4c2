@@ -2,6 +2,24 @@
 
 ## 0. Déploiement Production Vercel & Moteur de Conversion
 
+### 0.0w. Optimisation Back-Office : Actions en Lot & Campagne WhatsApp Groupée sur la Newsletter (`/admin/newsletter`)
+- **Demande Utilisateur :**
+  1. Optimiser le back-office Super4C2.
+  2. Implémenter la Priorité 1 : Actions en lot sur les abonnés de la Newsletter et leads WhatsApp.
+- **Réalisations & Améliorations Apportées :**
+  - **Composant Client Haute Performance (`components/admin/newsletter-list-client.tsx`) :**
+    - Sélection par cases à cocher individuelles et bouton « Tout sélectionner » dans l'en-tête de tableau.
+    - Barre d'actions en lot flottante `AdminBatchActionBar` avec animation spring Framer Motion.
+    - **Bouton Copie WhatsApp Groupée :** Extraction automatique de tous les numéros valides de la sélection et copie dans le presse-papier avec toast Sonner personnalisé.
+    - **Bouton Copie E-mails Groupée :** Copie instantanée de toutes les adresses e-mail des abonnés sélectionnés.
+    - **Export CSV Ciblé :** Téléchargement direct d'un fichier CSV encodé en UTF-8 BOM avec le Nom, l'E-mail, le WhatsApp, le diagnostic CRS (+pts), le profil NCLC visé, la source, le statut et la date.
+    - **Suppression en Lot :** Action serveur atomique `batchDeleteSubscribersAction` avec dialogue de confirmation sécurisé.
+    - **Mise à Jour de Statut en Lot :** Action serveur `batchUpdateSubscribersStatusAction` pour marquer en masse comme *Actif* ou *Désinscrit*.
+  - **Intégration & Nettoyage (`app/admin/newsletter/page.tsx` & `actions.ts`) :**
+    - Remplacement de la table statique par `NewsletterListClient`.
+    - Typage strict TypeScript (`tsc --noEmit` avec 0 erreur).
+- **Validation :** `npx tsc --noEmit` validé avec 0 erreur.
+
 ### 0.0v. Résolution Crash `/admin/series-eo/ajouter`, Fiche Candidat Enrichie, Actions en Batch & Capture WhatsApp Newsletter
 - **Demande Utilisateur :**
   1. Il manque les actions en batch sur la gestion des utilisateurs (`/admin/users`).

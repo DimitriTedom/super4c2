@@ -175,3 +175,29 @@ export async function deleteSubscriberAction(formData: FormData) {
     })
   );
 }
+
+export async function batchDeleteSubscribersAction(ids: string[]) {
+  if (!ids || ids.length === 0) return { count: 0 };
+
+  const result = await prisma.newsletterSubscriber.deleteMany({
+    where: { id: { in: ids } },
+  });
+
+  revalidatePath("/admin/newsletter");
+  return { count: result.count };
+}
+
+export async function batchUpdateSubscribersStatusAction(ids: string[], isActive: boolean) {
+  if (!ids || ids.length === 0) return { count: 0 };
+
+  const result = await prisma.newsletterSubscriber.updateMany({
+    where: { id: { in: ids } },
+    data: {
+      isActive,
+      unsubscribedAt: isActive ? null : new Date(),
+    },
+  });
+
+  revalidatePath("/admin/newsletter");
+  return { count: result.count };
+}

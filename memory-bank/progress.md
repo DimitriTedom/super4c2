@@ -1,3 +1,7 @@
+- [x] **Actions en Lot & Relance WhatsApp Groupée sur la Newsletter (`/admin/newsletter`) :**
+  - **Composant Client `NewsletterListClient` :** Sélection unitaire ou globale, barre flottante `AdminBatchActionBar` avec animation Framer Motion.
+  - **Outils d'Action Rapide :** Bouton de copie groupée des numéros WhatsApp, copie groupée des adresses e-mail, export CSV ciblé encodé UTF-8 BOM, bascule de statut actif/désinscrit en lot, et suppression en masse sécurisée.
+  - **Validation :** 0 erreur TypeScript (`npx tsc --noEmit`).
 - [x] **Assainissement de la Vue Admin, Éradication B2B/Cohortes, Pagination & Résilience Base :**
   - **Éradication Totale du B2B :** Suppression de tous les types `Cohort`, onglets `cohorts` et `licenses`, faux élèves et fausses écoles dans `AdminDashboard` et `AdminPage`.
   - **Pieds de Tableau pour la Pagination :** Ajout de `AdminTablePagination` dans `AdminDashboard` (candidats), `app/admin/series-ce/page.tsx` et uniformisation dans `app/admin/users/page.tsx`.
