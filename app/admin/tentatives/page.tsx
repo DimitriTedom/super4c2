@@ -16,15 +16,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ConfirmActionDialog } from "@/components/admin/ConfirmActionDialog";
 import { AdminTablePagination } from "@/components/admin/AdminTablePagination";
 import { AdminExportButton } from "@/components/admin/admin-export-button";
-import { AttemptInspectDialog } from "@/components/admin/attempt-inspect-dialog";
+import { AttemptListClient } from "@/components/admin/attempt-list-client";
 import { getAdminPagination } from "@/lib/admin-pagination";
 import { toOptionalString } from "@/lib/admin-crud-utils";
 import { prisma } from "@/lib/prisma";
 import { getDisciplineMeta } from "@/lib/dashboard/attempt-utils";
-import { deleteAttemptAction } from "./actions";
 
 export const metadata = {
   title: "Tentatives & Copies Candidats — Back-Office | Super4C2",
@@ -341,175 +339,31 @@ export default async function TentativesPage({ searchParams }: TentativesPagePro
           </div>
         </div>
 
-        {/* Table of Attempts */}
-        {attempts.length === 0 ? (
-          <div className="rounded-2xl border border-dashed p-12 text-center bg-card/40 space-y-3">
-            <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto text-primary">
-              <GraduationCap className="h-6 w-6" />
-            </div>
-            <h3 className="font-bold text-base text-foreground">Aucune tentative trouvée</h3>
-            <p className="text-xs text-muted-foreground max-w-sm mx-auto">
-              Aucune session d&apos;examen ne correspond à vos filtres actuels.
-            </p>
-          </div>
-        ) : (
+        {/* Table interactive avec Sélection Multiple, Purge en Lot & Inspection */}
+        <AttemptListClient
+          attempts={attempts.map((attempt) => ({
+            id: attempt.id,
+            discipline: attempt.discipline,
+            rawScore: attempt.rawScore,
+            tcfScaledScore: attempt.tcfScaledScore,
+            nclcLevel: attempt.nclcLevel,
+            crsPointsUnlocked: attempt.crsPointsUnlocked,
+            answers: attempt.answers,
+            feedback: attempt.feedback,
+            createdAt: attempt.createdAt,
+            user: attempt.user,
+          }))}
+        />
+
+        {/* Pagination du Tableau */}
+        {attempts.length > 0 && pagination.totalPages > 1 && (
           <div className="rounded-2xl border bg-card shadow-xs overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs">
-                <thead>
-                  <tr className="border-b bg-muted/30 text-muted-foreground font-semibold">
-                    <th className="py-3 px-4">Candidat</th>
-                    <th className="py-3 px-4">Épreuve</th>
-                    <th className="py-3 px-4 text-center">Score Brut</th>
-                    <th className="py-3 px-4 text-center">Score TCF</th>
-                    <th className="py-3 px-4 text-center">Niveau NCLC</th>
-                    <th className="py-3 px-4 text-center">Bonus CRS</th>
-                    <th className="py-3 px-4">Date de Passation</th>
-                    <th className="py-3 px-4 text-right">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border/60">
-                  {attempts.map((attempt) => {
-                    const meta = getDisciplineMeta(attempt.discipline);
-                    const candidateName =
-                      attempt.user?.profile?.displayName ||
-                      attempt.user?.email?.split("@")[0] ||
-                      "Anonyme";
-                    const candidateEmail = attempt.user?.email || "Visiteur non connecté";
-                    const isNclc7Plus = attempt.nclcLevel >= 7;
-
-                    return (
-                      <tr key={attempt.id} className="hover:bg-muted/30 transition-colors">
-                        {/* Candidate */}
-                        <td className="py-3 px-4">
-                          <div className="flex items-center gap-2.5">
-                            <div className="h-8 w-8 rounded-full bg-primary/10 text-primary font-bold text-xs flex items-center justify-center shrink-0">
-                              {candidateName.slice(0, 2).toUpperCase()}
-                            </div>
-                            <div className="space-y-0.5">
-                              <p className="font-bold text-foreground text-xs">
-                                {candidateName}
-                              </p>
-                              <p className="text-[11px] text-muted-foreground font-mono">
-                                {candidateEmail}
-                              </p>
-                            </div>
-                          </div>
-                        </td>
-
-                        {/* Discipline */}
-                        <td className="py-3 px-4">
-                          <div className="flex items-center gap-1.5 font-semibold text-foreground">
-                            <span>{meta.emoji}</span>
-                            <span>{meta.label}</span>
-                          </div>
-                        </td>
-
-                        {/* Raw Score */}
-                        <td className="py-3 px-4 text-center font-mono">
-                          {attempt.discipline === "EXPRESSION_ECRITE"
-                            ? `${attempt.rawScore} / 20`
-                            : attempt.discipline === "EXPRESSION_ORALE"
-                            ? `${attempt.rawScore} / 20`
-                            : `${attempt.rawScore} / 39`}
-                        </td>
-
-                        {/* Scaled Score */}
-                        <td className="py-3 px-4 text-center font-mono font-bold text-primary">
-                          {attempt.tcfScaledScore} / 699
-                        </td>
-
-                        {/* NCLC Level */}
-                        <td className="py-3 px-4 text-center">
-                          <span
-                            className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-mono font-bold border ${
-                              isNclc7Plus
-                                ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/30"
-                                : "bg-muted text-muted-foreground border-border"
-                            }`}
-                          >
-                            NCLC {attempt.nclcLevel}
-                          </span>
-                        </td>
-
-                        {/* Bonus CRS */}
-                        <td className="py-3 px-4 text-center">
-                          {attempt.crsPointsUnlocked > 0 ? (
-                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 font-mono">
-                              <Sparkles className="h-2.5 w-2.5" />
-                              +{attempt.crsPointsUnlocked} pts
-                            </span>
-                          ) : (
-                            <span className="text-[11px] text-muted-foreground font-mono">
-                              0 pt
-                            </span>
-                          )}
-                        </td>
-
-                        {/* Date */}
-                        <td className="py-3 px-4 text-muted-foreground text-[11px]">
-                          {new Date(attempt.createdAt).toLocaleString("fr-FR", {
-                            dateStyle: "short",
-                            timeStyle: "short",
-                          })}
-                        </td>
-
-                        {/* Actions */}
-                        <td className="py-3 px-4 text-right">
-                          <div className="flex items-center justify-end gap-1.5">
-                            <AttemptInspectDialog
-                              attempt={{
-                                id: attempt.id,
-                                discipline: attempt.discipline,
-                                rawScore: attempt.rawScore,
-                                tcfScaledScore: attempt.tcfScaledScore,
-                                nclcLevel: attempt.nclcLevel,
-                                crsPointsUnlocked: attempt.crsPointsUnlocked,
-                                answers: attempt.answers,
-                                feedback: attempt.feedback,
-                                createdAt: attempt.createdAt,
-                                user: attempt.user,
-                              }}
-                            />
-
-                            <form id={`del-attempt-${attempt.id}`} action={deleteAttemptAction}>
-                              <input type="hidden" name="id" value={attempt.id} />
-                            </form>
-
-                            <ConfirmActionDialog
-                              trigger={
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive"
-                                  title="Supprimer la session"
-                                >
-                                  <Trash2 className="h-3.5 w-3.5" />
-                                </Button>
-                              }
-                              title="Supprimer cette session d'examen ?"
-                              description="Êtes-vous sûr de vouloir supprimer définitivement cette tentative de la base de données ? Cette action est irréversible."
-                              confirmLabel="Supprimer"
-                              formId={`del-attempt-${attempt.id}`}
-                            />
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-
-            {/* Pagination */}
-            {pagination.totalPages > 1 && (
-              <AdminTablePagination
-                currentPage={pagination.currentPage}
-                totalPages={pagination.totalPages}
-                basePath="/admin/tentatives"
-                search={q ?? undefined}
-              />
-            )}
+            <AdminTablePagination
+              currentPage={pagination.currentPage}
+              totalPages={pagination.totalPages}
+              basePath="/admin/tentatives"
+              search={q ?? undefined}
+            />
           </div>
         )}
       </div>

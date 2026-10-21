@@ -2,6 +2,22 @@
 
 ## 0. Déploiement Production Vercel & Moteur de Conversion
 
+### 0.0x. Optimisation Back-Office : Actions en Lot & Purge Sécurisée des Tentatives (`/admin/tentatives`)
+- **Demande Utilisateur :**
+  1. Implémenter la Priorité 2 : Actions en lot et purge sécurisée des copies de test sur `/admin/tentatives`.
+- **Réalisations & Améliorations Apportées :**
+  - **Composant Client `AttemptListClient` (`components/admin/attempt-list-client.tsx`) :**
+    - Cases à cocher individuelles et sélection globale « Tout sélectionner ».
+    - Barre flottante `AdminBatchActionBar` avec animation spring Framer Motion.
+    - **Purge / Suppression en Lot :** Action serveur atomique `batchDeleteAttemptsAction` supprimant d'un coup toutes les copies cochées avec revalidation de cache (`/admin/tentatives`, `/admin`).
+    - **Export CSV Ciblé :** Exportation immédiate des seules sessions sélectionnées (Candidat, Email, Épreuve, Score brut, Score TCF, NCLC, Points CRS, Date) en UTF-8 BOM.
+    - **Copie Groupée des E-mails Candidats :** Bouton rapide d'extraction et copie des adresses e-mail de la sélection dans le presse-papier.
+    - **Maintien de l'Inspection Détaillée :** Composant `AttemptInspectDialog` conservé pour chaque ligne pour auditer les rédactions, les grilles FEI et les Magic Rewrite C2.
+  - **Action Serveur Haute Résilience (`app/admin/tentatives/actions.ts`) :**
+    - Création de `batchDeleteAttemptsAction(ids)`.
+    - Typage strict TypeScript (`tsc --noEmit` avec 0 erreur).
+- **Validation :** `npx tsc --noEmit` validé avec 0 erreur.
+
 ### 0.0w. Optimisation Back-Office : Actions en Lot & Campagne WhatsApp Groupée sur la Newsletter (`/admin/newsletter`)
 - **Demande Utilisateur :**
   1. Optimiser le back-office Super4C2.

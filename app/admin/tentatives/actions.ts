@@ -24,3 +24,15 @@ export async function deleteAttemptAction(formData: FormData) {
     })
   );
 }
+
+export async function batchDeleteAttemptsAction(ids: string[]) {
+  if (!ids || ids.length === 0) return { count: 0 };
+
+  const result = await prisma.userAttempt.deleteMany({
+    where: { id: { in: ids } },
+  });
+
+  revalidatePath("/admin/tentatives");
+  revalidatePath("/admin");
+  return { count: result.count };
+}

@@ -1,3 +1,7 @@
+- [x] **Purge et Suppression en Lot des Copies de Test (`/admin/tentatives`) :**
+  - **Composant Client `AttemptListClient` :** Sélection multiple avec cases à cocher, barre d'actions groupées `AdminBatchActionBar`.
+  - **Outils d'Action Rapide :** Purge atomique sécurisée `batchDeleteAttemptsAction`, export CSV ciblé encodé UTF-8 BOM, copie groupée des e-mails des candidats, et dialogue d'inspection pédagogique détaillé.
+  - **Validation :** 0 erreur TypeScript (`npx tsc --noEmit`).
 - [x] **Actions en Lot & Relance WhatsApp Groupée sur la Newsletter (`/admin/newsletter`) :**
   - **Composant Client `NewsletterListClient` :** Sélection unitaire ou globale, barre flottante `AdminBatchActionBar` avec animation Framer Motion.
   - **Outils d'Action Rapide :** Bouton de copie groupée des numéros WhatsApp, copie groupée des adresses e-mail, export CSV ciblé encodé UTF-8 BOM, bascule de statut actif/désinscrit en lot, et suppression en masse sécurisée.
