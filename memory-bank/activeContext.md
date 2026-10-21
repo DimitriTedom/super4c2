@@ -2,6 +2,20 @@
 
 ## 0. Déploiement Production Vercel & Moteur de Conversion
 
+### 0.0y. Optimisation Back-Office : Filtres Rapides & Détection des Candidats à Relancer (`/admin/users`)
+- **Demande Utilisateur :**
+  1. Implémenter l'Option A (Priorité 3) : Filtre rapide pour identifier les candidats sans simulation sur `/admin/users` et faciliter leur relance WhatsApp.
+- **Réalisations & Améliorations Apportées :**
+  - **Onglets de Filtres Rapides Dynamiques (`app/admin/users/page.tsx`) :**
+    - **Tous les candidats :** Vue d'ensemble avec décompte global en direct.
+    - **À relancer (0 simulation) :** Détection automatique des profils n'ayant passé aucun test (`attempts: { none: {} }`), pastille ambrée avec compteur dynamique.
+    - **Actifs (1+ simulations) :** Profils engagés ayant au moins 1 simulation évaluée (`attempts: { some: {} }`), pastille verte émeraude.
+    - **Avec WhatsApp :** Candidats disposant d'un numéro de téléphone WhatsApp validé (`profile: { phone: { not: null } }`).
+  - **Pagination Multi-Critères Robuste (`components/admin/AdminTablePagination.tsx`) :**
+    - Extension de `AdminTablePaginationProps` avec le paramètre `extraParams?: Record<string, string | undefined>` pour préserver le filtre actif lors de la navigation de page en page.
+  - **Recherche & Combinaison :** Possibilité de combiner recherche plein-texte (nom, email) et filtre de segmentation.
+- **Validation :** `npx tsc --noEmit` validé avec 0 erreur.
+
 ### 0.0x. Optimisation Back-Office : Actions en Lot & Purge Sécurisée des Tentatives (`/admin/tentatives`)
 - **Demande Utilisateur :**
   1. Implémenter la Priorité 2 : Actions en lot et purge sécurisée des copies de test sur `/admin/tentatives`.

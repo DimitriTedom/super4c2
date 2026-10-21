@@ -9,6 +9,7 @@ interface AdminTablePaginationProps {
   totalPages: number;
   basePath: string;
   search?: string;
+  extraParams?: Record<string, string | undefined>;
 }
 
 export function AdminTablePagination({
@@ -16,6 +17,7 @@ export function AdminTablePagination({
   totalPages,
   basePath,
   search,
+  extraParams,
 }: AdminTablePaginationProps) {
   if (totalPages <= 1) return null;
 
@@ -23,6 +25,11 @@ export function AdminTablePagination({
     const params = new URLSearchParams();
     if (page > 1) params.set("page", page.toString());
     if (search) params.set("search", search);
+    if (extraParams) {
+      Object.entries(extraParams).forEach(([k, v]) => {
+        if (v) params.set(k, v);
+      });
+    }
     const query = params.toString();
     return query ? `${basePath}?${query}` : basePath;
   };

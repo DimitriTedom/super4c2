@@ -1,3 +1,7 @@
+- [x] **Filtres Rapides & Détection des Candidats à Relancer (`/admin/users`) :**
+  - **Segmentation en 1 Clic :** Onglets rapides avec badges de compteurs : *Tous les candidats*, *À relancer (0 simulation)*, *Actifs (1+ simulations)*, et *Avec WhatsApp*.
+  - **Pagination Multi-Paramètres :** Support de `extraParams` dans `AdminTablePagination` préservant les filtres actifs lors de la navigation.
+  - **Validation :** 0 erreur TypeScript (`npx tsc --noEmit`).
 - [x] **Purge et Suppression en Lot des Copies de Test (`/admin/tentatives`) :**
   - **Composant Client `AttemptListClient` :** Sélection multiple avec cases à cocher, barre d'actions groupées `AdminBatchActionBar`.
   - **Outils d'Action Rapide :** Purge atomique sécurisée `batchDeleteAttemptsAction`, export CSV ciblé encodé UTF-8 BOM, copie groupée des e-mails des candidats, et dialogue d'inspection pédagogique détaillé.

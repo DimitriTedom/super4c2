@@ -1,5 +1,13 @@
 import Link from "next/link";
-import { Search, Users as UsersIcon, CalendarClock, Target } from "lucide-react";
+import {
+  Search,
+  Users as UsersIcon,
+  CalendarClock,
+  Target,
+  Clock,
+  GraduationCap,
+  MessageCircle,
+} from "lucide-react";
 
 import { AdminShell } from "@/components/admin/admin-shell";
 import { Button } from "@/components/ui/button";
@@ -17,7 +25,7 @@ export const dynamic = "force-dynamic";
 const PAGE_SIZE = 15;
 
 interface UsersPageProps {
-  searchParams: Promise<{ q?: string; page?: string }>;
+  searchParams: Promise<{ q?: string; page?: string; filter?: string }>;
 }
 
 function formatDate(date: Date | null | undefined) {
@@ -26,11 +34,12 @@ function formatDate(date: Date | null | undefined) {
 }
 
 export default async function AdminUsersPage({ searchParams }: UsersPageProps) {
-  const { q, page } = await searchParams;
+  const { q, page, filter } = await searchParams;
   const query = q?.trim() ?? "";
+  const currentFilter = filter || "all";
   const currentPage = Math.max(1, Number.parseInt(page ?? "1", 10) || 1);
 
-  const where = query
+  const baseSearchWhere = query
     ? {
         OR: [
           { email: { contains: query, mode: "insensitive" as const } },
@@ -39,12 +48,30 @@ export default async function AdminUsersPage({ searchParams }: UsersPageProps) {
       }
     : {};
 
+  const filterWhere: any = {};
+  if (currentFilter === "zero_attempts") {
+    filterWhere.attempts = { none: {} };
+  } else if (currentFilter === "active") {
+    filterWhere.attempts = { some: {} };
+  } else if (currentFilter === "has_phone") {
+    filterWhere.profile = { phone: { not: null } };
+  }
+
+  const where = {
+    ...baseSearchWhere,
+    ...filterWhere,
+  };
+
   let total = 0;
+  let allCount = 0;
+  let zeroCount = 0;
+  let activeCount = 0;
+  let hasPhoneCount = 0;
   let users: any[] = [];
   let dbError: string | null = null;
 
   try {
-    const [t, uList] = await Promise.all([
+    const [t, uList, totalAll, totalZero, totalActive, totalPhone] = await Promise.all([
       prisma.user.count({ where }),
       prisma.user.findMany({
         where,
@@ -68,9 +95,17 @@ export default async function AdminUsersPage({ searchParams }: UsersPageProps) {
           _count: { select: { attempts: true } },
         },
       }),
+      prisma.user.count({ where: baseSearchWhere }),
+      prisma.user.count({ where: { ...baseSearchWhere, attempts: { none: {} } } }),
+      prisma.user.count({ where: { ...baseSearchWhere, attempts: { some: {} } } }),
+      prisma.user.count({ where: { ...baseSearchWhere, profile: { phone: { not: null } } } }),
     ]);
     total = t;
     users = uList;
+    allCount = totalAll;
+    zeroCount = totalZero;
+    activeCount = totalActive;
+    hasPhoneCount = totalPhone;
   } catch (error) {
     console.error("Erreur lors du chargement des candidats :", error);
     dbError = "Impossible de récupérer les candidats en direct. Veuillez vérifier la connexion base de données.";
@@ -147,6 +182,9 @@ export default async function AdminUsersPage({ searchParams }: UsersPageProps) {
               ]}
             />
             <form action="/admin/users" method="GET" className="flex w-full gap-2 sm:w-auto">
+              {currentFilter !== "all" && (
+                <input type="hidden" name="filter" value={currentFilter} />
+              )}
               <div className="relative flex-1 sm:w-64">
                 <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                 <input
@@ -164,6 +202,65 @@ export default async function AdminUsersPage({ searchParams }: UsersPageProps) {
           </div>
         </header>
 
+        {/* Quick Filter Tabs */}
+        <div className="flex flex-wrap items-center gap-2 text-xs">
+          <Link
+            href={`/admin/users?${new URLSearchParams({ ...(query && { q: query }) }).toString()}`}
+            className={`px-3 py-1.5 rounded-xl font-semibold transition-all ${
+              currentFilter === "all"
+                ? "bg-primary text-primary-foreground shadow-xs font-bold"
+                : "bg-muted/60 text-muted-foreground hover:bg-muted hover:text-foreground"
+            }`}
+          >
+            Tous les candidats ({allCount})
+          </Link>
+
+          <Link
+            href={`/admin/users?${new URLSearchParams({ ...(query && { q: query }), filter: "zero_attempts" }).toString()}`}
+            className={`px-3 py-1.5 rounded-xl font-semibold transition-all flex items-center gap-1.5 ${
+              currentFilter === "zero_attempts"
+                ? "bg-amber-500 text-white shadow-xs font-bold"
+                : "bg-amber-500/10 text-amber-700 dark:text-amber-300 hover:bg-amber-500/20"
+            }`}
+          >
+            <Clock className="h-3.5 w-3.5" />
+            <span>À relancer (0 simulation)</span>
+            <span className="ml-1 px-1.5 py-0.5 rounded-full text-[10px] bg-amber-500/20 font-bold">
+              {zeroCount}
+            </span>
+          </Link>
+
+          <Link
+            href={`/admin/users?${new URLSearchParams({ ...(query && { q: query }), filter: "active" }).toString()}`}
+            className={`px-3 py-1.5 rounded-xl font-semibold transition-all flex items-center gap-1.5 ${
+              currentFilter === "active"
+                ? "bg-emerald-600 text-white shadow-xs font-bold"
+                : "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-500/20"
+            }`}
+          >
+            <GraduationCap className="h-3.5 w-3.5" />
+            <span>Actifs (1+ simulations)</span>
+            <span className="ml-1 px-1.5 py-0.5 rounded-full text-[10px] bg-emerald-500/20 font-bold">
+              {activeCount}
+            </span>
+          </Link>
+
+          <Link
+            href={`/admin/users?${new URLSearchParams({ ...(query && { q: query }), filter: "has_phone" }).toString()}`}
+            className={`px-3 py-1.5 rounded-xl font-semibold transition-all flex items-center gap-1.5 ${
+              currentFilter === "has_phone"
+                ? "bg-emerald-500 text-white shadow-xs font-bold"
+                : "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-500/20"
+            }`}
+          >
+            <MessageCircle className="h-3.5 w-3.5 fill-current" />
+            <span>Avec WhatsApp</span>
+            <span className="ml-1 px-1.5 py-0.5 rounded-full text-[10px] bg-emerald-500/20 font-bold">
+              {hasPhoneCount}
+            </span>
+          </Link>
+        </div>
+
         {dbError && (
           <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-4 text-xs text-amber-800 dark:text-amber-200">
             {dbError}
@@ -179,6 +276,7 @@ export default async function AdminUsersPage({ searchParams }: UsersPageProps) {
             totalPages={totalPages}
             basePath="/admin/users"
             search={query || undefined}
+            extraParams={{ filter: currentFilter !== "all" ? currentFilter : undefined }}
           />
         </div>
       </div>
