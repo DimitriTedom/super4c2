@@ -8,7 +8,6 @@ import { ArrowLeft } from "lucide-react";
 import { SiteFooter } from "@/components/site-footer";
 import { MobileNavBar } from "@/components/mobile-nav";
 import { AiChatWidget } from "@/components/ai/ai-chat-widget";
-import { ScrollProgress } from "@/components/ui/scroll-progress";
 import { ScrollToTop } from "@/components/ui/scroll-to-top";
 import { NewcomerGuideModal } from "@/components/onboarding/newcomer-guide-modal";
 
@@ -89,9 +88,6 @@ export function AppShell({ header, children }: AppShellProps) {
 
   return (
     <div className="flex min-h-screen flex-col justify-between pb-16 lg:pb-0 relative">
-      {/* Barre de défilement en haut du body */}
-      <ScrollProgress />
-
       <div>
         {header}
         <main className={isFullWidth ? "w-full" : "mx-auto max-w-7xl px-4 py-8"}>

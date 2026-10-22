@@ -81,11 +81,20 @@ export function WrittenExamEditor({
   autoStart = false,
 }: WrittenExamEditorProps) {
   const router = useRouter();
-  const handleGoBack = () => {
+
+  const executeGoBack = () => {
     if (typeof window !== "undefined" && window.history.length > 1) {
       router.back();
     } else {
       router.push(`/examens/${series.id}/ee/intro`);
+    }
+  };
+
+  const handleGoBack = () => {
+    if (!isFinished && texts.some((t) => t && t.trim().length > 0)) {
+      setIsExitOpen(true);
+    } else {
+      executeGoBack();
     }
   };
   const [mode, setMode] = useState<"exam" | "practice">(initialMode);
@@ -1088,11 +1097,12 @@ export function WrittenExamEditor({
         <button
           type="button"
           onClick={() => setIsRestoreOpen(true)}
-          className="fixed bottom-6 left-6 z-40 group flex items-center gap-2 rounded-full border border-primary/30 bg-card/95 hover:bg-card px-3.5 py-2 shadow-xl hover:shadow-2xl transition-all duration-200 text-xs font-bold text-foreground hover:border-primary backdrop-blur-md animate-in fade-in slide-in-from-bottom-3"
-          title="Restaurer votre travail précédent"
+          className="fixed bottom-6 left-6 z-50 group flex items-center gap-2 rounded-full border border-primary/30 bg-card/95 hover:bg-card px-3.5 py-2 shadow-xl hover:shadow-2xl transition-all duration-200 text-xs font-bold text-foreground hover:border-primary backdrop-blur-md animate-in fade-in slide-in-from-bottom-3"
+          title="Historique / Restaurer votre travail précédent"
         >
           <History className="h-4 w-4 text-primary group-hover:rotate-[-45deg] transition-transform duration-300" />
-          <span>Restaurer mon brouillon</span>
+          <span>Historique &amp; Brouillon</span>
+          <RotateCcw className="h-3 w-3 text-muted-foreground group-hover:text-primary transition-colors" />
           <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
         </button>
       )}
@@ -1138,21 +1148,29 @@ export function WrittenExamEditor({
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-foreground font-display text-lg">
               <LogOut className="h-5 w-5 text-primary" />
-              Quitter la salle d&apos;Expression Écrite ?
+              Quitter la session d&apos;examen ?
             </DialogTitle>
             <DialogDescription className="space-y-2 pt-2 text-sm leading-relaxed text-muted-foreground">
               <p>
-                Vos brouillons et votre chronomètre sont <strong>sauvegardés automatiquement</strong> sur cet appareil.
+                Votre brouillon et votre progression sont <strong>sauvegardés automatiquement</strong> en continu.
               </p>
-              <p>Vous pourrez reprendre cette session à tout moment depuis le catalogue.</p>
+              <p>
+                Vous pourrez reprendre votre travail à tout moment grâce au bouton flottant d&apos;historique et de restauration.
+              </p>
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="gap-2 sm:gap-0 pt-4">
             <Button variant="outline" onClick={() => setIsExitOpen(false)}>
               Poursuivre la rédaction
             </Button>
-            <Button asChild variant="destructive">
-              <Link href="/examens/demo-101-ce">Quitter la session</Link>
+            <Button
+              variant="destructive"
+              onClick={() => {
+                setIsExitOpen(false);
+                executeGoBack();
+              }}
+            >
+              Quitter et sauvegarder
             </Button>
           </DialogFooter>
         </DialogContent>

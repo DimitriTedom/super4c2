@@ -540,7 +540,7 @@ export function AiChatWidget() {
                 rows={1}
                 placeholder="Posez votre question à Aura C2™ (ex: grammaire, NCLC 7...)"
                 disabled={loading}
-                className="max-h-28 min-h-[38px] w-full resize-none bg-transparent text-sm text-foreground placeholder:text-muted-foreground focus:outline-hidden disabled:opacity-50"
+                className="max-h-28 min-h-[38px] w-full resize-none bg-transparent border-0 outline-none ring-0 text-sm text-foreground placeholder:text-muted-foreground focus:border-0 focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0 disabled:opacity-50"
               />
               <Button
                 onClick={() => void handleSend()}

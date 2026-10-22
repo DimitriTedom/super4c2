@@ -70,7 +70,7 @@ export async function getNotificationsAction(options?: {
 
     const whereClause = {
       recipient: "CANDIDATE",
-      OR: [{ userId: user.id }, { userId: null }],
+      userId: user.id,
       ...(options?.unreadOnly ? { isRead: false } : {}),
     };
 
@@ -83,7 +83,7 @@ export async function getNotificationsAction(options?: {
       prisma.notification.count({
         where: {
           recipient: "CANDIDATE",
-          OR: [{ userId: user.id }, { userId: null }],
+          userId: user.id,
           isRead: false,
         },
       }),

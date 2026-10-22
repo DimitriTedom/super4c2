@@ -72,45 +72,57 @@ export function WritingMethodologyHub({
 
   const currentCompanion = getCompanionById(companionId);
 
-  const audioPlayerRef = React.useRef<HTMLAudioElement | null>(null);
-
-  // Arrêt de l'audio lors du démontage
+  // Arrêt de l'audio vocal lors du démontage
   useEffect(() => {
     return () => {
-      if (audioPlayerRef.current) {
-        audioPlayerRef.current.pause();
-        audioPlayerRef.current = null;
+      if (typeof window !== "undefined" && "speechSynthesis" in window) {
+        window.speechSynthesis.cancel();
       }
     };
   }, []);
 
-  // Lecture audio ElevenLabs haute fidélité de présentation de la page
+  // Lecture vocale pédagogique et contextualisée de la page d'Expression Écrite
   const handlePlayPageTour = () => {
-    if (isSpeakingTour) {
-      if (audioPlayerRef.current) {
-        audioPlayerRef.current.pause();
-        audioPlayerRef.current.currentTime = 0;
-        audioPlayerRef.current = null;
-      }
+    if (typeof window === "undefined" || !("speechSynthesis" in window)) {
       setIsSpeakingTour(false);
       return;
     }
 
-    if (audioPlayerRef.current) {
-      audioPlayerRef.current.pause();
-      audioPlayerRef.current = null;
+    if (isSpeakingTour) {
+      window.speechSynthesis.cancel();
+      setIsSpeakingTour(false);
+      return;
     }
 
-    const audioUrl = currentCompanion.audioPreviewUrl || "/audio/eo/laurent-step1.mp3";
     try {
-      const audio = new Audio(audioUrl);
-      audioPlayerRef.current = audio;
+      window.speechSynthesis.cancel();
+      const textToSpeak = currentCompanion.pageTourSpeech || currentCompanion.speechText;
+      const utterance = new SpeechSynthesisUtterance(textToSpeak);
+      utterance.lang = "fr-FR";
+      utterance.rate = 1.0;
 
-      audio.onplay = () => setIsSpeakingTour(true);
-      audio.onended = () => setIsSpeakingTour(false);
-      audio.onerror = () => setIsSpeakingTour(false);
+      const voices = window.speechSynthesis.getVoices();
+      const frenchVoice =
+        voices.find(
+          (v) =>
+            v.lang.startsWith("fr") &&
+            (v.name.includes("Thomas") ||
+              v.name.includes("Google") ||
+              v.name.includes("Natural") ||
+              v.name.includes("Audrey") ||
+              v.name.includes("Amelie") ||
+              v.name.includes("Celine"))
+        ) || voices.find((v) => v.lang.startsWith("fr"));
 
-      audio.play().catch(() => setIsSpeakingTour(false));
+      if (frenchVoice) {
+        utterance.voice = frenchVoice;
+      }
+
+      utterance.onstart = () => setIsSpeakingTour(true);
+      utterance.onend = () => setIsSpeakingTour(false);
+      utterance.onerror = () => setIsSpeakingTour(false);
+
+      window.speechSynthesis.speak(utterance);
     } catch {
       setIsSpeakingTour(false);
     }
@@ -518,7 +530,7 @@ export function WritingMethodologyHub({
               size="lg"
               className="bg-brand-crimson hover:bg-brand-crimson/90 text-white font-black text-sm px-6 h-11 rounded-xl shadow-md gap-2 shrink-0"
             >
-              <Link href={`/examens/${series.id}/ee?mode=exam`}>
+              <Link href={`/examens/${series.id}/ee?mode=exam&start=true`}>
                 <PenTool className="h-4 w-4" />
                 <span>Démarrer l&apos;Examen d&apos;Écriture (60:00)</span>
                 <ArrowRight className="h-4 w-4" />
@@ -908,7 +920,7 @@ export function WritingMethodologyHub({
 
             <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-3">
               <Button asChild size="lg" className="bg-emerald-600 hover:bg-emerald-700 text-white font-black text-base px-8 h-12 shadow-lg gap-2">
-                <Link href={`/examens/${series.id}/ee?mode=exam`}>
+                <Link href={`/examens/${series.id}/ee?mode=exam&start=true`}>
                   <span>Lancer l&apos;Examen {series.seriesNumber || 1} (60:00)</span>
                   <ArrowRight className="h-5 w-5" />
                 </Link>
