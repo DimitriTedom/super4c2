@@ -1,3 +1,11 @@
+- [x] **Correctifs Direction & Retours UX (Examens, Navigation, Copywriting & Note Entraînement Tâche) :**
+  - **Copywriting Hero :** Sous-titre corrigé en « décrocher vos C2 » (suppression du chiffre « 4 » redondant).
+  - **CTA Hero & Entonnoir :** Remplacement de « Choisir ma Session d'Examen » par « Me préparer à l'Examen », pointant directement vers `/examens?test=tcf`.
+  - **Clarification du Catalogue :** Remplacement de « Sessions » par « Examens » (Examen 01, Examen 02, etc.) éliminant toute confusion administrative.
+  - **Bouton « Retourner » :** Branché sur l'historique du navigateur (`router.back()`) pour revenir naturellement à la page précédente (ex: Méthodologie).
+  - **Hiérarchie Systématique :** Expression Écrite (EE) et Expression Orale (EO) systématiquement placées EN PREMIER, suivies de Compréhension Orale (CO) et Compréhension Écrite (CE).
+  - **Option A Validée & Implémentée :** Retrait des 3 boutons individuels par tâche dans la méthodologie. Intégration d'un bandeau d'action unique clair pour démarrer l'épreuve complète officielle de 60 minutes.
+  - **Validation :** 0 erreur TypeScript (`npx tsc --noEmit`).
 - [x] **Filtres Rapides & Détection des Candidats à Relancer (`/admin/users`) :**
   - **Segmentation en 1 Clic :** Onglets rapides avec badges de compteurs : *Tous les candidats*, *À relancer (0 simulation)*, *Actifs (1+ simulations)*, et *Avec WhatsApp*.
   - **Pagination Multi-Paramètres :** Support de `extraParams` dans `AdminTablePagination` préservant les filtres actifs lors de la navigation.

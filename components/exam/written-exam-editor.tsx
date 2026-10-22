@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   Clock,
   Send,
@@ -79,6 +80,14 @@ export function WrittenExamEditor({
   initialTaskIndex = 0,
   autoStart = false,
 }: WrittenExamEditorProps) {
+  const router = useRouter();
+  const handleGoBack = () => {
+    if (typeof window !== "undefined" && window.history.length > 1) {
+      router.back();
+    } else {
+      router.push(`/examens/${series.id}/ee/intro`);
+    }
+  };
   const [mode, setMode] = useState<"exam" | "practice">(initialMode);
   const storageKey = `super4c2:written:${series.id}:${mode}`;
 
@@ -499,15 +508,14 @@ export function WrittenExamEditor({
         {/* 1. Bouton Retourner (avec flèche) */}
         <div className="flex items-center">
           <Button
-            asChild
+            type="button"
             variant="outline"
             size="sm"
+            onClick={handleGoBack}
             className="rounded-full gap-2 px-3.5 h-8 border-border/80 bg-background/80 hover:bg-muted font-bold text-xs shadow-2xs group shrink-0"
           >
-            <Link href={`/examens/${series.id}/ee/intro`}>
-              <ArrowLeft className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-1 text-primary" />
-              <span>Retourner</span>
-            </Link>
+            <ArrowLeft className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-1 text-primary" />
+            <span>Retourner</span>
           </Button>
         </div>
 

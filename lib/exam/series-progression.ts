@@ -973,10 +973,31 @@ export const IELTS_PROGRESSION_SERIES: ProgressionSeries[] = [
   },
 ];
 
+const DISCIPLINE_SORT_WEIGHT: Record<string, number> = {
+  ee: 1,
+  eo: 2,
+  co: 3,
+  ce: 4,
+};
+
+export function sortDisciplines(disciplines: SeriesDisciplineInfo[]): SeriesDisciplineInfo[] {
+  return [...disciplines].sort(
+    (a, b) => (DISCIPLINE_SORT_WEIGHT[a.type] ?? 99) - (DISCIPLINE_SORT_WEIGHT[b.type] ?? 99)
+  );
+}
+
 export function getSeriesForTest(testType: TestType = "tcf"): ProgressionSeries[] {
-  if (testType === "tef") return TEF_PROGRESSION_SERIES;
-  if (testType === "ielts") return IELTS_PROGRESSION_SERIES;
-  return TCF_PROGRESSION_SERIES;
+  const raw =
+    testType === "tef"
+      ? TEF_PROGRESSION_SERIES
+      : testType === "ielts"
+      ? IELTS_PROGRESSION_SERIES
+      : TCF_PROGRESSION_SERIES;
+
+  return raw.map((s) => ({
+    ...s,
+    disciplines: sortDisciplines(s.disciplines),
+  }));
 }
 
 export function getSeriesById(id: string): ProgressionSeries | undefined {
@@ -985,6 +1006,11 @@ export function getSeriesById(id: string): ProgressionSeries | undefined {
     ...TEF_PROGRESSION_SERIES,
     ...IELTS_PROGRESSION_SERIES,
   ];
-  return allSeries.find((s) => s.id === id);
+  const found = allSeries.find((s) => s.id === id);
+  if (!found) return undefined;
+  return {
+    ...found,
+    disciplines: sortDisciplines(found.disciplines),
+  };
 }
 

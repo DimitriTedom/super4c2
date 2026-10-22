@@ -62,7 +62,7 @@ export default async function HomePage() {
               {/* Flou ciblé uniquement derrière le texte de description pour adoucir les points sous les lettres sans voiler le titre ni le globe */}
               <div className="pointer-events-none absolute -inset-x-6 -inset-y-3 z-[-1] rounded-2xl bg-background/75 dark:bg-background/65 backdrop-blur-md [mask-image:radial-gradient(ellipse_90%_80%_at_50%_50%,black_50%,transparent_100%)]" />
               <p className="font-body text-base sm:text-xl text-foreground/90 dark:text-slate-200 font-medium leading-relaxed text-balance">
-                Le guide pour décrocher vos <strong className="text-foreground font-bold">4 C2</strong>. Surtout en <strong className="text-foreground font-bold">Expression Écrite</strong>, la bête noire des candidats.
+                Le guide pour décrocher <strong className="text-foreground font-bold">vos C2</strong>. Surtout en <strong className="text-foreground font-bold">Expression Écrite</strong>, la bête noire des candidats.
               </p>
             </div>
           </BlurFade>
@@ -71,13 +71,13 @@ export default async function HomePage() {
             <div className="flex flex-col items-center justify-center gap-4 pt-2">
               <div className="flex flex-col items-center justify-center gap-3">
                 <ShimmerButton
-                  href="/examens"
+                  href="/examens?test=tcf"
                   background="#E51A31"
                   shimmerColor="#ffffff"
                   className="shadow-[0_12px_45px_-10px_rgba(229,26,49,0.7)] font-bold px-8 py-3.5 sm:px-10 sm:py-4 group"
                 >
                   <span className="flex items-center gap-2.5 text-base sm:text-lg font-black tracking-tight text-white">
-                    Choisir ma Session d&apos;Examen
+                    Me préparer à l&apos;Examen
                     <ArrowRight className="h-5 w-5 transition-transform duration-200 group-hover:translate-x-1.5" />
                   </span>
                 </ShimmerButton>

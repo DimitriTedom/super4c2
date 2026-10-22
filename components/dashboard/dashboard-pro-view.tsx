@@ -285,24 +285,23 @@ export function DashboardProView({ userDisplayName, userEmail, attempts }: Dashb
                     </p>
                   </div>
 
-                  {/* Raccourcis Didactiques */}
                   <div className="grid grid-cols-3 gap-2 pt-1">
                     <Link
-                      href="/examens/101/ee?mode=training&task=1"
+                      href="/examens/101/ee/methodologie"
                       className="rounded-xl border border-border/80 bg-background/80 p-2 text-center hover:border-brand-crimson/40 transition-colors"
                     >
                       <span className="text-[10px] text-muted-foreground block">Tâche 1</span>
                       <span className="text-xs font-bold text-foreground">Courriel</span>
                     </Link>
                     <Link
-                      href="/examens/101/ee?mode=training&task=2"
+                      href="/examens/101/ee/methodologie"
                       className="rounded-xl border border-border/80 bg-background/80 p-2 text-center hover:border-brand-crimson/40 transition-colors"
                     >
                       <span className="text-[10px] text-muted-foreground block">Tâche 2</span>
                       <span className="text-xs font-bold text-foreground">Récit</span>
                     </Link>
                     <Link
-                      href="/examens/101/ee?mode=training&task=3"
+                      href="/examens/101/ee/methodologie"
                       className="rounded-xl border border-border/80 bg-background/80 p-2 text-center hover:border-brand-crimson/40 transition-colors"
                     >
                       <span className="text-[10px] text-muted-foreground block">Tâche 3</span>

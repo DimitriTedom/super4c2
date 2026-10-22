@@ -160,7 +160,7 @@ export function ExamRoadmapBoard({
         <div className="space-y-1">
           <div className="flex items-center gap-2.5 flex-wrap">
             <h1 className="font-display text-2xl sm:text-3xl font-black tracking-tight text-foreground">
-              Sessions {testMeta.name}
+              Examens {testMeta.name}
               {activeDiscipline === "ee" && " — Expression Écrite"}
               {activeDiscipline === "eo" && " — Expression Orale"}
             </h1>
@@ -173,7 +173,7 @@ export function ExamRoadmapBoard({
               ? "Préparez vos 3 tâches d'Expression Écrite (60 min) avec évaluation IA officielle FEI."
               : activeDiscipline === "eo"
               ? "Simulateur visio IA en direct : pratiquez vos 3 tâches d'Expression Orale."
-              : "Sélectionnez une session officielle pour lancer l'Épreuve Écrite (60 min) ou l'Épreuve Orale (Visio IA)."}
+              : "Choisissez un examen pour lancer l'Expression Écrite (60 min) ou l'Expression Orale (Visio IA)."}
           </p>
         </div>
 
@@ -289,7 +289,7 @@ export function ExamRoadmapBoard({
       <div className="space-y-4">
         <div className="flex items-center justify-between text-xs font-mono text-muted-foreground px-1">
           <span>
-            {seriesList.length} Sessions d&apos;Entraînement ·{" "}
+            {seriesList.length} Examens d&apos;Entraînement ·{" "}
             <strong className="text-foreground">
               {seriesList.filter((s) => s.status !== "LOCKED").length} Ouvertes
             </strong>
@@ -327,7 +327,7 @@ export function ExamRoadmapBoard({
                         {sessionNum}
                       </span>
                       <h3 className="font-display text-base font-black text-foreground">
-                        Session {sessionNum}
+                        Examen {sessionNum}
                       </h3>
                     </div>
                     <Badge variant={isUnlocked ? "outline" : "secondary"} className="text-[10px] font-bold">

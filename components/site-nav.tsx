@@ -151,7 +151,7 @@ export function SiteNav() {
                     </div>
                   </div>
                   <div className="mt-3 pt-2 border-t border-border/60 flex items-center justify-between text-[11px] font-bold text-brand-crimson">
-                    <span>Sessions Écrites (60 min)</span>
+                    <span>Examens Écrits (60 min)</span>
                     <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-1" />
                   </div>
                 </Link>
@@ -186,7 +186,7 @@ export function SiteNav() {
                     </div>
                   </div>
                   <div className="mt-3 pt-2 border-t border-border/60 flex items-center justify-between text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
-                    <span>Sessions Orales (Visio IA)</span>
+                    <span>Examens Oraux (Visio IA)</span>
                     <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-1" />
                   </div>
                 </Link>
@@ -200,7 +200,7 @@ export function SiteNav() {
                 >
                   <div className="flex items-center gap-2">
                     <Zap className="h-3.5 w-3.5 text-primary shrink-0" />
-                    <span>Voir toutes les Sessions d&apos;Entraînement</span>
+                    <span>Voir tous les Examens d&apos;Entraînement</span>
                   </div>
                   <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
                 </Link>
@@ -210,7 +210,7 @@ export function SiteNav() {
         </AnimatePresence>
       </div>
 
-      {/* 3. BLOC 2 : Compréhensions (CE & CO) — Information & Droits d'Auteur */}
+      {/* 3. BLOC 2 : Compréhensions (CO & CE) — Information & Droits d'Auteur */}
       <div className="relative">
         <button
           type="button"
@@ -222,7 +222,7 @@ export function SiteNav() {
               : "text-muted-foreground hover:text-foreground hover:bg-background/60"
           )}
         >
-          <span>Compréhensions (CE & CO)</span>
+          <span>Compréhensions (CO & CE)</span>
           <ChevronDown
             className={cn(
               "h-3 w-3 transition-transform duration-200",
@@ -242,7 +242,7 @@ export function SiteNav() {
             >
               <div className="flex items-center justify-between">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                  Compréhension Écrite &amp; Orale (QCM)
+                  Compréhension Orale &amp; Écrite (QCM)
                 </span>
                 <span className="rounded-full bg-cyan-500/10 border border-cyan-500/30 px-2 py-0.5 text-[9px] font-bold text-cyan-600 dark:text-cyan-400">
                   Démarche Transparente
@@ -256,7 +256,7 @@ export function SiteNav() {
                   <span>Pourquoi privilégier les Expressions ?</span>
                 </div>
                 <p className="text-[11px] text-muted-foreground leading-relaxed">
-                  Les QCM de compréhension (CE et CO) sont déjà accessibles gratuitement sur de nombreuses plateformes publiques (ex. TV5Monde, RFI).
+                  Les QCM de compréhension (CO et CE) sont déjà accessibles gratuitement sur de nombreuses plateformes publiques (ex. TV5Monde, RFI).
                   Par respect strict des droits d&apos;auteur et pour maximiser votre investissement temps, Super4C2 focalise sa technologie IA sur les épreuves de production (Écrite et Orale), là où se joue l&apos;obtention des paliers NCLC 7 à 10.
                 </p>
               </div>
@@ -265,25 +265,25 @@ export function SiteNav() {
               <div className="grid grid-cols-2 gap-2 text-xs">
                 <div className="rounded-xl border border-border/60 bg-card/40 p-2.5 space-y-1 opacity-80">
                   <div className="flex items-center justify-between">
-                    <span className="font-bold text-[11px] text-foreground">Compréhension Écrite</span>
-                    <span className="rounded bg-amber-500/15 text-amber-600 dark:text-amber-400 px-1 text-[9px] font-bold">
-                      Bientôt
-                    </span>
-                  </div>
-                  <p className="text-[10px] text-muted-foreground">
-                    Calibrage pédagogique 39Q en cours de finalisation.
-                  </p>
-                </div>
-
-                <div className="rounded-xl border border-border/60 bg-card/40 p-2.5 space-y-1 opacity-80">
-                  <div className="flex items-center justify-between">
-                    <span className="font-bold text-[11px] text-foreground">Compréhension Orale</span>
+                    <span className="font-bold text-[11px] text-foreground">Compréhension Orale (CO)</span>
                     <span className="rounded bg-amber-500/15 text-amber-600 dark:text-amber-400 px-1 text-[9px] font-bold">
                       Bientôt
                     </span>
                   </div>
                   <p className="text-[10px] text-muted-foreground">
                     Lecteur audio studio en cours de calibrage.
+                  </p>
+                </div>
+
+                <div className="rounded-xl border border-border/60 bg-card/40 p-2.5 space-y-1 opacity-80">
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold text-[11px] text-foreground">Compréhension Écrite (CE)</span>
+                    <span className="rounded bg-amber-500/15 text-amber-600 dark:text-amber-400 px-1 text-[9px] font-bold">
+                      Bientôt
+                    </span>
+                  </div>
+                  <p className="text-[10px] text-muted-foreground">
+                    Calibrage pédagogique 39Q en cours de finalisation.
                   </p>
                 </div>
               </div>

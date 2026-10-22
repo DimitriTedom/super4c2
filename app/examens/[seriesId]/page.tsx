@@ -240,56 +240,7 @@ export default async function SeriesDisciplineSelectorPage({
           </div>
         </div>
 
-        {/* 3. Compréhension Écrite / Reading (Bientôt disponible) */}
-        <div className="group relative flex flex-col justify-between rounded-3xl border border-border/80 bg-muted/20 p-6 shadow-xs opacity-90 transition-all hover:border-amber-500/40">
-          <span className="absolute -top-3 left-6 inline-flex items-center gap-1 rounded-full border border-amber-500/40 bg-amber-500/10 px-3 py-0.5 text-xs font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400">
-            🔒 Bientôt disponible · Calibrage FEI
-          </span>
-
-          <div className="space-y-4 pt-2">
-            <div className="flex items-center justify-between">
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-muted p-1">
-                <Image
-                  src="/brand/icons-3d/comprehension-ecrite-book.png"
-                  alt={isIelts ? "IELTS Reading" : "Compréhension Écrite"}
-                  width={48}
-                  height={48}
-                  className="h-12 w-12 object-contain drop-shadow-sm opacity-70"
-                />
-              </div>
-              <span className="text-xs font-mono text-muted-foreground">39 questions</span>
-            </div>
-
-            <div>
-              <h2 className="font-display text-xl font-bold text-foreground/80">
-                {isIelts ? "Reading (Compréhension Écrite)" : "Compréhension Écrite"}
-              </h2>
-              <p className="mt-1 text-sm text-muted-foreground leading-relaxed">
-                Les banques de questions et le simulateur double écran font l&apos;objet d&apos;un calibrage approfondi pour garantir une fidélité 100% conforme aux épreuves réelles.
-              </p>
-            </div>
-
-            <div className="flex items-center gap-4 text-xs font-semibold text-muted-foreground border-t pt-3">
-              <span className="inline-flex items-center gap-1.5">
-                <Clock className="h-4 w-4" /> 60 minutes
-              </span>
-              <span className="inline-flex items-center gap-1.5">
-                <ListChecks className="h-4 w-4" /> 39 questions
-              </span>
-            </div>
-          </div>
-
-          <div className="pt-6">
-            <Button asChild variant="outline" size="lg" className="w-full font-semibold border-dashed text-muted-foreground hover:text-foreground">
-              <Link href={`/examens/${series.id}/ce`}>
-                <span>Consulter le statut de calibrage</span>
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
-          </div>
-        </div>
-
-        {/* 4. Compréhension Orale / Listening (Bientôt disponible) */}
+        {/* 3. Compréhension Orale / Listening (Bientôt disponible) */}
         <div className="group relative flex flex-col justify-between rounded-3xl border border-border/80 bg-muted/20 p-6 shadow-xs opacity-90 transition-all hover:border-amber-500/40">
           <span className="absolute -top-3 left-6 inline-flex items-center gap-1 rounded-full border border-amber-500/40 bg-amber-500/10 px-3 py-0.5 text-xs font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400">
             🔒 Bientôt disponible · Calibrage FEI
@@ -331,6 +282,55 @@ export default async function SeriesDisciplineSelectorPage({
           <div className="pt-6">
             <Button asChild variant="outline" size="lg" className="w-full font-semibold border-dashed text-muted-foreground hover:text-foreground">
               <Link href={`/examens/${series.id}/co`}>
+                <span>Consulter le statut de calibrage</span>
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
+          </div>
+        </div>
+
+        {/* 4. Compréhension Écrite / Reading (Bientôt disponible) */}
+        <div className="group relative flex flex-col justify-between rounded-3xl border border-border/80 bg-muted/20 p-6 shadow-xs opacity-90 transition-all hover:border-amber-500/40">
+          <span className="absolute -top-3 left-6 inline-flex items-center gap-1 rounded-full border border-amber-500/40 bg-amber-500/10 px-3 py-0.5 text-xs font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400">
+            🔒 Bientôt disponible · Calibrage FEI
+          </span>
+
+          <div className="space-y-4 pt-2">
+            <div className="flex items-center justify-between">
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-muted p-1">
+                <Image
+                  src="/brand/icons-3d/comprehension-ecrite-book.png"
+                  alt={isIelts ? "IELTS Reading" : "Compréhension Écrite"}
+                  width={48}
+                  height={48}
+                  className="h-12 w-12 object-contain drop-shadow-sm opacity-70"
+                />
+              </div>
+              <span className="text-xs font-mono text-muted-foreground">39 questions</span>
+            </div>
+
+            <div>
+              <h2 className="font-display text-xl font-bold text-foreground/80">
+                {isIelts ? "Reading (Compréhension Écrite)" : "Compréhension Écrite"}
+              </h2>
+              <p className="mt-1 text-sm text-muted-foreground leading-relaxed">
+                Les banques de questions et le simulateur double écran font l&apos;objet d&apos;un calibrage approfondi pour garantir une fidélité 100% conforme aux épreuves réelles.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-4 text-xs font-semibold text-muted-foreground border-t pt-3">
+              <span className="inline-flex items-center gap-1.5">
+                <Clock className="h-4 w-4" /> 60 minutes
+              </span>
+              <span className="inline-flex items-center gap-1.5">
+                <ListChecks className="h-4 w-4" /> 39 questions
+              </span>
+            </div>
+          </div>
+
+          <div className="pt-6">
+            <Button asChild variant="outline" size="lg" className="w-full font-semibold border-dashed text-muted-foreground hover:text-foreground">
+              <Link href={`/examens/${series.id}/ce`}>
                 <span>Consulter le statut de calibrage</span>
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>

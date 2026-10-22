@@ -497,27 +497,48 @@ export function WritingMethodologyHub({
             </button>
           </div>
 
+          {/* 🚀 BANDEAU D'APPEL À L'ACTION UNIQUE ET SIGNIFICATIF (Option A) */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 sm:p-5 rounded-2xl border-2 border-primary/30 bg-gradient-to-r from-primary/10 via-card to-emerald-500/10 shadow-sm">
+            <div className="space-y-1">
+              <div className="flex items-center gap-2">
+                <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                <span className="font-display font-black text-sm text-foreground">
+                  Prêt à passer à la pratique réelle ?
+                </span>
+                <span className="rounded-full bg-primary/15 text-primary border border-primary/30 px-2 py-0.5 text-[10px] font-bold">
+                  Format Examen 60 min
+                </span>
+              </div>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                L&apos;examen officiel regroupe les 3 tâches en une session continue de 60 minutes. Testez votre gestion du temps en conditions réelles.
+              </p>
+            </div>
+            <Button
+              asChild
+              size="lg"
+              className="bg-brand-crimson hover:bg-brand-crimson/90 text-white font-black text-sm px-6 h-11 rounded-xl shadow-md gap-2 shrink-0"
+            >
+              <Link href={`/examens/${series.id}/ee?mode=exam`}>
+                <PenTool className="h-4 w-4" />
+                <span>Démarrer l&apos;Examen d&apos;Écriture (60:00)</span>
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </Button>
+          </div>
+
           {/* ======================================= */}
           {/* TÂCHE 1 : MÉTHODOLOGIE + EXERCICE CORRIGÉ */}
           {/* ======================================= */}
           {activeTaskTab === 1 && (
             <div className="space-y-6">
               <div className="rounded-3xl border bg-card p-6 sm:p-8 space-y-6 shadow-sm">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b pb-4">
-                  <div>
-                    <span className="text-xs font-bold uppercase tracking-wider text-primary">
-                      Tâche 1 • 60 à 120 Mots • ~15 Minutes Conseillées
-                    </span>
-                    <h2 className="font-display text-2xl font-black text-foreground mt-0.5">
-                      Message ou Courriel (Décrire, Raconter, Inviter)
-                    </h2>
-                  </div>
-                  <Button asChild className="gap-2 bg-primary hover:bg-primary-dark text-white font-bold shrink-0">
-                    <Link href={`/examens/${series.id}/ee?mode=training&task=1`}>
-                      <span>S&apos;entraîner sur la Tâche 1 (15 min)</span>
-                      <ArrowRight className="h-4 w-4" />
-                    </Link>
-                  </Button>
+                <div className="border-b pb-4">
+                  <span className="text-xs font-bold uppercase tracking-wider text-primary">
+                    Tâche 1 • 60 à 120 Mots • ~15 Minutes Conseillées
+                  </span>
+                  <h2 className="font-display text-2xl font-black text-foreground mt-0.5">
+                    Message ou Courriel (Décrire, Raconter, Inviter)
+                  </h2>
                 </div>
 
                 {/* Méthodologie en 3 Blocs */}
@@ -622,21 +643,13 @@ export function WritingMethodologyHub({
           {activeTaskTab === 2 && (
             <div className="space-y-6">
               <div className="rounded-3xl border bg-card p-6 sm:p-8 space-y-6 shadow-sm">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b pb-4">
-                  <div>
-                    <span className="text-xs font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400">
-                      Tâche 2 • 120 à 150 Mots • ~20 Minutes Conseillées
-                    </span>
-                    <h2 className="font-display text-2xl font-black text-foreground mt-0.5">
-                      Récit d&apos;Expérience &amp; Portée Citoyenne
-                    </h2>
-                  </div>
-                  <Button asChild className="gap-2 bg-amber-600 hover:bg-amber-700 text-white font-bold shrink-0">
-                    <Link href={`/examens/${series.id}/ee?mode=training&task=2`}>
-                      <span>S&apos;entraîner sur la Tâche 2 (20 min)</span>
-                      <ArrowRight className="h-4 w-4" />
-                    </Link>
-                  </Button>
+                <div className="border-b pb-4">
+                  <span className="text-xs font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400">
+                    Tâche 2 • 120 à 150 Mots • ~20 Minutes Conseillées
+                  </span>
+                  <h2 className="font-display text-2xl font-black text-foreground mt-0.5">
+                    Récit d&apos;Expérience &amp; Portée Citoyenne
+                  </h2>
                 </div>
 
                 {/* Méthodologie Tâche 2 */}
@@ -739,21 +752,13 @@ export function WritingMethodologyHub({
           {activeTaskTab === 3 && (
             <div className="space-y-6">
               <div className="rounded-3xl border bg-card p-6 sm:p-8 space-y-6 shadow-sm">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b pb-4">
-                  <div>
-                    <span className="text-xs font-bold uppercase tracking-wider text-cyan-600 dark:text-cyan-400">
-                      Tâche 3 • 120 à 180 Mots • ~25 Minutes Conseillées
-                    </span>
-                    <h2 className="font-display text-2xl font-black text-foreground mt-0.5">
-                      Double Argumentation &amp; Prise de Position Nuancée
-                    </h2>
-                  </div>
-                  <Button asChild className="gap-2 bg-cyan-600 hover:bg-cyan-700 text-white font-bold shrink-0">
-                    <Link href={`/examens/${series.id}/ee?mode=training&task=3`}>
-                      <span>S&apos;entraîner sur la Tâche 3 (25 min)</span>
-                      <ArrowRight className="h-4 w-4" />
-                    </Link>
-                  </Button>
+                <div className="border-b pb-4">
+                  <span className="text-xs font-bold uppercase tracking-wider text-cyan-600 dark:text-cyan-400">
+                    Tâche 3 • 120 à 180 Mots • ~25 Minutes Conseillées
+                  </span>
+                  <h2 className="font-display text-2xl font-black text-foreground mt-0.5">
+                    Double Argumentation &amp; Prise de Position Nuancée
+                  </h2>
                 </div>
 
                 {/* Méthodologie Tâche 3 */}
@@ -901,11 +906,16 @@ export function WritingMethodologyHub({
               </div>
             </div>
 
-            <div className="pt-4">
+            <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-3">
               <Button asChild size="lg" className="bg-emerald-600 hover:bg-emerald-700 text-white font-black text-base px-8 h-12 shadow-lg gap-2">
                 <Link href={`/examens/${series.id}/ee?mode=exam`}>
-                  <span>Lancer l&apos;Examen Blanc Officiel (60:00)</span>
+                  <span>Lancer l&apos;Examen {series.seriesNumber || 1} (60:00)</span>
                   <ArrowRight className="h-5 w-5" />
+                </Link>
+              </Button>
+              <Button asChild variant="outline" size="lg" className="font-bold text-sm h-12 px-6 border-border/80 hover:bg-muted">
+                <Link href="/examens?test=tcf&discipline=ee">
+                  <span>Choisir un autre examen (Examen 1, 2, 3...)</span>
                 </Link>
               </Button>
             </div>

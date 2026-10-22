@@ -2,6 +2,17 @@
 
 ## 0. Déploiement Production Vercel & Moteur de Conversion
 
+### 0.0z. Intégration des Retours Direction : Catalogue "Examens", Bouton Retourner Fluide, Hiérarchie des Épreuves & Note Entraînement Tâche
+- **Demande Utilisateur & Retours Direction (Analyse Audios & Vidéos) :**
+  1. **Copywriting Hero :** Retrait du « 4 » dans le sous-titre de la Hero (« décrocher vos C2, surtout en Expression Écrite... »).
+  2. **Entonnoir & CTA Hero :** Remplacement de « Choisir ma Session d'Examen » par « Me préparer à l'Examen », pointant vers `/examens?test=tcf`.
+  3. **Wording Catalogue :** Éradication de la terminologie trompeuse « Sessions » (Session 01, Session 02...) au profit de « Examens » (Examen 01, Examen 02, Examen 03...) et « Examens d'Entraînement » dans `ExamRoadmapBoard` et `SiteNav`.
+  4. **Bouton « Retourner » dans le Simulateur CBT :** Utilisation de l'historique du navigateur (`router.back()`) au lieu d'une redirection forcée vers `/intro`, permettant de revenir exactement à la Méthodologie si l'utilisateur en venait.
+  5. **Hiérarchie & Ordre des Épreuves :** Expression Écrite (EE) et Expression Orale (EO) systématiquement placées EN PREMIER, suivies de Compréhension Orale (CO) et Compréhension Écrite (CE) dans `series-progression.ts` (`sortDisciplines`), la navigation et les sélecteurs.
+  6. **Arbitrage Option A Validé & Implémenté (Conformité Standard Officiel & Objectif Canada) :** Retrait des 3 boutons individuels trompeurs par tâche dans l'Étape 2 de la Méthodologie (`writing-methodology-hub.tsx`). Ajout d'un bandeau d'appel à l'action unique et significatif : « Démarrer l'Examen d'Écriture (60:00) » pour lancer la simulation complète des 3 tâches en conditions réelles FEI, avec redirection des raccourcis du dashboard vers le hub méthodologique.
+- **Réalisations & Validations :**
+  - `app/page.tsx`, `lib/i18n/translations.ts`, `components/exam/written-exam-editor.tsx`, `components/exam/exam-roadmap-board.tsx`, `components/site-nav.tsx`, `lib/exam/series-progression.ts`, `app/examens/[seriesId]/page.tsx`, `components/exam/writing-methodology-hub.tsx`, `components/dashboard/dashboard-pro-view.tsx`.
+
 ### 0.0y. Optimisation Back-Office : Filtres Rapides & Détection des Candidats à Relancer (`/admin/users`)
 - **Demande Utilisateur :**
   1. Implémenter l'Option A (Priorité 3) : Filtre rapide pour identifier les candidats sans simulation sur `/admin/users` et faciliter leur relance WhatsApp.
