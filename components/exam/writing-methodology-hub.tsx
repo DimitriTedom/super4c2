@@ -72,24 +72,23 @@ export function WritingMethodologyHub({
 
   const currentCompanion = getCompanionById(companionId);
 
-  // Arrêt de l'audio vocal lors du démontage
+  const audioPlayerRef = React.useRef<HTMLAudioElement | null>(null);
+
+  // Arrêt de l'audio lors du démontage
   useEffect(() => {
     return () => {
+      if (audioPlayerRef.current) {
+        audioPlayerRef.current.pause();
+        audioPlayerRef.current = null;
+      }
       if (typeof window !== "undefined" && "speechSynthesis" in window) {
         window.speechSynthesis.cancel();
       }
     };
   }, []);
 
-  // Lecture vocale pédagogique et contextualisée de la page d'Expression Écrite
-  const handlePlayPageTour = () => {
+  const fallbackSpeechSynthesis = () => {
     if (typeof window === "undefined" || !("speechSynthesis" in window)) {
-      setIsSpeakingTour(false);
-      return;
-    }
-
-    if (isSpeakingTour) {
-      window.speechSynthesis.cancel();
       setIsSpeakingTour(false);
       return;
     }
@@ -126,6 +125,50 @@ export function WritingMethodologyHub({
     } catch {
       setIsSpeakingTour(false);
     }
+  };
+
+  // Lecture audio ElevenLabs Studio authentique de présentation de la page
+  const handlePlayPageTour = () => {
+    if (isSpeakingTour) {
+      if (audioPlayerRef.current) {
+        audioPlayerRef.current.pause();
+        audioPlayerRef.current = null;
+      }
+      if (typeof window !== "undefined" && "speechSynthesis" in window) {
+        window.speechSynthesis.cancel();
+      }
+      setIsSpeakingTour(false);
+      return;
+    }
+
+    // Si M. Laurent Mercier est sélectionné, lecture du véritable enregistrement Studio ElevenLabs
+    if (companionId === "laurent") {
+      try {
+        if (audioPlayerRef.current) {
+          audioPlayerRef.current.pause();
+          audioPlayerRef.current = null;
+        }
+        const audio = new Audio("/audio/ee/laurent-methodologie.mp3");
+        audioPlayerRef.current = audio;
+        audio.onplay = () => setIsSpeakingTour(true);
+        audio.onended = () => {
+          setIsSpeakingTour(false);
+          audioPlayerRef.current = null;
+        };
+        audio.onerror = () => {
+          fallbackSpeechSynthesis();
+        };
+        audio.play().catch(() => {
+          fallbackSpeechSynthesis();
+        });
+        return;
+      } catch {
+        fallbackSpeechSynthesis();
+        return;
+      }
+    }
+
+    fallbackSpeechSynthesis();
   };
 
   return (
