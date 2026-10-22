@@ -2,6 +2,17 @@
 
 ## 0. Déploiement Production Vercel & Moteur de Conversion
 
+### 0.0za. Correctifs Clés : Audio Studio ElevenLabs EE, Modale de Sortie & Brouillon, Démarrage Examen & Notifications Purges
+- **Demande Utilisateur & Décisions Validées :**
+  1. **ScrollProgress vs Loader :** Retrait de `<ScrollProgress />` de `app-shell.tsx` pour ne conserver que la barre de progression des chargements et requêtes.
+  2. **Génération Audio Studio ElevenLabs HD :** Remplacement de l'audio hors-contexte d'EO par le véritable fichier studio MP3 généré avec ElevenLabs (`/audio/ee/laurent-methodologie.mp3`, voix Charlie de M. Laurent Mercier) présentant les 3 étapes de l'Expression Écrite, avec fallback fluide SpeechSynthesis.
+  3. **Confirmation de Sortie & Bouton Historique :** Dans `WrittenExamEditor`, confirmation dialogique au clic sur `Retourner` si du texte a été saisi afin de rassurer le candidat sur la sauvegarde automatique du brouillon ; mise en avant du bouton flottant d'historique/restauration (`z-50`, icônes `History` et `RotateCcw`).
+  4. **Résolution Démarrage Examen EE :** Ajout de `&start=true` sur tous les boutons d'appel à l'action de `writing-methodology-hub.tsx` pour forcer l'initialisation immédiate du compte à rebours 60:00 et des 3 tâches FEI.
+  5. **Purge des Notifications & Sécurisation Candidat :** Élimination des 15 notifications de test historiques orphelines (`userId: null`) en base de données et filtrage strict `userId: user.id` dans `getNotificationsAction`.
+  6. **Chat Assistant IA :** Élimination du contour noir / border active au focus sur le champ textarea.
+  7. **Infrastructure Supabase :** Maintien de Supabase Cloud avec fail-safe rapide (800ms) dans le middleware.
+- **Validation :** `npx tsc --noEmit` validé avec 0 erreur, commit `0750ac8` et `319a697` déployés sur `main`.
+
 ### 0.0z. Intégration des Retours Direction : Catalogue "Examens", Bouton Retourner Fluide, Hiérarchie des Épreuves & Note Entraînement Tâche
 - **Demande Utilisateur & Retours Direction (Analyse Audios & Vidéos) :**
   1. **Copywriting Hero :** Retrait du « 4 » dans le sous-titre de la Hero (« décrocher vos C2, surtout en Expression Écrite... »).
