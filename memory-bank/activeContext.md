@@ -2,6 +2,24 @@
 
 ## 0. Déploiement Production Vercel & Moteur de Conversion
 
+### 0.0zi. Séparation Pédagogique Stricte : Entraînement Ciblé par Tâche vs Simulation Officielle 60 min (`writing-methodology-hub.tsx` & `written-exam-editor.tsx`)
+- **Directives Pédagogiques du Supérieur (Note Vocale WA0016) :**
+  - Clarification sans équivoque de la distinction entre **Méthodologie & Entraînement par Tâche** et **Examen Complet Officiel** :
+    1. **Dans la Méthodologie :** Après la fiche méthodologique d'une tâche, proposer les exercices d'application spécifiques à cette tâche UNIQUEMENT. Ne pas mélanger les autres tâches.
+       - Tâche 1 : Proposer l'exercice Tâche 1. Quand l'apprenant clique pour s'appliquer, il ne voit et ne compose QUE sur la Tâche 1 (15 min chrono, 60-120 mots).
+       - Tâche 2 : Idem, exercices de récit d'expérience UNIQUEMENT (20 min chrono, 120-150 mots).
+       - Tâche 3 : Idem, exercices d'argumentation contradictoire UNIQUEMENT (25 min chrono, 120-180 mots).
+    2. **Dans l'Examen Complet (Grand Titre 3 ou Sessions CBT du Catalogue) :**
+       - Simulation globale officielle de 60 minutes avec les 3 tâches consécutives (Tâche 1 + Tâche 2 + Tâche 3), où le candidat dispose de la navigation libre entre onglets de tâches.
+- **Réalisations Techniques & UI :**
+  1. **Hub Méthodologique (`components/exam/writing-methodology-hub.tsx`) :**
+     - Ajout sous chaque tâche d'un encart dédié **« 🎯 Passer à l'Application • Exercice Tâche N »** avec aperçu du sujet officiel de la série, rappel des critères, chrono dédié et bouton d'action direct : *« S'appliquer sur la Tâche N (X min) »* pointant vers `/examens/${series.id}/ee?mode=practice&task=${N}&start=true`.
+     - Grand Titre 3 réservé exclusivement au lancement de la simulation officielle de 60 minutes réunissant les 3 tâches.
+  2. **Salle d'Éditeur CBT (`components/exam/written-exam-editor.tsx`) :**
+     - En mode `practice` : Masquage total des onglets des autres tâches. Affichage d'un bandeau institutionnel ciblé : *« Entraînement Ciblé : Tâche N »* avec son compteur de mots et son chronomètre dédié (15, 20 ou 25 min). Le bouton de soumission et l'évaluation IA portent exclusivement sur cette tâche.
+     - En mode `exam` : Maintien des 3 onglets et de la navigation libre entre Tâche 1, 2 et 3 conforme aux normes officielles FEI.
+- **Validation :** 0 erreur TypeScript (`npx tsc --noEmit`), commit `dcc8c5a` poussé sur `origin/main`.
+
 ### 0.0zh. Moteur d'Acquisition & Lead Magnet WhatsApp sur `/sujets-recents` (Audit Objectif Canada)
 - **Objectif Stratégique :** Transformer la page `/sujets-recents` en un moteur d'acquisition de leads massif inspiré des meilleures pratiques concurrentielles (analyse approfondie du sitemap et du tunnel d'Objectif Canada `/fr/news/tcf`).
 - **Composants & Fonctionnalités Implémentés :**

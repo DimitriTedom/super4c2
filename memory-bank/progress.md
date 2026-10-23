@@ -1,3 +1,7 @@
+- [x] **Séparation Pédagogique Stricte : Entraînement Ciblé par Tâche vs Simulation Officielle 60 min (`writing-methodology-hub.tsx` & `written-exam-editor.tsx`) :**
+  - **Fidélité Totale aux Directives Vocales :** Dans la méthodologie, l'apprenant dispose d'exercices d'application UNIQUEMENT pour la tâche consultée (Tâche 1 -> Exercice Tâche 1 de 15 min ; Tâche 2 -> Exercice Tâche 2 de 20 min ; Tâche 3 -> Exercice Tâche 3 de 25 min) sans mélanger les autres tâches.
+  - **Éditeur CBT Dédié (`written-exam-editor.tsx`) :** En mode `practice`, masquage des onglets des autres tâches et affichage d'un bandeau exclusif pour la tâche ciblée. En mode `exam` (simulation 60 min), maintien des 3 tâches avec navigation libre comme en examen officiel FEI.
+  - **Validation :** 0 erreur TypeScript (`npx tsc --noEmit`), commit `dcc8c5a` poussé sur `origin/main`.
 - [x] **Moteur d'Acquisition & Lead Magnet WhatsApp sur `/sujets-recents` (Audit Objectif Canada) :**
   - **Ouverture Publique & SEO (`middleware.ts`) :** Déverrouillage de `/sujets-recents` pour permettre l'indexation par Google et la visite sans compte préalable.
   - **Freemium & Preuve d'Autorité (`app/sujets-recents/page.tsx`) :** 8 sujets réels d'examen (4 EE, 4 EO) issus des sessions 2026 FEI mondiales. 2 sujets intégralement consultables en accès libre (démonstrateurs C1/C2), et 6 sujets VIP avec modèles floutés débloquables sur saisie WhatsApp/Email.
