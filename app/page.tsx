@@ -41,7 +41,7 @@ export default async function HomePage() {
   return (
     <div className="overflow-x-clip">
       {/* 🌟 HERO — pleine largeur, sans composant lourd, halo lumineux CSS ultra-rapide */}
-      <section className="relative overflow-hidden w-full flex flex-col items-center justify-start pt-10 sm:pt-14 lg:pt-16 pb-16 sm:pb-20 border-b border-border/40">
+      <section className="relative overflow-hidden w-full flex flex-col items-center justify-start pt-8 sm:pt-12 lg:pt-14 pb-6 sm:pb-8 border-b border-border/40">
         {/* Halo d'ambiance vibrant & ultra-fluide pur CSS */}
         <div className="pointer-events-none absolute inset-0 z-0 bg-[radial-gradient(55%_45%_at_50%_20%,rgba(229,26,49,0.18),transparent_70%),radial-gradient(40%_40%_at_80%_30%,rgba(0,180,216,0.15),transparent_70%)]" />
         <div className="pointer-events-none absolute inset-0 z-0 [background-image:radial-gradient(hsl(var(--foreground)/0.06)_1px,transparent_1px)] [background-size:28px_28px] [mask-image:radial-gradient(ellipse_75%_60%_at_50%_25%,black,transparent_75%)]" />
@@ -107,7 +107,7 @@ export default async function HomePage() {
       </section>
 
       {/* Reste de la page dans un conteneur centré */}
-      <div className="space-y-24 px-4 pb-8 pt-20 sm:px-6">
+      <div className="space-y-20 px-4 pb-8 pt-6 sm:pt-8 sm:px-6">
       {/* 💻 VITRINE INTERACTIVE DU SIMULATEUR CBT (Démonstration Produit Directe) */}
       <BlurFade inView>
         <ProductShowcaseSection />
