@@ -201,7 +201,7 @@ export function ExamRoadmapBoard({
       ? rawSeriesList.filter((s) => !s.ieltsTrack || s.ieltsTrack === ieltsTrack)
       : rawSeriesList;
 
-  // ⚡ 1. CALCUL DYNAMIQUE DU TOTAL XP CUMULÉ DU CANDIDAT (MOTEUR RPG)
+  // ⚡ 1. CALCUL DYNAMIQUE DU TOTAL XP CUMULÉ DU CANDIDAT (PROGRESSION PÉDAGOGIQUE)
   const totalUserXp = useMemo(() => {
     let xp = 0;
     completedSeriesIds.forEach((sid) => {
@@ -219,12 +219,12 @@ export function ExamRoadmapBoard({
     return xp;
   }, [completedSeriesIds, completedDetails, filteredRaw]);
 
-  // 🛡️ 2. CALCUL DU RANG CANDIDAT RPG
+  // 🛡️ 2. CALCUL DU RANG & NIVEAU DE MAÎTRISE DU CANDIDAT
   const userRank = useMemo(() => {
     if (totalUserXp >= 2500) {
       return {
         title: "Maître C1/C2 Élite",
-        badge: "🥇 Rang Diamant",
+        badge: "🥇 Niveau Élite",
         color: "from-amber-500 via-rose-500 to-amber-400 text-amber-900 dark:text-amber-200 border-amber-500/40 bg-amber-500/10",
         nextThreshold: 5000,
         prevThreshold: 2500,
@@ -234,8 +234,8 @@ export function ExamRoadmapBoard({
     }
     if (totalUserXp >= 1000) {
       return {
-        title: "Candidat NCLC 7+",
-        badge: "🥈 Rang Argent",
+        title: "Candidat NCLC 7+ Confirmé",
+        badge: "🥈 Niveau Avancé",
         color: "from-emerald-500 to-cyan-500 text-emerald-800 dark:text-emerald-300 border-emerald-500/40 bg-emerald-500/10",
         nextThreshold: 2500,
         prevThreshold: 1000,
@@ -245,7 +245,7 @@ export function ExamRoadmapBoard({
     }
     return {
       title: "Initié B1/B2",
-      badge: "🥉 Rang Bronze",
+      badge: "🥉 Niveau Intermédiaire",
       color: "from-slate-400 to-primary text-primary border-primary/30 bg-primary/5",
       nextThreshold: 1000,
       prevThreshold: 0,
@@ -259,18 +259,18 @@ export function ExamRoadmapBoard({
   const rankProgressPercent = Math.min(100, Math.round((xpIntoCurrentRank / rankSpan) * 100));
   const xpRemainingToNextRank = Math.max(0, userRank.nextThreshold - totalUserXp);
 
-  // 🔒 3. RÈGLE DYNAMIQUE DE DÉBLOCAGE RPG :
+  // 🔒 3. RÈGLE DYNAMIQUE DE DÉBLOCAGE PÉDAGOGIQUE :
   // - Examen 01 : Toujours UNLOCKED (ou COMPLETED)
   // - Examen 02-03 : Requiert Examen N-1 (Score min. 8/20) OU Total XP suffisant
-  // - Examen 04 (Boss Gate NCLC 7+) : Requiert Examen 03 (Score min. 10/20) ET 1 000 XP cumulés !
-  // - Examen 07 (Grand Palier C1/C2) : Requiert NCLC 7+ validé ET 2 500 XP cumulés !
+  // - Examen 04 (Palier Certificatif NCLC 7+) : Requiert Examen 03 (Score min. 10/20) ET 1 000 XP cumulés
+  // - Examen 07 (Grand Palier C1/C2) : Requiert NCLC 7+ validé ET 2 500 XP cumulés
   const seriesList = filteredRaw.map((s, idx) => {
     const isCompleted = completedSeriesIds.includes(s.id);
     const prevSeriesId = idx > 0 ? filteredRaw[idx - 1].id : null;
     const prevDetail = prevSeriesId ? completedDetails[prevSeriesId] : null;
     const isPrevCompleted = prevSeriesId ? completedSeriesIds.includes(prevSeriesId) : false;
 
-    // Définition des conditions de quête par palier
+    // Définition des conditions de progression par palier
     let minScoreRequired = 8;
     let minCumulativeXpRequired = 0;
     let phaseName = "Phase 1 : Diagnostic & Fondations B1/B2";
@@ -287,11 +287,11 @@ export function ExamRoadmapBoard({
       minScoreRequired = 8;
       minCumulativeXpRequired = 650;
     } else if (idx === 3) {
-      // ⚡ BOSS GATE NCLC 7+
+      // 🏛️ PALIER CERTIFICATIF NCLC 7+
       minScoreRequired = 10;
       minCumulativeXpRequired = 1000;
       isGate = true;
-      gateLabel = "⚡ BOSS GATE : Seuil NCLC 7+ (+50 pts CRS)";
+      gateLabel = "🏛️ PALIER CERTIFICATIF : Seuil NCLC 7+ (+50 pts CRS)";
       phaseName = "Phase 2 : Passage au Seuil NCLC 7+";
     } else if (idx === 4) {
       minScoreRequired = 10;
@@ -524,7 +524,7 @@ export function ExamRoadmapBoard({
         </div>
       </div>
 
-      {/* 🎮 COCKPIT RPG & JAUGE D'XP DU CANDIDAT */}
+      {/* 📊 COCKPIT DE PROGRESSION & POINTS D'EXPÉRIENCE (XP) */}
       <div className="relative overflow-hidden rounded-2xl border border-primary/25 bg-gradient-to-br from-card via-card to-primary/5 p-4 sm:p-5 shadow-sm space-y-3">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           {/* Rang & Titre */}
@@ -543,7 +543,7 @@ export function ExamRoadmapBoard({
                   {userRank.badge}
                 </Badge>
                 <span className="font-mono text-xs text-muted-foreground font-semibold">
-                  Niveau {userRank.levelNum}
+                  Palier {userRank.levelNum}
                 </span>
               </div>
               <h2 className="font-display text-lg sm:text-xl font-black tracking-tight text-foreground">
@@ -557,7 +557,7 @@ export function ExamRoadmapBoard({
             <div className="space-y-0.5">
               <div className="flex items-center sm:justify-end gap-1.5 text-xs text-muted-foreground font-semibold">
                 <Zap className="h-3.5 w-3.5 text-amber-500 fill-amber-500" />
-                <span>Énergie XP Cumulée</span>
+                <span>Points XP Cumulés</span>
               </div>
               <div className="font-mono text-xl sm:text-2xl font-black text-foreground">
                 {totalUserXp.toLocaleString("fr-FR")}{" "}
@@ -574,8 +574,8 @@ export function ExamRoadmapBoard({
           <div className="flex items-center justify-between text-[11px] text-muted-foreground font-semibold">
             <span>
               {xpRemainingToNextRank > 0
-                ? `Plus que ${xpRemainingToNextRank} XP pour débloquer le rang supérieur`
-                : "Rang maximal C1/C2 atteint !"}
+                ? `Plus que ${xpRemainingToNextRank} XP pour atteindre le palier supérieur`
+                : "Palier maximal C1/C2 atteint !"}
             </span>
             <span className="font-mono font-bold text-foreground">
               {rankProgressPercent}%
@@ -647,7 +647,7 @@ export function ExamRoadmapBoard({
 
             return (
               <div key={series.id} className="relative group">
-                {/* Séparateur de Phase / Boss Gate */}
+                {/* Séparateur de Phase / Palier Pédagogique */}
                 {isPhaseStart && (
                   <div className="mb-4 -ml-7 sm:-ml-10 flex items-center gap-2">
                     <span
@@ -696,10 +696,10 @@ export function ExamRoadmapBoard({
                       : "border-border/50 bg-muted/20 opacity-80"
                   )}
                 >
-                  {/* Boss Gate Alert si applicable */}
+                  {/* Palier Certificatif si applicable */}
                   {gate.isGate && (
                     <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-800 dark:text-amber-300 text-xs font-black">
-                      <Zap className="h-3.5 w-3.5 fill-current text-amber-500 shrink-0" />
+                      <Award className="h-3.5 w-3.5 text-amber-600 shrink-0" />
                       <span>{gate.gateLabel}</span>
                     </div>
                   )}
@@ -727,7 +727,7 @@ export function ExamRoadmapBoard({
                         </Badge>
                       ) : isUnlocked ? (
                         <Badge variant="outline" className="text-xs font-bold border-primary/30 text-primary bg-primary/5">
-                          Prêt à Jouer (+{series.xpReward} XP)
+                          Prêt à Composer (+{series.xpReward} XP)
                         </Badge>
                       ) : (
                         <Badge variant="secondary" className="text-xs font-bold text-muted-foreground flex items-center gap-1">
@@ -738,12 +738,12 @@ export function ExamRoadmapBoard({
                     </div>
                   </div>
 
-                  {/* Conditions de Quête RPG si verrouillé */}
+                  {/* Prérequis Pédagogiques d'Accès si verrouillé */}
                   {!isUnlocked && (
                     <div className="rounded-xl border border-amber-500/25 bg-amber-500/5 p-3 space-y-2 text-xs">
                       <div className="font-bold text-amber-800 dark:text-amber-300 flex items-center gap-1.5">
-                        <Trophy className="h-3.5 w-3.5 text-amber-600" />
-                        <span>Conditions de Déverrouillage RPG :</span>
+                        <Award className="h-3.5 w-3.5 text-amber-600" />
+                        <span>Prérequis Pédagogiques d&apos;Accès :</span>
                       </div>
                       <div className="space-y-1.5 text-muted-foreground">
                         {idx > 0 && (
@@ -769,7 +769,7 @@ export function ExamRoadmapBoard({
                               ) : (
                                 <span className="h-2 w-2 rounded-full bg-amber-500 shrink-0" />
                               )}
-                              <span>Énergie XP cumulée requise ({gate.minCumulativeXpRequired} XP)</span>
+                              <span>Points XP cumulés requis ({gate.minCumulativeXpRequired} XP)</span>
                             </span>
                             <span className="font-mono font-bold text-foreground">
                               {totalUserXp} / {gate.minCumulativeXpRequired} XP
@@ -847,7 +847,7 @@ export function ExamRoadmapBoard({
                         className="w-full text-xs font-bold gap-1.5 text-amber-700 dark:text-amber-400 border-amber-500/30 hover:bg-amber-500/10"
                       >
                         <Lock className="h-3.5 w-3.5 text-amber-500" />
-                        <span>Consulter la Quête pour Débloquer l&apos;Examen {sessionNum}</span>
+                        <span>Consulter les Prérequis pour Débloquer l&apos;Examen {sessionNum}</span>
                       </Button>
                     </div>
                   )}
@@ -1023,7 +1023,7 @@ export function ExamRoadmapBoard({
                         className="w-full h-8 text-xs gap-1.5 text-amber-700 dark:text-amber-400 border-amber-500/30 hover:bg-amber-500/10 font-bold"
                       >
                         <Lock className="h-3.5 w-3.5 text-amber-500" />
-                        <span>Quête Examen {sessionNum}</span>
+                        <span>Prérequis Examen {sessionNum}</span>
                       </Button>
                     )}
                   </div>
@@ -1034,7 +1034,7 @@ export function ExamRoadmapBoard({
         </div>
       )}
 
-      {/* 🔒 DIALOGUE MODAL DE QUÊTE RPG POUR EXAMEN VERROUILLÉ */}
+      {/* 🔒 DIALOGUE MODAL DE PRÉREQUIS PÉDAGOGIQUES POUR EXAMEN VERROUILLÉ */}
       <Dialog
         open={!!lockedModalData}
         onOpenChange={(open) => {
@@ -1044,18 +1044,18 @@ export function ExamRoadmapBoard({
         <DialogContent className="max-w-md">
           <DialogHeader>
             <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-500/10 border border-amber-500/25 text-amber-600 mb-2">
-              <Trophy className="h-7 w-7 text-amber-600" />
+              <Award className="h-7 w-7 text-amber-600" />
             </div>
             <DialogTitle className="text-center font-display text-xl font-black">
-              Quête Examen {lockedModalData ? String(lockedModalData.targetIndex + 1).padStart(2, "0") : ""} Verrouillé
+              Prérequis Examen {lockedModalData ? String(lockedModalData.targetIndex + 1).padStart(2, "0") : ""} Verrouillé
             </DialogTitle>
             <DialogDescription className="text-center text-xs text-muted-foreground pt-1">
-              Progression Pédagogique RPG • Standard NCLC 7 / NCLC 10+
+              Parcours d&apos;Excellence Pédagogique • Norme FEI &amp; Standard NCLC 7+
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-3.5 py-2 text-xs">
-            {/* Encadré Objectifs de la Quête */}
+            {/* Encadré Objectifs Pédagogiques */}
             <div className="rounded-xl border border-amber-500/30 bg-amber-500/5 p-3.5 space-y-2.5">
               <p className="font-bold text-foreground flex items-center gap-2">
                 <ShieldCheck className="h-4 w-4 text-primary shrink-0" />
@@ -1095,7 +1095,7 @@ export function ExamRoadmapBoard({
                           ) : (
                             <Zap className="h-3.5 w-3.5 text-amber-500 fill-amber-500 shrink-0" />
                           )}
-                          Énergie XP Cumulée
+                          Points XP Cumulés
                         </span>
                         <span className="font-mono font-bold text-foreground">
                           {totalUserXp} / {lockedModalData.gateInfo.minCumulativeXpRequired} XP
@@ -1135,7 +1135,7 @@ export function ExamRoadmapBoard({
                   if (prevId) router.push(`/examens/${prevId}`);
                 }}
               >
-                Faire l&apos;Examen {String(lockedModalData.targetIndex).padStart(2, "0")}
+                Passer l&apos;Examen {String(lockedModalData.targetIndex).padStart(2, "0")}
               </Button>
             ) : null}
             <Button
@@ -1148,7 +1148,7 @@ export function ExamRoadmapBoard({
               }}
             >
               <Unlock className="h-3.5 w-3.5" />
-              <span>Débloquer en Mode Libre</span>
+              <span>Accéder Directement</span>
             </Button>
           </DialogFooter>
         </DialogContent>
