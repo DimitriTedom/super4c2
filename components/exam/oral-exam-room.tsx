@@ -780,6 +780,16 @@ export function OralExamRoom({ series }: OralExamRoomProps) {
     const evalResult = evaluateOralExam(series, dialogues);
     setEvaluation(evalResult);
 
+    try {
+      const COMPLETED_KEY = "super4c2:completed_series";
+      const raw = localStorage.getItem(COMPLETED_KEY);
+      const list = raw ? JSON.parse(raw) : [];
+      if (Array.isArray(list) && !list.includes(series.id)) {
+        list.push(series.id);
+        localStorage.setItem(COMPLETED_KEY, JSON.stringify(list));
+      }
+    } catch {}
+
     // Enregistrement persistant de la tentative dans PostgreSQL
     void fetch("/api/exam/attempt", {
       method: "POST",

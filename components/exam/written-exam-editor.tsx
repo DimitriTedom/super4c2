@@ -413,6 +413,35 @@ export function WrittenExamEditor({
     }
 
     // Mode Examen : Évaluation globale des 3 tâches
+    const recordExamCompletion = (finalRes: WrittenExamResult) => {
+      try {
+        const COMPLETED_KEY = "super4c2:completed_series";
+        const raw = localStorage.getItem(COMPLETED_KEY);
+        const list = raw ? JSON.parse(raw) : [];
+        if (Array.isArray(list) && !list.includes(series.id)) {
+          list.push(series.id);
+          localStorage.setItem(COMPLETED_KEY, JSON.stringify(list));
+        }
+      } catch {}
+
+      void fetch("/api/exam/attempt", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          discipline: "EXPRESSION_ECRITE",
+          seriesId: series.id,
+          rawScore: Math.round(finalRes.totalScore),
+          tcfScaledScore: finalRes.tcfScaledScore,
+          nclcLevel: finalRes.nclcLevel,
+          crsPointsUnlocked: finalRes.crsPointsUnlocked,
+          answers: texts,
+          feedback: finalRes,
+        }),
+      }).catch(() => {
+        // mode hors-ligne gracieux
+      });
+    };
+
     try {
       const response = await fetch("/api/ai/evaluate-written", {
         method: "POST",
@@ -424,6 +453,7 @@ export function WrittenExamEditor({
         const data = await response.json();
         if (data.ok && data.result) {
           setResult(data.result);
+          recordExamCompletion(data.result);
           setIsEvaluating(false);
           triggerGlobalLoading(false);
           return;
@@ -435,6 +465,7 @@ export function WrittenExamEditor({
 
     const evalResult = evaluateWrittenExam(series, texts);
     setResult(evalResult);
+    recordExamCompletion(evalResult);
     setIsEvaluating(false);
     triggerGlobalLoading(false);
   }, [series, texts, mode, activeTaskIndex]);

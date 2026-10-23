@@ -236,6 +236,16 @@ export function MockExamOrchestrator({
       addCardsToSrsVault(missedCards);
     }
 
+    try {
+      const COMPLETED_KEY = "super4c2:completed_series";
+      const raw = localStorage.getItem(COMPLETED_KEY);
+      const list = raw ? JSON.parse(raw) : [];
+      if (Array.isArray(list) && !list.includes(seriesId)) {
+        list.push(seriesId);
+        localStorage.setItem(COMPLETED_KEY, JSON.stringify(list));
+      }
+    } catch {}
+
     setStage("RESULT");
   };
 
