@@ -66,7 +66,6 @@ export async function middleware(request: NextRequest) {
     pathname.startsWith("/account") ||
     pathname.startsWith("/examens") ||
     pathname.startsWith("/carnet-erreurs") ||
-    pathname.startsWith("/sujets-recents") ||
     pathname.startsWith("/communaute");
 
   if (!isProtected) return response;
