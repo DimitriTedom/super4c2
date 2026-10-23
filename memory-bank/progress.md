@@ -1,3 +1,10 @@
+- [x] **Refonte Visuelle Admin, Cohérence Thème, Inspection Pédagogique & Synchronisation Séries DB :**
+  - **Logo Super4C2 en Mode Sombre (`components/brand-logo.tsx` & `/admin/login`) :** Adaptation automatique de la couleur du texte "SUPER" (`text-white` en mode dark) pour une lisibilité parfaite.
+  - **Cohérence Thème de la Barre d'Actions en Lot (`components/admin/admin-batch-action-bar.tsx`) :** Remplacement des classes `bg-slate-900` codées en dur par les tokens sémantiques `bg-card`, `border-border`, `text-card-foreground`.
+  - **Dialogue d'Inspection Pédagogique (`components/admin/attempt-inspect-dialog.tsx`) :** Élimination du bloc `<pre>` JSON brut ; intégration des cartes de critères FEI (/4 et /5), onglets de dialogues oraux candidat/Laurent, points forts, axes de progression et tiroir technique rétractable pour développeurs.
+  - **Barre Latérale Admin (`components/admin/admin-shell.tsx`) :** Alignement du badge `Bientôt` sur Compréhension Écrite (CE) et Compréhension Orale (CO).
+  - **Synchronisation Séries PostgreSQL (`scripts/sync-all-series-to-db.ts`) :** Insertion de la Série CO 101 (39 questions officielles) et des Séries CE 103, 104, 105, garantissant la concordance absolue entre le catalogue utilisateur et la vue admin.
+  - **Validation :** 0 erreur TypeScript (`npx tsc --noEmit`), commit poussé sur `origin/main`.
 - [x] **Actions en Lot (Batch Actions) sur le Tableau Historique & Corrections (`attempt-history-table.tsx` & `actions.ts`) :**
   - **Sélection Multiple & Checkboxes :** Colonne de cases à cocher unitaire et en-tête (`Square`, `CheckSquare`, `MinusSquare`), raccourci de sélection des copies vides et surbrillance des lignes sélectionnées.
   - **Barre Flottante d'Actions Groupées :** Apparition animée (Framer Motion) dès qu'une copie est cochée, affichant le nombre de copies sélectionnées, un bouton **Export CSV Groupé (Excel UTF-8 BOM)**, un bouton **Supprimer la sélection**, et un bouton pour tout désélectionner.

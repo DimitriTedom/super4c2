@@ -212,7 +212,7 @@ export const TCF_PROGRESSION_SERIES: ProgressionSeries[] = [
         badge: "39 Questions",
         questionsOrTasks: "39 questions CBT",
         duration: "60 min",
-        url: "/examens/demo-101-ce",
+        url: "/examens/demo-102-ce",
       },
       {
         type: "co",
@@ -267,7 +267,7 @@ export const TCF_PROGRESSION_SERIES: ProgressionSeries[] = [
         badge: "Mode Expert",
         questionsOrTasks: "39 questions haute complexité",
         duration: "60 min",
-        url: "/examens/demo-101-ce",
+        url: "/examens/demo-103-ce",
       },
       {
         type: "co",
@@ -322,7 +322,7 @@ export const TCF_PROGRESSION_SERIES: ProgressionSeries[] = [
         badge: "39 Questions C1",
         questionsOrTasks: "Textes d'opinion & essais",
         duration: "60 min",
-        url: "/examens/demo-101-ce",
+        url: "/examens/demo-104-ce",
       },
       {
         type: "co",
@@ -377,7 +377,7 @@ export const TCF_PROGRESSION_SERIES: ProgressionSeries[] = [
         badge: "39 Questions C2",
         questionsOrTasks: "Textes littéraires & scientifiques",
         duration: "60 min",
-        url: "/examens/demo-101-ce",
+        url: "/examens/demo-105-ce",
       },
       {
         type: "co",

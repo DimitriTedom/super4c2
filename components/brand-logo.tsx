@@ -51,8 +51,9 @@ export function BrandLogo({
   showSubtitle = true,
   subtitleText = "TCF & TEF CANADA PREP",
   href = "/",
+  forceDark = false,
   className,
-}: BrandLogoProps) {
+}: BrandLogoProps & { forceDark?: boolean }) {
   const config = sizeConfig[size];
 
   const logomark = (
@@ -77,8 +78,13 @@ export function BrandLogo({
   const wordmark = (
     <div className={cn("flex flex-col leading-none", variant === "vertical" && "items-center text-center")}>
       <div className={cn("font-display font-black tracking-[-0.03em] select-none flex items-baseline", config.textClass)}>
-        {/* SUPER4 : Navy en mode clair, Blanc en mode sombre */}
-        <span className="text-[#0B132B] dark:text-white transition-colors duration-200">
+        {/* SUPER4 : Navy en mode clair, Blanc en mode sombre ou si forceDark */}
+        <span
+          className={cn(
+            "transition-colors duration-200",
+            forceDark ? "text-white" : "text-[#0B132B] dark:text-white"
+          )}
+        >
           SUPER4
         </span>
         {/* C2 : Maple Crimson distinctif */}
@@ -90,7 +96,8 @@ export function BrandLogo({
       {showSubtitle && variant !== "type-only" && (
         <span
           className={cn(
-            "font-body font-semibold uppercase text-slate-500 dark:text-slate-400 mt-1 select-none",
+            "font-body font-semibold uppercase mt-1 select-none",
+            forceDark ? "text-slate-300" : "text-slate-500 dark:text-slate-400",
             config.subClass
           )}
         >

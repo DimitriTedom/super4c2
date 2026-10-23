@@ -190,6 +190,7 @@ for (const num of [102, 103, 104, 105]) {
     questions: FULL_SERIES_CE_101.questions,
   };
   SERIES[`serie-${num}`] = dynamicSeries;
+  SERIES[`demo-${num}-ce`] = dynamicSeries;
   SERIES[`${num}`] = dynamicSeries;
   SERIES[`serie-${num}-ee`] = dynamicSeries;
   SERIES[`serie-${num}-eo`] = dynamicSeries;

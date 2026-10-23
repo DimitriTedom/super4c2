@@ -56,7 +56,7 @@ const navItems: NavGroupItem[] = [
   {
     group: "Sujets d'Examens",
     links: [
-      { href: "/admin/series-ce", label: "Lecture (Compréhension Écrite)", icon: BookOpen },
+      { href: "/admin/series-ce", label: "Lecture (Compréhension Écrite)", icon: BookOpen, badge: "Bientôt" },
       { href: "/admin/series-co", label: "Écoute (Compréhension Orale)", icon: Headphones, badge: "Bientôt" },
       { href: "/admin/series-ee", label: "Rédaction (Expression Écrite)", icon: PenTool },
       { href: "/admin/series-eo", label: "Oral & Visio (Expression Orale)", icon: Mic },

@@ -45,7 +45,7 @@ function AdminLoginContent() {
   };
 
   return (
-    <div className="relative min-h-screen w-full flex flex-col items-center justify-center bg-[#060B18] text-slate-100 overflow-hidden px-4">
+    <div className="dark relative min-h-screen w-full flex flex-col items-center justify-center bg-[#060B18] text-slate-100 overflow-hidden px-4">
       <div className="pointer-events-none absolute -top-40 -left-32 h-[28rem] w-[28rem] rounded-full bg-rose-600/20 blur-[120px]" />
       <div className="pointer-events-none absolute -bottom-40 -right-32 h-[28rem] w-[28rem] rounded-full bg-cyan-500/20 blur-[120px]" />
 
@@ -56,7 +56,7 @@ function AdminLoginContent() {
         className="relative w-full max-w-md"
       >
         <div className="mb-8 flex justify-center">
-          <BrandLogo />
+          <BrandLogo forceDark />
         </div>
 
         <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-8 shadow-2xl backdrop-blur-xl">

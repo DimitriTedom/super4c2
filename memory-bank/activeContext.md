@@ -2,6 +2,21 @@
 
 ## 0. Déploiement Production Vercel & Moteur de Conversion
 
+### 0.0zk. Refonte Visuelle Admin, Cohérence Thème, Dialogue d'Inspection Pédagogique & Synchronisation Base de Données
+- **Directives Utilisateur :**
+  1. Fixer la lisibilité du logo Super4C2 en mode sombre (`/admin/login` et header) : le texte "SUPER" était illisible contre fond noir.
+  2. Cohérence du thème sur les composants d'actions groupées (`AdminBatchActionBar` et modale de suppression) qui étaient codés en dur avec `bg-slate-900` même en mode clair.
+  3. Dialogue d'inspection de copie (`AttemptInspectDialog`) : remplacer la balise `<pre>` brute affichant du JSON par une véritable interface pédagogique (bilan, grille critériée FEI, transcription des dialogues oraux Laurent / Candidat, et tiroir technique rétractable pour le JSON brut).
+  4. Badges "Bientôt" dans la barre latérale admin : aligner Compréhension Écrite (CE) et Compréhension Orale (CO) avec le badge `Bientôt`.
+  5. Synchronisation des séries d'examen entre vue candidat et vue administrateur : insertion de CO Série 101 (39 questions) et CE Séries 103 à 105 dans PostgreSQL afin d'assurer 100% de concordance entre le catalogue candidat et le back-office.
+- **Réalisations Techniques & UI :**
+  - `components/brand-logo.tsx` & `app/admin/login/page.tsx` : support de `forceDark` et tokens adaptatifs `text-[#0B132B] dark:text-white`.
+  - `components/admin/admin-batch-action-bar.tsx` : utilisation des tokens sémantiques `bg-card`, `border-border`, `text-card-foreground` en mode clair comme en mode sombre.
+  - `components/admin/attempt-inspect-dialog.tsx` : interface riche avec onglets de dialogues oraux, cartes de critères FEI (/4 et /5), points forts / axes d'amélioration, formulations C2 et JSON rétractable.
+  - `components/admin/admin-shell.tsx` : badge `Bientôt` sur CE et CO.
+  - `scripts/sync-all-series-to-db.ts` : synchronisation réussie de toutes les séries dans PostgreSQL.
+- **Validation :** 0 erreur TypeScript (`npx tsc --noEmit`), commit poussé sur `origin/main`.
+
 ### 0.0zj. Actions en Lot (Batch Actions) sur le Tableau Historique & Corrections (`attempt-history-table.tsx` & `actions.ts`)
 - **Demande Utilisateur :** Ajout des actions en lot (batch) sur le tableau de l'historique et des corrections du candidat (`/dashboard/historique` et dashboard principal).
 - **Fonctionnalités & Composants Déployés :**

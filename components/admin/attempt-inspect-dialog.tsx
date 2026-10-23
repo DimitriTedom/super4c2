@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import {
   Eye,
   Sparkles,
@@ -8,11 +8,17 @@ import {
   Clock,
   User,
   Mail,
-  Award,
-  BookOpen,
   PenTool,
   Mic,
-  Headphones,
+  MessageSquare,
+  AlertCircle,
+  Quote,
+  ChevronDown,
+  ChevronUp,
+  Code2,
+  Volume2,
+  Bot,
+  UserCheck,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -50,9 +56,36 @@ interface AttemptInspectDialogProps {
   };
 }
 
+interface OralDialogueMessage {
+  sender: "examiner" | "candidate" | string;
+  text: string;
+  timestamp?: number | string;
+  audioUrl?: string;
+}
+
+interface StructuredCriterion {
+  criterion?: string;
+  label: string;
+  score: number;
+  feedback?: string;
+}
+
+interface ParsedFeedback {
+  generalFeedback?: string;
+  examinerDebrief?: string;
+  criteria?: StructuredCriterion[];
+  strengths?: string[];
+  improvements?: string[];
+  recommendedPhrasesC2?: string[];
+  wordsPerMinute?: number;
+  raw?: unknown;
+}
+
 export function AttemptInspectDialog({ attempt }: AttemptInspectDialogProps) {
   const [open, setOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState<number>(1);
+  const [selectedOralTask, setSelectedOralTask] = useState<number>(1);
+  const [showRawJson, setShowRawJson] = useState(false);
 
   const meta = getDisciplineMeta(attempt.discipline);
   const candidateName =
@@ -64,10 +97,69 @@ export function AttemptInspectDialog({ attempt }: AttemptInspectDialogProps) {
   });
 
   const isWritten = attempt.discipline === "EXPRESSION_ECRITE";
+  const isOral = attempt.discipline === "EXPRESSION_ORALE";
+
+  // Données Rédaction (EE)
   const writtenAnswers = isWritten ? parseAnswers(attempt as never) : [];
   const taskEvaluations = isWritten ? getTaskEvaluations(attempt as never) : [];
   const currentTaskEval = taskEvaluations.find((t) => t.taskNumber === selectedTask);
   const currentAnswer = writtenAnswers[selectedTask - 1] || "";
+
+  // Données Orales (EO) et retour IA universel
+  const parsedFeedback: ParsedFeedback | null = useMemo(() => {
+    if (!attempt.feedback) return null;
+    let obj: any = attempt.feedback;
+    if (typeof obj === "string") {
+      try {
+        obj = JSON.parse(obj);
+      } catch {
+        return { generalFeedback: obj };
+      }
+    }
+    if (typeof obj !== "object" || obj === null) {
+      return { generalFeedback: String(obj) };
+    }
+
+    return {
+      generalFeedback: obj.generalFeedback || obj.feedback || obj.debrief || undefined,
+      examinerDebrief: obj.examinerDebrief || undefined,
+      criteria: Array.isArray(obj.criteria) ? obj.criteria : undefined,
+      strengths: Array.isArray(obj.strengths) ? obj.strengths : undefined,
+      improvements: Array.isArray(obj.improvements) ? obj.improvements : undefined,
+      recommendedPhrasesC2: Array.isArray(obj.recommendedPhrasesC2)
+        ? obj.recommendedPhrasesC2
+        : undefined,
+      wordsPerMinute: typeof obj.wordsPerMinute === "number" ? obj.wordsPerMinute : undefined,
+      raw: obj,
+    };
+  }, [attempt.feedback]);
+
+  // Dialogues oraux par tâche
+  const oralDialoguesByTask = useMemo(() => {
+    if (!isOral || !attempt.answers) return null;
+    let ans: any = attempt.answers;
+    if (typeof ans === "string") {
+      try {
+        ans = JSON.parse(ans);
+      } catch {
+        return null;
+      }
+    }
+    if (typeof ans !== "object" || ans === null) return null;
+
+    // Format Record<number, OralDialogueMessage[]>
+    const record: Record<number, OralDialogueMessage[]> = {};
+    if (Array.isArray(ans)) {
+      record[1] = ans;
+    } else {
+      [1, 2, 3].forEach((taskNum) => {
+        if (Array.isArray(ans[taskNum]) || Array.isArray(ans[String(taskNum)])) {
+          record[taskNum] = ans[taskNum] || ans[String(taskNum)];
+        }
+      });
+    }
+    return Object.keys(record).length > 0 ? record : null;
+  }, [isOral, attempt.answers]);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -94,7 +186,7 @@ export function AttemptInspectDialog({ attempt }: AttemptInspectDialogProps) {
                     ID: {attempt.id.slice(0, 8)}...
                   </Badge>
                 </DialogTitle>
-                <DialogDescription className="text-xs text-muted-foreground mt-0.5 flex items-center gap-2">
+                <DialogDescription className="text-xs text-muted-foreground mt-0.5 flex items-center gap-2 flex-wrap">
                   <span className="flex items-center gap-1">
                     <User className="h-3 w-3" /> {candidateName}
                   </span>
@@ -130,7 +222,7 @@ export function AttemptInspectDialog({ attempt }: AttemptInspectDialogProps) {
           </div>
         </DialogHeader>
 
-        {/* Written Exam Details */}
+        {/* Written Exam Details (EE) */}
         {isWritten ? (
           <div className="space-y-5 pt-2">
             {/* Task Selector Tabs */}
@@ -211,8 +303,9 @@ export function AttemptInspectDialog({ attempt }: AttemptInspectDialogProps) {
             )}
           </div>
         ) : (
-          /* Other Disciplines Details (EO, CE, CO) */
+          /* Oral (EO) & Other Disciplines (CE, CO) Rich View */
           <div className="space-y-4 pt-2">
+            {/* Session Stats */}
             <div className="rounded-xl border bg-card p-4 space-y-2">
               <h4 className="text-xs font-bold text-foreground">Bilan de la Session</h4>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs font-mono pt-1">
@@ -229,21 +322,209 @@ export function AttemptInspectDialog({ attempt }: AttemptInspectDialogProps) {
                   <span className="font-bold text-foreground">NCLC {attempt.nclcLevel}</span>
                 </div>
                 <div className="p-2.5 rounded-lg bg-muted/20 border">
-                  <span className="text-[10px] text-muted-foreground uppercase block">Bonus CRS</span>
-                  <span className="font-bold text-emerald-600">+{attempt.crsPointsUnlocked} pts</span>
+                  <span className="text-[10px] text-muted-foreground uppercase block">
+                    {parsedFeedback?.wordsPerMinute ? "Débit Élocution" : "Bonus CRS"}
+                  </span>
+                  <span className="font-bold text-emerald-600">
+                    {parsedFeedback?.wordsPerMinute
+                      ? `${parsedFeedback.wordsPerMinute} mots/min`
+                      : `+${attempt.crsPointsUnlocked} pts`}
+                  </span>
                 </div>
               </div>
             </div>
 
-            {Boolean(attempt.feedback) && (
-              <div className="rounded-xl border bg-muted/10 p-4 space-y-1.5">
-                <span className="text-xs font-bold text-foreground">Retour de l&apos;Évaluateur IA :</span>
-                <pre className="text-[11px] text-muted-foreground p-3 rounded-lg bg-card border overflow-x-auto font-mono whitespace-pre-wrap">
-                  {typeof attempt.feedback === "string"
-                    ? attempt.feedback
-                    : JSON.stringify(attempt.feedback, null, 2)}
-                </pre>
+            {/* Oral Transcripts / Dialogues (if present) */}
+            {oralDialoguesByTask && (
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-foreground flex items-center gap-1.5">
+                    <Mic className="h-3.5 w-3.5 text-primary" />
+                    <span>Échanges Oraux avec l&apos;Examinateur</span>
+                  </span>
+                  <div className="flex items-center gap-1">
+                    {[1, 2, 3].map((num) => {
+                      if (!oralDialoguesByTask[num]) return null;
+                      return (
+                        <button
+                          key={num}
+                          type="button"
+                          onClick={() => setSelectedOralTask(num)}
+                          className={`text-xs px-2.5 py-1 rounded-lg border font-semibold cursor-pointer transition-all ${
+                            selectedOralTask === num
+                              ? "bg-primary text-primary-foreground border-primary"
+                              : "bg-muted/30 text-muted-foreground hover:bg-muted"
+                          }`}
+                        >
+                          Tâche {num}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                <div className="rounded-xl border bg-muted/10 p-4 space-y-3 max-h-[300px] overflow-y-auto">
+                  {oralDialoguesByTask[selectedOralTask] && oralDialoguesByTask[selectedOralTask].length > 0 ? (
+                    oralDialoguesByTask[selectedOralTask].map((msg, idx) => {
+                      const isExaminer = msg.sender === "examiner" || msg.sender === "evaluator";
+                      return (
+                        <div
+                          key={idx}
+                          className={`flex items-start gap-2.5 ${
+                            isExaminer ? "justify-start" : "justify-end"
+                          }`}
+                        >
+                          {isExaminer && (
+                            <div className="w-6 h-6 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0 mt-0.5">
+                              <Bot className="h-3.5 w-3.5 text-primary" />
+                            </div>
+                          )}
+                          <div
+                            className={`max-w-[80%] rounded-2xl p-3 text-xs leading-relaxed ${
+                              isExaminer
+                                ? "bg-card border text-card-foreground rounded-tl-xs"
+                                : "bg-primary text-primary-foreground rounded-tr-xs"
+                            }`}
+                          >
+                            <div className="flex items-center justify-between gap-4 mb-1 text-[10px] opacity-75 font-mono">
+                              <span>{isExaminer ? "Examinateur Laurent" : "Candidat"}</span>
+                            </div>
+                            <p className="whitespace-pre-wrap">{msg.text}</p>
+                          </div>
+                          {!isExaminer && (
+                            <div className="w-6 h-6 rounded-full bg-muted border flex items-center justify-center shrink-0 mt-0.5">
+                              <UserCheck className="h-3.5 w-3.5 text-muted-foreground" />
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })
+                  ) : (
+                    <p className="text-xs text-muted-foreground italic text-center py-4">
+                      Aucun dialogue enregistré pour la Tâche {selectedOralTask}.
+                    </p>
+                  )}
+                </div>
               </div>
+            )}
+
+            {/* Debrief / General Feedback */}
+            {(parsedFeedback?.examinerDebrief || parsedFeedback?.generalFeedback) && (
+              <div className="rounded-xl border border-primary/20 bg-primary/5 p-4 space-y-1.5">
+                <span className="text-xs font-bold text-primary flex items-center gap-1.5">
+                  <Quote className="h-3.5 w-3.5" />
+                  <span>Bilan Pédagogique de l&apos;Examinateur</span>
+                </span>
+                <p className="text-xs text-foreground/90 leading-relaxed">
+                  {parsedFeedback.examinerDebrief || parsedFeedback.generalFeedback}
+                </p>
+              </div>
+            )}
+
+            {/* FEI Criteria Breakdown (Oral or other structured feedback) */}
+            {parsedFeedback?.criteria && parsedFeedback.criteria.length > 0 && (
+              <div className="rounded-xl border bg-card p-4 space-y-3">
+                <h4 className="text-xs font-bold text-foreground uppercase tracking-wider flex items-center gap-1.5">
+                  <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
+                  <span>Grille d&apos;Évaluation FEI</span>
+                </h4>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {parsedFeedback.criteria.map((c, i) => (
+                    <div key={i} className="p-3 rounded-lg border bg-muted/10 space-y-1">
+                      <div className="flex items-center justify-between text-xs font-bold">
+                        <span className="text-foreground">{c.label}</span>
+                        <span className="font-mono text-primary">{c.score} / 4</span>
+                      </div>
+                      {c.feedback && (
+                        <p className="text-[11px] text-muted-foreground leading-snug">
+                          {c.feedback}
+                        </p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Strengths & Improvements */}
+            {((parsedFeedback?.strengths && parsedFeedback.strengths.length > 0) ||
+              (parsedFeedback?.improvements && parsedFeedback.improvements.length > 0)) && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {parsedFeedback.strengths && parsedFeedback.strengths.length > 0 && (
+                  <div className="p-3.5 rounded-xl border border-emerald-500/20 bg-emerald-500/5 space-y-2">
+                    <span className="text-xs font-bold text-emerald-600 flex items-center gap-1.5">
+                      <CheckCircle2 className="h-3.5 w-3.5" />
+                      <span>Points Forts Validés</span>
+                    </span>
+                    <ul className="text-[11px] text-foreground/90 space-y-1 list-disc list-inside">
+                      {parsedFeedback.strengths.map((str, i) => (
+                        <li key={i}>{str}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                {parsedFeedback.improvements && parsedFeedback.improvements.length > 0 && (
+                  <div className="p-3.5 rounded-xl border border-amber-500/20 bg-amber-500/5 space-y-2">
+                    <span className="text-xs font-bold text-amber-600 flex items-center gap-1.5">
+                      <AlertCircle className="h-3.5 w-3.5" />
+                      <span>Axes de Progression</span>
+                    </span>
+                    <ul className="text-[11px] text-foreground/90 space-y-1 list-disc list-inside">
+                      {parsedFeedback.improvements.map((imp, i) => (
+                        <li key={i}>{imp}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Recommended C2 Phrases */}
+            {parsedFeedback?.recommendedPhrasesC2 && parsedFeedback.recommendedPhrasesC2.length > 0 && (
+              <div className="rounded-xl border border-primary/20 bg-card p-4 space-y-2">
+                <span className="text-xs font-bold text-foreground flex items-center gap-1.5">
+                  <Sparkles className="h-3.5 w-3.5 text-primary" />
+                  <span>Formulations C2 / Recommandations Ciblées</span>
+                </span>
+                <div className="space-y-1.5">
+                  {parsedFeedback.recommendedPhrasesC2.map((phrase, i) => (
+                    <div
+                      key={i}
+                      className="p-2.5 rounded-lg bg-muted/20 border text-xs font-sans text-foreground/90 italic"
+                    >
+                      {phrase}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Collapsible Raw JSON for Tech & Audit */}
+        {Boolean(attempt.feedback || attempt.answers) && (
+          <div className="pt-2 border-t mt-4">
+            <button
+              type="button"
+              onClick={() => setShowRawJson(!showRawJson)}
+              className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1.5 transition-colors cursor-pointer"
+            >
+              <Code2 className="h-3.5 w-3.5" />
+              <span>{showRawJson ? "Masquer les données brutes (JSON)" : "Afficher les données brutes (JSON)"}</span>
+              {showRawJson ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
+            </button>
+
+            {showRawJson && (
+              <pre className="mt-2 text-[10px] text-muted-foreground p-3 rounded-lg bg-muted/30 border overflow-x-auto font-mono whitespace-pre-wrap max-h-56">
+                {JSON.stringify(
+                  {
+                    answers: attempt.answers,
+                    feedback: attempt.feedback,
+                  },
+                  null,
+                  2
+                )}
+              </pre>
             )}
           </div>
         )}

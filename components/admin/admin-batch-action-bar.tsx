@@ -92,22 +92,22 @@ export function AdminBatchActionBar({
           transition={{ type: "spring", damping: 25, stiffness: 350 }}
           className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-2xl"
         >
-          <div className="relative overflow-hidden rounded-2xl border border-white/15 bg-slate-900/95 p-3 sm:p-4 shadow-2xl shadow-black/60 backdrop-blur-xl text-slate-100 flex flex-wrap items-center justify-between gap-3">
+          <div className="relative overflow-hidden rounded-2xl border border-border/80 bg-card/95 dark:bg-slate-900/95 p-3 sm:p-4 shadow-2xl shadow-black/10 dark:shadow-black/60 backdrop-blur-xl text-card-foreground dark:text-slate-100 flex flex-wrap items-center justify-between gap-3">
             {/* Ambient edge highlight */}
-            <div className="pointer-events-none absolute -top-10 left-1/2 -translate-x-1/2 h-20 w-80 rounded-full bg-gradient-to-r from-red-500/20 via-primary/30 to-blue-500/20 blur-xl" />
+            <div className="pointer-events-none absolute -top-10 left-1/2 -translate-x-1/2 h-20 w-80 rounded-full bg-gradient-to-r from-red-500/15 via-primary/20 to-blue-500/15 blur-xl" />
 
             {/* Left: Count & Clear */}
             <div className="flex items-center gap-2.5 z-10">
               <span className="flex h-7 px-2.5 items-center justify-center rounded-lg bg-primary text-white font-mono font-black text-xs shadow-md">
                 {selectedCount}
               </span>
-              <span className="text-xs sm:text-sm font-semibold text-slate-200">
+              <span className="text-xs sm:text-sm font-semibold text-foreground dark:text-slate-200">
                 {itemName} sélectionné{selectedCount > 1 ? "s" : ""}
               </span>
               <button
                 type="button"
                 onClick={onClearSelection}
-                className="ml-1 text-slate-400 hover:text-white p-1 rounded-md hover:bg-white/10 transition-colors"
+                className="ml-1 text-muted-foreground hover:text-foreground dark:text-slate-400 dark:hover:text-white p-1 rounded-md hover:bg-muted dark:hover:bg-white/10 transition-colors"
                 title="Désélectionner tout"
               >
                 <X className="h-4 w-4" />
@@ -125,9 +125,9 @@ export function AdminBatchActionBar({
                     variant="outline"
                     disabled={isPending}
                     onClick={() => handleToggleActive(true)}
-                    className="h-8 text-xs font-semibold bg-white/5 border-white/10 hover:bg-emerald-500/20 hover:text-emerald-400 hover:border-emerald-500/30 gap-1.5"
+                    className="h-8 text-xs font-semibold bg-muted/60 dark:bg-white/5 border-border/80 dark:border-white/10 hover:bg-emerald-500/15 dark:hover:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 hover:border-emerald-500/30 gap-1.5"
                   >
-                    <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />
+                    <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
                     <span>Activer</span>
                   </Button>
                   <Button
@@ -136,9 +136,9 @@ export function AdminBatchActionBar({
                     variant="outline"
                     disabled={isPending}
                     onClick={() => handleToggleActive(false)}
-                    className="h-8 text-xs font-semibold bg-white/5 border-white/10 hover:bg-amber-500/20 hover:text-amber-400 hover:border-amber-500/30 gap-1.5"
+                    className="h-8 text-xs font-semibold bg-muted/60 dark:bg-white/5 border-border/80 dark:border-white/10 hover:bg-amber-500/15 dark:hover:bg-amber-500/20 text-amber-700 dark:text-amber-400 hover:border-amber-500/30 gap-1.5"
                   >
-                    <XCircle className="h-3.5 w-3.5 text-amber-400" />
+                    <XCircle className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400" />
                     <span>Masquer</span>
                   </Button>
                 </>
@@ -157,7 +157,7 @@ export function AdminBatchActionBar({
                         variant={opt.variant || "outline"}
                         disabled={isPending}
                         onClick={() => handleStatusChange(opt.value)}
-                        className="h-8 text-xs font-semibold bg-white/5 border-white/10 hover:bg-white/15 gap-1.5"
+                        className="h-8 text-xs font-semibold bg-muted/60 dark:bg-white/5 border-border/80 dark:border-white/10 hover:bg-muted dark:hover:bg-white/15 text-foreground dark:text-slate-200 gap-1.5"
                       >
                         <Icon className="h-3.5 w-3.5" />
                         <span>{opt.label}</span>
@@ -178,7 +178,7 @@ export function AdminBatchActionBar({
                   variant="outline"
                   disabled={isPending}
                   onClick={onExportCsv}
-                  className="h-8 text-xs font-semibold bg-white/5 border-white/10 hover:bg-white/15 gap-1.5"
+                  className="h-8 text-xs font-semibold bg-muted/60 dark:bg-white/5 border-border/80 dark:border-white/10 hover:bg-muted dark:hover:bg-white/15 text-foreground dark:text-slate-200 gap-1.5"
                   title="Exporter la sélection en CSV"
                 >
                   <Download className="h-3.5 w-3.5" />
@@ -193,7 +193,7 @@ export function AdminBatchActionBar({
                   size="sm"
                   disabled={isPending}
                   onClick={() => setShowDeleteConfirm(true)}
-                  className="h-8 text-xs font-bold bg-red-600/90 hover:bg-red-600 text-white shadow-md shadow-red-950/50 gap-1.5"
+                  className="h-8 text-xs font-bold bg-red-600 hover:bg-red-700 text-white shadow-md gap-1.5"
                 >
                   {isPending ? (
                     <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -210,28 +210,28 @@ export function AdminBatchActionBar({
 
       {/* Delete Confirmation Modal */}
       <Dialog open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>
-        <DialogContent className="max-w-md bg-slate-900 border-white/10 text-slate-100">
+        <DialogContent className="max-w-md bg-card border-border text-card-foreground dark:bg-slate-900 dark:border-white/10 dark:text-slate-100 shadow-2xl">
           <DialogHeader>
             <div className="flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-500/10 text-red-500 border border-red-500/20">
                 <AlertTriangle className="h-5 w-5" />
               </div>
-              <DialogTitle className="text-lg font-bold text-white">
+              <DialogTitle className="text-lg font-bold text-foreground dark:text-white">
                 Supprimer {selectedCount} {itemName} ?
               </DialogTitle>
             </div>
-            <DialogDescription className="text-slate-400 text-xs sm:text-sm pt-2 leading-relaxed">
-              Cette action est <span className="text-red-400 font-semibold">irréversible</span>. Les {selectedCount} {itemName} sélectionnés seront définitivement supprimés de la base de données.
+            <DialogDescription className="text-muted-foreground dark:text-slate-400 text-xs sm:text-sm pt-2 leading-relaxed">
+              Cette action est <span className="text-red-500 dark:text-red-400 font-semibold">irréversible</span>. Les {selectedCount} {itemName} sélectionnés seront définitivement supprimés de la base de données.
             </DialogDescription>
           </DialogHeader>
 
-          <DialogFooter className="gap-2 sm:gap-0 pt-3 border-t border-white/10">
+          <DialogFooter className="gap-2 sm:gap-0 pt-3 border-t border-border dark:border-white/10">
             <Button
               type="button"
               variant="outline"
               disabled={isPending}
               onClick={() => setShowDeleteConfirm(false)}
-              className="border-white/10 text-slate-300 hover:text-white"
+              className="border-border text-foreground dark:border-white/10 dark:text-slate-300 hover:bg-muted"
             >
               Annuler
             </Button>
@@ -239,7 +239,7 @@ export function AdminBatchActionBar({
               type="button"
               disabled={isPending}
               onClick={handleDelete}
-              className="bg-red-600 hover:bg-red-700 text-white font-bold gap-2"
+              className="bg-red-600 hover:bg-red-700 text-white font-bold gap-2 shadow-sm"
             >
               {isPending && <Loader2 className="h-4 w-4 animate-spin" />}
               Confirmer la suppression
