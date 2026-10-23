@@ -1046,41 +1046,73 @@ export function WrittenExamEditor({
         </div>
       ) : (
         <div className="flex min-h-0 flex-1 flex-col">
-          {/* 📑 SÉLECTEUR D'ONGLETS DES 3 TÂCHES */}
+          {/* 📑 EN-TÊTE : MODE ENTRAÎNEMENT CIBLÉ (1 SEULE TÂCHE) VS SIMULATION OFFICIELLE (3 TÂCHES) */}
           <div className="flex items-center justify-between border-b bg-muted/40 px-4 sm:px-6 py-2 gap-3 overflow-x-auto">
-            <div className="flex items-center gap-2">
-              {series.tasks.map((task, idx) => {
-                const count = countWordsFei(texts[idx] || "");
-                const active = activeTaskIndex === idx;
+            {mode === "practice" ? (
+              <div className="flex items-center justify-between w-full">
+                <div className="flex items-center gap-2.5">
+                  <div className="flex items-center gap-2 rounded-xl bg-card border border-primary/30 px-3 py-1.5 shadow-2xs">
+                    <span className="flex h-5 w-5 items-center justify-center rounded-md bg-primary/10 text-primary text-xs font-black">
+                      {currentTask.taskNumber}
+                    </span>
+                    <span className="text-xs font-bold text-foreground">
+                      Entraînement Ciblé : Tâche {currentTask.taskNumber}
+                    </span>
+                  </div>
 
-                return (
-                  <button
-                    key={task.taskNumber}
-                    type="button"
-                    onClick={() => setActiveTaskIndex(idx as 0 | 1 | 2)}
+                  <span
                     className={cn(
-                      "flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition-all select-none border",
-                      active
-                        ? "bg-card text-foreground border-primary shadow-xs ring-1 ring-primary/20"
-                        : "bg-transparent text-muted-foreground border-transparent hover:bg-muted"
+                      "font-mono text-[11px] rounded-lg px-2.5 py-1 border font-bold",
+                      currentWordCount >= currentTask.minWords && currentWordCount <= currentTask.maxWords
+                        ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-600 dark:text-emerald-400"
+                        : "bg-muted border-border/80 text-muted-foreground"
                     )}
                   >
-                    <BookOpen className="h-3.5 w-3.5 text-primary" />
-                    <span>Tâche {task.taskNumber}</span>
-                    <span
+                    {currentWordCount} mots ({currentTask.minWords} à {currentTask.maxWords} requis)
+                  </span>
+                </div>
+
+                <div className="hidden sm:flex items-center gap-2 text-xs text-muted-foreground">
+                  <span>⏱️ Chronomètre dédié : {Math.round(TASK_PRACTICE_DURATIONS[activeTaskIndex] / 60)} min</span>
+                  <span>•</span>
+                  <span>Évaluation FEI &amp; Magic Rewrite C1/C2</span>
+                </div>
+              </div>
+            ) : (
+              <div className="flex items-center gap-2">
+                {series.tasks.map((task, idx) => {
+                  const count = countWordsFei(texts[idx] || "");
+                  const active = activeTaskIndex === idx;
+
+                  return (
+                    <button
+                      key={task.taskNumber}
+                      type="button"
+                      onClick={() => setActiveTaskIndex(idx as 0 | 1 | 2)}
                       className={cn(
-                        "font-mono text-[11px] rounded px-1.5 py-0.5 ml-1",
-                        count >= task.minWords && count <= task.maxWords
-                          ? "bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-bold"
-                          : "bg-muted text-muted-foreground"
+                        "flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition-all select-none border",
+                        active
+                          ? "bg-card text-foreground border-primary shadow-xs ring-1 ring-primary/20"
+                          : "bg-transparent text-muted-foreground border-transparent hover:bg-muted"
                       )}
                     >
-                      {count} mots
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
+                      <BookOpen className="h-3.5 w-3.5 text-primary" />
+                      <span>Tâche {task.taskNumber}</span>
+                      <span
+                        className={cn(
+                          "font-mono text-[11px] rounded px-1.5 py-0.5 ml-1",
+                          count >= task.minWords && count <= task.maxWords
+                            ? "bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-bold"
+                            : "bg-muted text-muted-foreground"
+                        )}
+                      >
+                        {count} mots
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
           </div>
 
           {/* 🪟 ÉCRAN SCINDÉ : SUJET À GAUCHE, ÉDITEUR À DROITE */}

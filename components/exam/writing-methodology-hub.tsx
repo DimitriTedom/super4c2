@@ -679,6 +679,53 @@ export function WritingMethodologyHub({
                   </div>
                 </div>
 
+                {/* 🎯 ESPACE D'APPLICATION IMMÉDIATE • TÂCHE 1 */}
+                <div className="rounded-2xl border-2 border-primary/40 bg-gradient-to-r from-primary/[0.04] via-card to-primary/[0.02] p-5 sm:p-6 space-y-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b pb-3">
+                    <div className="flex items-center gap-2">
+                      <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-primary text-white text-xs font-black">
+                        1
+                      </span>
+                      <div>
+                        <h4 className="font-display text-sm sm:text-base font-black text-foreground">
+                          Passer à l&apos;Application • Exercice Tâche 1
+                        </h4>
+                        <p className="text-xs text-muted-foreground">
+                          Mettez en pratique la méthodologie sur le sujet officiel sous chronomètre dédié de 15 minutes.
+                        </p>
+                      </div>
+                    </div>
+
+                    <span className="text-[11px] font-mono font-bold text-primary bg-primary/10 border border-primary/20 px-2.5 py-1 rounded-full shrink-0">
+                      15 min • 60-120 mots
+                    </span>
+                  </div>
+
+                  <div className="p-4 rounded-xl border bg-card text-xs space-y-2">
+                    <div className="flex items-center justify-between text-muted-foreground">
+                      <span className="font-bold text-foreground">Sujet d&apos;application (Série {series.seriesNumber || 101}) :</span>
+                      <span className="text-[11px]">Évaluation ciblée &amp; Magic Rewrite C1/C2</span>
+                    </div>
+                    <p className="text-muted-foreground italic leading-relaxed">
+                      &laquo; {series.tasks[0]?.topic || "Rédigez un message court pour transmettre des informations claires et précises en respectant la situation de communication."} &raquo;
+                    </p>
+                  </div>
+
+                  <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-1">
+                    <p className="text-[11px] text-muted-foreground italic">
+                      💡 Seule la Tâche 1 sera soumise. Les Tâches 2 et 3 ne sont pas mélangées en mode entraînement.
+                    </p>
+
+                    <Button asChild className="w-full sm:w-auto bg-primary hover:bg-primary/90 text-white font-black text-xs h-10 px-6 rounded-xl shadow-md gap-2">
+                      <Link href={`/examens/${series.id}/ee?mode=practice&task=1&start=true`}>
+                        <PenTool className="h-3.5 w-3.5" />
+                        <span>S&apos;appliquer sur la Tâche 1 (15 min)</span>
+                        <ArrowRight className="h-3.5 w-3.5" />
+                      </Link>
+                    </Button>
+                  </div>
+                </div>
+
                 <div className="flex justify-between items-center pt-2">
                   <Button variant="outline" onClick={() => setActiveTab("presentation")}>
                     ← Revoir la Présentation de l&apos;Épreuve
@@ -788,6 +835,53 @@ export function WritingMethodologyHub({
                   </div>
                 </div>
 
+                {/* 🎯 ESPACE D'APPLICATION IMMÉDIATE • TÂCHE 2 */}
+                <div className="rounded-2xl border-2 border-amber-500/40 bg-gradient-to-r from-amber-500/[0.04] via-card to-amber-500/[0.02] p-5 sm:p-6 space-y-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b pb-3">
+                    <div className="flex items-center gap-2">
+                      <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-amber-600 text-white text-xs font-black">
+                        2
+                      </span>
+                      <div>
+                        <h4 className="font-display text-sm sm:text-base font-black text-foreground">
+                          Passer à l&apos;Application • Exercice Tâche 2
+                        </h4>
+                        <p className="text-xs text-muted-foreground">
+                          Racontez votre expérience et dégagez sa portée citoyenne sous chronomètre dédié de 20 minutes.
+                        </p>
+                      </div>
+                    </div>
+
+                    <span className="text-[11px] font-mono font-bold text-amber-600 bg-amber-500/10 border border-amber-500/20 px-2.5 py-1 rounded-full shrink-0">
+                      20 min • 120-150 mots
+                    </span>
+                  </div>
+
+                  <div className="p-4 rounded-xl border bg-card text-xs space-y-2">
+                    <div className="flex items-center justify-between text-muted-foreground">
+                      <span className="font-bold text-foreground">Sujet d&apos;application (Série {series.seriesNumber || 101}) :</span>
+                      <span className="text-[11px]">Évaluation ciblée &amp; Magic Rewrite C1/C2</span>
+                    </div>
+                    <p className="text-muted-foreground italic leading-relaxed">
+                      &laquo; {series.tasks[1]?.topic || "Racontez une expérience vécue marquante et expliquez en quoi cette initiative a eu un impact positif."} &raquo;
+                    </p>
+                  </div>
+
+                  <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-1">
+                    <p className="text-[11px] text-muted-foreground italic">
+                      💡 Seule la Tâche 2 sera soumise. Vous travaillez exclusivement sur le récit et la portée civique.
+                    </p>
+
+                    <Button asChild className="w-full sm:w-auto bg-amber-600 hover:bg-amber-700 text-white font-black text-xs h-10 px-6 rounded-xl shadow-md gap-2">
+                      <Link href={`/examens/${series.id}/ee?mode=practice&task=2&start=true`}>
+                        <PenTool className="h-3.5 w-3.5" />
+                        <span>S&apos;appliquer sur la Tâche 2 (20 min)</span>
+                        <ArrowRight className="h-3.5 w-3.5" />
+                      </Link>
+                    </Button>
+                  </div>
+                </div>
+
                 <div className="flex justify-between items-center pt-2">
                   <Button variant="outline" onClick={() => setActiveTaskTab(1)}>
                     ← Revoir la Tâche 1
@@ -894,6 +988,53 @@ export function WritingMethodologyHub({
                         <span className="text-muted-foreground">Concession « bien que (...) j&apos;estime que », verbes précis.</span>
                       </div>
                     </div>
+                  </div>
+                </div>
+
+                {/* 🎯 ESPACE D'APPLICATION IMMÉDIATE • TÂCHE 3 */}
+                <div className="rounded-2xl border-2 border-cyan-500/40 bg-gradient-to-r from-cyan-500/[0.04] via-card to-cyan-500/[0.02] p-5 sm:p-6 space-y-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b pb-3">
+                    <div className="flex items-center gap-2">
+                      <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-cyan-600 text-white text-xs font-black">
+                        3
+                      </span>
+                      <div>
+                        <h4 className="font-display text-sm sm:text-base font-black text-foreground">
+                          Passer à l&apos;Application • Exercice Tâche 3
+                        </h4>
+                        <p className="text-xs text-muted-foreground">
+                          Construisez une double argumentation antithétique et une prise de position nuancée (25 minutes).
+                        </p>
+                      </div>
+                    </div>
+
+                    <span className="text-[11px] font-mono font-bold text-cyan-600 bg-cyan-500/10 border border-cyan-500/20 px-2.5 py-1 rounded-full shrink-0">
+                      25 min • 120-180 mots
+                    </span>
+                  </div>
+
+                  <div className="p-4 rounded-xl border bg-card text-xs space-y-2">
+                    <div className="flex items-center justify-between text-muted-foreground">
+                      <span className="font-bold text-foreground">Sujet d&apos;application (Série {series.seriesNumber || 101}) :</span>
+                      <span className="text-[11px]">Évaluation ciblée &amp; Magic Rewrite C1/C2</span>
+                    </div>
+                    <p className="text-muted-foreground italic leading-relaxed">
+                      &laquo; {series.tasks[2]?.topic || "Présentez deux opinions opposées sur un sujet de société avant de formuler votre propre point de vue étayé."} &raquo;
+                    </p>
+                  </div>
+
+                  <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-1">
+                    <p className="text-[11px] text-muted-foreground italic">
+                      💡 Seule la Tâche 3 sera soumise. Vous travaillez exclusivement sur l&apos;argumentation et la concession C1/C2.
+                    </p>
+
+                    <Button asChild className="w-full sm:w-auto bg-cyan-600 hover:bg-cyan-700 text-white font-black text-xs h-10 px-6 rounded-xl shadow-md gap-2">
+                      <Link href={`/examens/${series.id}/ee?mode=practice&task=3&start=true`}>
+                        <PenTool className="h-3.5 w-3.5" />
+                        <span>S&apos;appliquer sur la Tâche 3 (25 min)</span>
+                        <ArrowRight className="h-3.5 w-3.5" />
+                      </Link>
+                    </Button>
                   </div>
                 </div>
 
