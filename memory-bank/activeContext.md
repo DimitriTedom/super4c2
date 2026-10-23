@@ -2,6 +2,24 @@
 
 ## 0. Déploiement Production Vercel & Moteur de Conversion
 
+### 0.0zj. Actions en Lot (Batch Actions) sur le Tableau Historique & Corrections (`attempt-history-table.tsx` & `actions.ts`)
+- **Demande Utilisateur :** Ajout des actions en lot (batch) sur le tableau de l'historique et des corrections du candidat (`/dashboard/historique` et dashboard principal).
+- **Fonctionnalités & Composants Déployés :**
+  1. **Sélection Unitaire & Globale Multi-Pages :**
+     - Case à cocher sur chaque ligne d'épreuve avec surbrillance douce de la ligne sélectionnée (`Square` / `CheckSquare`).
+     - Case à cocher maîtresse dans l'en-tête de colonne avec état indéterminé (`MinusSquare`) et sélection de toute la page en 1 clic.
+     - Raccourci intelligent de sélection : bouton *« Cocher les X copie(s) vide(s) »* dans la barre d'outils pour cibler instantanément les simulations à 0 mot / 0 point.
+  2. **Barre d'Actions Flottante Réactive (`AnimatePresence` / Framer Motion) :**
+     - Apparaît avec animation spring dès qu'au moins 1 copie est cochée.
+     - Badge dynamique avec compteur d'éléments sélectionnés.
+     - Lien de sélection globale : *« Sélectionner tous les X résultats »*.
+     - **Export CSV Groupé :** Génération instantanée d'un fichier CSV encodé UTF-8 BOM (`super4c2-corrections-selection-*.csv`) avec ID, Date, Heure, Discipline, Note /20, Score TCF /699, Palier NCLC, Nombre de mots et Points CRS.
+     - **Suppression Groupée :** Bouton rouge avec modale de confirmation récapitulative.
+     - Bouton Annuler / Tout désélectionner (`X`).
+  3. **Action Serveur Sécurisée (`app/dashboard/historique/actions.ts`) :**
+     - `batchDeleteUserAttemptsAction(attemptIds: string[])` : Suppression atomique avec filtre d'appartenance strict (`userId: user.id`), revalidation Next.js et mise à jour optimiste locale.
+- **Validation :** 0 erreur TypeScript (`npx tsc --noEmit`), commit `0dd9724` poussé sur `origin/main`.
+
 ### 0.0zi. Séparation Pédagogique Stricte : Entraînement Ciblé par Tâche vs Simulation Officielle 60 min (`writing-methodology-hub.tsx` & `written-exam-editor.tsx`)
 - **Directives Pédagogiques du Supérieur (Note Vocale WA0016) :**
   - Clarification sans équivoque de la distinction entre **Méthodologie & Entraînement par Tâche** et **Examen Complet Officiel** :

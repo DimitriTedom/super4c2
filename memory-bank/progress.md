@@ -1,3 +1,8 @@
+- [x] **Actions en Lot (Batch Actions) sur le Tableau Historique & Corrections (`attempt-history-table.tsx` & `actions.ts`) :**
+  - **Sélection Multiple & Checkboxes :** Colonne de cases à cocher unitaire et en-tête (`Square`, `CheckSquare`, `MinusSquare`), raccourci de sélection des copies vides et surbrillance des lignes sélectionnées.
+  - **Barre Flottante d'Actions Groupées :** Apparition animée (Framer Motion) dès qu'une copie est cochée, affichant le nombre de copies sélectionnées, un bouton **Export CSV Groupé (Excel UTF-8 BOM)**, un bouton **Supprimer la sélection**, et un bouton pour tout désélectionner.
+  - **Action Serveur Atomique (`batchDeleteUserAttemptsAction`) :** Suppression sécurisée des copies appartenant au candidat connecté avec recalcul automatique de la moyenne et notifications toast.
+  - **Validation :** 0 erreur TypeScript (`npx tsc --noEmit`), commit `0dd9724` poussé sur `origin/main`.
 - [x] **Séparation Pédagogique Stricte : Entraînement Ciblé par Tâche vs Simulation Officielle 60 min (`writing-methodology-hub.tsx` & `written-exam-editor.tsx`) :**
   - **Fidélité Totale aux Directives Vocales :** Dans la méthodologie, l'apprenant dispose d'exercices d'application UNIQUEMENT pour la tâche consultée (Tâche 1 -> Exercice Tâche 1 de 15 min ; Tâche 2 -> Exercice Tâche 2 de 20 min ; Tâche 3 -> Exercice Tâche 3 de 25 min) sans mélanger les autres tâches.
   - **Éditeur CBT Dédié (`written-exam-editor.tsx`) :** En mode `practice`, masquage des onglets des autres tâches et affichage d'un bandeau exclusif pour la tâche ciblée. En mode `exam` (simulation 60 min), maintien des 3 tâches avec navigation libre comme en examen officiel FEI.
