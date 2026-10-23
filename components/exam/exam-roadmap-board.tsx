@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useTransition } from "react";
+import { useState, useEffect, useMemo, useTransition } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
@@ -24,6 +24,9 @@ import {
   CheckCircle2,
   Play,
   Check,
+  Award,
+  AlertCircle,
+  HelpCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -41,6 +44,7 @@ import {
   getSeriesForTest,
   type TestType,
   type DisciplineType,
+  type ProgressionSeries,
 } from "@/lib/exam/series-progression";
 
 interface ExamRoadmapBoardProps {
@@ -56,6 +60,17 @@ interface CompletedDetail {
   nclcLevel?: number;
   totalScore?: number;
   tcfScaledScore?: number;
+}
+
+export interface RoadmapGateInfo {
+  minScoreRequired: number;
+  minCumulativeXpRequired: number;
+  isGate: boolean;
+  gateLabel?: string;
+  isPrevScoreSufficient: boolean;
+  isXpSufficient: boolean;
+  prevScore: number;
+  phaseName: string;
 }
 
 export function ExamRoadmapBoard({
@@ -186,27 +201,149 @@ export function ExamRoadmapBoard({
       ? rawSeriesList.filter((s) => !s.ieltsTrack || s.ieltsTrack === ieltsTrack)
       : rawSeriesList;
 
-  // 🔒 Règle de progression stricte de la Roadmap :
-  // - Examen 01 : UNLOCKED par défaut pour tout candidat (ou COMPLETED si déjà fait)
-  // - Examen N (N > 1) : COMPLETED si fait, UNLOCKED si l'Examen N-1 est COMPLETED (ou débloqué VIP), sinon strictement LOCKED.
+  // ⚡ 1. CALCUL DYNAMIQUE DU TOTAL XP CUMULÉ DU CANDIDAT (MOTEUR RPG)
+  const totalUserXp = useMemo(() => {
+    let xp = 0;
+    completedSeriesIds.forEach((sid) => {
+      const s = filteredRaw.find((item) => item.id === sid);
+      const reward = s?.xpReward || 350;
+      xp += reward;
+      const det = completedDetails[sid];
+      if (det?.nclcLevel && det.nclcLevel >= 7) {
+        xp += 200; // Bonus de validation Seuil NCLC 7
+      }
+      if (det?.nclcLevel && det.nclcLevel >= 9) {
+        xp += 300; // Bonus d'excellence C1/C2
+      }
+    });
+    return xp;
+  }, [completedSeriesIds, completedDetails, filteredRaw]);
+
+  // 🛡️ 2. CALCUL DU RANG CANDIDAT RPG
+  const userRank = useMemo(() => {
+    if (totalUserXp >= 2500) {
+      return {
+        title: "Maître C1/C2 Élite",
+        badge: "🥇 Rang Diamant",
+        color: "from-amber-500 via-rose-500 to-amber-400 text-amber-900 dark:text-amber-200 border-amber-500/40 bg-amber-500/10",
+        nextThreshold: 5000,
+        prevThreshold: 2500,
+        levelNum: 3,
+        icon: "💎",
+      };
+    }
+    if (totalUserXp >= 1000) {
+      return {
+        title: "Candidat NCLC 7+",
+        badge: "🥈 Rang Argent",
+        color: "from-emerald-500 to-cyan-500 text-emerald-800 dark:text-emerald-300 border-emerald-500/40 bg-emerald-500/10",
+        nextThreshold: 2500,
+        prevThreshold: 1000,
+        levelNum: 2,
+        icon: "🥈",
+      };
+    }
+    return {
+      title: "Initié B1/B2",
+      badge: "🥉 Rang Bronze",
+      color: "from-slate-400 to-primary text-primary border-primary/30 bg-primary/5",
+      nextThreshold: 1000,
+      prevThreshold: 0,
+      levelNum: 1,
+      icon: "🥉",
+    };
+  }, [totalUserXp]);
+
+  const xpIntoCurrentRank = Math.max(0, totalUserXp - userRank.prevThreshold);
+  const rankSpan = Math.max(1, userRank.nextThreshold - userRank.prevThreshold);
+  const rankProgressPercent = Math.min(100, Math.round((xpIntoCurrentRank / rankSpan) * 100));
+  const xpRemainingToNextRank = Math.max(0, userRank.nextThreshold - totalUserXp);
+
+  // 🔒 3. RÈGLE DYNAMIQUE DE DÉBLOCAGE RPG :
+  // - Examen 01 : Toujours UNLOCKED (ou COMPLETED)
+  // - Examen 02-03 : Requiert Examen N-1 (Score min. 8/20) OU Total XP suffisant
+  // - Examen 04 (Boss Gate NCLC 7+) : Requiert Examen 03 (Score min. 10/20) ET 1 000 XP cumulés !
+  // - Examen 07 (Grand Palier C1/C2) : Requiert NCLC 7+ validé ET 2 500 XP cumulés !
   const seriesList = filteredRaw.map((s, idx) => {
     const isCompleted = completedSeriesIds.includes(s.id);
     const prevSeriesId = idx > 0 ? filteredRaw[idx - 1].id : null;
+    const prevDetail = prevSeriesId ? completedDetails[prevSeriesId] : null;
     const isPrevCompleted = prevSeriesId ? completedSeriesIds.includes(prevSeriesId) : false;
+
+    // Définition des conditions de quête par palier
+    let minScoreRequired = 8;
+    let minCumulativeXpRequired = 0;
+    let phaseName = "Phase 1 : Diagnostic & Fondations B1/B2";
+    let isGate = false;
+    let gateLabel = "";
+
+    if (idx === 0) {
+      minScoreRequired = 0;
+      minCumulativeXpRequired = 0;
+    } else if (idx === 1) {
+      minScoreRequired = 8;
+      minCumulativeXpRequired = 300;
+    } else if (idx === 2) {
+      minScoreRequired = 8;
+      minCumulativeXpRequired = 650;
+    } else if (idx === 3) {
+      // ⚡ BOSS GATE NCLC 7+
+      minScoreRequired = 10;
+      minCumulativeXpRequired = 1000;
+      isGate = true;
+      gateLabel = "⚡ BOSS GATE : Seuil NCLC 7+ (+50 pts CRS)";
+      phaseName = "Phase 2 : Passage au Seuil NCLC 7+";
+    } else if (idx === 4) {
+      minScoreRequired = 10;
+      minCumulativeXpRequired = 1400;
+      phaseName = "Phase 2 : Passage au Seuil NCLC 7+";
+    } else if (idx === 5) {
+      minScoreRequired = 10;
+      minCumulativeXpRequired = 1800;
+      phaseName = "Phase 2 : Passage au Seuil NCLC 7+";
+    } else if (idx >= 6) {
+      // 🏆 GRAND PALIER C1/C2
+      minScoreRequired = 12;
+      minCumulativeXpRequired = 2500;
+      isGate = idx === 6;
+      gateLabel = "🏆 GRAND PALIER : Maîtrise C1/C2 Élite";
+      phaseName = "Phase 3 : Maîtrise C1/C2 Élite";
+    }
+
+    // Score obtenu sur l'épreuve précédente
+    const prevScore = prevDetail?.totalScore ?? (isPrevCompleted ? 10 : 0);
+    const isPrevScoreSufficient = idx === 0 || (isPrevCompleted && prevScore >= minScoreRequired);
+    const isXpSufficient = totalUserXp >= minCumulativeXpRequired;
     const isExplicitlyUnlocked = unlockedSeriesIds.includes(s.id);
 
     let status: "COMPLETED" | "UNLOCKED" | "LOCKED" = "LOCKED";
     if (isCompleted) {
       status = "COMPLETED";
-    } else if (idx === 0 || isPrevCompleted || isExplicitlyUnlocked) {
+    } else if (idx === 0) {
+      status = "UNLOCKED";
+    } else if (isExplicitlyUnlocked) {
+      status = "UNLOCKED";
+    } else if (isPrevScoreSufficient && isXpSufficient) {
       status = "UNLOCKED";
     } else {
       status = "LOCKED";
     }
 
+    const gateInfo: RoadmapGateInfo = {
+      minScoreRequired,
+      minCumulativeXpRequired,
+      isGate,
+      gateLabel,
+      isPrevScoreSufficient,
+      isXpSufficient,
+      prevScore,
+      phaseName,
+    };
+
     return {
       ...s,
       status,
+      gateInfo,
     };
   });
 
@@ -214,6 +351,7 @@ export function ExamRoadmapBoard({
     targetSeries: (typeof seriesList)[0];
     targetIndex: number;
     prevSeries?: (typeof seriesList)[0];
+    gateInfo: RoadmapGateInfo;
   } | null>(null);
 
   const handleAttemptAccessLocked = (seriesItem: (typeof seriesList)[0], index: number) => {
@@ -222,6 +360,7 @@ export function ExamRoadmapBoard({
       targetSeries: seriesItem,
       targetIndex: index,
       prevSeries,
+      gateInfo: seriesItem.gateInfo,
     });
   };
 
@@ -288,7 +427,7 @@ export function ExamRoadmapBoard({
           </p>
         </div>
 
-        {/* Sélecteurs Rapides : Test [TCF | TEF | IELTS] + Épreuve [Toutes | Écrit | Oral] + Vue [Parcours | Grille] */}
+        {/* Sélecteurs Rapides */}
         <div className="flex flex-wrap items-center gap-2 self-start sm:self-auto shrink-0">
           {/* 1. Sélecteur de Test */}
           <div className="inline-flex items-center p-1 rounded-xl bg-muted/60 border border-border/80 shadow-2xs">
@@ -385,6 +524,72 @@ export function ExamRoadmapBoard({
         </div>
       </div>
 
+      {/* 🎮 COCKPIT RPG & JAUGE D'XP DU CANDIDAT */}
+      <div className="relative overflow-hidden rounded-2xl border border-primary/25 bg-gradient-to-br from-card via-card to-primary/5 p-4 sm:p-5 shadow-sm space-y-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          {/* Rang & Titre */}
+          <div className="flex items-center gap-3">
+            <div
+              className={cn(
+                "flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border shadow-inner text-2xl font-black bg-gradient-to-br",
+                userRank.color
+              )}
+            >
+              {userRank.icon}
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <Badge className={cn("font-bold text-[10px] px-2 py-0.5", userRank.color)}>
+                  {userRank.badge}
+                </Badge>
+                <span className="font-mono text-xs text-muted-foreground font-semibold">
+                  Niveau {userRank.levelNum}
+                </span>
+              </div>
+              <h2 className="font-display text-lg sm:text-xl font-black tracking-tight text-foreground">
+                {userRank.title}
+              </h2>
+            </div>
+          </div>
+
+          {/* XP Total & Objectif Palier */}
+          <div className="flex items-center gap-4 self-start sm:self-auto sm:text-right">
+            <div className="space-y-0.5">
+              <div className="flex items-center sm:justify-end gap-1.5 text-xs text-muted-foreground font-semibold">
+                <Zap className="h-3.5 w-3.5 text-amber-500 fill-amber-500" />
+                <span>Énergie XP Cumulée</span>
+              </div>
+              <div className="font-mono text-xl sm:text-2xl font-black text-foreground">
+                {totalUserXp.toLocaleString("fr-FR")}{" "}
+                <span className="text-xs font-bold text-muted-foreground font-sans">
+                  / {userRank.nextThreshold.toLocaleString("fr-FR")} XP
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Jauge d'XP animée vers le prochain palier */}
+        <div className="space-y-1.5 pt-1">
+          <div className="flex items-center justify-between text-[11px] text-muted-foreground font-semibold">
+            <span>
+              {xpRemainingToNextRank > 0
+                ? `Plus que ${xpRemainingToNextRank} XP pour débloquer le rang supérieur`
+                : "Rang maximal C1/C2 atteint !"}
+            </span>
+            <span className="font-mono font-bold text-foreground">
+              {rankProgressPercent}%
+            </span>
+          </div>
+          <div className="h-2.5 w-full rounded-full bg-muted/80 overflow-hidden border border-border/60">
+            <div
+              className="h-full bg-gradient-to-r from-primary via-indigo-500 to-emerald-500 transition-all duration-700 ease-out rounded-full"
+              style={{ width: `${Math.max(rankProgressPercent, 3)}%` }}
+            />
+          </div>
+        </div>
+      </div>
+
       {/* 🇬🇧 IELTS Dual Track Switcher (si applicable) */}
       {activeTest === "ielts" && (
         <div className="p-3 rounded-2xl border border-indigo-500/20 bg-indigo-500/5 dark:bg-indigo-950/20 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
@@ -420,42 +625,6 @@ export function ExamRoadmapBoard({
         </div>
       )}
 
-      {/* 📊 BANDEAU DE PROGRESSION STRICTE */}
-      <div className="p-4 rounded-2xl border border-border/80 bg-card/60 backdrop-blur-sm space-y-3 shadow-2xs">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
-          <div className="flex items-center gap-2">
-            <span className="font-bold text-foreground">Progression de la Série :</span>
-            <span className="text-muted-foreground font-mono">
-              <strong className="text-emerald-600 dark:text-emerald-400 font-bold">{completedCount}</strong>/{totalCount} complétés ({progressPercent}%)
-            </span>
-            <span className="text-muted-foreground hidden sm:inline">·</span>
-            <span className="text-muted-foreground font-mono">
-              <strong className="text-foreground">{unlockedCount}</strong> débloqués
-            </span>
-          </div>
-
-          <div className="flex items-center gap-2">
-            {completedCount > 0 ? (
-              <Badge className="bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-emerald-500/30 text-[11px] font-bold">
-                ✓ Seuil Actif (+50 pts CRS en cours)
-              </Badge>
-            ) : (
-              <span className="text-muted-foreground flex items-center gap-1 font-semibold text-[11px]">
-                <ShieldCheck className="h-3.5 w-3.5 text-primary" /> Règle : Complétez chaque examen pour ouvrir le suivant
-              </span>
-            )}
-          </div>
-        </div>
-
-        {/* Barre de progression visuelle */}
-        <div className="h-2 w-full rounded-full bg-muted overflow-hidden">
-          <div
-            className="h-full bg-gradient-to-r from-primary via-indigo-500 to-emerald-500 transition-all duration-500"
-            style={{ width: `${Math.max(progressPercent, 4)}%` }}
-          />
-        </div>
-      </div>
-
       {/* ======================================================== */}
       {/* 1. VUE PARCOURS PÉDAGOGIQUE (ROADMAP STEPPER)           */}
       {/* ======================================================== */}
@@ -466,6 +635,7 @@ export function ExamRoadmapBoard({
             const isUnlocked = series.status !== "LOCKED";
             const sessionNum = String(idx + 1).padStart(2, "0");
             const details = completedDetails[series.id];
+            const gate = series.gateInfo;
 
             const eeUrl =
               series.disciplines.find((d) => d.type === "ee")?.url || `/examens/${series.id}/ee/intro`;
@@ -474,20 +644,23 @@ export function ExamRoadmapBoard({
 
             // Paliers pédagogiques
             const isPhaseStart = idx === 0 || idx === 3 || idx === 6;
-            const phaseTitle =
-              idx === 0
-                ? "Phase 1 : Immersion & Diagnostic CBT Initial"
-                : idx === 3
-                ? "Phase 2 : Passage au Seuil NCLC 7+ (+50 pts CRS)"
-                : "Phase 3 : Maîtrise C1/C2 Élite & Vitesse Réflexe";
 
             return (
               <div key={series.id} className="relative group">
-                {/* Séparateur de Phase */}
+                {/* Séparateur de Phase / Boss Gate */}
                 {isPhaseStart && (
                   <div className="mb-4 -ml-7 sm:-ml-10 flex items-center gap-2">
-                    <span className="flex h-6 px-2.5 items-center rounded-full bg-primary/10 border border-primary/25 font-bold text-[10px] text-primary uppercase tracking-wider">
-                      {phaseTitle}
+                    <span
+                      className={cn(
+                        "flex h-6 px-3 items-center rounded-full border font-bold text-[10px] uppercase tracking-wider",
+                        idx === 3
+                          ? "bg-amber-500/15 border-amber-500/40 text-amber-700 dark:text-amber-300"
+                          : idx === 6
+                          ? "bg-rose-500/15 border-rose-500/40 text-rose-700 dark:text-rose-300"
+                          : "bg-primary/10 border-primary/25 text-primary"
+                      )}
+                    >
+                      {gate.phaseName}
                     </span>
                   </div>
                 )}
@@ -508,14 +681,14 @@ export function ExamRoadmapBoard({
                   ) : isUnlocked ? (
                     <Play className="h-3.5 w-3.5 fill-current ml-0.5" />
                   ) : (
-                    <Lock className="h-3.5 w-3.5" />
+                    <Lock className="h-3.5 w-3.5 text-amber-500" />
                   )}
                 </div>
 
                 {/* Carte de la Session du Parcours */}
                 <div
                   className={cn(
-                    "rounded-2xl border p-4 sm:p-5 transition-all",
+                    "rounded-2xl border p-4 sm:p-5 transition-all space-y-3",
                     isCompleted
                       ? "border-emerald-500/40 bg-card hover:border-emerald-500/70 shadow-2xs"
                       : isUnlocked
@@ -523,7 +696,15 @@ export function ExamRoadmapBoard({
                       : "border-border/50 bg-muted/20 opacity-80"
                   )}
                 >
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
+                  {/* Boss Gate Alert si applicable */}
+                  {gate.isGate && (
+                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-800 dark:text-amber-300 text-xs font-black">
+                      <Zap className="h-3.5 w-3.5 fill-current text-amber-500 shrink-0" />
+                      <span>{gate.gateLabel}</span>
+                    </div>
+                  )}
+
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div className="space-y-1">
                       <div className="flex items-center gap-2 flex-wrap">
                         <span className="font-mono text-xs font-black text-primary px-2 py-0.5 rounded bg-primary/10">
@@ -546,7 +727,7 @@ export function ExamRoadmapBoard({
                         </Badge>
                       ) : isUnlocked ? (
                         <Badge variant="outline" className="text-xs font-bold border-primary/30 text-primary bg-primary/5">
-                          Disponible
+                          Prêt à Jouer (+{series.xpReward} XP)
                         </Badge>
                       ) : (
                         <Badge variant="secondary" className="text-xs font-bold text-muted-foreground flex items-center gap-1">
@@ -556,6 +737,48 @@ export function ExamRoadmapBoard({
                       )}
                     </div>
                   </div>
+
+                  {/* Conditions de Quête RPG si verrouillé */}
+                  {!isUnlocked && (
+                    <div className="rounded-xl border border-amber-500/25 bg-amber-500/5 p-3 space-y-2 text-xs">
+                      <div className="font-bold text-amber-800 dark:text-amber-300 flex items-center gap-1.5">
+                        <Trophy className="h-3.5 w-3.5 text-amber-600" />
+                        <span>Conditions de Déverrouillage RPG :</span>
+                      </div>
+                      <div className="space-y-1.5 text-muted-foreground">
+                        {idx > 0 && (
+                          <div className="flex items-center justify-between">
+                            <span className="flex items-center gap-1.5">
+                              {gate.isPrevScoreSufficient ? (
+                                <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
+                              ) : (
+                                <span className="h-2 w-2 rounded-full bg-amber-500 shrink-0" />
+                              )}
+                              <span>Examen {String(idx).padStart(2, "0")} validé (Min. {gate.minScoreRequired}/20)</span>
+                            </span>
+                            <span className="font-mono font-bold text-foreground">
+                              {gate.prevScore > 0 ? `${gate.prevScore}/20` : "Non validé"}
+                            </span>
+                          </div>
+                        )}
+                        {gate.minCumulativeXpRequired > 0 && (
+                          <div className="flex items-center justify-between">
+                            <span className="flex items-center gap-1.5">
+                              {gate.isXpSufficient ? (
+                                <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
+                              ) : (
+                                <span className="h-2 w-2 rounded-full bg-amber-500 shrink-0" />
+                              )}
+                              <span>Énergie XP cumulée requise ({gate.minCumulativeXpRequired} XP)</span>
+                            </span>
+                            <span className="font-mono font-bold text-foreground">
+                              {totalUserXp} / {gate.minCumulativeXpRequired} XP
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
 
                   {/* Accès aux Épreuves */}
                   <div className="grid gap-2 sm:grid-cols-2 pt-2 border-t border-border/50">
@@ -616,7 +839,7 @@ export function ExamRoadmapBoard({
 
                   {/* Bouton d'action si verrouillé */}
                   {!isUnlocked && (
-                    <div className="mt-3">
+                    <div className="pt-1">
                       <Button
                         onClick={() => handleAttemptAccessLocked(series, idx)}
                         variant="outline"
@@ -624,7 +847,7 @@ export function ExamRoadmapBoard({
                         className="w-full text-xs font-bold gap-1.5 text-amber-700 dark:text-amber-400 border-amber-500/30 hover:bg-amber-500/10"
                       >
                         <Lock className="h-3.5 w-3.5 text-amber-500" />
-                        <span>Voir le prérequis pour débloquer l&apos;Examen {sessionNum}</span>
+                        <span>Consulter la Quête pour Débloquer l&apos;Examen {sessionNum}</span>
                       </Button>
                     </div>
                   )}
@@ -646,6 +869,7 @@ export function ExamRoadmapBoard({
               const isUnlocked = series.status !== "LOCKED";
               const sessionNum = String(idx + 1).padStart(2, "0");
               const details = completedDetails[series.id];
+              const gate = series.gateInfo;
 
               const eeUrl =
                 series.disciplines.find((d) => d.type === "ee")?.url || `/examens/${series.id}/ee/intro`;
@@ -789,7 +1013,7 @@ export function ExamRoadmapBoard({
                         <span className="font-mono text-emerald-600 dark:text-emerald-400 font-bold">
                           +{series.crsBonusPoints || 50} pts CRS
                         </span>
-                        <span className="font-mono">+{series.xpReward} XP</span>
+                        <span className="font-mono font-bold text-foreground">+{series.xpReward} XP</span>
                       </div>
                     ) : (
                       <Button
@@ -799,7 +1023,7 @@ export function ExamRoadmapBoard({
                         className="w-full h-8 text-xs gap-1.5 text-amber-700 dark:text-amber-400 border-amber-500/30 hover:bg-amber-500/10 font-bold"
                       >
                         <Lock className="h-3.5 w-3.5 text-amber-500" />
-                        <span>Examen {sessionNum} Verrouillé</span>
+                        <span>Quête Examen {sessionNum}</span>
                       </Button>
                     )}
                   </div>
@@ -810,7 +1034,7 @@ export function ExamRoadmapBoard({
         </div>
       )}
 
-      {/* 🔒 DIALOGUE EXPLICATIF DE PRÉREQUIS POUR EXAMEN VERROUILLÉ */}
+      {/* 🔒 DIALOGUE MODAL DE QUÊTE RPG POUR EXAMEN VERROUILLÉ */}
       <Dialog
         open={!!lockedModalData}
         onOpenChange={(open) => {
@@ -820,30 +1044,84 @@ export function ExamRoadmapBoard({
         <DialogContent className="max-w-md">
           <DialogHeader>
             <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-500/10 border border-amber-500/25 text-amber-600 mb-2">
-              <Lock className="h-7 w-7" />
+              <Trophy className="h-7 w-7 text-amber-600" />
             </div>
             <DialogTitle className="text-center font-display text-xl font-black">
-              Examen {lockedModalData ? String(lockedModalData.targetIndex + 1).padStart(2, "0") : ""} Verrouillé
+              Quête Examen {lockedModalData ? String(lockedModalData.targetIndex + 1).padStart(2, "0") : ""} Verrouillé
             </DialogTitle>
             <DialogDescription className="text-center text-xs text-muted-foreground pt-1">
-              Progression Pédagogique Recommandée • Standard NCLC 7 / NCLC 10+
+              Progression Pédagogique RPG • Standard NCLC 7 / NCLC 10+
             </DialogDescription>
           </DialogHeader>
 
-          <div className="space-y-3 py-2 text-xs">
-            <div className="rounded-xl border border-border/80 bg-muted/40 p-3.5 space-y-2">
-              <p className="font-semibold text-foreground flex items-center gap-2">
+          <div className="space-y-3.5 py-2 text-xs">
+            {/* Encadré Objectifs de la Quête */}
+            <div className="rounded-xl border border-amber-500/30 bg-amber-500/5 p-3.5 space-y-2.5">
+              <p className="font-bold text-foreground flex items-center gap-2">
                 <ShieldCheck className="h-4 w-4 text-primary shrink-0" />
-                <span>Pourquoi cet examen est-il verrouillé ?</span>
+                <span>Conditions requises pour débloquer cette session :</span>
               </p>
-              <p className="text-muted-foreground leading-relaxed">
-                Pour garantir une progression solide vers les <strong>+50 points CRS</strong>, nous vous recommandons de compléter d&apos;abord l&apos;<strong>Examen {lockedModalData && lockedModalData.prevSeries ? String(lockedModalData.targetIndex).padStart(2, "0") : "précédent"}</strong> ({lockedModalData?.prevSeries?.title || "Session antérieure"}).
-              </p>
+
+              <div className="space-y-2 text-muted-foreground">
+                {/* Condition 1 : Examen Précédent */}
+                {lockedModalData?.prevSeries && (
+                  <div className="flex items-start justify-between gap-2 border-b border-border/50 pb-2">
+                    <div className="space-y-0.5">
+                      <span className="font-semibold text-foreground flex items-center gap-1.5">
+                        {lockedModalData.gateInfo.isPrevScoreSufficient ? (
+                          <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
+                        ) : (
+                          <AlertCircle className="h-3.5 w-3.5 text-amber-500 shrink-0" />
+                        )}
+                        Examen {String(lockedModalData.targetIndex).padStart(2, "0")} validé (Min. {lockedModalData.gateInfo.minScoreRequired}/20)
+                      </span>
+                      <p className="text-[11px] text-muted-foreground">
+                        {lockedModalData.gateInfo.isPrevScoreSufficient
+                          ? "✓ Prérequis pédagogique validé !"
+                          : `Votre note actuelle est de ${lockedModalData.gateInfo.prevScore}/20. Un score de ${lockedModalData.gateInfo.minScoreRequired}/20 est exigé.`}
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Condition 2 : Total XP Cumulé */}
+                {lockedModalData?.gateInfo && lockedModalData.gateInfo.minCumulativeXpRequired > 0 && (
+                  <div className="flex items-start justify-between gap-2 pt-1">
+                    <div className="space-y-0.5 flex-1">
+                      <div className="flex items-center justify-between">
+                        <span className="font-semibold text-foreground flex items-center gap-1.5">
+                          {lockedModalData.gateInfo.isXpSufficient ? (
+                            <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
+                          ) : (
+                            <Zap className="h-3.5 w-3.5 text-amber-500 fill-amber-500 shrink-0" />
+                          )}
+                          Énergie XP Cumulée
+                        </span>
+                        <span className="font-mono font-bold text-foreground">
+                          {totalUserXp} / {lockedModalData.gateInfo.minCumulativeXpRequired} XP
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-muted-foreground">
+                        {lockedModalData.gateInfo.isXpSufficient
+                          ? "✓ Seuil d'expérience atteint !"
+                          : `Il vous manque ${Math.max(0, lockedModalData.gateInfo.minCumulativeXpRequired - totalUserXp)} XP pour débloquer ce niveau.`}
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
 
-            <p className="text-[11px] text-muted-foreground leading-relaxed text-center">
-              Chaque série d&apos;examen augmente progressivement le niveau d&apos;exigence FEI (variété lexicale, connecteurs formels C1/C2 et pièges rhétoriques).
-            </p>
+            {/* Conseil Stratégique du Mentor */}
+            <div className="rounded-xl border border-primary/20 bg-primary/5 p-3 text-[11px] text-muted-foreground space-y-1">
+              <div className="font-bold text-foreground flex items-center gap-1.5">
+                <Sparkles className="h-3.5 w-3.5 text-primary" />
+                <span>Conseil du Mentor Pédagogique :</span>
+              </div>
+              <p className="leading-relaxed">
+                Ce verrouillage garantit que vous n&apos;abordez pas des sujets pièges FEI de niveau C1/C2 avant d&apos;avoir consolidé vos automatismes de gestion du temps et vos connecteurs formels.
+              </p>
+            </div>
           </div>
 
           <DialogFooter className="flex-col sm:flex-row gap-2 pt-2">
@@ -870,7 +1148,7 @@ export function ExamRoadmapBoard({
               }}
             >
               <Unlock className="h-3.5 w-3.5" />
-              <span>Débloquer cet examen</span>
+              <span>Débloquer en Mode Libre</span>
             </Button>
           </DialogFooter>
         </DialogContent>
