@@ -3,6 +3,7 @@
 import { useMemo, useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowDown,
   ArrowUp,
@@ -19,6 +20,10 @@ import {
   Trash2,
   AlertTriangle,
   X,
+  Square,
+  CheckSquare,
+  MinusSquare,
+  CheckCircle2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -47,6 +52,7 @@ import { exportAttemptPdf } from "@/lib/dashboard/attempt-export";
 import {
   deleteUserAttemptAction,
   batchDeleteEmptyAttemptsAction,
+  batchDeleteUserAttemptsAction,
 } from "@/app/dashboard/historique/actions";
 import { toast } from "sonner";
 
@@ -238,6 +244,131 @@ export function AttemptHistoryTable({ attempts }: AttemptHistoryTableProps) {
     }
   };
 
+  // Sélection & Actions par lot (Batch)
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [showBatchDeleteDialog, setShowBatchDeleteDialog] = useState(false);
+  const [isBatchDeleting, setIsBatchDeleting] = useState(false);
+
+  const allPageIds = useMemo(() => pageItems.map((a) => a.id), [pageItems]);
+  const isAllPageSelected = allPageIds.length > 0 && allPageIds.every((id) => selectedIds.has(id));
+  const isSomePageSelected = allPageIds.some((id) => selectedIds.has(id)) && !isAllPageSelected;
+
+  const toggleSelectOne = (id: string) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
+  };
+
+  const handleSelectAllPage = () => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (isAllPageSelected) {
+        allPageIds.forEach((id) => next.delete(id));
+      } else {
+        allPageIds.forEach((id) => next.add(id));
+      }
+      return next;
+    });
+  };
+
+  const handleClearSelection = () => {
+    setSelectedIds(new Set());
+  };
+
+  const handleSelectAllFiltered = () => {
+    setSelectedIds(new Set(filtered.map((a) => a.id)));
+    toast.info(`${filtered.length} correction(s) sélectionnée(s).`);
+  };
+
+  const handleSelectEmptyAttempts = () => {
+    const emptyIds = localAttempts
+      .filter((a) => a.rawScore === 0 || getTotalWords(a) === 0)
+      .map((a) => a.id);
+    setSelectedIds(new Set(emptyIds));
+    toast.info(`${emptyIds.length} copie(s) vide(s) cochée(s).`);
+  };
+
+  const handleBatchExportCsv = () => {
+    const selectedAttempts = localAttempts.filter((a) => selectedIds.has(a.id));
+    if (selectedAttempts.length === 0) return;
+
+    const headers = [
+      "ID Copie",
+      "Date",
+      "Heure",
+      "Discipline",
+      "Note / 20",
+      "Score TCF / 699",
+      "Palier NCLC",
+      "Statut NCLC 7+",
+      "Nombre de mots",
+      "Points CRS",
+    ];
+
+    const rows = selectedAttempts.map((a) => {
+      const meta = getDisciplineMeta(a.discipline);
+      const date = getAttemptDate(a);
+      const dateStr = date.toLocaleDateString("fr-FR");
+      const timeStr = date.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
+      const words = getTotalWords(a);
+      const validated = a.nclcLevel >= 7 ? "Validé (NCLC 7+)" : "À consolider";
+      const crsStr = a.crsPointsUnlocked ? "+50 CRS" : "0 CRS";
+
+      return [
+        `"${a.id}"`,
+        `"${dateStr}"`,
+        `"${timeStr}"`,
+        `"${meta.label}"`,
+        `"${a.rawScore}"`,
+        `"${a.tcfScaledScore}"`,
+        `"NCLC ${a.nclcLevel}"`,
+        `"${validated}"`,
+        `"${words}"`,
+        `"${crsStr}"`,
+      ].join(";");
+    });
+
+    const csvContent = "\uFEFF" + [headers.join(";"), ...rows].join("\r\n");
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", `super4c2-corrections-selection-${Date.now()}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    toast.success(`Export CSV de ${selectedAttempts.length} correction(s) téléchargé.`);
+  };
+
+  const handleConfirmBatchDelete = async () => {
+    if (selectedIds.size === 0) return;
+    try {
+      setIsBatchDeleting(true);
+      const idsArray = Array.from(selectedIds);
+      const res = await batchDeleteUserAttemptsAction(idsArray);
+      if (res.ok) {
+        setLocalAttempts((prev) => prev.filter((a) => !selectedIds.has(a.id)));
+        toast.success(`${res.count || idsArray.length} correction(s) supprimée(s) avec succès.`);
+        setSelectedIds(new Set());
+        setShowBatchDeleteDialog(false);
+        router.refresh();
+      } else {
+        toast.error(res.error || "Impossible de supprimer les corrections sélectionnées.");
+      }
+    } catch {
+      toast.error("Erreur réseau lors de la suppression groupée.");
+    } finally {
+      setIsBatchDeleting(false);
+    }
+  };
+
   if (localAttempts.length === 0) {
     return (
       <div className="rounded-3xl border border-dashed bg-card/60 p-10 text-center space-y-4">
@@ -307,20 +438,35 @@ export function AttemptHistoryTable({ attempts }: AttemptHistoryTableProps) {
               </Select>
             </div>
 
-            {/* Bouton de Nettoyage Rapide des Copies Vides */}
-            {emptyAttemptsCount > 0 && (
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() => setShowCleanEmptyDialog(true)}
-                className="h-9 rounded-xl border-amber-500/30 bg-amber-500/10 hover:bg-amber-500/20 text-amber-800 dark:text-amber-300 text-xs font-bold gap-1.5 shrink-0"
-                title="Supprimer toutes les simulations à 0 mot ou non rédigées"
-              >
-                <Trash2 className="h-3.5 w-3.5 text-amber-600" />
-                <span>Nettoyer {emptyAttemptsCount} copie{emptyAttemptsCount > 1 ? "s" : ""} vide{emptyAttemptsCount > 1 ? "s" : ""}</span>
-              </Button>
-            )}
+            {/* Boutons d'Action & Sélection Rapide */}
+            <div className="flex items-center gap-2 shrink-0">
+              {emptyAttemptsCount > 0 && selectedIds.size === 0 && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={handleSelectEmptyAttempts}
+                  className="h-9 rounded-xl border-amber-500/30 bg-amber-500/10 hover:bg-amber-500/20 text-amber-800 dark:text-amber-300 text-xs font-bold gap-1.5"
+                  title="Cocher automatiquement toutes les simulations à 0 mot pour les exporter ou les supprimer"
+                >
+                  <CheckSquare className="h-3.5 w-3.5 text-amber-600" />
+                  <span>Cocher {emptyAttemptsCount} copie{emptyAttemptsCount > 1 ? "s" : ""} vide{emptyAttemptsCount > 1 ? "s" : ""}</span>
+                </Button>
+              )}
+
+              {selectedIds.size > 0 && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={handleClearSelection}
+                  className="h-9 rounded-xl border-border text-muted-foreground hover:text-foreground text-xs font-bold gap-1.5"
+                >
+                  <X className="h-3.5 w-3.5" />
+                  <span>Désélectionner ({selectedIds.size})</span>
+                </Button>
+              )}
+            </div>
           </div>
         </div>
 
@@ -363,6 +509,26 @@ export function AttemptHistoryTable({ attempts }: AttemptHistoryTableProps) {
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b bg-muted/30 text-[11px] text-muted-foreground">
+              <th className="w-10 px-3 py-3 text-center">
+                <button
+                  type="button"
+                  onClick={handleSelectAllPage}
+                  className="p-1 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+                  title={
+                    isAllPageSelected
+                      ? "Tout désélectionner sur cette page"
+                      : "Tout sélectionner sur cette page"
+                  }
+                >
+                  {isAllPageSelected ? (
+                    <CheckSquare className="h-4 w-4 text-primary" />
+                  ) : isSomePageSelected ? (
+                    <MinusSquare className="h-4 w-4 text-primary" />
+                  ) : (
+                    <Square className="h-4 w-4" />
+                  )}
+                </button>
+              </th>
               <th className="px-4 py-3 text-left font-bold uppercase tracking-wider">Épreuve</th>
               <th className="px-4 py-3 text-left">
                 <SortHeader label="Date" sortKey="date" active={sortKey} dir={sortDir} onSort={handleSort} />
@@ -382,7 +548,7 @@ export function AttemptHistoryTable({ attempts }: AttemptHistoryTableProps) {
           <tbody>
             {pageItems.length === 0 ? (
               <tr>
-                <td colSpan={6} className="px-4 py-12 text-center">
+                <td colSpan={7} className="px-4 py-12 text-center">
                   <p className="text-sm font-semibold text-foreground">Aucun résultat pour ces filtres</p>
                   <button
                     type="button"
@@ -400,13 +566,32 @@ export function AttemptHistoryTable({ attempts }: AttemptHistoryTableProps) {
                 const validated = attempt.nclcLevel >= 7;
                 const href = `/dashboard/historique/${attempt.id}`;
                 const isWritten = attempt.discipline === "EXPRESSION_ECRITE";
+                const isSelected = selectedIds.has(attempt.id);
 
                 return (
                   <tr
                     key={attempt.id}
                     onClick={() => router.push(href)}
-                    className="group border-b last:border-b-0 cursor-pointer transition-colors hover:bg-muted/40"
+                    className={`group border-b last:border-b-0 cursor-pointer transition-colors ${
+                      isSelected
+                        ? "bg-primary/[0.05] hover:bg-primary/[0.08]"
+                        : "hover:bg-muted/40"
+                    }`}
                   >
+                    <td className="w-10 px-3 py-3 text-center" onClick={(e) => e.stopPropagation()}>
+                      <button
+                        type="button"
+                        onClick={() => toggleSelectOne(attempt.id)}
+                        className="p-1 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+                        title={isSelected ? "Désélectionner" : "Sélectionner cette copie"}
+                      >
+                        {isSelected ? (
+                          <CheckSquare className="h-4 w-4 text-primary" />
+                        ) : (
+                          <Square className="h-4 w-4" />
+                        )}
+                      </button>
+                    </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
                         <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-base">
@@ -651,6 +836,131 @@ export function AttemptHistoryTable({ attempts }: AttemptHistoryTableProps) {
             >
               {isCleaningEmpty ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Trash2 className="h-3.5 w-3.5" />}
               <span>{isCleaningEmpty ? "Nettoyage en cours…" : "Nettoyer maintenant"}</span>
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* 🚀 BARRE D'ACTIONS EN LOT FLOTTANTE (BATCH ACTION BAR) */}
+      <AnimatePresence>
+        {selectedIds.size > 0 && (
+          <motion.div
+            initial={{ y: 80, opacity: 0, scale: 0.95 }}
+            animate={{ y: 0, opacity: 1, scale: 1 }}
+            exit={{ y: 80, opacity: 0, scale: 0.95 }}
+            transition={{ type: "spring", damping: 25, stiffness: 350 }}
+            className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-2xl"
+          >
+            <div className="relative overflow-hidden rounded-2xl border border-white/15 bg-slate-900/95 p-3 sm:p-4 shadow-2xl shadow-black/60 backdrop-blur-xl text-slate-100 flex flex-wrap items-center justify-between gap-3">
+              {/* Halos lumineux d'ambiance */}
+              <div className="pointer-events-none absolute -top-10 left-1/2 -translate-x-1/2 h-20 w-80 rounded-full bg-gradient-to-r from-red-500/20 via-primary/30 to-emerald-500/20 blur-xl" />
+
+              {/* Gauche : Compteur & portée */}
+              <div className="flex items-center gap-2.5 z-10">
+                <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-primary text-white font-black text-xs shadow-md">
+                  {selectedIds.size}
+                </div>
+                <div>
+                  <p className="text-xs font-bold text-white">
+                    {selectedIds.size} correction{selectedIds.size > 1 ? "s" : ""} sélectionnée{selectedIds.size > 1 ? "s" : ""}
+                  </p>
+                  <div className="flex items-center gap-2 text-[11px] text-slate-400">
+                    {selectedIds.size < filtered.length ? (
+                      <button
+                        type="button"
+                        onClick={handleSelectAllFiltered}
+                        className="hover:text-primary transition-colors underline"
+                      >
+                        Sélectionner tous les {filtered.length} résultats
+                      </button>
+                    ) : (
+                      <span>Toutes les corrections filtrées sont cochées</span>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Droite : Actions en lot */}
+              <div className="flex items-center gap-2 z-10">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={handleBatchExportCsv}
+                  className="h-8 gap-1.5 text-xs font-semibold bg-slate-800 text-slate-200 border-slate-700 hover:bg-slate-700 hover:text-white"
+                  title="Exporter les corrections sélectionnées au format CSV (Excel)"
+                >
+                  <Download className="h-3.5 w-3.5 text-emerald-400" />
+                  <span className="hidden sm:inline">Exporter</span> CSV
+                </Button>
+
+                <Button
+                  type="button"
+                  variant="destructive"
+                  size="sm"
+                  onClick={() => setShowBatchDeleteDialog(true)}
+                  className="h-8 gap-1.5 text-xs font-semibold bg-red-600 hover:bg-red-700 text-white shadow-sm"
+                  title="Supprimer les corrections sélectionnées"
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                  <span>Supprimer</span>
+                </Button>
+
+                <button
+                  type="button"
+                  onClick={handleClearSelection}
+                  className="h-8 w-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+                  title="Annuler la sélection"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* 🛑 Modale de Confirmation de Suppression Groupée */}
+      <Dialog open={showBatchDeleteDialog} onOpenChange={setShowBatchDeleteDialog}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-destructive/10 text-destructive mb-2">
+              <AlertTriangle className="h-6 w-6" />
+            </div>
+            <DialogTitle className="text-center font-display text-lg font-black">
+              Supprimer {selectedIds.size} correction{selectedIds.size > 1 ? "s" : ""} ?
+            </DialogTitle>
+            <DialogDescription className="text-center text-xs text-muted-foreground pt-1 leading-relaxed">
+              Cette action est irréversible. Les <strong>{selectedIds.size} tentative(s) sélectionnée(s)</strong> seront définitivement supprimées de votre historique et votre moyenne sera immédiatement recalculée.
+            </DialogDescription>
+          </DialogHeader>
+
+          <DialogFooter className="flex-col sm:flex-row gap-2 pt-2">
+            <Button
+              variant="outline"
+              disabled={isBatchDeleting}
+              onClick={() => setShowBatchDeleteDialog(false)}
+              className="w-full sm:w-auto text-xs font-semibold"
+            >
+              Annuler
+            </Button>
+            <Button
+              variant="destructive"
+              disabled={isBatchDeleting}
+              onClick={handleConfirmBatchDelete}
+              className="w-full sm:w-auto text-xs font-bold gap-1.5"
+            >
+              {isBatchDeleting ? (
+                <>
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                  <span>Suppression en cours…</span>
+                </>
+              ) : (
+                <>
+                  <Trash2 className="h-3.5 w-3.5" />
+                  <span>Supprimer définitivement ({selectedIds.size})</span>
+                </>
+              )}
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -73,3 +73,37 @@ export async function batchDeleteEmptyAttemptsAction() {
     return { ok: false, error: "Impossible de nettoyer les copies vides." };
   }
 }
+
+/**
+ * Supprime en lot une sélection de corrections spécifiques appartenant au candidat connecté.
+ */
+export async function batchDeleteUserAttemptsAction(attemptIds: string[]) {
+  try {
+    const supabase = await createSupabaseServerClient();
+    const user = supabase ? (await supabase.auth.getUser()).data.user : null;
+
+    if (!user) {
+      return { ok: false, error: "Vous devez être connecté pour effectuer cette action." };
+    }
+
+    if (!Array.isArray(attemptIds) || attemptIds.length === 0) {
+      return { ok: false, error: "Aucune correction sélectionnée." };
+    }
+
+    // Sécurité stricte : supprime uniquement les copies appartenant à l'utilisateur connecté
+    const result = await prisma.userAttempt.deleteMany({
+      where: {
+        id: { in: attemptIds },
+        userId: user.id,
+      },
+    });
+
+    revalidatePath("/dashboard");
+    revalidatePath("/dashboard/historique");
+
+    return { ok: true, count: result.count, deletedIds: attemptIds };
+  } catch (error) {
+    console.error("Erreur suppression groupée tentatives :", error);
+    return { ok: false, error: "Impossible de supprimer les corrections sélectionnées." };
+  }
+}
