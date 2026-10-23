@@ -1,3 +1,10 @@
+- [x] **Règle de Progression Stricte de la Roadmap & Double Vue Parcours / Grille (`components/exam/exam-roadmap-board.tsx`) :**
+  - **Déblocage Séquentiel Strict :** Examen 01 toujours débloqué pour tous ; Examen $N$ ($N > 1$) strictement verrouillé tant que l'Examen $N-1$ n'est pas complété (`COMPLETED`) ou débloqué VIP (`super4c2:unlocked_series`).
+  - **Badges d'État Distincts :** Badge vert `✓ Complété` avec palier NCLC officiel atteint, badge `Disponible` pour les examens ouverts, et badge `Verrouillé` avec cadenas pour les examens sous prérequis.
+  - **Modale Explicative de Prérequis Pédagogique :** Tout clic sur un examen ou une épreuve verrouillée déclenche la modale Shadcn `Dialog` détaillant les prérequis pour viser les +50 points CRS, avec bouton prioritaire vers l'Examen $N-1$ et déblocage direct pour candidats avancés.
+  - **Auto-Enregistrement de Réussite :** Prise en compte immédiate dans `super4c2:completed_series` (`localStorage`) et PostgreSQL via `/api/exam/attempt` depuis EE (`written-exam-editor.tsx`), EO (`oral-exam-room.tsx`) et examens complets (`mock-exam-orchestrator.tsx`).
+  - **Double Affichage :** Vue Parcours Pédagogique (stepper vertical avec phases et jalons) et Vue Grille CBT (cartes 4 colonnes compactes).
+  - **Validation :** 0 erreur TypeScript (`npx tsc --noEmit`), commit `473931b` poussé sur `main`.
 - [x] **Enregistrement Intégral EO, Boutons Quitter vers le Catalogue, Prérequis Roadmap & Logos Réseaux :**
   - **Capture Audio Intégrale EO (`oral-exam-room.tsx`) :** Démarrage immédiat de `ensureMediaRecordingStarted` dès l'amorce de la tâche et avant chaque réplique de l'examinateur (`playOrFetchExaminerSpeech`), garantissant l'enregistrement de l'intervention de l'examinateur et de tout l'entretien.
   - **Bouton « Quitter vers le Catalogue » Global :** Déployé dans l'en-tête supérieur et le pied de rapport d'EE (`written-exam-editor.tsx`), le header post-examen d'EO (`oral-exam-room.tsx`), et les résultats de QCM (`exam-result-summary.tsx`), avec suppression du « 101 » codé en dur.

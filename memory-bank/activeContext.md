@@ -2,6 +2,28 @@
 
 ## 0. Déploiement Production Vercel & Moteur de Conversion
 
+### 0.0zd. Règle de Progression Stricte de la Roadmap, Badges Complétés & Double Vue (Parcours Stepper & Grille CBT)
+- **Demande Utilisateur & Réalisations :**
+  1. **Règle de Progression Stricte (`components/exam/exam-roadmap-board.tsx`) :**
+     - **Examen 01 (`tcf-blanc-1` / `demo-101-ce`) :** Toujours débloqué pour tout le monde (`UNLOCKED` ou `COMPLETED` si fait).
+     - **Examen N ($N > 1$) :** Strictement verrouillé (`LOCKED`) sauf si l'Examen $N-1$ a été complété (`status === "COMPLETED"`) ou explicitement débloqué (`unlockedSeriesIds`).
+  2. **Badges d'État & Relevé de Score :**
+     - Si complété : Badge vert institutionnel `✓ Complété` affichant le niveau officiel atteint (`✓ Complété • NCLC X`).
+     - Si disponible : Badge `Disponible` prêt à composer.
+     - Si verrouillé : Badge `Verrouillé` avec icône cadenas ambrée.
+  3. **Dialogue Explicatif de Prérequis Pédagogique :**
+     - Si le candidat tente d'accéder à un examen verrouillé (clic sur la carte ou sur l'épreuve Écrite ou Orale), ouverture immédiate de la boîte de dialogue institutionnelle Shadcn `Dialog`.
+     - Explication claire de la logique d'apprentissage vers les **+50 points CRS**, avec bouton prioritaire pour passer l'Examen $N-1$ et bouton de déblocage direct pour candidats avancés.
+  4. **Enregistrement Automatique des Réussites :**
+     - Dans `written-exam-editor.tsx` : au terme de l'évaluation (API ou fallback local), ajout automatique de la série dans `super4c2:completed_series` (`localStorage`) et persistance via `/api/exam/attempt`.
+     - Dans `oral-exam-room.tsx` : ajout de l'ID de série dans `super4c2:completed_series` à la fin de l'évaluation.
+     - Dans `mock-exam-orchestrator.tsx` : enregistrement de la série complète dans `super4c2:completed_series`.
+     - Récupération synchrone en local + asynchrone depuis la base de données via `GET /api/exam/attempt` sur `ExamRoadmapBoard`.
+  5. **Double Affichage Ergonomique :**
+     - **Vue Parcours Pédagogique (`viewMode === "roadmap"`) :** Stepper vertical relié par un gradient dynamique, jalons par paliers (Phase 1 : Diagnostic, Phase 2 : Seuil NCLC 7+, Phase 3 : Maîtrise C1/C2 Élite), statut visuel de chaque étape et accès direct aux épreuves.
+     - **Vue Grille CBT (`viewMode === "grid"`) :** Grille responsive à 4 colonnes compacte avec filtres rapides, badges d'état et cadenas interactifs.
+- **Validation :** `npx tsc --noEmit` validé avec 0 erreur, commit `473931b` poussé sur `main`.
+
 ### 0.0zc. Capture Audio Intégrale EO, Quitter vers le Catalogue, Prérequis Roadmap & Logos Réseaux
 - **Réalisations & Correctifs :**
   1. **Bouton « Quitter vers le Catalogue » Partout Déployé :**
