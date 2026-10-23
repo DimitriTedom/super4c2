@@ -2,6 +2,21 @@
 
 ## 0. Déploiement Production Vercel & Moteur de Conversion
 
+### 0.0ze. Suppression des Corrections & Nettoyage des Copies Vides par le Candidat (`/dashboard`)
+- **Demande Utilisateur & Réalisations :**
+  1. **Action Serveur Sécurisée (`app/dashboard/historique/actions.ts`) :**
+     - `deleteUserAttemptAction(attemptId)` : Vérification d'authentification et de propriété stricte (`where: { id: attemptId, userId: user.id }`), empêchant tout candidat d'altérer les données d'autrui. Suppression atomique et revalidation des chemins `/dashboard` et `/dashboard/historique`.
+     - `batchDeleteEmptyAttemptsAction()` : Nettoyage en 1 clic de toutes les copies blanches (`rawScore: 0`) du candidat pour assainir sa moyenne.
+  2. **Tableau Historique & Corrections (`components/dashboard/attempt-history-table.tsx`) :**
+     - **Bouton Corbeille (`Trash2`)** ajouté sur chaque ligne d'épreuve dans la colonne d'actions avec infobulle.
+     - **Modale de Confirmation Shadcn UI (`Dialog`) :** Avertissement sur l'irréversibilité de l'action avec détails de l'épreuve (discipline, note /20, palier NCLC) et recalcul immédiat des statistiques.
+     - **Bouton Détection & Nettoyage Rapide :** Détecte automatiquement les copies vides (`rawScore === 0` ou 0 mot) et affiche dans la barre d'outils le bouton *« Nettoyer X copie(s) vide(s) »* avec modale de confirmation groupée.
+     - **Mise à jour Optimiste Réactive :** L'élément supprimé disparaît instantanément du tableau avec notification `toast.success`, sans attendre le rechargement complet de la page.
+  3. **Page Détail de Correction (`components/dashboard/attempt-detail-view.tsx`) :**
+     - Bouton *« Supprimer »* avec icône `Trash2` dans la barre d'action de l'en-tête (désactivé sur la copie de démonstration `isDemo`).
+     - Modale de confirmation et redirection automatique vers `/dashboard` après suppression.
+- **Validation :** `npx tsc --noEmit` validé avec 0 erreur, commit `fdfd5c6` poussé sur `main`.
+
 ### 0.0zd. Règle de Progression Stricte de la Roadmap, Badges Complétés & Double Vue (Parcours Stepper & Grille CBT)
 - **Demande Utilisateur & Réalisations :**
   1. **Règle de Progression Stricte (`components/exam/exam-roadmap-board.tsx`) :**

@@ -1,3 +1,8 @@
+- [x] **Suppression des Corrections & Nettoyage des Copies Vides par le Candidat (`/dashboard`) :**
+  - **Action Serveur Sécurisée (`app/dashboard/historique/actions.ts`) :** `deleteUserAttemptAction` vérifiant l'authentification et l'appartenance stricte (`userId === user.id`) et `batchDeleteEmptyAttemptsAction` pour purger les simulations à 0 mot / 0 point en 1 clic.
+  - **Interface Tableau (`components/dashboard/attempt-history-table.tsx`) :** Bouton corbeille `Trash2` sur chaque ligne, modale de confirmation Shadcn UI `Dialog`, bouton de nettoyage rapide des copies non rédigées dans la barre d'outils et mise à jour optimiste instantanée avec notifications Toast.
+  - **Interface Détail (`components/dashboard/attempt-detail-view.tsx`) :** Bouton de suppression dans l'en-tête avec confirmation et redirection vers `/dashboard`.
+  - **Validation :** 0 erreur TypeScript (`npx tsc --noEmit`), commit `fdfd5c6` poussé sur `main`.
 - [x] **Règle de Progression Stricte de la Roadmap & Double Vue Parcours / Grille (`components/exam/exam-roadmap-board.tsx`) :**
   - **Déblocage Séquentiel Strict :** Examen 01 toujours débloqué pour tous ; Examen $N$ ($N > 1$) strictement verrouillé tant que l'Examen $N-1$ n'est pas complété (`COMPLETED`) ou débloqué VIP (`super4c2:unlocked_series`).
   - **Badges d'État Distincts :** Badge vert `✓ Complété` avec palier NCLC officiel atteint, badge `Disponible` pour les examens ouverts, et badge `Verrouillé` avec cadenas pour les examens sous prérequis.
