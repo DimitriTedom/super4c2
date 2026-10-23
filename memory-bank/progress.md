@@ -1,3 +1,8 @@
+- [x] **Moteur RPG Dynamique d'XP, Rangs Candidat & Boss Gates de Progression (`components/exam/exam-roadmap-board.tsx`) :**
+  - **Système de Rangs RPG & Cockpit Gamifié :** Calcul instantané du total XP cumulé avec primes de réussite (+200 XP si NCLC 7+, +300 XP si C1/C2) et jauge d'énergie avec paliers : *🥉 Initié B1/B2 (Niveau 1, 0 à 999 XP)*, *🥈 Candidat NCLC 7+ (Niveau 2, 1 000 à 2 499 XP)*, *🥇 Maître C1/C2 Élite (Niveau 3, 2 500+ XP)*.
+  - **Boss Gates & Clés de Passage :** Validation de l'Examen $N-1$ avec un score minimum (8/20 en Phase 1, 10/20 en Phase 2), Boss Gate au seuil NCLC 7+ (Examen 04 : Examen 03 + 1 000 XP), et Grand Palier Élite (Examen 07+ : NCLC 7+ validé + 2 500 XP).
+  - **Checklists de Quête & Briefing Interactif :** Boîtes d'objectifs de quête sur chaque carte verrouillée et modale de briefing avec recommandations d'entraînement et bypass VIP.
+  - **Validation :** 0 erreur TypeScript (`npx tsc --noEmit`), commit `c814d31` poussé sur `main`.
 - [x] **Suppression des Corrections & Nettoyage des Copies Vides par le Candidat (`/dashboard`) :**
   - **Action Serveur Sécurisée (`app/dashboard/historique/actions.ts`) :** `deleteUserAttemptAction` vérifiant l'authentification et l'appartenance stricte (`userId === user.id`) et `batchDeleteEmptyAttemptsAction` pour purger les simulations à 0 mot / 0 point en 1 clic.
   - **Interface Tableau (`components/dashboard/attempt-history-table.tsx`) :** Bouton corbeille `Trash2` sur chaque ligne, modale de confirmation Shadcn UI `Dialog`, bouton de nettoyage rapide des copies non rédigées dans la barre d'outils et mise à jour optimiste instantanée avec notifications Toast.

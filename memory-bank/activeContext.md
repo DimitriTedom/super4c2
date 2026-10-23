@@ -2,6 +2,24 @@
 
 ## 0. Déploiement Production Vercel & Moteur de Conversion
 
+### 0.0zf. Moteur RPG Dynamique d'XP, Rangs Candidat & Boss Gates de Progression (`components/exam/exam-roadmap-board.tsx`)
+- **Demande Utilisateur & Réalisations :**
+  1. **Système de Rangs RPG & Jauge d'XP Globale :**
+     - Calcul dynamique du total XP cumulé (`totalUserXp`) en agrégeant les `xpReward` des sessions complétées (+200 XP si NCLC 7+ validé, +300 XP si C1/C2).
+     - Rangs dynamiques affichés dans un Cockpit d'en-tête gamifié :
+       - 🥉 *Initié B1/B2 (Niveau 1, 0 à 999 XP)*
+       - 🥈 *Candidat NCLC 7+ (Niveau 2, 1 000 à 2 499 XP)*
+       - 🥇 *Maître C1/C2 Élite (Niveau 3, 2 500+ XP)*
+     - Jauge RPG animée en temps réel avec pourcentage d'évolution et XP manquant pour le palier suivant.
+  2. **Conditions de Déblocage Dynamiques par Paliers (Game Mechanics) :**
+     - **Clé de Passage (Score minimal requis) :** L'Examen $N$ exige que l'Examen $N-1$ soit validé avec au moins 8/20 (Phase 1) ou 10/20 (Phase 2), éliminant tout déblocage abusif par copie blanche.
+     - **Boss Gate Seuil NCLC 7+ (Examen 04) :** Exige l'Examen 03 validé (min. 10/20) **ET** un cumul d'au moins **1 000 XP**, assurant la maturité du candidat avant les épreuves certificatives.
+     - **Grand Palier C1/C2 Élite (Examen 07+) :** Exige un score NCLC 7+ validé sur les sessions antérieures **ET** **2 500 XP** cumulés.
+  3. **Cartes & Modales de Quêtes Interactives :**
+     - Encadré d'objectifs de quête RPG sur chaque session verrouillée avec indicateurs visuels d'avancement (score sur $N-1$ et jauge d'XP).
+     - Modale de briefing de quête détaillée indiquant exactement ce qui manque au candidat et lui suggérant une épreuve à rejouer pour gagner les points XP manquants, avec bouton de déblocage libre (Bypass).
+- **Validation :** `npx tsc --noEmit` validé avec 0 erreur, commit `c814d31` poussé sur `main`.
+
 ### 0.0ze. Suppression des Corrections & Nettoyage des Copies Vides par le Candidat (`/dashboard`)
 - **Demande Utilisateur & Réalisations :**
   1. **Action Serveur Sécurisée (`app/dashboard/historique/actions.ts`) :**
