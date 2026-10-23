@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { Clock, ListChecks, Sparkles, ArrowRight, ShieldCheck, Trophy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { getMockSeries } from "@/lib/exam/mock-series";
@@ -30,11 +30,11 @@ export async function generateMetadata({
   }
 
   return {
-    title: `Sujet ${series?.seriesNumber || 101} — TCF & TEF Canada CBT`,
-    description: `Simulation d'entraînement du Sujet ${series?.seriesNumber || 101} TCF Canada : Compréhension Écrite, Compréhension Orale, Expression Écrite et Orale. Objectif NCLC 7+ (+50 pts CRS).`,
+    title: `Examen ${series?.seriesNumber || 1} — TCF & TEF Canada CBT`,
+    description: `Simulation d'entraînement de l'Examen ${series?.seriesNumber || 1} TCF Canada : Compréhension Écrite, Compréhension Orale, Expression Écrite et Orale. Objectif NCLC 7+ (+50 pts CRS).`,
     openGraph: {
-      title: `Sujet ${series?.seriesNumber || 101} TCF Canada — Super4C2`,
-      description: `Entraînez-vous sur le Sujet ${series?.seriesNumber || 101} en conditions réelles d'examen CBT.`,
+      title: `Examen ${series?.seriesNumber || 1} TCF Canada — Super4C2`,
+      description: `Entraînez-vous sur l'Examen ${series?.seriesNumber || 1} en conditions réelles d'examen CBT.`,
     },
   };
 }
@@ -45,8 +45,19 @@ export default async function SeriesDisciplineSelectorPage({
   params: Promise<{ seriesId: string }>;
 }) {
   const { seriesId } = await params;
-  const series = getMockSeries(seriesId) || getMockSeries("demo-101-ce");
-  if (!series) notFound();
+
+  // Redirection intelligente si l'identifiant cible spécifiquement l'Écrit ou l'Oral
+  if (seriesId.startsWith("series_eo_") || seriesId.endsWith("-eo")) {
+    redirect(`/examens/${seriesId}/eo`);
+  }
+  if (seriesId.startsWith("series_ee_") || seriesId.endsWith("-ee")) {
+    redirect(`/examens/${seriesId}/ee`);
+  }
+
+  const series = getMockSeries(seriesId);
+  if (!series) {
+    redirect("/examens");
+  }
 
   const isIelts = seriesId.includes("ielts");
 

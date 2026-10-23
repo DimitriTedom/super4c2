@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   Mic,
   MicOff,
@@ -29,8 +30,17 @@ import {
   MessageSquare,
   Award,
   Layers,
+  LogOut,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { OralWaveform } from "@/components/exam/oral-waveform";
 import { OralDebriefCard } from "@/components/exam/oral-debrief-card";
 import { formatClock } from "@/components/exam/exam-header";
@@ -44,6 +54,8 @@ interface OralExamRoomProps {
 }
 
 export function OralExamRoom({ series }: OralExamRoomProps) {
+  const router = useRouter();
+  const [isExitConfirmOpen, setIsExitConfirmOpen] = useState<boolean>(false);
   const [currentTaskIndex, setCurrentTaskIndex] = useState<0 | 1 | 2>(0);
   const [isRecording, setIsRecording] = useState<boolean>(false);
   const [isExaminerSpeaking, setIsExaminerSpeaking] = useState<boolean>(false);
@@ -990,30 +1002,27 @@ export function OralExamRoom({ series }: OralExamRoomProps) {
               className="rounded-full gap-2 px-3.5 h-8 border-border/80 bg-background/80 hover:bg-muted font-bold text-xs shadow-2xs group shrink-0"
               title="Retourner au catalogue de tous les examens"
             >
-              <Link href="/examens">
+              <Link href="/examens?test=tcf&discipline=eo">
                 <ArrowLeft className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-1 text-primary" />
                 <span>Quitter vers le Catalogue</span>
               </Link>
             </Button>
           ) : (
             <Button
-              asChild
               variant="ghost"
               size="sm"
-              onClick={stopAllAudio}
-              className="gap-1.5 text-muted-foreground hover:text-foreground font-semibold rounded-full"
+              onClick={() => setIsExitConfirmOpen(true)}
+              className="gap-1.5 text-muted-foreground hover:text-foreground font-semibold rounded-full hover:bg-muted"
             >
-              <Link href={`/examens/${series.id}`}>
-                <ArrowLeft className="h-4 w-4" />
-                <span className="hidden sm:inline">Quitter</span>
-              </Link>
+              <ArrowLeft className="h-4 w-4" />
+              <span className="hidden sm:inline">Quitter</span>
             </Button>
           )}
 
           <div className="border-l pl-3">
             <div className="flex items-center gap-2">
               <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-primary bg-primary/10 px-2 py-0.5 rounded-full border border-primary/20">
-                <ShieldCheck className="h-3 w-3" /> TCF CANADA · SÉRIE {series.seriesNumber || 101}
+                <ShieldCheck className="h-3 w-3" /> TCF CANADA · SÉRIE {series.seriesNumber || 1}
               </span>
               <span className="hidden md:inline-flex items-center gap-1 text-[10px] font-medium text-muted-foreground">
                 <Headphones className="h-3 w-3 text-cyan-500" /> Visio-Examen FEI
@@ -1107,14 +1116,14 @@ export function OralExamRoom({ series }: OralExamRoomProps) {
 
             <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
               <Button asChild variant="outline" size="lg" className="flex-1 sm:flex-initial gap-2 font-bold rounded-2xl">
-                <Link href="/examens">
+                <Link href="/examens?test=tcf&discipline=eo">
                   <ArrowLeft className="h-4 w-4" />
                   Catalogue des Examens
                 </Link>
               </Button>
-              <Button asChild variant="ghost" size="lg" className="flex-1 sm:flex-initial gap-2 rounded-2xl">
-                <Link href={`/examens/${series.id}`}>
-                  Menu Série {series.seriesNumber || 101}
+              <Button asChild variant="outline" size="lg" className="flex-1 sm:flex-initial gap-2 rounded-2xl">
+                <Link href="/dashboard">
+                  Mon Espace Candidat
                 </Link>
               </Button>
               <Button onClick={handleRestart} variant="default" size="lg" className="flex-1 sm:flex-initial gap-2 font-bold rounded-2xl shadow-md cursor-pointer">
@@ -1885,6 +1894,41 @@ export function OralExamRoom({ series }: OralExamRoomProps) {
           </div>
         </div>
       )}
+
+      {/* 🚪 DIALOGUE DE CONFIRMATION DE SORTIE DE L'EXAMEN ORAL */}
+      <Dialog open={isExitConfirmOpen} onOpenChange={setIsExitConfirmOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-foreground font-display text-lg">
+              <LogOut className="h-5 w-5 text-primary" />
+              Quitter la simulation d&apos;Expression Orale ?
+            </DialogTitle>
+            <DialogDescription className="space-y-2 pt-2 text-sm leading-relaxed text-muted-foreground">
+              <p>
+                Votre simulation avec l&apos;examinateur IA M. Laurent est en cours.
+              </p>
+              <p>
+                Si vous quittez maintenant, l&apos;entretien sera interrompu et vos répliques ne pourront pas être évaluées pour votre score NCLC.
+              </p>
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="gap-2 sm:gap-0 pt-4">
+            <Button variant="outline" onClick={() => setIsExitConfirmOpen(false)}>
+              Poursuivre l&apos;entretien
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={() => {
+                stopAllAudio();
+                setIsExitConfirmOpen(false);
+                router.push("/examens?test=tcf&discipline=eo");
+              }}
+            >
+              Quitter vers le Catalogue
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
