@@ -1,4 +1,8 @@
-- [x] **Moteur RPG Dynamique d'XP, Rangs Candidat & Boss Gates de Progression (`components/exam/exam-roadmap-board.tsx`) :**
+- [x] **Éradication du Vocabulaire Jeu Vidéo & Harmonisation Pédagogique Institutionnelle (`components/exam/exam-roadmap-board.tsx`) :**
+  - **Suppression du vocabulaire gaming :** Remplacement de *« Prêt à Jouer »* par *« Prêt à Composer »*, *« BOSS GATE »* par *« PALIER CERTIFICATIF »*, *« Quête »* par *« Prérequis Pédagogiques d'Accès »*, *« Énergie XP »* par *« Points XP Cumulés »*, et *« Débloquer en Mode Libre »* par *« Accéder Directement »*.
+  - **Maintien de l'impact pédagogique :** Préservation intégrale des seuils d'exigence (note minimale et XP cumulé) pour canaliser l'apprenant sans nuire au prestige académique de la plateforme.
+  - **Validation :** 0 occurrence de vocabulaire gaming, `npx tsc --noEmit` validé (0 erreur), commit `a8a3c59` poussé sur `main`.
+- [x] **Moteur Dynamique de Progression par Paliers & Points d'Expérience (`components/exam/exam-roadmap-board.tsx`) :**
   - **Système de Rangs RPG & Cockpit Gamifié :** Calcul instantané du total XP cumulé avec primes de réussite (+200 XP si NCLC 7+, +300 XP si C1/C2) et jauge d'énergie avec paliers : *🥉 Initié B1/B2 (Niveau 1, 0 à 999 XP)*, *🥈 Candidat NCLC 7+ (Niveau 2, 1 000 à 2 499 XP)*, *🥇 Maître C1/C2 Élite (Niveau 3, 2 500+ XP)*.
   - **Boss Gates & Clés de Passage :** Validation de l'Examen $N-1$ avec un score minimum (8/20 en Phase 1, 10/20 en Phase 2), Boss Gate au seuil NCLC 7+ (Examen 04 : Examen 03 + 1 000 XP), et Grand Palier Élite (Examen 07+ : NCLC 7+ validé + 2 500 XP).
   - **Checklists de Quête & Briefing Interactif :** Boîtes d'objectifs de quête sur chaque carte verrouillée et modale de briefing avec recommandations d'entraînement et bypass VIP.

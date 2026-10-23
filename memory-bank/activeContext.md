@@ -2,7 +2,18 @@
 
 ## 0. Déploiement Production Vercel & Moteur de Conversion
 
-### 0.0zf. Moteur RPG Dynamique d'XP, Rangs Candidat & Boss Gates de Progression (`components/exam/exam-roadmap-board.tsx`)
+### 0.0zg. Éradication du Vocabulaire Jeu Vidéo & Harmonisation Pédagogique Institutionnelle (`components/exam/exam-roadmap-board.tsx`)
+- **Directive Utilisateur :** Supprimer toute trace de langage "jeu vidéo" (ex. *"Prêt à Jouer"*, *"Boss Gate"*, *"Quête"*, *"Cockpit RPG"*, *"Énergie XP"*) afin de préserver l'image académique, prestigieuse et certifiante de Super4C2 (plateforme de préparation officielle FEI / IRCC).
+- **Harmonisations Terminologiques Appliquées :**
+  1. **Bouton d'état disponible :** *« Prêt à Jouer (+X XP) »* ➔ **« Prêt à Composer (+X XP) »**.
+  2. **Alertes de Paliers :** *« ⚡ BOSS GATE : Seuil NCLC 7+ »* ➔ **« 🏛️ PALIER CERTIFICATIF : Seuil NCLC 7+ (+50 pts CRS) »**.
+  3. **Cartes Verrouillées :** *« Conditions de Déverrouillage RPG »* ➔ **« Prérequis Pédagogiques d'Accès »**.
+  4. **Boutons de consultation :** *« Consulter la Quête pour Débloquer l'Examen »* / *« Quête Examen »* ➔ **« Consulter les Prérequis pour Débloquer l'Examen »** / **« Prérequis Examen »**.
+  5. **Modale Pédagogique :** Remplacement de la quête par le **« Parcours d'Excellence Pédagogique • Norme FEI & Standard NCLC 7+ »**, icône institutionnelle `Award`, et bouton *« Accéder Directement »* au lieu de *« Débloquer en Mode Libre »*.
+  6. **Cockpit de Progression :** *« Énergie XP Cumulée »* ➔ **« Points XP Cumulés »**, *« Niveau »* ➔ *« Palier »*, *« Initié B1/B2 »*, *« Candidat NCLC 7+ Confirmé »*, *« Maître C1/C2 Élite »*.
+- **Validation :** 0 occurrence restante de vocabulaire gaming, `npx tsc --noEmit` validé (0 erreur), commit `a8a3c59` poussé sur `main`.
+
+### 0.0zf. Moteur Dynamique de Progression par Paliers & Points d'Expérience (`components/exam/exam-roadmap-board.tsx`)
 - **Demande Utilisateur & Réalisations :**
   1. **Système de Rangs RPG & Jauge d'XP Globale :**
      - Calcul dynamique du total XP cumulé (`totalUserXp`) en agrégeant les `xpReward` des sessions complétées (+200 XP si NCLC 7+ validé, +300 XP si C1/C2).
