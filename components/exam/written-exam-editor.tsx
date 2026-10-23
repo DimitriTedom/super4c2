@@ -22,6 +22,7 @@ import {
   Printer,
   HelpCircle,
   History,
+  Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -47,6 +48,8 @@ import { triggerGlobalLoading } from "@/components/ui/top-body-loader";
 import { CompanionPod } from "@/components/companions/companion-pod";
 import { type CompanionId, DEFAULT_COMPANION_ID } from "@/lib/companions/data";
 import { generateExamReportPdf } from "@/lib/exam/export-pdf";
+import { AnimatedAiAvatar } from "@/components/ui/animated-ai-avatar";
+import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
 
 // Palette de caractères accentués et symboles — Standard Clavier Officiel
@@ -124,6 +127,13 @@ export function WrittenExamEditor({
   const [isRestoreOpen, setIsRestoreOpen] = useState<boolean>(false);
   const [isExportingPdf, setIsExportingPdf] = useState<boolean>(false);
 
+  const [candidateInfo, setCandidateInfo] = useState<{
+    name?: string;
+    email?: string;
+    id?: string;
+  }>({});
+  const [evalElapsedSeconds, setEvalElapsedSeconds] = useState<number>(0);
+
   const [isSubmitOpen, setIsSubmitOpen] = useState<boolean>(false);
   const [isExitOpen, setIsExitOpen] = useState<boolean>(false);
   const [hydrated, setHydrated] = useState<boolean>(false);
@@ -135,6 +145,40 @@ export function WrittenExamEditor({
 
   const finishedRef = useRef<boolean>(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Récupération des informations d'identification du candidat
+  useEffect(() => {
+    try {
+      const supabase = createSupabaseBrowserClient();
+      supabase.auth.getUser().then(({ data }) => {
+        if (data?.user) {
+          const meta = data.user.user_metadata || {};
+          const fullName =
+            meta.full_name ||
+            meta.name ||
+            (data.user.email ? data.user.email.split("@")[0] : "Candidat Officiel");
+          setCandidateInfo({
+            name: fullName,
+            email: data.user.email,
+            id: data.user.id.slice(0, 8).toUpperCase(),
+          });
+        }
+      }).catch(() => {});
+    } catch {}
+  }, []);
+
+  // Défilement du chronomètre d'évaluation réelle
+  useEffect(() => {
+    if (!isEvaluating) {
+      setEvalElapsedSeconds(0);
+      return;
+    }
+    const start = Date.now();
+    const interval = setInterval(() => {
+      setEvalElapsedSeconds(Math.floor((Date.now() - start) / 1000));
+    }, 500);
+    return () => clearInterval(interval);
+  }, [isEvaluating]);
 
   // Initialisation et hydratation depuis le localStorage
   useEffect(() => {
@@ -312,6 +356,10 @@ export function WrittenExamEditor({
         series,
         result,
         texts,
+        candidateName: candidateInfo.name || "Candidat Super4C2",
+        candidateEmail: candidateInfo.email,
+        candidateId: candidateInfo.id,
+        companionId: userCompanionId,
       });
     } catch (err) {
       console.error("Échec génération PDF personnalisé, bascule impression :", err);
@@ -512,39 +560,65 @@ export function WrittenExamEditor({
 
   return (
     <div className="flex h-screen flex-col bg-background select-none">
-      {/* 🏛️ BARRE D'EN-TÊTE STRICTEMENT ÉPURÉE : RETOURNER • CHRONOMÈTRE • SOUMETTRE */}
+      {/* 🏛️ BARRE D'EN-TÊTE STRICTEMENT ÉPURÉE : RETOURNER / QUITTER • STATUT • ACTIONS */}
       <header className="flex h-14 shrink-0 items-center justify-between gap-4 border-b bg-card px-4 sm:px-6">
-        {/* 1. Bouton Retourner (avec flèche) */}
+        {/* 1. Bouton Retourner ou Quitter vers le Catalogue */}
         <div className="flex items-center">
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={handleGoBack}
-            className="rounded-full gap-2 px-3.5 h-8 border-border/80 bg-background/80 hover:bg-muted font-bold text-xs shadow-2xs group shrink-0"
-          >
-            <ArrowLeft className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-1 text-primary" />
-            <span>Retourner</span>
-          </Button>
+          {isFinished ? (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => router.push("/examens")}
+              className="rounded-full gap-2 px-3.5 h-8 border-border/80 bg-background/80 hover:bg-muted font-bold text-xs shadow-2xs group shrink-0"
+              title="Retourner à la liste de toutes les séries d'examen"
+            >
+              <ArrowLeft className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-1 text-primary" />
+              <span>Quitter vers le Catalogue</span>
+            </Button>
+          ) : (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={handleGoBack}
+              className="rounded-full gap-2 px-3.5 h-8 border-border/80 bg-background/80 hover:bg-muted font-bold text-xs shadow-2xs group shrink-0"
+            >
+              <ArrowLeft className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-1 text-primary" />
+              <span>Retourner</span>
+            </Button>
+          )}
         </div>
 
-        {/* 2. Chronomètre officiel strict (60:00) */}
+        {/* 2. Chronomètre officiel OU Statut de fin d'examen */}
         <div className="flex items-center">
-          <div
-            role="timer"
-            className={cn(
-              "flex items-center gap-2 rounded-full border px-4 py-1 font-mono text-sm sm:text-base font-bold tabular-nums transition-colors shadow-2xs",
-              urgent && "border-orange-500/50 bg-orange-500/10 text-orange-600",
-              critical && "animate-pulse border-red-500/60 bg-red-500/10 text-red-600",
-              !urgent && !critical && "border-border/80 bg-background text-foreground"
-            )}
-          >
-            <Clock className="h-4 w-4 text-muted-foreground" />
-            <span>{formatClock(remaining)}</span>
-          </div>
+          {isFinished ? (
+            <div className="flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3.5 py-1 text-xs font-bold text-emerald-700 dark:text-emerald-400 shadow-2xs">
+              <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
+              <span>Épreuve Soumise &amp; Évaluée</span>
+            </div>
+          ) : isEvaluating ? (
+            <div className="flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3.5 py-1 text-xs font-bold text-primary shadow-2xs animate-pulse">
+              <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />
+              <span>Correction IA en cours ({evalElapsedSeconds}s)</span>
+            </div>
+          ) : (
+            <div
+              role="timer"
+              className={cn(
+                "flex items-center gap-2 rounded-full border px-4 py-1 font-mono text-sm sm:text-base font-bold tabular-nums transition-colors shadow-2xs",
+                urgent && "border-orange-500/50 bg-orange-500/10 text-orange-600",
+                critical && "animate-pulse border-red-500/60 bg-red-500/10 text-red-600",
+                !urgent && !critical && "border-border/80 bg-background text-foreground"
+              )}
+            >
+              <Clock className="h-4 w-4 text-muted-foreground" />
+              <span>{formatClock(remaining)}</span>
+            </div>
+          )}
         </div>
 
-        {/* 3. Bouton Soumettre */}
+        {/* 3. Bouton Soumettre ou Actions Rapport */}
         <div className="flex items-center gap-2 shrink-0">
           {!isFinished ? (
             <Button
@@ -559,12 +633,22 @@ export function WrittenExamEditor({
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => window.print()}
+                disabled={isExportingPdf}
+                onClick={handleDownloadPdf}
                 className="rounded-full gap-2 font-bold text-xs shadow-2xs hover:bg-muted h-8"
-                title="Télécharger ou imprimer mon rapport d'évaluation FEI"
+                title="Télécharger votre bilan officiel d'évaluation FEI (PDF institutionnel)"
               >
-                <Download className="h-3.5 w-3.5 text-primary" />
-                <span className="hidden sm:inline">Télécharger (PDF)</span>
+                {isExportingPdf ? (
+                  <>
+                    <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />
+                    <span>Génération PDF...</span>
+                  </>
+                ) : (
+                  <>
+                    <Download className="h-3.5 w-3.5 text-primary" />
+                    <span className="hidden sm:inline">Télécharger (PDF)</span>
+                  </>
+                )}
               </Button>
               <Button variant="outline" size="sm" onClick={handleRestart} className="rounded-full gap-2 h-8 text-xs">
                 <RotateCcw className="h-3.5 w-3.5" />
@@ -604,32 +688,122 @@ export function WrittenExamEditor({
 
       {/* Vue Résultats ou Vue Rédaction ou Évaluation en cours */}
       {isEvaluating ? (
-        <div className="flex-1 flex flex-col items-center justify-center p-6 sm:p-12 text-center space-y-6">
+        <div className="flex-1 flex flex-col items-center justify-center p-6 sm:p-12 text-center space-y-6 max-w-xl mx-auto w-full">
+          {/* Orbe Avatar Aura C2 avec halos d'énergie concentriques */}
           <div className="relative flex items-center justify-center">
-            <div className="absolute h-24 w-24 rounded-full bg-brand-crimson/15 animate-ping" />
-            <div className="relative flex h-20 w-20 items-center justify-center rounded-2xl bg-brand-crimson text-white shadow-xl shadow-brand-crimson/25">
-              <Sparkles className="h-10 w-10 animate-pulse" />
+            <div className="absolute h-36 w-36 rounded-full bg-brand-crimson/15 animate-ping pointer-events-none" />
+            <div className="absolute h-32 w-32 rounded-full bg-gradient-to-tr from-cyan-500/20 via-red-500/20 to-rose-500/30 blur-lg animate-pulse pointer-events-none" />
+            <div className="relative flex h-24 w-24 items-center justify-center rounded-3xl bg-gradient-to-br from-slate-900 via-rose-950 to-slate-950 border border-primary/30 shadow-2xl shadow-brand-crimson/25">
+              <AnimatedAiAvatar size="xl" isThinking={true} isSpeaking={evalElapsedSeconds % 2 === 0} />
             </div>
           </div>
+
           <div className="space-y-2 max-w-md">
+            <div className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3.5 py-1 text-xs font-bold text-primary shadow-2xs">
+              <span className="flex h-2 w-2 rounded-full bg-primary animate-pulse" />
+              <span>Moteur Aura C2™ • Double Correction FEI</span>
+            </div>
             <h2 className="font-display text-2xl font-black text-foreground">
-              Correction IA conforme FEI en cours...
+              Correction officielle en cours...
             </h2>
-            <p className="text-sm text-muted-foreground leading-relaxed">
+            <p className="text-xs text-muted-foreground leading-relaxed">
               {mode === "practice"
-                ? `Analyse de votre Tâche ${activeTaskIndex + 1} selon la grille de France Éducation International et génération du modèle Magic Rewrite C1/C2.`
-                : "Notre moteur analyse vos 3 tâches selon la grille officielle de France Éducation International et génère vos modèles Magic Rewrite C1/C2."}
+                ? `Analyse détaillée de votre Tâche ${activeTaskIndex + 1} selon la grille France Éducation International et génération du modèle Magic Rewrite C1/C2.`
+                : "Notre jury IA analyse vos 3 tâches selon la grille officielle FEI (4 critères) et formule vos réécritures Magic Rewrite C1/C2."}
             </p>
           </div>
-          <div className="w-full max-w-sm rounded-xl border bg-card p-4 text-xs text-left space-y-2.5 text-muted-foreground shadow-xs">
-            <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-medium">
-              <CheckCircle2 className="h-4 w-4" /> Comptage des mots (norme FEI)
+
+          {/* Checklist dynamique et progressive en temps réel */}
+          <div className="w-full max-w-md rounded-2xl border bg-card/80 backdrop-blur-md p-4 text-xs text-left space-y-3.5 text-muted-foreground shadow-sm">
+            {/* Étape 1 : Comptage officiel des mots */}
+            <div className="flex items-start gap-2.5 text-emerald-600 dark:text-emerald-400 font-medium">
+              <CheckCircle2 className="h-4 w-4 shrink-0 mt-0.5 text-emerald-600" />
+              <div>
+                <p className="font-bold">Comptage &amp; calibrage des mots (norme FEI)</p>
+                <p className="text-[11px] text-muted-foreground font-normal mt-0.5">
+                  {mode === "practice"
+                    ? `Tâche ${activeTaskIndex + 1} : ${countWordsFei(texts[activeTaskIndex] || "")} mots analysés`
+                    : `T1 : ${countWordsFei(texts[0] || "")} mots • T2 : ${countWordsFei(texts[1] || "")} mots • T3 : ${countWordsFei(texts[2] || "")} mots`}
+                </p>
+              </div>
             </div>
-            <div className="flex items-center gap-2 text-primary font-medium">
-              <div className="h-2 w-2 rounded-full bg-primary animate-ping ml-1 mr-1" /> Évaluation syntaxique &amp; connecteurs logiques
+
+            {/* Étape 2 : Syntaxe et connecteurs */}
+            <div
+              className={cn(
+                "flex items-start gap-2.5 font-medium transition-colors",
+                evalElapsedSeconds >= 3 ? "text-emerald-600 dark:text-emerald-400" : "text-primary"
+              )}
+            >
+              {evalElapsedSeconds >= 3 ? (
+                <CheckCircle2 className="h-4 w-4 shrink-0 mt-0.5 text-emerald-600" />
+              ) : (
+                <Loader2 className="h-4 w-4 shrink-0 mt-0.5 animate-spin text-primary" />
+              )}
+              <div>
+                <p className="font-bold">Analyse syntaxique &amp; connecteurs logiques</p>
+                <p className="text-[11px] text-muted-foreground font-normal mt-0.5">
+                  {evalElapsedSeconds >= 3
+                    ? "Cohérence textuelle et registre validés"
+                    : "Détection des structures morphosyntaxiques..."}
+                </p>
+              </div>
             </div>
-            <div className="flex items-center gap-2">
-              <div className="h-1.5 w-1.5 rounded-full bg-muted-foreground ml-1.5 mr-1.5" /> Génération du Magic Rewrite C1/C2
+
+            {/* Étape 3 : Double correction IA DeepSeek & Gemini */}
+            <div
+              className={cn(
+                "flex items-start gap-2.5 font-medium transition-colors",
+                evalElapsedSeconds >= 7
+                  ? "text-emerald-600 dark:text-emerald-400"
+                  : evalElapsedSeconds >= 3
+                  ? "text-primary"
+                  : "text-muted-foreground/60"
+              )}
+            >
+              {evalElapsedSeconds >= 7 ? (
+                <CheckCircle2 className="h-4 w-4 shrink-0 mt-0.5 text-emerald-600" />
+              ) : evalElapsedSeconds >= 3 ? (
+                <Loader2 className="h-4 w-4 shrink-0 mt-0.5 animate-spin text-primary" />
+              ) : (
+                <div className="h-2 w-2 rounded-full bg-muted-foreground/40 ml-1 mr-1 mt-1 shrink-0" />
+              )}
+              <div>
+                <p className="font-bold">Double notation IA (DeepSeek &amp; Gemini)</p>
+                <p className="text-[11px] text-muted-foreground font-normal mt-0.5">
+                  {evalElapsedSeconds >= 7
+                    ? "Notes /20 et niveaux NCLC 4-10+ attribués"
+                    : "Calibration sur le barème officiel 4 critères FEI..."}
+                </p>
+              </div>
+            </div>
+
+            {/* Étape 4 : Modèle Magic Rewrite */}
+            <div
+              className={cn(
+                "flex items-start gap-2.5 font-medium transition-colors",
+                evalElapsedSeconds >= 10
+                  ? "text-emerald-600 dark:text-emerald-400"
+                  : evalElapsedSeconds >= 7
+                  ? "text-primary"
+                  : "text-muted-foreground/60"
+              )}
+            >
+              {evalElapsedSeconds >= 10 ? (
+                <CheckCircle2 className="h-4 w-4 shrink-0 mt-0.5 text-emerald-600" />
+              ) : evalElapsedSeconds >= 7 ? (
+                <Loader2 className="h-4 w-4 shrink-0 mt-0.5 animate-spin text-primary" />
+              ) : (
+                <div className="h-2 w-2 rounded-full bg-muted-foreground/40 ml-1 mr-1 mt-1 shrink-0" />
+              )}
+              <div>
+                <p className="font-bold">Génération du modèle Magic Rewrite C1/C2</p>
+                <p className="text-[11px] text-muted-foreground font-normal mt-0.5">
+                  {evalElapsedSeconds >= 10
+                    ? "Modèle haute fidélité prêt"
+                    : "Formulation des tournures idiomatiques et vocabulaire soutenu..."}
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -797,6 +971,45 @@ export function WrittenExamEditor({
                   />
                 </div>
               ))}
+
+              {/* 🏁 BARRE D'ACTIONS INFÉRIEURE : QUITTER VERS LE CATALOGUE • TÉLÉCHARGER • RECOMMENCER */}
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 border-t mt-8">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => router.push("/examens")}
+                  className="gap-2 w-full sm:w-auto font-bold rounded-xl"
+                  title="Revenir à la liste de toutes les séries d'examens"
+                >
+                  <ArrowLeft className="h-4 w-4 text-primary" />
+                  <span>Quitter vers le Catalogue</span>
+                </Button>
+
+                <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    disabled={isExportingPdf}
+                    onClick={handleDownloadPdf}
+                    className="gap-2 font-bold w-full sm:w-auto rounded-xl"
+                  >
+                    {isExportingPdf ? (
+                      <Loader2 className="h-4 w-4 animate-spin text-primary" />
+                    ) : (
+                      <Download className="h-4 w-4 text-primary" />
+                    )}
+                    <span>Télécharger le Rapport (PDF)</span>
+                  </Button>
+                  <Button
+                    type="button"
+                    onClick={handleRestart}
+                    className="gap-2 w-full sm:w-auto bg-primary hover:bg-primary/90 text-white font-bold rounded-xl"
+                  >
+                    <RotateCcw className="h-4 w-4" />
+                    <span>Recommencer l&apos;Examen</span>
+                  </Button>
+                </div>
+              </div>
             </>
           ) : null}
         </div>

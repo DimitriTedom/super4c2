@@ -2,6 +2,46 @@
 
 ## 0. Déploiement Production Vercel & Moteur de Conversion
 
+### 0.0zc. Capture Audio Intégrale EO, Quitter vers le Catalogue, Prérequis Roadmap & Logos Réseaux
+- **Réalisations & Correctifs :**
+  1. **Bouton « Quitter vers le Catalogue » Partout Déployé :**
+     - Dans `written-exam-editor.tsx` : présent en haut à gauche dès que `isFinished` est vrai ET tout en bas de la page de rapport après la grille des 3 tâches, menant directement à `/examens` sans popup.
+     - Dans `oral-exam-room.tsx` : remplace le bouton générique « Quitter » dans le header une fois l'entretien oral terminé et évalué, ainsi que dans le bloc de fin d'examen.
+     - Dans `exam-result-summary.tsx` : harmonisé pour remplacer le texte statique et supprimer le « 101 » codé en dur.
+  2. **Enregistrement Audio Intégral en Expression Orale (`oral-exam-room.tsx`) :**
+     - Résolution de la perte de la première réplique de l'examinateur : `ensureMediaRecordingStarted` est désormais appelé immédiatement dès l'amorce de la tâche (`useEffect`) et avant chaque intervention de l'examinateur (`playOrFetchExaminerSpeech`), sans attendre le premier clic micro du candidat.
+  3. **Dialogue Explicatif de Prérequis Roadmap (`exam-roadmap-board.tsx`) :**
+     - Remplacement du simple déblocage direct par une boîte de dialogue institutionnelle Shadcn `Dialog` détaillant les prérequis d'apprentissage (compléter l'Examen N-1 ou atteindre le palier d'XP), avec bouton de redirection vers l'examen précédent et déblocage volontaire.
+  4. **Logos Officiels SVG pour Telegram & WhatsApp (`app/communaute/page.tsx`) :**
+     - Remplacement des icônes génériques `Send` et `MessageCircle` par les véritables logos vectoriels SVG officiels de Telegram (`#229ED9`) et WhatsApp (`#25D366`).
+- **Validation :** `npx tsc --noEmit` validé avec 0 erreur.
+
+### 0.0zb. Refonte Intégrale du PDF d'Expression Écrite & Écran de Correction Dynamique Aura C2™
+- **Demande Utilisateur & Réalisations :**
+  1. **Traçage en Temps Réel de l'Évolution de la Correction (Écran 33) :**
+     - Remplacement de la simple icône étoile par l'orbe animée **Aura C2™** (`AnimatedAiAvatar` avec yeux numériques réactifs, rotation `isThinking`, pulsations de lumière et ondes de choc concentriques).
+     - Intégration d'une checklist dynamique séquentielle qui reflète la progression exacte en direct :
+       - *Étape 1 (0s) :* Comptage et calibrage des mots (norme FEI) affichant les volumes réels saisis (`T1: X mots • T2: Y mots • T3: Z mots`) validés par un check vert.
+       - *Étape 2 (3s) :* Analyse syntaxique & connecteurs logiques.
+       - *Étape 3 (7s) :* Double notation IA (DeepSeek & Gemini conforme barème FEI /20 et NCLC).
+       - *Étape 4 (10s) :* Génération du modèle d'excellence Magic Rewrite C1/C2.
+     - Compteur d'analyse réel en direct affiché dans l'en-tête : `Correction IA en cours (Xs)`.
+  2. **Refonte Intégrale du PDF d'Expression Écrite (`lib/exam/export-pdf.ts`) :**
+     - Remplacement de l'ancien appel `window.print()` par le générateur vectoriel institutionnel `generateExamReportPdf`.
+     - Intégration du logo officiel Super4C2 (avec fallback vectoriel précis).
+     - Élimination des superpositions de texte dans l'en-tête grâce à un découpage rigoureux entre le logo de gauche et le cartouche d'autorité FEI de droite.
+     - Nettoyage automatique des titres de tâches avec `cleanTaskTitle()` (suppression des doublons "TÂCHE 1 - TÂCHE 1...").
+     - Cadre d'identification officiel : Nom du candidat, Email, ID Unique, Numéro de dossier d'attestation (`S4C2-EE-101-XXXX`) et Mentor pédagogique.
+     - 4 cartes de score officielles (/20, /699, NCLC 4-10+, +50 points CRS).
+     - Grille d'évaluation FEI à 4 critères avec barres et commentaires.
+     - Modèle d'excellence Magic Rewrite C1/C2 intégral avec points clés de perfectionnement.
+     - Tampon de certification officiel et pagination multi-pages.
+  3. **Ergonomie de l'En-tête (`written-exam-editor.tsx`) :**
+     - Disambiguïsation du bouton `← Retourner` : une fois l'examen terminé, le bouton devient `← Quitter vers le Catalogue` (lien direct vers `/examens` sans alerte superflue).
+     - Masquage du chronomètre à l'issue de l'examen, remplacé par le badge officiel `✓ Épreuve Soumise & Évaluée`.
+     - Bouton de téléchargement PDF enrichi d'un état de chargement avec spinner `Loader2` et désactivation préventive.
+- **Validation :** `npx tsc --noEmit` validé avec 0 erreur.
+
 ### 0.0za. Correctifs Clés : Audio Studio ElevenLabs EE, Modale de Sortie & Brouillon, Démarrage Examen & Notifications Purges
 - **Demande Utilisateur & Décisions Validées :**
   1. **ScrollProgress vs Loader :** Retrait de `<ScrollProgress />` de `app-shell.tsx` pour ne conserver que la barre de progression des chargements et requêtes.

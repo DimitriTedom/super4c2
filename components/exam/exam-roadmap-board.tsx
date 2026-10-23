@@ -25,6 +25,14 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import {
   TEST_CATALOG,
@@ -118,6 +126,20 @@ export function ExamRoadmapBoard({
   }));
 
   const [selectedSeriesId, setSelectedSeriesId] = useState<string>(seriesList[0]?.id || "");
+  const [lockedModalData, setLockedModalData] = useState<{
+    targetSeries: (typeof seriesList)[0];
+    targetIndex: number;
+    prevSeries?: (typeof seriesList)[0];
+  } | null>(null);
+
+  const handleAttemptAccessLocked = (seriesItem: (typeof seriesList)[0], index: number) => {
+    const prevSeries = index > 0 ? seriesList[index - 1] : undefined;
+    setLockedModalData({
+      targetSeries: seriesItem,
+      targetIndex: index,
+      prevSeries,
+    });
+  };
 
   const selectedSeries =
     seriesList.find((s) => s.id === selectedSeriesId) || seriesList[0];
@@ -343,7 +365,7 @@ export function ExamRoadmapBoard({
                       onClick={(e) => {
                         if (!isUnlocked) {
                           e.preventDefault();
-                          handleUnlockSeries(series.id);
+                          handleAttemptAccessLocked(series, idx);
                         }
                       }}
                       className={cn(
@@ -374,7 +396,7 @@ export function ExamRoadmapBoard({
                       onClick={(e) => {
                         if (!isUnlocked) {
                           e.preventDefault();
-                          handleUnlockSeries(series.id);
+                          handleAttemptAccessLocked(series, idx);
                         }
                       }}
                       className={cn(
@@ -412,13 +434,13 @@ export function ExamRoadmapBoard({
                     </div>
                   ) : (
                     <Button
-                      onClick={() => handleUnlockSeries(series.id)}
+                      onClick={() => handleAttemptAccessLocked(series, idx)}
                       variant="outline"
                       size="sm"
-                      className="w-full h-8 text-xs gap-1.5 text-primary border-primary/30 hover:bg-primary/10"
+                      className="w-full h-8 text-xs gap-1.5 text-amber-700 dark:text-amber-400 border-amber-500/30 hover:bg-amber-500/10 font-bold"
                     >
-                      <Unlock className="h-3.5 w-3.5" />
-                      <span>Débloquer la Session {sessionNum}</span>
+                      <Lock className="h-3.5 w-3.5 text-amber-500" />
+                      <span>Examen {sessionNum} Verrouillé</span>
                     </Button>
                   )}
                 </div>
@@ -427,6 +449,72 @@ export function ExamRoadmapBoard({
           })}
         </div>
       </div>
+
+      {/* 🔒 DIALOGUE EXPLICATIF DE PRÉREQUIS POUR EXAMEN VERROUILLÉ */}
+      <Dialog
+        open={!!lockedModalData}
+        onOpenChange={(open) => {
+          if (!open) setLockedModalData(null);
+        }}
+      >
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-500/10 border border-amber-500/25 text-amber-600 mb-2">
+              <Lock className="h-7 w-7" />
+            </div>
+            <DialogTitle className="text-center font-display text-xl font-black">
+              Examen {lockedModalData ? String(lockedModalData.targetIndex + 1).padStart(2, "0") : ""} Verrouillé
+            </DialogTitle>
+            <DialogDescription className="text-center text-xs text-muted-foreground pt-1">
+              Progression Pédagogique Recommandée • Standard NCLC 7 / NCLC 10+
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-3 py-2 text-xs">
+            <div className="rounded-xl border border-border/80 bg-muted/40 p-3.5 space-y-2">
+              <p className="font-semibold text-foreground flex items-center gap-2">
+                <ShieldCheck className="h-4 w-4 text-primary shrink-0" />
+                <span>Prérequis d&apos;apprentissage recommandé :</span>
+              </p>
+              <p className="text-muted-foreground leading-relaxed">
+                Pour garantir une progression solide vers les <strong>+50 points CRS</strong>, nous vous recommandons de compléter d&apos;abord l&apos;<strong>Examen {lockedModalData && lockedModalData.prevSeries ? String(lockedModalData.targetIndex).padStart(2, "0") : "précédent"}</strong> ou d&apos;accumuler <strong>+{lockedModalData?.targetSeries?.xpReward || 150} XP</strong>.
+              </p>
+            </div>
+
+            <p className="text-[11px] text-muted-foreground leading-relaxed text-center">
+              Chaque série d&apos;examen augmente progressivement le niveau d&apos;exigence FEI (variété lexicale, connecteurs formels C1/C2 et pièges rhétoriques).
+            </p>
+          </div>
+
+          <DialogFooter className="flex-col sm:flex-row gap-2 pt-2">
+            {lockedModalData?.prevSeries ? (
+              <Button
+                variant="outline"
+                className="w-full sm:w-auto text-xs font-semibold"
+                onClick={() => {
+                  const prevId = lockedModalData.prevSeries?.id;
+                  setLockedModalData(null);
+                  if (prevId) router.push(`/examens/${prevId}`);
+                }}
+              >
+                Faire l&apos;Examen {String(lockedModalData.targetIndex).padStart(2, "0")}
+              </Button>
+            ) : null}
+            <Button
+              className="w-full sm:w-auto bg-primary hover:bg-primary/90 text-white font-bold text-xs gap-1.5"
+              onClick={() => {
+                if (lockedModalData?.targetSeries) {
+                  handleUnlockSeries(lockedModalData.targetSeries.id);
+                  setLockedModalData(null);
+                }
+              }}
+            >
+              <Unlock className="h-3.5 w-3.5" />
+              <span>Débloquer cet examen</span>
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

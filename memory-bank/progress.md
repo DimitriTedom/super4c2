@@ -1,3 +1,25 @@
+- [x] **Enregistrement Intégral EO, Boutons Quitter vers le Catalogue, Prérequis Roadmap & Logos Réseaux :**
+  - **Capture Audio Intégrale EO (`oral-exam-room.tsx`) :** Démarrage immédiat de `ensureMediaRecordingStarted` dès l'amorce de la tâche et avant chaque réplique de l'examinateur (`playOrFetchExaminerSpeech`), garantissant l'enregistrement de l'intervention de l'examinateur et de tout l'entretien.
+  - **Bouton « Quitter vers le Catalogue » Global :** Déployé dans l'en-tête supérieur et le pied de rapport d'EE (`written-exam-editor.tsx`), le header post-examen d'EO (`oral-exam-room.tsx`), et les résultats de QCM (`exam-result-summary.tsx`), avec suppression du « 101 » codé en dur.
+  - **Boîte de Dialogue Prérequis Roadmap (`exam-roadmap-board.tsx`) :** Remplacement du déblocage direct par une modale pédagogique explicative des prérequis (Examen N-1 ou palier d'XP).
+  - **Logos Officiels SVG (`app/communaute/page.tsx`) :** Remplacement des icônes génériques par les véritables logos vectoriels Telegram et WhatsApp.
+  - **Validation :** 0 erreur TypeScript (`npx tsc --noEmit`).
+- [x] **Refonte Intégrale du PDF d'Expression Écrite & Écran de Correction Dynamique Aura C2™ (`lib/exam/export-pdf.ts` & `components/exam/written-exam-editor.tsx`) :**
+  - **Traçage en Temps Réel de l'Évolution de la Correction (Écran 33) :**
+    - Remplacement de l'étoile par l'avatar **Aura C2™** (`AnimatedAiAvatar` avec yeux numériques réactifs, rotation `isThinking`, ondes de choc concentriques).
+    - Checklist séquentielle dynamique reflétant les véritables phases de calcul : (1) Comptage FEI affichant les volumes réels de mots (`T1, T2, T3`) avec check vert, (2) Analyse morphosyntaxique & connecteurs, (3) Double notation IA (DeepSeek & Gemini), (4) Génération Magic Rewrite C1/C2.
+    - Chronomètre d'analyse réel en direct dans l'en-tête (`Correction IA en cours (Xs)`).
+  - **Refonte Institutionnelle du PDF d'Expression Écrite :**
+    - Déploiement du moteur vectoriel `generateExamReportPdf` en lieu et place du simple `window.print()`.
+    - Logo haute résolution Super4C2 (avec fallback vectoriel).
+    - Suppression de tous les chevauchements et collisions de texte dans l'en-tête.
+    - Nettoyage des titres des tâches (`cleanTaskTitle()`) éliminant les doublons ("TÂCHE 1 - TÂCHE 1...").
+    - Cadre officiel d'identification : Nom, Email, ID Candidat, N° d'attestation (`S4C2-EE-101-XXXX`) et Mentor.
+    - Grille officielle FEI à 4 critères, cartes de scores (/20, /699, NCLC 4-10+, +50 CRS) et modèles Magic Rewrite C1/C2 intégraux.
+  - **Navigation de Fin d'Épreuve :**
+    - Disambiguïsation du bouton `← Retourner` devenant `← Quitter vers le Catalogue` pointant vers `/examens`.
+    - Masquage du chronomètre à la fin de l'examen remplacé par `✓ Épreuve Soumise & Évaluée`.
+  - **Validation :** 0 erreur TypeScript (`npx tsc --noEmit`).
 - [x] **Correctifs Direction & Retours UX (Examens, Navigation, Copywriting & Note Entraînement Tâche) :**
   - **Copywriting Hero :** Sous-titre corrigé en « décrocher vos C2 » (suppression du chiffre « 4 » redondant).
   - **CTA Hero & Entonnoir :** Remplacement de « Choisir ma Session d'Examen » par « Me préparer à l'Examen », pointant directement vers `/examens?test=tcf`.

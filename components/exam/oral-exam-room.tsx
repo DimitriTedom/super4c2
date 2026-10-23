@@ -218,11 +218,60 @@ export function OralExamRoom({ series }: OralExamRoomProps) {
     []
   );
 
+  // Démarrage de l'enregistrement de la session globale (MediaRecorder avec mixeur Candidat + Examinateur)
+  const ensureMediaRecordingStarted = useCallback(async () => {
+    if (typeof window === "undefined" || !navigator.mediaDevices?.getUserMedia) return;
+    try {
+      if (!mediaStreamRef.current) {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        mediaStreamRef.current = stream;
+      }
+
+      // Connexion du microphone au mixeur audio
+      const audioSetup = getAudioContext();
+      if (audioSetup?.ctx && audioSetup?.dest && mediaStreamRef.current) {
+        if (!micSourceRef.current) {
+          micSourceRef.current = audioSetup.ctx.createMediaStreamSource(mediaStreamRef.current);
+          micSourceRef.current.connect(audioSetup.dest);
+        }
+      }
+
+      // Flux mixte regroupant le microphone du candidat ET la voix de l'examinateur
+      const recordingStream = audioSetup?.dest?.stream || mediaStreamRef.current;
+
+      if (!mediaRecorderRef.current || mediaRecorderRef.current.state === "inactive") {
+        const mimeType = MediaRecorder.isTypeSupported("audio/webm;codecs=opus")
+          ? "audio/webm;codecs=opus"
+          : "audio/webm";
+        const recorder = new MediaRecorder(recordingStream, { mimeType });
+        recorder.ondataavailable = (event) => {
+          if (event.data && event.data.size > 0) {
+            recordedChunksRef.current.push(event.data);
+          }
+        };
+        recorder.onstop = () => {
+          if (recordedChunksRef.current.length > 0) {
+            const fullBlob = new Blob(recordedChunksRef.current, { type: "audio/webm" });
+            const url = URL.createObjectURL(fullBlob);
+            setSessionAudioUrl(url);
+          }
+        };
+        recorder.start(1000);
+        mediaRecorderRef.current = recorder;
+      }
+    } catch (err) {
+      console.warn("[MediaRecorder] Microphone non disponible pour capture globale:", err);
+    }
+  }, [getAudioContext]);
+
   // Lecture d'audio MP3 ElevenLabs (Charlie) avec routage mixé dans l'enregistrement
   const playOrFetchExaminerSpeech = useCallback(
     async (text: string, existingBase64?: string | null, onEnd?: () => void) => {
       if (typeof window === "undefined") return;
       if (isExamCompletedRef.current || isLiveCallActiveRef.current) return;
+
+      // S'assurer que le MediaRecorder enregistre dès la première réplique de l'examinateur !
+      void ensureMediaRecordingStarted().catch(() => {});
 
       // Stopper tout audio précédent et générer un jeton de session unique
       stopAllAudio();
@@ -388,54 +437,8 @@ export function OralExamRoom({ series }: OralExamRoomProps) {
         speakExaminerFallback(text, onEnd, thisSessionId);
       }
     },
-    [getAudioContext, speakExaminerFallback, stopAllAudio]
+    [getAudioContext, speakExaminerFallback, stopAllAudio, ensureMediaRecordingStarted]
   );
-
-  // Démarrage de l'enregistrement de la session globale (MediaRecorder avec mixeur Candidat + Examinateur)
-  const ensureMediaRecordingStarted = useCallback(async () => {
-    if (typeof window === "undefined" || !navigator.mediaDevices?.getUserMedia) return;
-    try {
-      if (!mediaStreamRef.current) {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        mediaStreamRef.current = stream;
-      }
-
-      // Connexion du microphone au mixeur audio
-      const audioSetup = getAudioContext();
-      if (audioSetup?.ctx && audioSetup?.dest && mediaStreamRef.current) {
-        if (!micSourceRef.current) {
-          micSourceRef.current = audioSetup.ctx.createMediaStreamSource(mediaStreamRef.current);
-          micSourceRef.current.connect(audioSetup.dest);
-        }
-      }
-
-      // Flux mixte regroupant le microphone du candidat ET la voix de l'examinateur
-      const recordingStream = audioSetup?.dest?.stream || mediaStreamRef.current;
-
-      if (!mediaRecorderRef.current || mediaRecorderRef.current.state === "inactive") {
-        const mimeType = MediaRecorder.isTypeSupported("audio/webm;codecs=opus")
-          ? "audio/webm;codecs=opus"
-          : "audio/webm";
-        const recorder = new MediaRecorder(recordingStream, { mimeType });
-        recorder.ondataavailable = (event) => {
-          if (event.data && event.data.size > 0) {
-            recordedChunksRef.current.push(event.data);
-          }
-        };
-        recorder.onstop = () => {
-          if (recordedChunksRef.current.length > 0) {
-            const fullBlob = new Blob(recordedChunksRef.current, { type: "audio/webm" });
-            const url = URL.createObjectURL(fullBlob);
-            setSessionAudioUrl(url);
-          }
-        };
-        recorder.start(1000);
-        mediaRecorderRef.current = recorder;
-      }
-    } catch (err) {
-      console.warn("[MediaRecorder] Microphone non disponible pour capture globale:", err);
-    }
-  }, [getAudioContext]);
 
   const stopMediaRecording = useCallback(() => {
     if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
@@ -743,6 +746,9 @@ export function OralExamRoom({ series }: OralExamRoomProps) {
       return prev;
     });
 
+    // Démarrage de l'enregistreur de session pour capturer l'examinateur et le candidat dès la première seconde
+    void ensureMediaRecordingStarted().catch(() => {});
+
     // Ne pas lire l'audio tour par tour si un appel live est en cours
     if (!isLiveCallActiveRef.current) {
       void playOrFetchExaminerSpeech(initialPrompt);
@@ -751,7 +757,7 @@ export function OralExamRoom({ series }: OralExamRoomProps) {
     return () => {
       stopAllAudio();
     };
-  }, [currentTaskIndex, series.tasks, playOrFetchExaminerSpeech, stopAllAudio]);
+  }, [currentTaskIndex, series.tasks, playOrFetchExaminerSpeech, stopAllAudio, ensureMediaRecordingStarted]);
 
   // Clôture et évaluation définitive de l'épreuve
   const handleCompleteExam = useCallback(() => {
@@ -965,18 +971,34 @@ export function OralExamRoom({ series }: OralExamRoomProps) {
       {/* HEADER DE LUXE — CERTIFICATION OFFICIELLE & TÉLÉMÉTRIE */}
       <header className="flex h-16 shrink-0 items-center justify-between gap-4 border-b bg-card/90 backdrop-blur-md px-4 sm:px-6 z-20">
         <div className="flex items-center gap-3">
-          <Button
-            asChild
-            variant="ghost"
-            size="sm"
-            onClick={stopAllAudio}
-            className="gap-1.5 text-muted-foreground hover:text-foreground font-semibold rounded-full"
-          >
-            <Link href={`/examens/${series.id}`}>
-              <ArrowLeft className="h-4 w-4" />
-              <span className="hidden sm:inline">Quitter</span>
-            </Link>
-          </Button>
+          {isExamCompleted ? (
+            <Button
+              asChild
+              variant="outline"
+              size="sm"
+              onClick={stopAllAudio}
+              className="rounded-full gap-2 px-3.5 h-8 border-border/80 bg-background/80 hover:bg-muted font-bold text-xs shadow-2xs group shrink-0"
+              title="Retourner au catalogue de tous les examens"
+            >
+              <Link href="/examens">
+                <ArrowLeft className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-1 text-primary" />
+                <span>Quitter vers le Catalogue</span>
+              </Link>
+            </Button>
+          ) : (
+            <Button
+              asChild
+              variant="ghost"
+              size="sm"
+              onClick={stopAllAudio}
+              className="gap-1.5 text-muted-foreground hover:text-foreground font-semibold rounded-full"
+            >
+              <Link href={`/examens/${series.id}`}>
+                <ArrowLeft className="h-4 w-4" />
+                <span className="hidden sm:inline">Quitter</span>
+              </Link>
+            </Button>
+          )}
 
           <div className="border-l pl-3">
             <div className="flex items-center gap-2">

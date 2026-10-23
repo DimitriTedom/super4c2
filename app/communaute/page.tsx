@@ -17,15 +17,31 @@ export const metadata = {
     "Rejoignez les groupes Telegram et WhatsApp officiels Super4C2 pour échanger sur les sujets récents tombés en centre d'examen et vous entraîner avec d'autres candidats.",
 };
 
+function TelegramIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+      <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z" />
+    </svg>
+  );
+}
+
+function WhatsAppIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+      <path d="M19.05 4.91A9.816 9.816 0 0 0 12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01zm-7.01 15.24c-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.264 8.264 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.24-8.24 2.2 0 4.27.86 5.82 2.42a8.183 8.183 0 0 1 2.41 5.83c.02 4.54-3.68 8.23-8.22 8.23zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.12-.17.25-.64.81-.78.97-.15.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.02-.38.11-.51.11-.11.25-.29.37-.43.12-.15.17-.25.25-.42.08-.17.04-.31-.02-.44-.06-.12-.56-1.34-.76-1.84-.2-.48-.41-.42-.56-.43h-.48c-.17 0-.44.06-.66.31-.22.25-.86.84-.86 2.06 0 1.21.89 2.39 1.01 2.56.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.53.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.67-1.18.21-.58.21-1.07.15-1.18-.07-.1-.23-.17-.48-.29z" />
+    </svg>
+  );
+}
+
 export default function CommunautePage() {
   const groups = [
     {
       title: "Canal Telegram VIP — Alertes Sujets 2026",
       desc: "Diffusion en temps réel des sujets récents d'Expression Écrite et Orale rapportés par les candidats sortant des centres d'examen dans le monde entier (Paris, Alger, Dakar, Douala, Beyrouth, Montréal).",
       badge: "Indispensable Veille Examen",
-      icon: Send,
+      icon: TelegramIcon,
       members: "3 840+ candidats",
-      color: "bg-sky-500/10 text-sky-500 border-sky-500/30",
+      color: "bg-[#229ED9]/15 text-[#229ED9] border-[#229ED9]/30",
       btnText: "Rejoindre le Canal Telegram",
       btnHref: "https://t.me/super4c2_tcf",
     },
@@ -33,9 +49,9 @@ export default function CommunautePage() {
       title: "Groupe WhatsApp — Objectif NCLC 7+",
       desc: "Salon d'entraide interactif modéré par nos formateurs. Trouvez un binôme pour simuler la Tâche 2 d'Expression Orale (Jeu de rôle) et partagez vos questions de grammaire et syntaxe.",
       badge: "Entraide & Binômes",
-      icon: MessageCircle,
+      icon: WhatsAppIcon,
       members: "1 250+ membres actifs",
-      color: "bg-emerald-500/10 text-emerald-500 border-emerald-500/30",
+      color: "bg-[#25D366]/15 text-[#25D366] border-[#25D366]/30",
       btnText: "Rejoindre le Groupe WhatsApp",
       btnHref: "https://chat.whatsapp.com/super4c2_nclc7",
     },

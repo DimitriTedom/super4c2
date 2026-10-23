@@ -16,6 +16,7 @@ import {
   Sparkles,
   Volume2,
   XCircle,
+  ArrowLeft,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { crsBonusForNclc } from "@/lib/exam/scoring";
@@ -719,7 +720,7 @@ export function ExamResultSummary({
       {/* Bottom Footer Actions */}
       <div className="flex flex-wrap items-center justify-between gap-4 border-t pt-6">
         <Button variant="outline" onClick={onRestart}>
-          <RotateCcw className="mr-2 h-4 w-4" aria-hidden /> Recommencer cette série 101
+          <RotateCcw className="mr-2 h-4 w-4" aria-hidden /> Recommencer cette série
         </Button>
         <div className="flex items-center gap-3">
           <Button variant="secondary" asChild>
@@ -728,7 +729,10 @@ export function ExamResultSummary({
             </Link>
           </Button>
           <Button asChild>
-            <Link href="/examens">Retour au catalogue d&apos;examens</Link>
+            <Link href="/examens">
+              <ArrowLeft className="mr-1.5 h-4 w-4" />
+              Quitter vers le Catalogue
+            </Link>
           </Button>
         </div>
       </div>
