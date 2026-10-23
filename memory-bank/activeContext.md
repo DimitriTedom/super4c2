@@ -2,6 +2,33 @@
 
 ## 0. Déploiement Production Vercel & Moteur de Conversion
 
+### 0.0zh. Moteur d'Acquisition & Lead Magnet WhatsApp sur `/sujets-recents` (Audit Objectif Canada)
+- **Objectif Stratégique :** Transformer la page `/sujets-recents` en un moteur d'acquisition de leads massif inspiré des meilleures pratiques concurrentielles (analyse approfondie du sitemap et du tunnel d'Objectif Canada `/fr/news/tcf`).
+- **Composants & Fonctionnalités Implémentés :**
+  1. **Ouverture Publique & SEO de la Route (`middleware.ts`) :**
+     - Retrait de `pathname.startsWith("/sujets-recents")` de la liste des routes protégées par authentification obligatoire.
+     - Permet aux visiteurs arrivant depuis Google SEO, les réseaux sociaux ou le bouche-à-oreille d'accéder directement au contenu et de convertir.
+  2. **Tiering Freemium à Forte Valeur Ajoutée (`app/sujets-recents/page.tsx`) :**
+     - Collection de 8 sujets officiels récents (4 Expression Écrite + 4 Expression Orale) tombés dans les centres d'examen FEI (Douala, Yaoundé, Dakar, Casablanca, Alger, Paris, etc.).
+     - **2 Sujets Démonstrateurs 100% Débloqués (Preuve d'Autorité) :**
+       - Sujet EE : *« Le travail à distance à 100% : progrès ou isolement ? »* (Tâche 3, 220 mots, corrigé C1/C2 complet).
+       - Sujet EO : *« La semaine de 4 jours dans votre entreprise »* (Tâche 3, 4 min 30 s, argumentation structurée).
+     - **6 Sujets VIP sous Verrouillage Partiel :**
+       - Libellé officiel, contexte de session, lexique C1/C2 et conseils du mentor visibles.
+       - Modèle de rédaction et corrigé C1/C2 floutés avec CTA : *« Débloquer le Corrigé C1/C2 (Gratuit sur WhatsApp) »*.
+  3. **Modale de Capture Lead Multinationale (`components/sujets/sujet-lead-dialog.tsx`) :**
+     - Prénom + Email + Sélecteur d'indicatif téléphonique international (🇨🇲 +237, 🇸🇳 +221, 🇨🇮 +225, 🇲🇦 +212, 🇩🇿 +213, 🇹🇳 +216, 🇨🇩 +243, 🇫🇷 +33, 🇨🇦 +1, etc.) + Numéro WhatsApp.
+     - Enregistrement immédiat dans `newsletter_subscribers` via `captureLeadAction` (sources: `sujets_recents_vip` ou `sujets_recents_pack_pdf`).
+     - Déblocage instantané en `localStorage` (`super4c2:vip_topics_unlocked`) sans rechargement de page.
+     - État de succès avec bouton direct vers le groupe WhatsApp officiel (`https://chat.whatsapp.com/super4c2_nclc7`).
+  4. **Déclencheur Comportemental Intelligent (`components/sujets/sujet-behavioral-slidein.tsx`) :**
+     - Détection des sessions et de l'engagement (2e visite ou 16s de lecture).
+     - Slide-in Framer Motion discret et élégant en bas à droite proposant les nouveaux sujets chaque vendredi sur WhatsApp.
+     - Mémorisation de fermeture (3 jours de répit).
+  5. **Bandeau Lead Magnet Supérieur :**
+     - Téléchargement du *« Pack PDF : 50 Sujets Réels 2026 avec Plans Détaillés »*.
+- **Validation :** 0 erreur TypeScript (`npx tsc --noEmit`), commit `8bb3959` poussé sur `origin/main`.
+
 ### 0.0zg. Éradication du Vocabulaire Jeu Vidéo & Harmonisation Pédagogique Institutionnelle (`components/exam/exam-roadmap-board.tsx`)
 - **Directive Utilisateur :** Supprimer toute trace de langage "jeu vidéo" (ex. *"Prêt à Jouer"*, *"Boss Gate"*, *"Quête"*, *"Cockpit RPG"*, *"Énergie XP"*) afin de préserver l'image académique, prestigieuse et certifiante de Super4C2 (plateforme de préparation officielle FEI / IRCC).
 - **Harmonisations Terminologiques Appliquées :**

@@ -1,3 +1,9 @@
+- [x] **Moteur d'Acquisition & Lead Magnet WhatsApp sur `/sujets-recents` (Audit Objectif Canada) :**
+  - **Ouverture Publique & SEO (`middleware.ts`) :** Déverrouillage de `/sujets-recents` pour permettre l'indexation par Google et la visite sans compte préalable.
+  - **Freemium & Preuve d'Autorité (`app/sujets-recents/page.tsx`) :** 8 sujets réels d'examen (4 EE, 4 EO) issus des sessions 2026 FEI mondiales. 2 sujets intégralement consultables en accès libre (démonstrateurs C1/C2), et 6 sujets VIP avec modèles floutés débloquables sur saisie WhatsApp/Email.
+  - **Modale de Capture Lead Multinationale (`components/sujets/sujet-lead-dialog.tsx`) :** Saisie du prénom, e-mail et numéro WhatsApp avec indicatifs pays ciblés (Cameroun, Sénégal, Côte d'Ivoire, Maroc, Algérie, Tunisie, RDC, France, Canada...), enregistrement serveur via `captureLeadAction`, déblocage instantané en `localStorage`, et invitation 1-clic vers le groupe WhatsApp officiel.
+  - **Déclencheur Comportemental Récurrent (`components/sujets/sujet-behavioral-slidein.tsx`) :** Slide-in intelligent sur 2e visite ou 16s de consultation pour proposer la veille hebdomadaire des sujets d'examen.
+  - **Validation :** 0 erreur TypeScript (`npx tsc --noEmit`), commit `8bb3959` poussé sur `origin/main`.
 - [x] **Éradication du Vocabulaire Jeu Vidéo & Harmonisation Pédagogique Institutionnelle (`components/exam/exam-roadmap-board.tsx`) :**
   - **Suppression du vocabulaire gaming :** Remplacement de *« Prêt à Jouer »* par *« Prêt à Composer »*, *« BOSS GATE »* par *« PALIER CERTIFICATIF »*, *« Quête »* par *« Prérequis Pédagogiques d'Accès »*, *« Énergie XP »* par *« Points XP Cumulés »*, et *« Débloquer en Mode Libre »* par *« Accéder Directement »*.
   - **Maintien de l'impact pédagogique :** Préservation intégrale des seuils d'exigence (note minimale et XP cumulé) pour canaliser l'apprenant sans nuire au prestige académique de la plateforme.
