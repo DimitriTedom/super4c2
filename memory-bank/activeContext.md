@@ -2,6 +2,25 @@
 
 ## 0. Déploiement Production Vercel & Moteur de Conversion
 
+### 0.0zm. Hub Méthodologique d'Expression Orale & Entraînement Ciblé par Tâche (`oral-methodology-hub.tsx`, `oral-exam-room.tsx`)
+- **Directives Utilisateur :**
+  1. Confirmation formelle de la méthodologie d'Expression Orale : 100% conforme à la norme universelle officielle de France Éducation International (FEI) pour le TCF Canada (3 tâches séquentielles, 12 min, grille critériée des 5 axes sur 4 pts = 20 pts).
+  2. Implémentation du **Hub Méthodologique d'Expression Orale** (`components/exam/oral-methodology-hub.tsx`) remplaçant l'ancienne page statique d'intro (`app/examens/[seriesId]/eo/intro/page.tsx`).
+  3. Support du mode entraînement ciblé par tâche (`?mode=practice&task=1|2|3`) dans `components/exam/oral-exam-room.tsx` et `app/examens/[seriesId]/eo/page.tsx`.
+- **Réalisations Techniques & UI :**
+  1. **Hub Méthodologique Officiel EO (`components/exam/oral-methodology-hub.tsx`) :**
+     - **3 Grands Titres Clairs :**
+       - *1. Présentation & Grille FEI (20 Points)* : Explication détaillée des 5 critères officiels (/4 pts chacun : Aisance, Phonologie, Lexique, Morphosyntaxe, Interaction), seuils NCLC et bonus Entrée Express (+50 pts CRS). Calibrage micro interactif `OralHardwareCheck`.
+       - *2. Méthodologie & Entraînement par Tâche* : Sous-onglets Tâche 1 (Entretien dirigé 2 min), Tâche 2 (Jeu de rôle 3.5 min, insistance sur le fait que le candidat mène l'échange avec 8-10 questions), Tâche 3 (Argumentation 4.5 min, plan en 4 étapes). Chacun doté du sujet officiel de la série et d'un bouton d'entraînement direct vers la tâche spécifique face à Laurent.
+       - *3. Simulation Complète (12 min)* : Lancement de l'épreuve officielle d'un seul bloc.
+     - **Compagnon Examinateur Interactif :** Briefing vocal de Laurent Mercier avec Web Speech / TTS et sélecteur de compagnon.
+  2. **Mode Entraînement Ciblé dans la Salle Orale (`oral-exam-room.tsx` & `app/examens/[seriesId]/eo/page.tsx`) :**
+     - Prise en charge des props `initialMode="practice"` et `initialTaskIndex={0|1|2}` injectées depuis les searchParams de la route.
+     - Badge dynamique en en-tête : *« 🎯 Entraînement Ciblé · Tâche N »*.
+     - Le minuteur s'arrête à la fin de la tâche choisie et déclenche immédiatement la clôture et l'évaluation personnalisée sans enchaîner les autres tâches.
+     - Bouton de clôture adaptatif : *« Terminer l'entraînement »*.
+- **Validation :** `npx tsc --noEmit` avec 0 erreur, validé et poussé sur `origin/main` (`0617b80`).
+
 ### 0.0zl. Rapport Détaillé d'Expression Orale (Vue Candidat), Export PDF Officiel & Règle de Périmètre V1
 - **Directives Utilisateur :**
   1. Implémenter en priorité le **Rapport Détaillé Oral** dans l'espace candidat (`/dashboard/historique/[attemptId]`) : remplacer le placeholder vide par un rapport complet.
