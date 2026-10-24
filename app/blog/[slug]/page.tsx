@@ -32,50 +32,59 @@ interface BlogPostPageProps {
 }
 
 export async function generateMetadata({ params }: BlogPostPageProps): Promise<Metadata> {
-  const { slug } = await params;
-  const post = await getSingleBlogPost(slug);
-  if (!post) {
-    return { title: "Article introuvable — Super4C2" };
+  try {
+    const { slug } = await params;
+    const post = await getSingleBlogPost(slug);
+    if (!post) {
+      return { title: "Article introuvable — Super4C2" };
+    }
+
+    const ogImage =
+      post.coverImage ||
+      (post.youtubeUrl && extractYouTubeId(post.youtubeUrl)
+        ? `https://img.youtube.com/vi/${extractYouTubeId(post.youtubeUrl)}/maxresdefault.jpg`
+        : "https://super4c2.com/brand/cbt-platform-preview.jpg");
+
+    return {
+      title: `${post.title} | Super4C2`,
+      description: post.excerpt,
+      keywords: post.tags,
+      alternates: {
+        canonical: `https://super4c2.com/blog/${post.slug}`,
+      },
+      openGraph: {
+        title: `${post.title} | Super4C2`,
+        description: post.excerpt,
+        type: "article",
+        url: `https://super4c2.com/blog/${post.slug}`,
+        publishedTime: post.publishedAt,
+        authors: [post.author?.name || "Super4C2"],
+        tags: post.tags,
+        images: [
+          {
+            url: ogImage,
+            width: 1200,
+            height: 630,
+            alt: post.title,
+          },
+        ],
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: `${post.title} | Super4C2`,
+        description: post.excerpt,
+        images: [ogImage],
+      },
+    };
+  } catch (err) {
+    console.warn("⚠️ Erreur lors de la génération des métadonnées du blog :", err);
+    return {
+      title: "Blog & Guides Stratégiques TCF / TEF Canada — Super4C2",
+    };
   }
-
-  const ogImage =
-    post.coverImage ||
-    (post.youtubeUrl && extractYouTubeId(post.youtubeUrl)
-      ? `https://img.youtube.com/vi/${extractYouTubeId(post.youtubeUrl)}/maxresdefault.jpg`
-      : "https://super4c2.com/brand/cbt-platform-preview.jpg");
-
-  return {
-    title: `${post.title} | Super4C2`,
-    description: post.excerpt,
-    keywords: post.tags,
-    alternates: {
-      canonical: `https://super4c2.com/blog/${post.slug}`,
-    },
-    openGraph: {
-      title: `${post.title} | Super4C2`,
-      description: post.excerpt,
-      type: "article",
-      url: `https://super4c2.com/blog/${post.slug}`,
-      publishedTime: post.publishedAt,
-      authors: [post.author.name],
-      tags: post.tags,
-      images: [
-        {
-          url: ogImage,
-          width: 1200,
-          height: 630,
-          alt: post.title,
-        },
-      ],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: `${post.title} | Super4C2`,
-      description: post.excerpt,
-      images: [ogImage],
-    },
-  };
 }
+
+export const dynamic = "force-dynamic";
 
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const { slug } = await params;
@@ -85,16 +94,31 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     notFound();
   }
 
-  // Session utilisateur courante
-  const supabase = await createSupabaseServerClient();
-  const user = supabase ? (await supabase.auth.getUser()).data.user : null;
+  // Session utilisateur courante (sécurisée contre tout rejet serveur)
+  let user: any = null;
+  try {
+    const supabase = await createSupabaseServerClient();
+    if (supabase) {
+      const { data } = await supabase.auth.getUser();
+      user = data?.user ?? null;
+    }
+  } catch (authErr) {
+    console.warn("⚠️ Impossible de vérifier la session utilisateur sur la page de blog :", authErr);
+    user = null;
+  }
 
-  // Articles recommandés (les plus récents hors l'article actif)
-  const allPosts = await listAllBlogPosts();
-  const relatedPosts = allPosts.filter((p) => p.slug !== post.slug).slice(0, 2);
+  // Articles recommandés (sécurisés contre toute panne DB)
+  let relatedPosts: any[] = [];
+  try {
+    const allPosts = await listAllBlogPosts();
+    relatedPosts = allPosts.filter((p) => p.slug !== post.slug).slice(0, 2);
+  } catch (recErr) {
+    console.warn("⚠️ Impossible de charger les articles recommandés :", recErr);
+    relatedPosts = [];
+  }
 
   // Extraction des ancres pour le sommaire interactif
-  const tocItems = extractTocFromMarkdown(post.content);
+  const tocItems = extractTocFromMarkdown(post.content || "");
 
   // YouTube ID si disponible
   const ytId = post.youtubeUrl ? extractYouTubeId(post.youtubeUrl) : null;
