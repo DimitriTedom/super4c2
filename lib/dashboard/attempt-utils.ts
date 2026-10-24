@@ -219,6 +219,20 @@ export function parseOralDialogues(attempt: UserAttemptFull): Record<number, Ora
   return {};
 }
 
+export function parseOralAudioUrl(attempt: UserAttemptFull): string | null {
+  try {
+    const feedback = typeof attempt.feedback === "string" ? JSON.parse(attempt.feedback) : attempt.feedback;
+    if (feedback && typeof feedback === "object" && typeof feedback.audioUrl === "string" && feedback.audioUrl.trim()) {
+      return feedback.audioUrl;
+    }
+    const answers = typeof attempt.answers === "string" ? JSON.parse(attempt.answers) : attempt.answers;
+    if (answers && typeof answers === "object" && typeof answers.audioUrl === "string" && answers.audioUrl.trim()) {
+      return answers.audioUrl;
+    }
+  } catch {}
+  return null;
+}
+
 export const DEMO_ORAL_ATTEMPT: UserAttemptFull = {
   id: "demo-oral",
   discipline: "EXPRESSION_ORALE",
@@ -229,6 +243,7 @@ export const DEMO_ORAL_ATTEMPT: UserAttemptFull = {
   createdAt: new Date("2026-10-12T14:30:00").toISOString(),
   completedAt: new Date("2026-10-12T14:42:00").toISOString(),
   answers: {
+    audioUrl: "/audio/eo/laurent-step1.mp3",
     1: [
       { id: "1", sender: "examiner", text: "Bonjour et bienvenue. Je m'appelle Laurent et je serai votre examinateur. Pour cette première tâche, pouvez-vous vous présenter et me parler de votre parcours professionnel ?", timestamp: 0 },
       { id: "2", sender: "candidate", text: "Bonjour monsieur. Je m'appelle David, je suis ingénieur logiciel depuis six ans. J'ai commencé ma carrière en France dans une société de conseil, puis j'ai rejoint une start-up spécialisée dans l'éducation numérique.", timestamp: 8000 },
@@ -247,6 +262,7 @@ export const DEMO_ORAL_ATTEMPT: UserAttemptFull = {
     ],
   },
   feedback: {
+    audioUrl: "/audio/eo/laurent-step1.mp3",
     totalScore: 16.5,
     tcfScaledScore: 512,
     nclcLevel: 8,

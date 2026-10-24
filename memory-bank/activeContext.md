@@ -2,24 +2,38 @@
 
 ## 0. Déploiement Production Vercel & Moteur de Conversion
 
-### 0.0zm. Hub Méthodologique d'Expression Orale & Entraînement Ciblé par Tâche (`oral-methodology-hub.tsx`, `oral-exam-room.tsx`)
+### 0.0zn. Option 1 : Lecteur Audio de Réécoute dans l'Historique Candidat & Archivage des Sessions Orales
+- **Directives Utilisateur :**
+  1. Choix prioritaire de l'**Option 1** : intégrer un lecteur audio interactif et complet dans la vue de détail d'une tentative orale (`/dashboard/historique/[attemptId]`).
+  2. Retrait préalable de tout mode d'entraînement ciblé fragmenté en Expression Orale pour maîtriser rigoureusement les coûts d'API (ElevenLabs / WebRTC) lors du lancement commercial 100% gratuit de la V1.
+- **Réalisations Techniques & UI :**
+  1. **Document de Spécification (`docs/specs/18-candidate-oral-audio-player-and-archive.md`) :**
+     - User stories, architecture des flux audio WebM/Opus, persistance en base et synchronisation avec les transcriptions de dialogue.
+  2. **API d'Archivage Audio (`app/api/exam/oral-audio/route.ts`) :**
+     - Endpoint `POST /api/exam/oral-audio` recevant le Blob audio de la session et assurant l'archivage via `uploadExamAsset` dans le sous-dossier `oral-recordings` (Supabase Storage bucket `exam-assets` avec repli local).
+  3. **Composant Lecteur Audio Élite (`components/dashboard/candidate-oral-audio-player.tsx`) :**
+     - Visualiseur de forme d'onde (waveform animée à 36 barres réactives).
+     - Barre de défilement (seekbar) interactive et chronomètres précis écoulé/total.
+     - Contrôles de transport complets : Play/Pause, Revenir au début, Reculer -10s, Avancer +10s, Coupure son/Mute.
+     - Sélecteur de vitesse de lecture (0.8x, 1x, 1.25x, 1.5x) pour analyser le débit d'élocution.
+     - Raccourcis de saut direct par tâche (Tâche 1 à 00:00, Tâche 2 à 02:00, Tâche 3 à 05:30) avec bascule automatique vers l'onglet transcription correspondant.
+     - Bouton de téléchargement direct du fichier `.webm`.
+  4. **Persistance & Intégration Détail Copie (`components/dashboard/attempt-detail-view.tsx` & `lib/dashboard/attempt-utils.ts`) :**
+     - Extraction automatique via `parseOralAudioUrl(attempt)` avec repli démo `/audio/eo/laurent-step1.mp3` sur `/dashboard/historique/demo-oral`.
+     - Intégration dans `OralExamRoom` (`components/exam/oral-exam-room.tsx`) : le blob audio complet est téléversé lors de `handleCompleteExam` et indexé dans `answers.audioUrl` et `feedback.audioUrl`.
+- **Validation :** `npx tsc --noEmit` avec 0 erreur.
+
+### 0.0zm. Hub Méthodologique d'Expression Orale & Focalisation Examen Officiel 12 min (`oral-methodology-hub.tsx`, `oral-exam-room.tsx`)
 - **Directives Utilisateur :**
   1. Confirmation formelle de la méthodologie d'Expression Orale : 100% conforme à la norme universelle officielle de France Éducation International (FEI) pour le TCF Canada (3 tâches séquentielles, 12 min, grille critériée des 5 axes sur 4 pts = 20 pts).
-  2. Implémentation du **Hub Méthodologique d'Expression Orale** (`components/exam/oral-methodology-hub.tsx`) remplaçant l'ancienne page statique d'intro (`app/examens/[seriesId]/eo/intro/page.tsx`).
-  3. Support du mode entraînement ciblé par tâche (`?mode=practice&task=1|2|3`) dans `components/exam/oral-exam-room.tsx` et `app/examens/[seriesId]/eo/page.tsx`.
+  2. Retrait des boutons d'entraînement séparés pour préserver les coûts d'infrastructure ; maintien d'un unique CTA d'examen officiel continu de 12 min.
 - **Réalisations Techniques & UI :**
   1. **Hub Méthodologique Officiel EO (`components/exam/oral-methodology-hub.tsx`) :**
-     - **3 Grands Titres Clairs :**
-       - *1. Présentation & Grille FEI (20 Points)* : Explication détaillée des 5 critères officiels (/4 pts chacun : Aisance, Phonologie, Lexique, Morphosyntaxe, Interaction), seuils NCLC et bonus Entrée Express (+50 pts CRS). Calibrage micro interactif `OralHardwareCheck`.
-       - *2. Méthodologie & Entraînement par Tâche* : Sous-onglets Tâche 1 (Entretien dirigé 2 min), Tâche 2 (Jeu de rôle 3.5 min, insistance sur le fait que le candidat mène l'échange avec 8-10 questions), Tâche 3 (Argumentation 4.5 min, plan en 4 étapes). Chacun doté du sujet officiel de la série et d'un bouton d'entraînement direct vers la tâche spécifique face à Laurent.
-       - *3. Simulation Complète (12 min)* : Lancement de l'épreuve officielle d'un seul bloc.
-     - **Compagnon Examinateur Interactif :** Briefing vocal de Laurent Mercier avec Web Speech / TTS et sélecteur de compagnon.
-  2. **Mode Entraînement Ciblé dans la Salle Orale (`oral-exam-room.tsx` & `app/examens/[seriesId]/eo/page.tsx`) :**
-     - Prise en charge des props `initialMode="practice"` et `initialTaskIndex={0|1|2}` injectées depuis les searchParams de la route.
-     - Badge dynamique en en-tête : *« 🎯 Entraînement Ciblé · Tâche N »*.
-     - Le minuteur s'arrête à la fin de la tâche choisie et déclenche immédiatement la clôture et l'évaluation personnalisée sans enchaîner les autres tâches.
-     - Bouton de clôture adaptatif : *« Terminer l'entraînement »*.
-- **Validation :** `npx tsc --noEmit` avec 0 erreur, validé et poussé sur `origin/main` (`0617b80`).
+     - Présentation de la grille officielle des 5 critères FEI sur 4 (20 points), seuil NCLC 7 et bonus CRS (+50 pts).
+     - Analyse didactique des 3 tâches (présentation, jeu de rôle, monologue d'argumentation) avec sujets authentiques de la série.
+     - Briefing vocal interactif de Laurent Mercier et module de calibrage micro `OralHardwareCheck`.
+     - Bouton unique d'accès à l'examen officiel de 12 minutes.
+- **Validation :** `npx tsc --noEmit` avec 0 erreur.
 
 ### 0.0zl. Rapport Détaillé d'Expression Orale (Vue Candidat), Export PDF Officiel & Règle de Périmètre V1
 - **Directives Utilisateur :**

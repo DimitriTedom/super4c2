@@ -802,23 +802,55 @@ export function OralExamRoom({ series }: OralExamRoomProps) {
       }
     } catch {}
 
-    // Enregistrement persistant de la tentative dans PostgreSQL
-    void fetch("/api/exam/attempt", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        discipline: "EXPRESSION_ORALE",
-        seriesId: series.id,
-        rawScore: Math.round(evalResult.totalScore),
-        tcfScaledScore: evalResult.tcfScaledScore,
-        nclcLevel: evalResult.nclcLevel,
-        crsPointsUnlocked: evalResult.crsPointsUnlocked,
-        answers: dialogues,
-        feedback: evalResult,
-      }),
-    }).catch(() => {
-      // mode hors ligne gracieux
-    });
+    const saveAttemptWithAudio = async () => {
+      let remoteAudioUrl: string | null = null;
+      if (recordedChunksRef.current.length > 0) {
+        try {
+          const blob = new Blob(recordedChunksRef.current, { type: "audio/webm" });
+          const fd = new FormData();
+          fd.append("audio", blob, `session-${series.id}.webm`);
+          fd.append("seriesId", series.id);
+          const upRes = await fetch("/api/exam/oral-audio", {
+            method: "POST",
+            body: fd,
+          });
+          if (upRes.ok) {
+            const upData = await upRes.json();
+            if (upData.ok && upData.audioUrl) {
+              remoteAudioUrl = upData.audioUrl;
+            }
+          }
+        } catch (uploadErr) {
+          console.warn("[Oral Audio Upload Warning]:", uploadErr);
+        }
+      }
+
+      // Enregistrement persistant de la tentative dans PostgreSQL
+      void fetch("/api/exam/attempt", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          discipline: "EXPRESSION_ORALE",
+          seriesId: series.id,
+          rawScore: Math.round(evalResult.totalScore),
+          tcfScaledScore: evalResult.tcfScaledScore,
+          nclcLevel: evalResult.nclcLevel,
+          crsPointsUnlocked: evalResult.crsPointsUnlocked,
+          answers: {
+            ...dialogues,
+            ...(remoteAudioUrl ? { audioUrl: remoteAudioUrl } : {}),
+          },
+          feedback: {
+            ...evalResult,
+            ...(remoteAudioUrl ? { audioUrl: remoteAudioUrl } : {}),
+          },
+        }),
+      }).catch(() => {
+        // mode hors ligne gracieux
+      });
+    };
+
+    void saveAttemptWithAudio();
   }, [dialogues, endLiveCall, series, stopAllAudio, stopMediaRecording]);
 
   // Minuteur de la tâche active

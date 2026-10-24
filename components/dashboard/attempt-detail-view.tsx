@@ -41,8 +41,10 @@ import {
   parseAnswers,
   parseOralFeedback,
   parseOralDialogues,
+  parseOralAudioUrl,
   type UserAttemptFull,
 } from "@/lib/dashboard/attempt-utils";
+import { CandidateOralAudioPlayer } from "@/components/dashboard/candidate-oral-audio-player";
 import { exportAttemptPdf } from "@/lib/dashboard/attempt-export";
 import { deleteUserAttemptAction } from "@/app/dashboard/historique/actions";
 import { toast } from "sonner";
@@ -74,6 +76,9 @@ export function AttemptDetailView({ attempt, isDemo = false }: AttemptDetailView
   // Données Orales
   const oralEvaluation = isOral ? parseOralFeedback(attempt) : null;
   const oralDialogues = isOral ? parseOralDialogues(attempt) : {};
+  const oralAudioUrl = isOral
+    ? parseOralAudioUrl(attempt) || (isDemo ? "/audio/eo/laurent-step1.mp3" : null)
+    : null;
 
   const handleExport = async () => {
     try {
@@ -358,6 +363,15 @@ export function AttemptDetailView({ attempt, isDemo = false }: AttemptDetailView
       ) : isOral ? (
         /* CAS 2 : Épreuve d'Expression Orale (EO) */
         <div className="space-y-6">
+          {/* Lecteur Audio Intégral avec Forme d'Onde & Navigation par Tâche */}
+          <CandidateOralAudioPlayer
+            audioUrl={oralAudioUrl}
+            onSelectTaskTime={(taskNum) => {
+              setOralViewMode("transcript");
+              setOralActiveTask(taskNum);
+            }}
+          />
+
           {/* Sélecteur de mode d'affichage Oral */}
           <div className="flex items-center justify-between border-b pb-3">
             <div className="flex items-center gap-2">
