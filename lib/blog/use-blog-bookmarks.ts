@@ -49,6 +49,7 @@ export function useBlogBookmarks() {
       });
 
       return () => {
+        isMounted = false;
         subscription.unsubscribe();
       };
     } catch {

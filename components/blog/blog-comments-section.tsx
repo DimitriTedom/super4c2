@@ -236,7 +236,7 @@ export function BlogCommentsSection({
         <div className="flex items-center justify-between gap-2 mb-3">
           <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
             <HelpCircle className="w-4 h-4 text-primary" />
-            <span>Poser une question à l'équipe pédagogique</span>
+            <span>Poser une question à l&apos;équipe pédagogique</span>
           </div>
           {userProfile && (
             <span className="text-xs text-muted-foreground bg-muted px-2.5 py-1 rounded-md">
@@ -454,7 +454,7 @@ export function BlogCommentsSection({
             Envie de tester vos rédactions sur les 3 Tâches réelles ?
           </h3>
           <p className="text-xs sm:text-sm text-muted-foreground max-w-xl">
-            Passez une simulation complète sur notre moteur d'examen CBT. Correction IA instantanée
+            Passez une simulation complète sur notre moteur d&apos;examen CBT. Correction IA instantanée
             selon les 4 critères officiels FEI et calcul de vos points CRS en direct.
           </p>
         </div>
