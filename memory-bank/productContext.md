@@ -15,7 +15,9 @@ Les candidats à l'immigration canadienne (Afrique francophone, Maghreb, France,
 2. **Le Candidat d'Urgence :** Son examen a lieu dans 10 à 20 jours. Il s'entraîne intensément jour et nuit, a besoin de retours instantanés à toute heure.
 3. **L'Étudiant en Mobilité :** Prépare son admission dans une université canadienne ou québécoise.
 
-## 3. Objectifs d'Expérience Utilisateur (UX Goals)
-- **Fluidité & Réassurance :** Interface épurée, sombre/lumineuse moderne, sans friction, réduisant l'anxiété du test.
-- **Réalisme Absolu :** Reproduction fidèle de l'écran d'examen officiel (gestion du chronomètre non pausable, passage entre questions, conditions d'écoute audio strictes).
-- **Gamification Pédagogique :** Feedback immédiat, progression visible vers le palier NCLC 7, radar de compétences, carnet d'erreurs automatique.
+## 4. Périmètre & Règle d'Or de la V1 (Lancement Commercial)
+- **Cœur Stratégique Exclusif V1 :** L'application Super4C2 en Version 1 est centrée à 100% sur les deux compétences discriminantes à forte valeur ajoutée :
+  1. **Expression Écrite (EE) :** Simulateur CBT 60 min, notation IA selon la grille FEI sur 20, comptage de mots officiel et réécriture Magic Rewrite C2.
+  2. **Expression Orale (EO) :** Salle d'examen vidéo interactive avec l'examinateur IA M. Laurent Mercier (3 tâches FEI, jeu de rôle en direct, débriefing et transcriptions).
+- **Exclusion Explicite V1 :** Les simulateurs d'entraînement dédiés pour la **Compréhension Écrite (CE)** et la **Compréhension Orale (CO)** ne feront PAS partie de la V1. Ils restent étiquetés en *"Bientôt disponible"* et constituent le jalon V2.
+

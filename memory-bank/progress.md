@@ -1,3 +1,9 @@
+- [x] **Rapport Détaillé Oral (Vue Candidat), Export PDF Officiel & Règle de Périmètre V1 :**
+  - **Rapport de Correction Oral Complet (`components/dashboard/attempt-detail-view.tsx`) :** Remplacement du placeholder par le rapport riche FEI pour l'Expression Orale : bilan global, score /20, score TCF /699, débit de parole (mots/min), grille des 5 critères FEI sur 4 avec barres de progression et commentaires, débriefing de M. Laurent Mercier, retranscription intégrale des répliques par tâche avec bulles et horodatages, et formulations C2 recommandées.
+  - **Export PDF Officiel d'Expression Orale (`lib/exam/export-pdf-oral.ts` & `lib/dashboard/attempt-export.ts`) :** Génération d'une attestation officielle PDF dédiée avec en-tête Super4C2, scores TCF/NCLC/CRS, grille FEI et transcription des échanges.
+  - **Support Démo Oral (`/dashboard/historique/demo-oral`) :** Consultation immédiate d'un exemple authentique pour les candidats sans historique préalable.
+  - **Consignation Périmètre V1 (`memory-bank/productContext.md`) :** Enregistrement formel de la règle selon laquelle la V1 de Super4C2 se concentre exclusivement sur l'Expression Écrite et l'Expression Orale (CE et CO restent en *"Bientôt"*).
+  - **Validation :** 0 erreur TypeScript (`npx tsc --noEmit`), commit poussé sur `origin/main`.
 - [x] **Refonte Visuelle Admin, Cohérence Thème, Inspection Pédagogique & Synchronisation Séries DB :**
   - **Logo Super4C2 en Mode Sombre (`components/brand-logo.tsx` & `/admin/login`) :** Adaptation automatique de la couleur du texte "SUPER" (`text-white` en mode dark) pour une lisibilité parfaite.
   - **Cohérence Thème de la Barre d'Actions en Lot (`components/admin/admin-batch-action-bar.tsx`) :** Remplacement des classes `bg-slate-900` codées en dur par les tokens sémantiques `bg-card`, `border-border`, `text-card-foreground`.

@@ -2,7 +2,7 @@ import { notFound, redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { prisma } from "@/lib/prisma";
 import { AttemptDetailView } from "@/components/dashboard/attempt-detail-view";
-import { DEMO_ATTEMPT, type UserAttemptFull } from "@/lib/dashboard/attempt-utils";
+import { DEMO_ATTEMPT, DEMO_ORAL_ATTEMPT, type UserAttemptFull } from "@/lib/dashboard/attempt-utils";
 
 export const metadata = {
   title: "Détail de la correction | Super4C2",
@@ -23,10 +23,18 @@ export default async function AttemptDetailPage({ params }: PageProps) {
     redirect(`/auth/login?next=/dashboard/historique/${attemptId}`);
   }
 
-  if (attemptId === "demo") {
+  if (attemptId === "demo" || attemptId === "demo-ee") {
     return (
       <div className="container mx-auto max-w-5xl px-4 sm:px-6 py-6">
         <AttemptDetailView attempt={DEMO_ATTEMPT} isDemo />
+      </div>
+    );
+  }
+
+  if (attemptId === "demo-oral" || attemptId === "demo-eo") {
+    return (
+      <div className="container mx-auto max-w-5xl px-4 sm:px-6 py-6">
+        <AttemptDetailView attempt={DEMO_ORAL_ATTEMPT} isDemo />
       </div>
     );
   }

@@ -2,6 +2,27 @@
 
 ## 0. Déploiement Production Vercel & Moteur de Conversion
 
+### 0.0zl. Rapport Détaillé d'Expression Orale (Vue Candidat), Export PDF Officiel & Règle de Périmètre V1
+- **Directives Utilisateur :**
+  1. Implémenter en priorité le **Rapport Détaillé Oral** dans l'espace candidat (`/dashboard/historique/[attemptId]`) : remplacer le placeholder vide par un rapport complet.
+  2. Noter formellement dans la Memory Bank la **Règle d'Or V1** : La première version commerciale de Super4C2 se concentre à 100% sur l'Expression Écrite (EE) et l'Expression Orale (EO). Elle ne contiendra pas de simulateur dédié pour la Compréhension Écrite (CE) et la Compréhension Orale (CO) (gardées en *"Bientôt"*).
+- **Réalisations Techniques & UI :**
+  1. **Parsers & Données Orales (`lib/dashboard/attempt-utils.ts`) :**
+     - Ajout de `parseOralFeedback(attempt)` et `parseOralDialogues(attempt)` extrayant les données structurées FEI.
+     - Création de `DEMO_ORAL_ATTEMPT` pour prévisualiser un rapport oral authentique.
+  2. **Page de Détail Candidat (`components/dashboard/attempt-detail-view.tsx`) :**
+     - Bascule fluide entre deux modes dédiés : **Grille FEI & Bilan** vs **Transcription des Échanges**.
+     - Bilan personnalisé de l'examinateur IA M. Laurent Mercier.
+     - Grille officielle des 5 critères FEI sur 4 (Aisance & Débit, Phonologie, Lexique, Morphosyntaxe, Interaction) avec barres de progression et commentaires spécifiques.
+     - Transcription intégrale des dialogues par tâche (Tâche 1, 2, 3) avec bulles différenciées (Laurent vs Candidat) et timestamps `mm:ss`.
+     - Formulations C2 recommandées pour progresser.
+  3. **Générateur PDF Vectoriel d'Expression Orale (`lib/exam/export-pdf-oral.ts`) & Routage Export (`lib/dashboard/attempt-export.ts`) :**
+     - Nouveau générateur `generateOralExamReportPdf` avec logo Super4C2, identification officielle FEI, synthèse des scores (/20, /699, NCLC, débit), grille des 5 critères, débriefing de Laurent et extraits de dialogues.
+     - Déclenchement automatique depuis le bouton *"Export PDF"* de la copie.
+  4. **Support Démo Oral (`app/dashboard/historique/[attemptId]/page.tsx`) :**
+     - Prise en charge des routes `/dashboard/historique/demo-oral` et `demo-eo`.
+- **Validation :** 0 erreur TypeScript (`npx tsc --noEmit`), commit poussé sur `origin/main`.
+
 ### 0.0zk. Refonte Visuelle Admin, Cohérence Thème, Dialogue d'Inspection Pédagogique & Synchronisation Base de Données
 - **Directives Utilisateur :**
   1. Fixer la lisibilité du logo Super4C2 en mode sombre (`/admin/login` et header) : le texte "SUPER" était illisible contre fond noir.

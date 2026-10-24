@@ -1,4 +1,9 @@
 import type { TaskEvaluation, WrittenExamResult } from "@/lib/exam/written-types";
+import type {
+  OralDialogueMessage,
+  OralExamEvaluation,
+  OralCriterionScore,
+} from "@/lib/exam/oral-types";
 
 export interface UserAttemptFull {
   id: string;
@@ -164,3 +169,102 @@ export const DEMO_ATTEMPT: UserAttemptFull = {
     ],
   } satisfies WrittenExamResult,
 };
+
+export function parseOralFeedback(attempt: UserAttemptFull): OralExamEvaluation | null {
+  try {
+    const raw = typeof attempt.feedback === "string" ? JSON.parse(attempt.feedback) : attempt.feedback;
+    if (raw && typeof raw === "object") {
+      const obj = raw as Record<string, any>;
+      if (Array.isArray(obj.criteria) || typeof obj.totalScore === "number" || typeof obj.examinerDebrief === "string") {
+        return {
+          totalScore: typeof obj.totalScore === "number" ? obj.totalScore : attempt.rawScore || 0,
+          tcfScaledScore: typeof obj.tcfScaledScore === "number" ? obj.tcfScaledScore : attempt.tcfScaledScore || 100,
+          nclcLevel: typeof obj.nclcLevel === "number" ? obj.nclcLevel : attempt.nclcLevel || 4,
+          crsPointsUnlocked: typeof obj.crsPointsUnlocked === "number" ? obj.crsPointsUnlocked : attempt.crsPointsUnlocked || 0,
+          wordsPerMinute: typeof obj.wordsPerMinute === "number" ? obj.wordsPerMinute : 0,
+          criteria: Array.isArray(obj.criteria) ? obj.criteria : [],
+          examinerDebrief: typeof obj.examinerDebrief === "string" ? obj.examinerDebrief : (obj.generalFeedback || ""),
+          recommendedPhrasesC2: Array.isArray(obj.recommendedPhrasesC2) ? obj.recommendedPhrasesC2 : [],
+        };
+      }
+    }
+  } catch {
+    // fallback
+  }
+  return null;
+}
+
+export function parseOralDialogues(attempt: UserAttemptFull): Record<number, OralDialogueMessage[]> {
+  try {
+    let raw: any = attempt.answers;
+    if (typeof raw === "string") {
+      raw = JSON.parse(raw);
+    }
+    if (raw && typeof raw === "object") {
+      const result: Record<number, OralDialogueMessage[]> = {};
+      if (Array.isArray(raw)) {
+        result[1] = raw;
+      } else {
+        [1, 2, 3].forEach((taskNum) => {
+          if (Array.isArray(raw[taskNum]) || Array.isArray(raw[String(taskNum)])) {
+            result[taskNum] = raw[taskNum] || raw[String(taskNum)];
+          }
+        });
+      }
+      return result;
+    }
+  } catch {
+    // fallback
+  }
+  return {};
+}
+
+export const DEMO_ORAL_ATTEMPT: UserAttemptFull = {
+  id: "demo-oral",
+  discipline: "EXPRESSION_ORALE",
+  nclcLevel: 8,
+  tcfScaledScore: 512,
+  rawScore: 16.5,
+  crsPointsUnlocked: 50,
+  createdAt: new Date("2026-10-12T14:30:00").toISOString(),
+  completedAt: new Date("2026-10-12T14:42:00").toISOString(),
+  answers: {
+    1: [
+      { id: "1", sender: "examiner", text: "Bonjour et bienvenue. Je m'appelle Laurent et je serai votre examinateur. Pour cette première tâche, pouvez-vous vous présenter et me parler de votre parcours professionnel ?", timestamp: 0 },
+      { id: "2", sender: "candidate", text: "Bonjour monsieur. Je m'appelle David, je suis ingénieur logiciel depuis six ans. J'ai commencé ma carrière en France dans une société de conseil, puis j'ai rejoint une start-up spécialisée dans l'éducation numérique.", timestamp: 8000 },
+      { id: "3", sender: "examiner", text: "Très intéressant. Quels sont vos projets d'immigration au Canada ?", timestamp: 25000 },
+      { id: "4", sender: "candidate", text: "Mon objectif est de m'installer au Québec ou en Ontario pour apporter mon expertise technique dans le secteur de l'intelligence artificielle.", timestamp: 35000 },
+    ],
+    2: [
+      { id: "5", sender: "examiner", text: "Passons à la tâche 2. Vous avez lu l'annonce pour le club de randonnée. Vous m'appelez pour obtenir des informations pratiques. Je vous écoute.", timestamp: 0 },
+      { id: "6", sender: "candidate", text: "Bonjour monsieur, je vous contacte au sujet des sorties en montagne organisées par votre club. Pourriez-vous m'indiquer si le matériel d'escalade est fourni ?", timestamp: 7000 },
+      { id: "7", sender: "examiner", text: "Oui, le matériel technique est fourni, mais vous devez apporter vos propres chaussures de marche adaptées.", timestamp: 18000 },
+      { id: "8", sender: "candidate", text: "D'accord, c'est très clair. Serait-il également possible de connaître les modalités d'inscription pour un groupe de trois personnes ?", timestamp: 28000 },
+    ],
+    3: [
+      { id: "9", sender: "examiner", text: "Pour la tâche 3, certains estiment que les transports en commun devraient être totalement gratuits dans les métropoles. Quel est votre avis sur cette proposition ?", timestamp: 0 },
+      { id: "10", sender: "candidate", text: "C'est un sujet complexe. D'une part, la gratuité incite indéniablement les citoyens à délaisser la voiture individuelle au profit de mobilités plus écologiques. D'autre part, cela pose la question cruciale du financement de l'entretien des réseaux. Je préconise plutôt une tarification solidaire modulée selon les revenus.", timestamp: 12000 },
+    ],
+  },
+  feedback: {
+    totalScore: 16.5,
+    tcfScaledScore: 512,
+    nclcLevel: 8,
+    crsPointsUnlocked: 50,
+    wordsPerMinute: 115,
+    criteria: [
+      { criterion: "fluidite", label: "Aisance & Débit d'Élocution", score: 3.5, feedback: "Débit naturel et constant avec un rythme soutenu (115 mots/min). Très peu d'hésitations." },
+      { criterion: "phonologie", label: "Compétence Phonologique & Intonation", score: 3.4, feedback: "Prononciation nette et intonation affirmative convaincante lors du jeu de rôle." },
+      { criterion: "lexique", label: "Richesse & Précision Lexicale", score: 3.3, feedback: "Vocabulaire précis et soutenu (« mobilités écologiques », « tarification solidaire »)." },
+      { criterion: "morphosyntaxe", label: "Morphosyntaxe & Variété des Structures", score: 3.2, feedback: "Bonne maîtrise du conditionnel de politesse et des propositions subordonnées complexes." },
+      { criterion: "interaction", label: "Capacité d'Interaction & Réactivité", score: 3.1, feedback: "Réactivité immédiate face aux relances de l'examinateur Laurent." },
+    ],
+    examinerDebrief: "Prestation remarquable ! Vous validez avec brio le niveau NCLC 8, largement au-dessus du seuil critique NCLC 7 requis pour les 50 points de bonus CRS. Votre argumentation en Tâche 3 était particulièrement structurée et nuancée.",
+    recommendedPhrasesC2: [
+      "« Auriez-vous l'obligeance de me préciser... ? » (Raffinement d'interaction pour Tâche 2)",
+      "« Force est de reconnaître que cette initiative comporte des retombées contrastées... » (Structure d'autorité pour Tâche 3)",
+      "« Il conviendrait dès lors de privilégier une approche pragmatique... » (Formulation de synthèse C2)",
+    ],
+  },
+};
+
