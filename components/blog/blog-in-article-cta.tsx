@@ -1,8 +1,11 @@
-import React from "react";
+"use client";
+
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { Sparkles, ArrowRight, ShieldCheck, Zap, Users, CheckCircle2 } from "lucide-react";
 import { ShimmerButton } from "@/components/ui/shimmer-button";
 import { Button } from "@/components/ui/button";
+import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 
 interface BlogInArticleCtaProps {
   category?: string;
@@ -17,6 +20,25 @@ export function BlogInArticleCta({
   customHref,
   customLabel,
 }: BlogInArticleCtaProps) {
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+
+  useEffect(() => {
+    try {
+      const supabase = createSupabaseBrowserClient();
+      supabase.auth.getUser().then(({ data }) => {
+        setIsAuthenticated(!!data?.user);
+      });
+      const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
+        setIsAuthenticated(!!session?.user);
+      });
+      return () => {
+        authListener?.subscription?.unsubscribe();
+      };
+    } catch {
+      setIsAuthenticated(false);
+    }
+  }, []);
+
   const isWriting = category?.toLowerCase().includes("écrite") || category?.toLowerCase().includes("tâche");
   const isSpeaking = category?.toLowerCase().includes("orale");
 
@@ -34,8 +56,13 @@ export function BlogInArticleCta({
     ? "Entraînez-vous avec l'examinateur IA vocal interactif sur les 3 tâches réelles du TCF Canada et perfectionnez votre fluidité avant le jour J."
     : "Rejoignez le simulateur CBT Super4C2 conforme aux normes 2026 de France Éducation International. Évaluez votre niveau réel en 5 minutes.";
 
-  const href = customHref || "/auth/register?source=blog_in_article_cta";
-  const label = customLabel || "Créer mon compte gratuit (30s)";
+  const href = isAuthenticated
+    ? (customHref || "/examens")
+    : (customHref || "/auth/register?source=blog_in_article_cta");
+
+  const label = isAuthenticated
+    ? (customLabel || "S'entraîner sur le Simulateur CBT →")
+    : (customLabel || "Créer mon compte gratuit (30s)");
 
   return (
     <aside
@@ -95,8 +122,8 @@ export function BlogInArticleCta({
           </ShimmerButton>
 
           <Button variant="ghost" size="sm" asChild className="text-xs text-muted-foreground hover:text-foreground">
-            <Link href="/test-gratuit">
-              <span>Tester le simulateur sans compte →</span>
+            <Link href={isAuthenticated ? "/dashboard" : "/test-gratuit"}>
+              <span>{isAuthenticated ? "Accéder à mon espace candidat →" : "Tester le simulateur sans compte →"}</span>
             </Link>
           </Button>
         </div>

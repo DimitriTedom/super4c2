@@ -25,6 +25,7 @@ import { BlogLeadEngagement } from "@/components/blog/blog-lead-engagement";
 import { BlogBookmarkButton } from "@/components/blog/blog-bookmark-button";
 import { BlogArticleFeedback } from "@/components/blog/blog-article-feedback";
 import { BlogCommentsSection } from "@/components/blog/blog-comments-section";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 interface BlogPostPageProps {
   params: Promise<{ slug: string }>;
@@ -83,6 +84,10 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   if (!post) {
     notFound();
   }
+
+  // Session utilisateur courante
+  const supabase = await createSupabaseServerClient();
+  const user = supabase ? (await supabase.auth.getUser()).data.user : null;
 
   // Articles recommandés (les plus récents hors l'article actif)
   const allPosts = await listAllBlogPosts();
@@ -307,14 +312,25 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               </p>
 
               <div className="pt-2 flex flex-wrap items-center gap-3">
-                <ShimmerButton
-                  href="/auth/register?source=blog_article_footer"
-                  background="#E51A31"
-                  shimmerColor="#ffffff"
-                  className="font-bold px-7 py-3 text-white text-xs sm:text-sm shadow-md"
-                >
-                  Créer mon compte gratuit en 30s →
-                </ShimmerButton>
+                {user ? (
+                  <ShimmerButton
+                    href="/dashboard"
+                    background="#E51A31"
+                    shimmerColor="#ffffff"
+                    className="font-bold px-7 py-3 text-white text-xs sm:text-sm shadow-md"
+                  >
+                    Accéder à mon espace d&apos;entraînement →
+                  </ShimmerButton>
+                ) : (
+                  <ShimmerButton
+                    href="/auth/register?source=blog_article_footer"
+                    background="#E51A31"
+                    shimmerColor="#ffffff"
+                    className="font-bold px-7 py-3 text-white text-xs sm:text-sm shadow-md"
+                  >
+                    Créer mon compte gratuit en 30s →
+                  </ShimmerButton>
+                )}
                 <Button variant="outline" size="sm" asChild className="text-xs h-10 border-border">
                   <Link href={post.targetCta.href}>{post.targetCta.label}</Link>
                 </Button>
@@ -338,18 +354,37 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
             {/* Mini Box d'Appel à l'Action Sticky */}
             <div className="rounded-2xl border border-primary/30 bg-gradient-to-br from-card to-primary/5 p-4 text-center space-y-3 shadow-sm">
-              <span className="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-primary/10 text-primary border border-primary/20">
-                100% Gratuit • Sans Carte
-              </span>
-              <h5 className="font-display font-bold text-sm text-foreground leading-snug">
-                Créez Votre Compte Candidat
-              </h5>
-              <p className="text-[11px] text-muted-foreground leading-relaxed">
-                Sauvegardez vos scores, activez le carnet d&apos;erreurs SRS et simulez sous le chrono officiel FEI.
-              </p>
-              <Button asChild size="sm" className="w-full text-xs font-bold h-9 bg-primary hover:bg-primary-dark text-white shadow-xs">
-                <Link href="/auth/register?source=blog_sidebar_sticky">Créer Mon Compte →</Link>
-              </Button>
+              {user ? (
+                <>
+                  <span className="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                    Session Active
+                  </span>
+                  <h5 className="font-display font-bold text-sm text-foreground leading-snug">
+                    Votre Espace Candidat
+                  </h5>
+                  <p className="text-[11px] text-muted-foreground leading-relaxed">
+                    Reprenez vos simulations CBT, révisez vos erreurs et suivez votre progression NCLC.
+                  </p>
+                  <Button asChild size="sm" className="w-full text-xs font-bold h-9 bg-primary hover:bg-primary-dark text-white shadow-xs">
+                    <Link href="/dashboard">Mon Tableau de Bord →</Link>
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <span className="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-primary/10 text-primary border border-primary/20">
+                    100% Gratuit • Sans Carte
+                  </span>
+                  <h5 className="font-display font-bold text-sm text-foreground leading-snug">
+                    Créez Votre Compte Candidat
+                  </h5>
+                  <p className="text-[11px] text-muted-foreground leading-relaxed">
+                    Sauvegardez vos scores, activez le carnet d&apos;erreurs SRS et simulez sous le chrono officiel FEI.
+                  </p>
+                  <Button asChild size="sm" className="w-full text-xs font-bold h-9 bg-primary hover:bg-primary-dark text-white shadow-xs">
+                    <Link href="/auth/register?source=blog_sidebar_sticky">Créer Mon Compte →</Link>
+                  </Button>
+                </>
+              )}
             </div>
           </div>
         </div>

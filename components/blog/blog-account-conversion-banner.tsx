@@ -1,10 +1,11 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { Sparkles, ArrowRight, ShieldCheck, CheckCircle2, UserPlus, Zap } from "lucide-react";
 import { ShimmerButton } from "@/components/ui/shimmer-button";
 import { Button } from "@/components/ui/button";
+import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 
 interface BlogAccountConversionBannerProps {
   className?: string;
@@ -15,6 +16,31 @@ export function BlogAccountConversionBanner({
   className = "",
   sourceContext = "blog_index",
 }: BlogAccountConversionBannerProps) {
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    try {
+      const supabase = createSupabaseBrowserClient();
+      supabase.auth.getUser().then(({ data }) => {
+        setIsAuthenticated(!!data?.user);
+      });
+
+      const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
+        setIsAuthenticated(!!session?.user);
+      });
+
+      return () => {
+        authListener?.subscription?.unsubscribe();
+      };
+    } catch {
+      setIsAuthenticated(false);
+    }
+  }, []);
+
+  // Ne pas afficher la bannière de création de compte si l'utilisateur est déjà connecté
+  if (isAuthenticated === true) {
+    return null;
+  }
   return (
     <div
       className={`relative overflow-hidden rounded-3xl border border-primary/30 bg-gradient-to-br from-card via-card to-primary/10 p-6 sm:p-8 shadow-xl ${className}`}
