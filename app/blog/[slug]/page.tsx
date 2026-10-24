@@ -22,6 +22,8 @@ import { BlogSocialShare } from "@/components/blog/blog-social-share";
 import { BlogAuthorBio } from "@/components/blog/blog-author-bio";
 import { BlogContentRenderer } from "@/components/blog/blog-content-renderer";
 import { BlogLeadEngagement } from "@/components/blog/blog-lead-engagement";
+import { BlogBookmarkButton } from "@/components/blog/blog-bookmark-button";
+import { BlogArticleFeedback } from "@/components/blog/blog-article-feedback";
 
 interface BlogPostPageProps {
   params: Promise<{ slug: string }>;
@@ -242,8 +244,11 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               ))}
             </div>
 
-            {/* Partage Social Rapide */}
-            <BlogSocialShare title={post.title} slug={post.slug} />
+            {/* Partage Social Rapide & Favoris */}
+            <div className="flex items-center gap-2">
+              <BlogBookmarkButton slug={post.slug} articleTitle={post.title} variant="button" />
+              <BlogSocialShare title={post.title} slug={post.slug} />
+            </div>
           </div>
         </header>
 
@@ -276,13 +281,8 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               ctaUrl={post.targetCta.href}
             />
 
-            {/* Boutons de Partage en Fin d'Article */}
-            <div className="p-4 rounded-2xl border border-border bg-card/60 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs">
-              <span className="text-xs font-semibold text-foreground">
-                Ce guide vous a été utile pour votre préparation ?
-              </span>
-              <BlogSocialShare title={post.title} slug={post.slug} />
-            </div>
+            {/* 💬 Évaluation & Réactions Candidat (Option A) */}
+            <BlogArticleFeedback slug={post.slug} articleTitle={post.title} />
 
             {/* 🎁 Capture de Lead VIP 100% Gratuite : Pack Modèles PDF & Communauté WhatsApp */}
             <BlogLeadEngagement

@@ -14,10 +14,13 @@ import {
   Sparkles,
   User,
   RotateCcw,
+  Bookmark,
 } from "lucide-react";
 import type { BlogPost } from "@/lib/blog/types";
 import { Button } from "@/components/ui/button";
 import { BlogAccountConversionBanner } from "@/components/blog/blog-account-conversion-banner";
+import { BlogBookmarkButton } from "@/components/blog/blog-bookmark-button";
+import { useBlogBookmarks } from "@/lib/blog/use-blog-bookmarks";
 
 const CATEGORIES: { key: string; label: string }[] = [
   { key: "ALL", label: "Tous les Articles" },
@@ -35,12 +38,18 @@ interface BlogIndexClientProps {
 export function BlogIndexClient({ initialPosts }: BlogIndexClientProps) {
   const [selectedCategory, setSelectedCategory] = useState<string>("ALL");
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const { isBookmarked, count: bookmarkCount } = useBlogBookmarks();
 
   const featured = initialPosts.find((p) => p.featured) || initialPosts[0];
 
   const filteredPosts = initialPosts.filter((post) => {
     const matchesCategory =
-      selectedCategory === "ALL" || post.category === selectedCategory;
+      selectedCategory === "ALL"
+        ? true
+        : selectedCategory === "FAVORITES"
+        ? isBookmarked(post.slug)
+        : post.category === selectedCategory;
+
     const matchesSearch =
       post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       post.excerpt.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -101,12 +110,20 @@ export function BlogIndexClient({ initialPosts }: BlogIndexClientProps) {
                   </span>
                 </div>
 
-                <Button asChild className="bg-primary hover:bg-primary-dark text-white font-bold h-9 text-xs shadow-xs">
-                  <Link href={`/blog/${featured.slug}`}>
-                    Lire le guide complet
-                    <ArrowRight className="ml-2 h-3.5 w-3.5" />
-                  </Link>
-                </Button>
+                <div className="flex items-center gap-2">
+                  <BlogBookmarkButton
+                    slug={featured.slug}
+                    articleTitle={featured.title}
+                    variant="button"
+                  />
+
+                  <Button asChild className="bg-primary hover:bg-primary-dark text-white font-bold h-9 text-xs shadow-xs">
+                    <Link href={`/blog/${featured.slug}`}>
+                      Lire le guide complet
+                      <ArrowRight className="ml-2 h-3.5 w-3.5" />
+                    </Link>
+                  </Button>
+                </div>
               </div>
             </div>
 
@@ -138,8 +155,8 @@ export function BlogIndexClient({ initialPosts }: BlogIndexClientProps) {
       {/* 🔍 Barre de Recherche & Filtres Catégories */}
       <div className="space-y-4">
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
-          {/* Catégories */}
-          <div className="flex flex-wrap gap-1.5">
+          {/* Catégories & Favoris */}
+          <div className="flex flex-wrap items-center gap-1.5">
             {CATEGORIES.map((cat) => (
               <button
                 key={cat.key}
@@ -154,6 +171,27 @@ export function BlogIndexClient({ initialPosts }: BlogIndexClientProps) {
                 {cat.label}
               </button>
             ))}
+
+            {/* Onglet Mes Favoris */}
+            <button
+              type="button"
+              onClick={() => setSelectedCategory("FAVORITES")}
+              className={`inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all ${
+                selectedCategory === "FAVORITES"
+                  ? "bg-primary text-white shadow-xs"
+                  : "border border-border bg-card text-muted-foreground hover:bg-muted hover:text-foreground"
+              }`}
+            >
+              <Bookmark className={`h-3 w-3 ${selectedCategory === "FAVORITES" || bookmarkCount > 0 ? "fill-current" : ""}`} />
+              <span>Mes Favoris</span>
+              {bookmarkCount > 0 && (
+                <span className={`ml-0.5 rounded-full px-1.5 py-0.2 text-[10px] font-bold ${
+                  selectedCategory === "FAVORITES" ? "bg-white/20 text-white" : "bg-primary/10 text-primary"
+                }`}>
+                  {bookmarkCount}
+                </span>
+              )}
+            </button>
           </div>
 
           {/* Recherche */}
@@ -173,25 +211,47 @@ export function BlogIndexClient({ initialPosts }: BlogIndexClientProps) {
       {/* 📚 Grille des Articles Modernisés (Audio 2) */}
       {filteredPosts.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-border p-12 text-center space-y-3">
-          <BookOpenText className="h-10 w-10 text-muted-foreground/40 mx-auto" />
-          <h4 className="font-display text-lg font-bold text-foreground">
-            Aucun article trouvé pour votre recherche
-          </h4>
-          <p className="text-xs text-muted-foreground max-w-sm mx-auto">
-            Essayez d&apos;ajuster vos mots-clés ou sélectionnez une autre catégorie thématique.
-          </p>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => {
-              setSelectedCategory("ALL");
-              setSearchQuery("");
-            }}
-            className="text-xs"
-          >
-            <RotateCcw className="h-3.5 w-3.5 mr-1.5" />
-            Réinitialiser les filtres
-          </Button>
+          {selectedCategory === "FAVORITES" ? (
+            <>
+              <Bookmark className="h-10 w-10 text-primary/40 mx-auto" />
+              <h4 className="font-display text-lg font-bold text-foreground">
+                Aucun guide dans vos favoris pour le moment
+              </h4>
+              <p className="text-xs text-muted-foreground max-w-sm mx-auto">
+                Cliquez sur l&apos;icône marque-page présente sur n&apos;importe quel article pour le sauvegarder et préparer vos révisions.
+              </p>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setSelectedCategory("ALL")}
+                className="text-xs"
+              >
+                Explorer tous les articles
+              </Button>
+            </>
+          ) : (
+            <>
+              <BookOpenText className="h-10 w-10 text-muted-foreground/40 mx-auto" />
+              <h4 className="font-display text-lg font-bold text-foreground">
+                Aucun article trouvé pour votre recherche
+              </h4>
+              <p className="text-xs text-muted-foreground max-w-sm mx-auto">
+                Essayez d&apos;ajuster vos mots-clés ou sélectionnez une autre catégorie thématique.
+              </p>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setSelectedCategory("ALL");
+                  setSearchQuery("");
+                }}
+                className="text-xs"
+              >
+                <RotateCcw className="h-3.5 w-3.5 mr-1.5" />
+                Réinitialiser les filtres
+              </Button>
+            </>
+          )}
         </div>
       ) : (
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -205,7 +265,7 @@ export function BlogIndexClient({ initialPosts }: BlogIndexClientProps) {
                 key={post.slug}
                 className="group flex flex-col justify-between rounded-2xl border border-border bg-card overflow-hidden shadow-xs transition-all duration-300 hover:-translate-y-1.5 hover:border-primary/40 hover:shadow-xl"
               >
-                {/* 🖼️ Vignette 16:9 avec Badges Flottants Modernes */}
+                {/* 🖼️ Vignette 16:9 avec Badges Flottants Modernes & Favoris */}
                 <div className="relative aspect-video w-full overflow-hidden bg-muted/40 border-b border-border/60">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
@@ -222,11 +282,12 @@ export function BlogIndexClient({ initialPosts }: BlogIndexClientProps) {
                     </span>
                   </div>
 
-                  {/* Temps de Lecture Top-Right */}
-                  <div className="absolute top-2.5 right-2.5">
+                  {/* Temps de Lecture & Bouton Favoris Top-Right */}
+                  <div className="absolute top-2.5 right-2.5 flex items-center gap-1.5">
                     <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-mono font-medium bg-black/70 backdrop-blur-md text-white/95 border border-white/20 shadow-md">
                       <Clock className="h-2.5 w-2.5 text-primary" /> {post.readTimeMinutes} min
                     </span>
+                    <BlogBookmarkButton slug={post.slug} articleTitle={post.title} variant="icon" />
                   </div>
 
                   {/* Badge Vidéo Bottom-Right si vidéo YouTube */}
@@ -239,6 +300,7 @@ export function BlogIndexClient({ initialPosts }: BlogIndexClientProps) {
                     </div>
                   )}
                 </div>
+
 
                 {/* 📝 Contenu de la Carte */}
                 <div className="p-5 flex-1 flex flex-col justify-between space-y-4">

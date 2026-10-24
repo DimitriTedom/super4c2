@@ -2,6 +2,25 @@
 
 ## 0. Déploiement Production Vercel & Moteur de Conversion
 
+### 0.0zu. Étape 1 / Option A : Système de Favoris (Bookmarks) & Réactions d'Utilité / Claps
+- **Directives Utilisateur :**
+  1. Implémenter les améliorations UI/UX du blog étape par étape, en commençant rigoureusement par l'**Option A** :
+     - Système de **Favoris / Bookmarks** avec gating d'inscription douce pour les visiteurs non connectés.
+     - Widget d'**Évaluation Rapide / Utilité & Claps** en fin d'article pour encourager l'engagement et renforcer la preuve sociale.
+- **Réalisations Techniques & UI :**
+  1. **Brand & Design Canvas (`docs/brand/blog-bookmarks-and-feedback-canvas.md`) :**
+     - Codes graphiques, micro-animations haptiques, tokens HSL réactifs et modale de sauvegarde bienveillante.
+  2. **Spécification Technique Structurée (`docs/specs/22-blog-bookmarks-and-article-feedback-reactions.md`) :**
+     - User stories, hook `useBlogBookmarks` avec événement custom multi-onglets, gestion de la persistance locale et authentifiée.
+  3. **Composants Déployés :**
+     - **Hook Réactif `useBlogBookmarks` (`lib/blog/use-blog-bookmarks.ts`) :** Détection de l'état d'authentification Supabase, synchronisation d'événements `super4c2:bookmarks-changed` et persistance `localStorage`.
+     - **Modale de Conversion Compte Gratuit `BlogBookmarkDialog` (`components/blog/blog-bookmark-dialog.tsx`) :** Déclenchée au clic favori d'un visiteur anonyme pour lui expliquer qu'un compte gratuit permet de retrouver toutes ses fiches et scores sauvegardés avant le jour J.
+     - **Bouton Favoris Polyvalent `BlogBookmarkButton` (`components/blog/blog-bookmark-button.tsx`) :** Décliné en mode `icon` (pour les vignettes du catalogue) et `button` (pour l'en-tête de lecture) avec animation d'échelle et toasts Sonner.
+     - **Widget d'Évaluation `BlogArticleFeedback` (`components/blog/blog-article-feedback.tsx`) :** Bloc en fin d'article avec compteurs dynamiques *Utile* (👍) et *Inspirant* (❤️), bouton favori synchronisé, et badge *98% d'utilité constatée*.
+     - **Intégration Catalogue `BlogIndexClient` (`components/blog/blog-index-client.tsx`) :** Ajout de l'onglet filtre *« Mes Favoris (N) »* et bouton favori sur chaque vignette 16:9.
+     - **Intégration Guide `BlogPostPage` (`app/blog/[slug]/page.tsx`) :** Bouton de sauvegarde dans l'en-tête et widget de feedback en pied de guide.
+- **Validation :** 0 erreur TypeScript (`npx tsc --noEmit`), build Next.js validé.
+
 ### 0.0zt. Machine de Conversion en Compte Gratuit (Audio 1) & Modernisation Visuelle des Cartes de Blog (Audio 2)
 - **Directives Utilisateur (Notes Vocales 1 & 2) :**
   1. **Audio 1 (Conversion en Compte) :** L'un des principaux objectifs marketing est de convertir les visiteurs du blog en **comptes utilisateurs inscrits** (`créer leur compte` / inscription gratuite) en leur montrant un intérêt concret et immédiat (sauvegarde des notes, accès au simulateur CBT, carnet d'erreurs SRS, double correction IA barème FEI, 100% gratuit sans carte bancaire).

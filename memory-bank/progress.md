@@ -1,3 +1,13 @@
+- [x] **Étape 1 / Option A : Système de Favoris (Bookmarks) & Réactions d'Utilité / Claps :**
+  - **Système de Favoris Réactif (`use-blog-bookmarks.ts`, `blog-bookmark-button.tsx`, `blog-bookmark-dialog.tsx`) :**
+    - Hook synchronisé par événements custom et `localStorage` pour réactivité instantanée à travers tous les composants et onglets.
+    - Modale de capture de compte gratuit bienveillante pour les visiteurs non connectés (`BlogBookmarkDialog`) valorisant la sauvegarde permanente des fiches et des scores.
+    - Bouton `BlogBookmarkButton` avec variantes `icon` (pour vignettes du catalogue) et `button` (pour en-tête d'article) avec animation haptique et notifications toast Sonner.
+    - Filtre instantané *« Mes Favoris (N) »* avec compteur dynamique sur `/blog`.
+  - **Widget d'Évaluation Rapide & Réactions (`blog-article-feedback.tsx`) :**
+    - Bloc d'engagement en fin d'article avec compteurs animés *Utile* (👍) et *Inspirant* (❤️).
+    - Mémorisation du vote par slug pour éviter les votes doubles, badge d'autorité *98% d'utilité constatée* et bouton favori synchronisé.
+  - **Validation :** 0 erreur TypeScript (`npx tsc --noEmit`), build Next.js validé.
 - [x] **Machine de Conversion en Compte Gratuit (Audio 1) & Modernisation Visuelle des Cartes de Blog (Audio 2) :**
   - **Machine de Conversion en Compte Gratuit (`components/blog/blog-account-conversion-banner.tsx`) :**
     - Encart d'incitation à l'action à forte valeur ajoutée (*« Passez de la Lecture à l'Action : Créez votre Compte Gratuit »*).
