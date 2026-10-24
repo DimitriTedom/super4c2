@@ -18,7 +18,6 @@ interface BlogBookmarkDialogProps {
   onOpenChange: (open: boolean) => void;
   articleTitle?: string;
   articleSlug?: string;
-  onContinueLocal?: () => void;
 }
 
 export function BlogBookmarkDialog({
@@ -26,7 +25,6 @@ export function BlogBookmarkDialog({
   onOpenChange,
   articleTitle,
   articleSlug,
-  onContinueLocal,
 }: BlogBookmarkDialogProps) {
   const registerUrl = articleSlug
     ? `/auth/register?source=blog_bookmark&article=${encodeURIComponent(articleSlug)}`
@@ -95,7 +93,7 @@ export function BlogBookmarkDialog({
             <ArrowRight className="h-4 w-4 ml-1.5 inline-block" />
           </ShimmerButton>
 
-          <div className="flex items-center justify-between gap-2 pt-1">
+          <div className="flex items-center justify-center pt-1">
             <Button
               asChild
               variant="ghost"
@@ -106,21 +104,6 @@ export function BlogBookmarkDialog({
                 Déjà un compte ? Se connecter
               </Link>
             </Button>
-
-            {onContinueLocal && (
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                onClick={() => {
-                  onContinueLocal();
-                  onOpenChange(false);
-                }}
-                className="text-[11px] text-muted-foreground/80 hover:text-foreground h-8"
-              >
-                Sauvegarder en local
-              </Button>
-            )}
           </div>
         </div>
 

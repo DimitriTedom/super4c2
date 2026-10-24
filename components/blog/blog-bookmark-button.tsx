@@ -93,7 +93,6 @@ export function BlogBookmarkButton({
           onOpenChange={setDialogOpen}
           articleTitle={articleTitle}
           articleSlug={slug}
-          onContinueLocal={performToggle}
         />
       </>
     );
@@ -129,7 +128,6 @@ export function BlogBookmarkButton({
         onOpenChange={setDialogOpen}
         articleTitle={articleTitle}
         articleSlug={slug}
-        onContinueLocal={performToggle}
       />
     </>
   );

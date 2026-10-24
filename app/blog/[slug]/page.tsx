@@ -13,6 +13,7 @@ import {
   Zap,
 } from "lucide-react";
 import { getSingleBlogPost, listAllBlogPosts } from "@/lib/blog/blog-service";
+import { getBlogPost } from "@/lib/blog/mock-posts";
 import { Button } from "@/components/ui/button";
 import { ShimmerButton } from "@/components/ui/shimmer-button";
 import { ReadingProgressBar } from "@/components/blog/reading-progress-bar";
@@ -85,11 +86,28 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
   }
 }
 
-export const dynamic = "force-dynamic";
+export async function generateStaticParams() {
+  try {
+    const posts = await listAllBlogPosts();
+    if (Array.isArray(posts) && posts.length > 0) {
+      return posts.map((p) => ({ slug: p.slug }));
+    }
+  } catch (err) {
+    console.warn("⚠️ Impossible de pré-générer les slugs du blog :", err);
+  }
+  return [];
+}
+
+export const revalidate = 60;
 
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const { slug } = await params;
-  const post = await getSingleBlogPost(slug);
+  let post = await getSingleBlogPost(slug);
+
+  // Fallback de haute résilience si la base de données est indisponible
+  if (!post) {
+    post = getBlogPost(slug) || null;
+  }
 
   if (!post) {
     notFound();
