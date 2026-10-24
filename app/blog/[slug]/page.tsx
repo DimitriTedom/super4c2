@@ -24,6 +24,7 @@ import { BlogContentRenderer } from "@/components/blog/blog-content-renderer";
 import { BlogLeadEngagement } from "@/components/blog/blog-lead-engagement";
 import { BlogBookmarkButton } from "@/components/blog/blog-bookmark-button";
 import { BlogArticleFeedback } from "@/components/blog/blog-article-feedback";
+import { BlogCommentsSection } from "@/components/blog/blog-comments-section";
 
 interface BlogPostPageProps {
   params: Promise<{ slug: string }>;
@@ -322,6 +323,13 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
             {/* ✍️ Signature & Autorité Auteur E-E-A-T */}
             <BlogAuthorBio name={post.author.name} role={post.author.role} />
+
+            {/* 💬 Salon de Mentorat & Échange Pédagogique (Option C) */}
+            <BlogCommentsSection
+              slug={post.slug}
+              category={post.category}
+              articleTitle={post.title}
+            />
           </div>
 
           {/* Colonne Latérale Droite : Sommaire Interactif Sticky Desktop */}

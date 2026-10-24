@@ -2,6 +2,29 @@
 
 ## 0. Déploiement Production Vercel & Moteur de Conversion
 
+### 0.0zw. Étape 3 / Option C : Salon de Mentorat & Questions-Réponses Pédagogiques Certifiées (`/blog/[slug]`)
+- **Directives Utilisateur :**
+  1. Implémenter l'**Option C** du système de blog : Espace d'échange pédagogique et Q&A interactif entre candidats et mentors sous chaque article de blog.
+- **Réalisations Techniques & UI :**
+  1. **Brand & Design Canvas (`docs/brand/blog-pedagogical-comments-canvas.md`) :**
+     - Vision produit, tonalité bienveillante et académique, badge d'autorité *« Réponse Officielle • Équipe Pédagogique Super4C2 »*, mise en forme carmin indentée avec citations des critères FEI.
+  2. **Spécification Technique Structurée (`docs/specs/24-blog-pedagogical-comments-and-qa.md`) :**
+     - User stories, modèles `PedagogicalComment` et `PedagogicalAnswer`, persistance `localStorage` avec affichage optimiste et statut d'attente.
+  3. **Composants & Données Déployés :**
+     - **Dataset Pédagogique Réaliste (`lib/blog/comments-data.ts`) :**
+       - Questions et réponses exhaustives pour Compréhension Écrite (distracteurs B2/C1, navigation CBT), Entrée Express (pénalité NCLC 6 vs 7, seuils de tirages ciblés francophones), Expression Écrite (tolérance de longueur de mots, confrontation de points de vue Tâche 3), et IELTS vs TCF (rentabilité des 50 points bonus).
+       - Réponses formulées par Dimitri Tedom et Laurent Mercier citant les grilles officielles FEI et les décrets IRCC.
+     - **Composant Interactif `BlogCommentsSection` (`components/blog/blog-comments-section.tsx`) :**
+       - Formulaire de soumission fluide avec textarea, compteur de caractères, saisie nom/email avec réassurance 100% gratuité.
+       - Pré-remplissage automatique des profils connectés via Supabase Auth.
+       - Ajout optimiste immédiat avec badge ambré *« En attente de relecture pédagogique »* et persistance `localStorage`.
+       - Compteur d'utilité (upvotes) avec protection anti-double vote local.
+       - Carte d'encadrement FEI avec citations des règlements d'examen.
+       - Bannière d'appel à l'action pour tester le simulateur d'examen CBT.
+     - **Intégration Guide `BlogPostPage` (`app/blog/[slug]/page.tsx`) :**
+       - Insertion fluide sous la bio de l'auteur, avant les articles connexes.
+- **Validation :** 0 erreur TypeScript (`npx tsc --noEmit`), build Next.js validé (41/41 pages générées).
+
 ### 0.0zv. Étape 2 / Option B : Filtres Avancés par Compétence, Durée de Lecture & Tri Intelligent (`/blog`)
 - **Directives Utilisateur :**
   1. Implémenter l'**Option B** du système de blog : filtres avancés par compétence (Expression Écrite, Orale, CRS, QCM, IELTS, Favoris), format de lecture (Express ≤ 5 min, Stratégique 6–9 min, Dossier Pilier 10+ min), et menu de tri contextuel.

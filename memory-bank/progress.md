@@ -1,3 +1,17 @@
+- [x] **Étape 3 / Option C : Salon de Mentorat & Questions-Réponses Pédagogiques Certifiées (`/blog/[slug]`) :**
+  - **Dataset Pédagogique Réaliste (`lib/blog/comments-data.ts`) :**
+    - Q&A d'experts couvrant Compréhension Écrite, Expression Écrite, Entrée Express / CRS et IELTS.
+    - Réponses officielles formulées par Dimitri Tedom et Laurent Mercier citant explicitement les critères FEI et IRCC.
+  - **Composant Client `BlogCommentsSection` (`components/blog/blog-comments-section.tsx`) :**
+    - En-tête avec compteur d'échanges vérifiés et badge mentorat.
+    - Formulaire de question réactif avec validation, compteur de caractères, saisie prénom/email et réassurance gratuité.
+    - Rendu optimiste immédiat avec badge ambré *« En attente de relecture pédagogique »* et persistance `localStorage`.
+    - Bouton d'upvote avec compteur et anti-double vote local.
+    - Carte réponse certifiée FEI avec filet carmin indenté et référence aux grilles officielles.
+    - Bannière de conversion vers le simulateur d'examen CBT.
+  - **Intégration Guide `app/blog/[slug]/page.tsx` :**
+    - Positionné élégamment entre la bio de l'auteur et les guides connexes.
+  - **Validation :** 0 erreur TypeScript (`npx tsc --noEmit`), build Next.js validé (41/41 pages générées).
 - [x] **Étape 2 / Option B : Filtres Avancés par Compétence, Durée de Lecture & Tri Intelligent (`/blog`) :**
   - **Barre de Contrôle Avancée `BlogFilterBar` (`components/blog/blog-filter-bar.tsx`) :**
     - 7 onglets de compétences clés : Expression Écrite, Expression Orale, Entrée Express / CRS, Compréhension, IELTS, Tous les guides et Mes Favoris.
