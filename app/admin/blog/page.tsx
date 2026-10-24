@@ -3,34 +3,28 @@ import {
   FolderKanban,
   Plus,
   Search,
-  Pencil,
-  Trash2,
+  ExternalLink,
+  FileText,
   Eye,
   EyeOff,
-  Filter,
-  Star,
-  Clock,
-  ExternalLink,
+  TrendingUp,
 } from "lucide-react";
 import { Prisma } from "@prisma/client";
 import { AdminShell } from "@/components/admin/admin-shell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ConfirmActionDialog } from "@/components/admin/ConfirmActionDialog";
 import { AdminTablePagination } from "@/components/admin/AdminTablePagination";
 import { AdminListEmptyState } from "@/components/admin/AdminListEmptyState";
+import { BlogListClient, AdminBlogPostItem } from "@/components/admin/blog-list-client";
 import { prisma } from "@/lib/prisma";
 import { getAdminPagination } from "@/lib/admin-pagination";
 import { toOptionalString } from "@/lib/admin-crud-utils";
-import {
-  deleteBlogPostAction,
-  toggleBlogPostFeaturedAction,
-  toggleBlogPostPublishAction,
-} from "./actions";
 
 export const metadata = {
   title: "Blog & Guides SEO — Back-Office | Super4C2",
 };
+
+export const dynamic = "force-dynamic";
 
 interface BlogPageProps {
   searchParams: Promise<{
@@ -46,6 +40,7 @@ const BLOG_CATEGORIES = [
   "Stratégie TCF",
   "Entrée Express & CRS",
   "Expression Écrite",
+  "Expression Orale",
   "Compréhension Écrite",
   "Méthodologie NCLC 7",
   "Actualités Immigration",
@@ -54,9 +49,9 @@ const BLOG_CATEGORIES = [
 export default async function BlogPage({ searchParams }: BlogPageProps) {
   const { page: rawPage, q: rawQ, category: rawCat, status: rawStatus } =
     await searchParams;
-  const q = toOptionalString(rawQ);
-  const selectedCategory = toOptionalString(rawCat);
-  const status = toOptionalString(rawStatus);
+  const q = toOptionalString(rawQ) || "";
+  const selectedCategory = toOptionalString(rawCat) || "Toutes";
+  const status = toOptionalString(rawStatus) || "all";
 
   const whereClause: Prisma.BlogPostWhereInput = {};
 
@@ -65,6 +60,7 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
       { title: { contains: q, mode: "insensitive" } },
       { excerpt: { contains: q, mode: "insensitive" } },
       { content: { contains: q, mode: "insensitive" } },
+      { targetKeyword: { contains: q, mode: "insensitive" } },
     ];
   }
 
@@ -76,14 +72,33 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
     whereClause.isPublished = true;
   } else if (status === "draft") {
     whereClause.isPublished = false;
+  } else if (status === "featured") {
+    whereClause.featured = true;
   }
 
   let totalItems = 0;
   let posts: any[] = [];
   let dbError: string | null = null;
 
+  // Global KPIs
+  let totalCount = 0;
+  let publishedCount = 0;
+  let draftCount = 0;
+  let totalViews = 0;
+
   try {
-    totalItems = await prisma.blogPost.count({ where: whereClause });
+    [totalCount, publishedCount, draftCount, totalItems] = await Promise.all([
+      prisma.blogPost.count(),
+      prisma.blogPost.count({ where: { isPublished: true } }),
+      prisma.blogPost.count({ where: { isPublished: false } }),
+      prisma.blogPost.count({ where: whereClause }),
+    ]);
+
+    const aggregateViews = await prisma.blogPost.aggregate({
+      _sum: { viewCount: true },
+    });
+    totalViews = aggregateViews._sum.viewCount || 0;
+
     const paginationData = getAdminPagination(totalItems, rawPage, 10);
 
     posts = await prisma.blogPost.findMany({
@@ -99,6 +114,23 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
 
   const pagination = getAdminPagination(totalItems, rawPage, 10);
 
+  const mappedPosts: AdminBlogPostItem[] = posts.map((p) => ({
+    id: p.id,
+    title: p.title,
+    slug: p.slug,
+    excerpt: p.excerpt,
+    category: p.category,
+    coverImage: p.coverImage,
+    youtubeUrl: p.youtubeUrl,
+    targetKeyword: p.targetKeyword,
+    isPublished: p.isPublished,
+    featured: p.featured,
+    viewCount: p.viewCount,
+    readingMinutes: p.readingMinutes || 5,
+    publishedAt: p.publishedAt ? new Date(p.publishedAt).toISOString() : "",
+    createdAt: p.createdAt ? new Date(p.createdAt).toISOString() : "",
+  }));
+
   return (
     <AdminShell>
       <div className="space-y-6">
@@ -107,18 +139,19 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
             {dbError}
           </div>
         )}
+
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b pb-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border/80 pb-4">
           <div>
             <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-primary/10 text-primary border border-primary/20 mb-1.5">
               <FolderKanban className="h-3 w-3" />
-              Acquisition Organique &amp; Stratégie Éditoriale
+              Acquisition Organique &amp; Studio SEO
             </div>
             <h1 className="font-display text-2xl sm:text-3xl font-black tracking-tight text-foreground">
               Blog &amp; Guides Stratégiques
             </h1>
             <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">
-              Gérez les guides de préparation, articles d&apos;autorité et comparatifs pour attirer des candidats qualifiés.
+              Rédigez, illustrez avec YouTube et optimisez vos articles pour capter le trafic Google TCF &amp; Entrée Express.
             </p>
           </div>
 
@@ -139,249 +172,161 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
           </div>
         </div>
 
-        {/* Filters Bar */}
-        <div className="space-y-3">
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-            <form className="relative flex-1 max-w-sm">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
-              <Input
-                name="q"
-                defaultValue={q || ""}
-                placeholder="Rechercher par titre, mot-clé ou extrait..."
-                className="pl-9 h-9 text-xs rounded-xl bg-card border-border"
-              />
-              {selectedCategory && (
-                <input type="hidden" name="category" value={selectedCategory} />
-              )}
-              {status && <input type="hidden" name="status" value={status} />}
-            </form>
-
-            <div className="flex items-center gap-1.5">
-              <Button
-                asChild
-                variant={!status ? "secondary" : "ghost"}
-                size="sm"
-                className="text-xs h-8"
-              >
-                <Link href="/admin/blog">Tous ({totalItems})</Link>
-              </Button>
-              <Button
-                asChild
-                variant={status === "published" ? "secondary" : "ghost"}
-                size="sm"
-                className="text-xs h-8"
-              >
-                <Link href="/admin/blog?status=published">Publiés</Link>
-              </Button>
-              <Button
-                asChild
-                variant={status === "draft" ? "secondary" : "ghost"}
-                size="sm"
-                className="text-xs h-8"
-              >
-                <Link href="/admin/blog?status=draft">Brouillons</Link>
-              </Button>
+        {/* 4 KPI Cards */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+          <div className="p-4 rounded-xl border border-border bg-card shadow-xs">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold text-muted-foreground">Total Articles</span>
+              <FileText className="h-4 w-4 text-primary" />
             </div>
+            <div className="text-2xl font-black text-foreground mt-1 font-mono">{totalCount}</div>
+            <p className="text-[11px] text-muted-foreground mt-0.5">Contenus enregistrés</p>
           </div>
 
-          {/* Category Pill Filters */}
-          <div className="flex flex-wrap items-center gap-1.5 pt-1">
-            <span className="text-xs text-muted-foreground font-semibold flex items-center gap-1 mr-1">
-              <Filter className="h-3 w-3" />
-              Catégorie :
-            </span>
-            {BLOG_CATEGORIES.map((cat) => {
-              const isActive =
-                (!selectedCategory && cat === "Toutes") ||
-                selectedCategory === cat;
-              const href =
-                cat === "Toutes"
-                  ? `/admin/blog${status ? `?status=${status}` : ""}`
-                  : `/admin/blog?category=${encodeURIComponent(cat)}${
-                      status ? `&status=${status}` : ""
-                    }`;
+          <div className="p-4 rounded-xl border border-border bg-card shadow-xs">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold text-muted-foreground">En Ligne (Publiés)</span>
+              <Eye className="h-4 w-4 text-emerald-500" />
+            </div>
+            <div className="text-2xl font-black text-emerald-600 dark:text-emerald-400 mt-1 font-mono">
+              {publishedCount}
+            </div>
+            <p className="text-[11px] text-muted-foreground mt-0.5">Indexables sur Google</p>
+          </div>
 
-              return (
-                <Button
-                  key={cat}
-                  asChild
-                  variant={isActive ? "default" : "outline"}
-                  size="sm"
-                  className={`h-7 px-2.5 text-[11px] rounded-lg transition-all ${
-                    isActive ? "font-bold shadow-xs" : "text-muted-foreground"
-                  }`}
-                >
-                  <Link href={href}>{cat}</Link>
-                </Button>
-              );
-            })}
+          <div className="p-4 rounded-xl border border-border bg-card shadow-xs">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold text-muted-foreground">Brouillons</span>
+              <EyeOff className="h-4 w-4 text-amber-500" />
+            </div>
+            <div className="text-2xl font-black text-amber-600 dark:text-amber-400 mt-1 font-mono">
+              {draftCount}
+            </div>
+            <p className="text-[11px] text-muted-foreground mt-0.5">En cours d&apos;édition</p>
+          </div>
+
+          <div className="p-4 rounded-xl border border-border bg-card shadow-xs">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold text-muted-foreground">Lectures Cumulées</span>
+              <TrendingUp className="h-4 w-4 text-sky-500" />
+            </div>
+            <div className="text-2xl font-black text-foreground mt-1 font-mono">
+              {totalViews.toLocaleString("fr-FR")}
+            </div>
+            <p className="text-[11px] text-muted-foreground mt-0.5">Vues de pages globales</p>
           </div>
         </div>
 
-        {/* Table Container */}
-        {posts.length === 0 ? (
+        {/* Filters & Search Toolbar */}
+        <div className="rounded-2xl border border-border bg-card p-4 shadow-xs space-y-3">
+          {/* Status Tabs */}
+          <div className="flex items-center gap-1.5 flex-wrap border-b border-border/60 pb-3">
+            {[
+              { id: "all", label: "Tous les articles", count: totalCount },
+              { id: "published", label: "Publiés", count: publishedCount },
+              { id: "draft", label: "Brouillons", count: draftCount },
+              { id: "featured", label: "À la une", count: undefined },
+            ].map((tab) => {
+              const isActive = status === tab.id;
+              const href = `/admin/blog?status=${tab.id}${q ? `&q=${encodeURIComponent(q)}` : ""}${
+                selectedCategory && selectedCategory !== "Toutes"
+                  ? `&category=${encodeURIComponent(selectedCategory)}`
+                  : ""
+              }`;
+              return (
+                <Link
+                  key={tab.id}
+                  href={href}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 ${
+                    isActive
+                      ? "bg-primary text-primary-foreground shadow-xs"
+                      : "bg-muted/50 text-muted-foreground hover:bg-muted hover:text-foreground"
+                  }`}
+                >
+                  <span>{tab.label}</span>
+                  {tab.count !== undefined && (
+                    <span
+                      className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono ${
+                        isActive
+                          ? "bg-primary-foreground/20 text-primary-foreground"
+                          : "bg-muted text-muted-foreground"
+                      }`}
+                    >
+                      {tab.count}
+                    </span>
+                  )}
+                </Link>
+              );
+            })}
+          </div>
+
+          {/* Search + Category Form */}
+          <form method="GET" action="/admin/blog" className="grid grid-cols-1 sm:grid-cols-[1fr_200px_auto] gap-2.5">
+            <input type="hidden" name="status" value={status} />
+
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
+              <Input
+                type="search"
+                name="q"
+                defaultValue={q}
+                placeholder="Rechercher par titre, extrait ou mot-clé SEO..."
+                className="pl-8.5 h-9 text-xs rounded-xl bg-background"
+              />
+            </div>
+
+            <select
+              name="category"
+              defaultValue={selectedCategory}
+              className="h-9 text-xs rounded-xl border border-input bg-background px-3 text-foreground"
+            >
+              {BLOG_CATEGORIES.map((cat) => (
+                <option key={cat} value={cat}>
+                  {cat}
+                </option>
+              ))}
+            </select>
+
+            <Button type="submit" size="sm" variant="secondary" className="h-9 text-xs font-semibold px-4">
+              Filtrer
+            </Button>
+          </form>
+        </div>
+
+        {/* Table or Empty State */}
+        {mappedPosts.length === 0 ? (
           <AdminListEmptyState
             kind="blog"
-            title="Aucun article de blog trouvé"
-            description="Rédigez votre premier article pour commencer à générer du trafic organique ciblé."
+            title="Aucun article trouvé"
+            description={
+              q || (selectedCategory && selectedCategory !== "Toutes") || status !== "all"
+                ? "Aucun article ne correspond à vos critères de recherche actuels."
+                : "Commencez par rédiger votre premier guide de préparation TCF Canada pour capter le trafic SEO."
+            }
             actionLabel="Rédiger un Article"
             actionHref="/admin/blog/ajouter"
           />
         ) : (
-          <div className="rounded-2xl border bg-card shadow-xs overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs">
-                <thead>
-                  <tr className="border-b bg-muted/30 text-muted-foreground font-semibold">
-                    <th className="py-3 px-4">Article</th>
-                    <th className="py-3 px-4">Catégorie</th>
-                    <th className="py-3 px-4">Auteur</th>
-                    <th className="py-3 px-4 text-center">Lecture</th>
-                    <th className="py-3 px-4 text-center">À la une</th>
-                    <th className="py-3 px-4 text-center">Statut</th>
-                    <th className="py-3 px-4 text-right">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border/60">
-                  {posts.map((post) => (
-                    <tr
-                      key={post.id}
-                      className="hover:bg-muted/20 transition-colors"
-                    >
-                      <td className="py-3.5 px-4 max-w-sm">
-                        <div className="space-y-1">
-                          <Link
-                            href={`/blog/${post.slug}`}
-                            target="_blank"
-                            className="font-bold text-foreground text-xs sm:text-sm hover:text-primary transition-colors line-clamp-2"
-                          >
-                            {post.title}
-                          </Link>
-                          <p className="line-clamp-1 text-[11px] text-muted-foreground">
-                            {post.excerpt}
-                          </p>
-                          <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground font-mono">
-                            <span>/blog/{post.slug}</span>
-                          </div>
-                        </div>
-                      </td>
-
-                      <td className="py-3.5 px-4">
-                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-primary/10 text-primary border border-primary/20">
-                          {post.category}
-                        </span>
-                      </td>
-
-                      <td className="py-3.5 px-4 text-muted-foreground">
-                        <p className="font-medium text-foreground">{post.authorName}</p>
-                        <p className="text-[10px] text-muted-foreground">{post.authorRole}</p>
-                      </td>
-
-                      <td className="py-3.5 px-4 text-center font-mono text-muted-foreground">
-                        <span className="inline-flex items-center gap-1">
-                          <Clock className="h-3 w-3" />
-                          {post.readingMinutes} min
-                        </span>
-                      </td>
-
-                      <td className="py-3.5 px-4 text-center">
-                        <form action={toggleBlogPostFeaturedAction} className="inline-block">
-                          <input type="hidden" name="id" value={post.id} />
-                          <button
-                            type="submit"
-                            className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-bold border transition-all ${
-                              post.featured
-                                ? "bg-amber-500/10 text-amber-600 border-amber-500/30 hover:bg-amber-500/20"
-                                : "bg-muted/40 text-muted-foreground border-border hover:bg-muted"
-                            }`}
-                            title="Bascule mise à la une"
-                          >
-                            <Star
-                              className={`h-3 w-3 ${
-                                post.featured ? "fill-current" : ""
-                              }`}
-                            />
-                            <span>{post.featured ? "Vedette" : "Non"}</span>
-                          </button>
-                        </form>
-                      </td>
-
-                      <td className="py-3.5 px-4 text-center">
-                        <form action={toggleBlogPostPublishAction} className="inline-block">
-                          <input type="hidden" name="id" value={post.id} />
-                          <button
-                            type="submit"
-                            className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold border transition-all ${
-                              post.isPublished
-                                ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/20"
-                                : "bg-muted text-muted-foreground border-border hover:bg-muted/80"
-                            }`}
-                            title="Bascule publication"
-                          >
-                            {post.isPublished ? (
-                              <>
-                                <Eye className="h-3 w-3" />
-                                <span>Publié</span>
-                              </>
-                            ) : (
-                              <>
-                                <EyeOff className="h-3 w-3" />
-                                <span>Brouillon</span>
-                              </>
-                            )}
-                          </button>
-                        </form>
-                      </td>
-
-                      <td className="py-3.5 px-4 text-right">
-                        <div className="flex items-center justify-end gap-1">
-                          <Button
-                            asChild
-                            variant="ghost"
-                            size="sm"
-                            className="h-8 w-8 p-0"
-                            title="Modifier l'article"
-                          >
-                            <Link href={`/admin/blog/${post.id}`}>
-                              <Pencil className="h-3.5 w-3.5" />
-                            </Link>
-                          </Button>
-
-                          <form id={`del-post-${post.id}`} action={deleteBlogPostAction}>
-                            <input type="hidden" name="id" value={post.id} />
-                          </form>
-
-                          <ConfirmActionDialog
-                            trigger={
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive"
-                                title="Supprimer l'article"
-                              >
-                                <Trash2 className="h-3.5 w-3.5" />
-                              </Button>
-                            }
-                            title="Supprimer cet article ?"
-                            description={`Êtes-vous sûr de vouloir supprimer définitivement l'article "${post.title}" ? Cette action est irréversible.`}
-                            confirmLabel="Supprimer définitivement"
-                            formId={`del-post-${post.id}`}
-                          />
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+          <>
+            <BlogListClient
+              posts={mappedPosts}
+              totalCount={totalItems}
+              currentQuery={q}
+              currentCategory={selectedCategory}
+              currentStatus={status}
+            />
 
             <AdminTablePagination
               currentPage={pagination.currentPage}
               totalPages={pagination.totalPages}
               basePath="/admin/blog"
-              search={q ?? undefined}
+              extraParams={{
+                q: q || undefined,
+                category: selectedCategory !== "Toutes" ? selectedCategory : undefined,
+                status: status !== "all" ? status : undefined,
+              }}
             />
-          </div>
+          </>
         )}
       </div>
     </AdminShell>

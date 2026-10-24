@@ -18,10 +18,13 @@ export interface BlogPost {
     role: string;
   };
   featured?: boolean;
+  coverImage?: string;
+  youtubeUrl?: string;
+  targetKeyword?: string;
   tags: string[];
   content: string;
   targetCta: {
-    type: "CBT_EXAM" | "CRS_CALCULATOR" | "FREE_TEST" | "IELTS_MODULE";
+    type: "CBT_EXAM" | "CRS_CALCULATOR" | "FREE_TEST" | "IELTS_MODULE" | "RECENT_TOPICS" | "COMMUNITY";
     label: string;
     href: string;
   };

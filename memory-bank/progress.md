@@ -1,3 +1,20 @@
+- [x] **Jalon 3 & Jalon 4 : Infrastructure SEO Globale, Sitemap XML Dynamique & Clusters Piliers Synchronisés :**
+  - **Spécification Complète (`docs/specs/21-sitemap-xml-and-schema-org-seo.md`) :** Architecture du sitemap XML asynchrone, intégration PostgreSQL et priorité algorithmique.
+  - **Sitemap XML Dynamique (`app/sitemap.ts`) :** Extraction automatique de tous les articles publiés de `prisma.blogPost` avec priorités 0.90 / 0.85 et horodatages `<lastmod>` réels.
+  - **Données Structurées Schema.org :** Balisage JSON-LD `BlogPosting` + `VideoObject` sur `/blog/[slug]` pour affichage enrichi et carrousel vidéo Google.
+  - **Synchronisation des 3 Clusters Piliers (`scripts/sync-master-clusters.ts`) :** 7 articles d'autorité publiés en base PostgreSQL (Tâche 1 EE formules et modèles, Tâche 2 EO 10 questions types, et Stratégie NCLC 7 vs NCLC 5 +50 pts CRS).
+  - **Validation :** 0 erreur TypeScript (`npx tsc --noEmit`), compilation Next.js de production réussie.
+- [x] **Jalon 2 : Expérience de Lecture Publique Premium, Sommaire Interactif & E-E-A-T (`/blog` & `/blog/[slug]`) :**
+  - **Brand & Design Canvas (`docs/brand/blog-reading-experience-canvas.md`) :** Typographie haute lisibilité (Bricolage Grotesque, interlignage 1.75), callouts FEI personnalisés et disposition 2 colonnes avec sticky TOC.
+  - **Spécification Complète (`docs/specs/20-public-blog-reading-experience-and-engagement.md`) :** Architecture technique, ancres synchronisées, JSON-LD Schema.org Article & VideoObject.
+  - **Composants d'Engagement Déployés :** `ReadingProgressBar` dynamique au scroll, `BlogTableOfContents` avec `IntersectionObserver` et accordéon mobile, `BlogVideoPlayer` responsive 16:9, `BlogSocialShare` (WhatsApp 1-clic avec texte pré-rempli, LinkedIn, Twitter, Copie), `BlogAuthorBio` avec badge Expert Vérifié FEI, et `BlogContentRenderer` avec blocs didactiques.
+  - **Validation :** 0 erreur TypeScript (`npx tsc --noEmit`).
+- [x] **Jalon 1 : Moteur de Gestion de Blog & Studio SEO Haute Fidélité (`/admin/blog`) :**
+  - **Brand & Design Canvas (`docs/brand/admin-blog-cms-canvas.md`) :** Définition de l'identité visuelle du CMS, de l'optimisation E-E-A-T et du simulateur SERP Google.
+  - **Spécification Complète (`docs/specs/19-admin-blog-cms-and-seo-engine.md`) :** Schéma de données enrichi, actions serveur et gestion des cas limites.
+  - **Tableau de Bord `/admin/blog` & Batch Actions (`components/admin/blog-list-client.tsx`) :** 4 KPI Cards, sélection multiple par checkboxes, barre d'actions groupées `AdminBatchActionBar` (publication, brouillon, suppression, export CSV UTF-8 BOM), toggles rapides en 1 clic et filtres par catégorie.
+  - **Studio de Rédaction Élite (`components/admin/blog-form.tsx`) :** Analyseur SEO de mot-clé en temps réel, simulateur de SERP Google direct (desktop/mobile), intégrateur YouTube 1-clic avec récupération de miniature HD, 6 presets photo, 4 templates didactiques et configurateur de CTA de conversion.
+  - **Validation :** 0 erreur TypeScript (`npx tsc --noEmit`).
 - [x] **Option 1 : Lecteur Audio de Réécoute dans l'Historique Candidat & Archivage des Sessions Orales :**
   - **Spécification Structurée (`docs/specs/18-candidate-oral-audio-player-and-archive.md`) :** Définition complète de l'architecture d'écoute réflexive, de persistance audio et de synchronisation par tâche.
   - **Composant Lecteur Audio Élite (`components/dashboard/candidate-oral-audio-player.tsx`) :** Lecteur audio EdTech/Fintech avec forme d'onde dynamique interactive à 36 barres réactives, seekbar fluide, contrôles de transport (Play/Pause, saut ±10s, retour début, coupure son), régulateur de vitesse (0.8x, 1x, 1.25x, 1.5x) pour analyser le débit d'élocution, boutons de saut direct par tâche (Tâche 1, Tâche 2, Tâche 3) avec bascule automatique vers la transcription correspondante, et téléchargement direct du fichier `.webm`.

@@ -17,6 +17,8 @@ function normalizeBlogPostPayload(formData: FormData) {
   const excerpt = toOptionalString(formData.get("excerpt"));
   const content = toOptionalString(formData.get("content"));
   const coverImage = toOptionalString(formData.get("coverImage"));
+  const youtubeUrl = toOptionalString(formData.get("youtubeUrl"));
+  const targetKeyword = toOptionalString(formData.get("targetKeyword"));
   const authorName =
     toOptionalString(formData.get("authorName")) || "Équipe Pédagogique Super4C2";
   const authorRole =
@@ -25,6 +27,9 @@ function normalizeBlogPostPayload(formData: FormData) {
   const tags = toCsvArray(formData.get("tags"));
   const isPublished = toBoolean(formData.get("isPublished"));
   const featured = toBoolean(formData.get("featured"));
+  const ctaType = toOptionalString(formData.get("ctaType")) || "CRS_CALCULATOR";
+  const ctaLabel = toOptionalString(formData.get("ctaLabel"));
+  const ctaUrl = toOptionalString(formData.get("ctaUrl"));
 
   if (!title || !excerpt || !content) {
     throw new Error("Le titre, l'extrait et le contenu Markdown sont obligatoires.");
@@ -42,6 +47,8 @@ function normalizeBlogPostPayload(formData: FormData) {
     excerpt,
     content,
     coverImage,
+    youtubeUrl,
+    targetKeyword,
     authorName,
     authorRole,
     readingMinutes,
@@ -49,6 +56,9 @@ function normalizeBlogPostPayload(formData: FormData) {
     tags,
     isPublished,
     featured,
+    ctaType,
+    ctaLabel,
+    ctaUrl,
   };
 }
 
@@ -70,6 +80,7 @@ export async function createBlogPostAction(formData: FormData) {
 
   revalidatePath("/admin/blog");
   revalidatePath("/blog");
+  revalidatePath("/sitemap.xml");
   revalidatePath("/");
   redirect(
     withToastQuery("/admin/blog", {
@@ -107,6 +118,7 @@ export async function updateBlogPostAction(formData: FormData) {
   revalidatePath(`/admin/blog/${id}`);
   revalidatePath("/blog");
   revalidatePath(`/blog/${updated.slug}`);
+  revalidatePath("/sitemap.xml");
   revalidatePath("/");
   redirect(
     withToastQuery("/admin/blog", {
@@ -127,6 +139,7 @@ export async function deleteBlogPostAction(formData: FormData) {
 
   revalidatePath("/admin/blog");
   revalidatePath("/blog");
+  revalidatePath("/sitemap.xml");
   revalidatePath("/");
   redirect(
     withToastQuery("/admin/blog", {
@@ -155,6 +168,7 @@ export async function toggleBlogPostPublishAction(formData: FormData) {
 
   revalidatePath("/admin/blog");
   revalidatePath("/blog");
+  revalidatePath("/sitemap.xml");
   revalidatePath("/");
   redirect(
     withToastQuery("/admin/blog", {
@@ -195,4 +209,87 @@ export async function toggleBlogPostFeaturedAction(formData: FormData) {
       variant: "success",
     })
   );
+}
+
+// ============================================
+// ACTIONS EN LOT (BATCH ACTIONS) & ACTIONS DIRECTES
+// ============================================
+
+export async function batchDeleteBlogPostsAction(ids: string[]): Promise<{ success: boolean; count: number; error?: string }> {
+  try {
+    if (!ids || ids.length === 0) return { success: true, count: 0 };
+
+    const result = await prisma.blogPost.deleteMany({
+      where: { id: { in: ids } },
+    });
+
+    revalidatePath("/admin/blog");
+    revalidatePath("/blog");
+    revalidatePath("/sitemap.xml");
+    revalidatePath("/");
+
+    return { success: true, count: result.count };
+  } catch (err: any) {
+    console.error("Erreur batchDeleteBlogPostsAction :", err);
+    return { success: false, count: 0, error: err.message || "Erreur de suppression groupée" };
+  }
+}
+
+export async function batchUpdateBlogPostsPublishAction(
+  ids: string[],
+  isPublished: boolean
+): Promise<{ success: boolean; count: number; error?: string }> {
+  try {
+    if (!ids || ids.length === 0) return { success: true, count: 0 };
+
+    const result = await prisma.blogPost.updateMany({
+      where: { id: { in: ids } },
+      data: { isPublished },
+    });
+
+    revalidatePath("/admin/blog");
+    revalidatePath("/blog");
+    revalidatePath("/sitemap.xml");
+    revalidatePath("/");
+
+    return { success: true, count: result.count };
+  } catch (err: any) {
+    console.error("Erreur batchUpdateBlogPostsPublishAction :", err);
+    return { success: false, count: 0, error: err.message || "Erreur de mise à jour groupée" };
+  }
+}
+
+export async function togglePublishDirectAction(
+  id: string,
+  targetPublished: boolean
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    await prisma.blogPost.update({
+      where: { id },
+      data: { isPublished: targetPublished },
+    });
+    revalidatePath("/admin/blog");
+    revalidatePath("/blog");
+    revalidatePath("/sitemap.xml");
+    return { success: true };
+  } catch (err: any) {
+    return { success: false, error: err.message };
+  }
+}
+
+export async function toggleFeaturedDirectAction(
+  id: string,
+  targetFeatured: boolean
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    await prisma.blogPost.update({
+      where: { id },
+      data: { featured: targetFeatured },
+    });
+    revalidatePath("/admin/blog");
+    revalidatePath("/blog");
+    return { success: true };
+  } catch (err: any) {
+    return { success: false, error: err.message };
+  }
 }

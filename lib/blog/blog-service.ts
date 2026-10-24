@@ -19,6 +19,42 @@ function mapDbCategoryToKey(cat: string): { key: BlogCategory; label: string } {
   return { key: "METHODE_TCF", label: "Méthodologie TCF" };
 }
 
+function resolveCta(ctaType?: string | null, ctaLabel?: string | null, ctaUrl?: string | null) {
+  if (ctaType === "CBT_EXAM") {
+    return {
+      type: "CBT_EXAM" as const,
+      label: ctaLabel || "S'entraîner sur le Simulateur CBT Officiel",
+      href: ctaUrl || "/examens",
+    };
+  }
+  if (ctaType === "RECENT_TOPICS") {
+    return {
+      type: "RECENT_TOPICS" as const,
+      label: ctaLabel || "Consulter les Sujets Récents d'Examen 2026",
+      href: ctaUrl || "/sujets-recents",
+    };
+  }
+  if (ctaType === "COMMUNITY") {
+    return {
+      type: "COMMUNITY" as const,
+      label: ctaLabel || "Rejoindre le Groupe d'Entraide WhatsApp VIP",
+      href: ctaUrl || "/communaute",
+    };
+  }
+  if (ctaType === "FREE_TEST") {
+    return {
+      type: "FREE_TEST" as const,
+      label: ctaLabel || "Passer le Test Diagnostique Gratuit",
+      href: ctaUrl || "/test-gratuit",
+    };
+  }
+  return {
+    type: "CRS_CALCULATOR" as const,
+    label: ctaLabel || "Simuler mes 50 points CRS avec le NCLC 7",
+    href: ctaUrl || "/nclc-calculator",
+  };
+}
+
 export async function listAllBlogPosts(): Promise<BlogPost[]> {
   try {
     const dbPosts = await prisma.blogPost.findMany({
@@ -46,13 +82,12 @@ export async function listAllBlogPosts(): Promise<BlogPost[]> {
             role: p.authorRole || "Expert NCLC & Ancien Correcteur FEI",
           },
           featured: p.featured,
+          coverImage: p.coverImage || undefined,
+          youtubeUrl: p.youtubeUrl || undefined,
+          targetKeyword: p.targetKeyword || undefined,
           tags: p.tags && p.tags.length > 0 ? p.tags : ["TCF Canada", "NCLC 7"],
           content: p.content,
-          targetCta: {
-            type: "CRS_CALCULATOR",
-            label: "Simuler mes 50 points CRS avec le NCLC 7",
-            href: "/nclc-calculator",
-          },
+          targetCta: resolveCta(p.ctaType, p.ctaLabel, p.ctaUrl),
         };
       });
 
@@ -93,13 +128,12 @@ export async function getSingleBlogPost(slug: string): Promise<BlogPost | null> 
           role: dbPost.authorRole || "Expert NCLC & Ancien Correcteur FEI",
         },
         featured: dbPost.featured,
+        coverImage: dbPost.coverImage || undefined,
+        youtubeUrl: dbPost.youtubeUrl || undefined,
+        targetKeyword: dbPost.targetKeyword || undefined,
         tags: dbPost.tags && dbPost.tags.length > 0 ? dbPost.tags : ["TCF Canada", "NCLC 7"],
         content: dbPost.content,
-        targetCta: {
-          type: "CRS_CALCULATOR",
-          label: "Simuler mes 50 points CRS avec le NCLC 7",
-          href: "/nclc-calculator",
-        },
+        targetCta: resolveCta(dbPost.ctaType, dbPost.ctaLabel, dbPost.ctaUrl),
       };
     }
   } catch (error) {

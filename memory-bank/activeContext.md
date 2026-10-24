@@ -2,6 +2,67 @@
 
 ## 0. Déploiement Production Vercel & Moteur de Conversion
 
+### 0.0zq. Jalon 3 & Jalon 4 : Infrastructure SEO Globale, Sitemap XML Dynamique & Clusters Piliers Synchronisés
+- **Directives Utilisateur :**
+  1. Finalisation complète du plan de route SEO : intégration du **Jalon 3** (Sitemap XML dynamique avec base PostgreSQL et balises JSON-LD Article/VideoObject) et du **Jalon 4** (Création et synchronisation des 3 clusters de contenus piliers).
+- **Réalisations Techniques & UI :**
+  1. **Sitemap XML Dynamique (`app/sitemap.ts`) :**
+     - Remplacement de la fonction statique par un handler asynchrone interrogeant `prisma.blogPost` pour extraire tous les articles publiés (`isPublished: true`).
+     - Attribution des métadonnées de fraîcheur `<lastmod>` (basées sur `updatedAt` ou `publishedAt`) et de priorité (0.90 pour les articles à la une, 0.85 pour les articles standards).
+     - Repli de sécurité gracieux (`try / catch`) sur `BLOG_POSTS` en cas d'indisponibilité momentanée de la base.
+  2. **Données Structurées Schema.org (JSON-LD) :**
+     - Balisage `@type: "BlogPosting"` avec URL canonique, image, auteur et date de publication.
+     - Balisage conditionnel `@type: "VideoObject"` pour toute publication contenant une vidéo YouTube, permettant le positionnement dans le carrousel « Vidéos » de Google.
+  3. **Synchronisation des 3 Clusters de Contenus Piliers (`scripts/sync-master-clusters.ts`) :**
+     - **Cluster Expression Écrite :** *« Tâche 1 Expression Écrite TCF : Formules de Politesse et Modèles 60-120 Mots »* (slug: `tache-1-expression-ecrite-tcf-canada-formules-politesse-modeles`).
+     - **Cluster Expression Orale :** *« Expression Orale TCF : La Liste des 10 Questions Types à Poser en Tâche 2 »* (slug: `expression-orale-tcf-canada-10-questions-types-tache-2`).
+     - **Cluster Entrée Express & CRS :** *« NCLC 7 vs NCLC 5 : Comment le Français Donne +50 Points Directs en Entrée Express »* (slug: `nclc-7-vs-nclc-5-pourquoi-francais-donne-50-points-bonus-entree-express`).
+     - Total de 7 articles officiels synchronisés en base PostgreSQL Supabase avec photos de couverture HD, vidéo YouTube intégrée et CTAs ciblés.
+  4. **Validation de Compilation :** `npx tsc --noEmit` validé avec 0 erreur, build Next.js validé.
+
+### 0.0zp. Jalon 2 : Expérience de Lecture Publique Premium, Sommaire Interactif & E-E-A-T (`/blog` & `/blog/[slug]`)
+- **Directives Utilisateur :**
+  1. Continuer sur le **Jalon 2** : métamorphoser l'expérience de lecture publique sur `/blog` et `/blog/[slug]` pour maximiser le temps de rétention (*Dwell Time* > 4 min) et la conversion vers les outils Super4C2.
+- **Réalisations Techniques & UI :**
+  1. **Brand & Design Canvas (`docs/brand/blog-reading-experience-canvas.md`) :**
+     - Standards typographiques éditoriaux (Bricolage Grotesque, interlignage 1.75), disposition scindée 2 colonnes (680px lecture + 280px sticky sidebar TOC), callouts FEI personnalisés.
+  2. **Document de Spécification Structuré (`docs/specs/20-public-blog-reading-experience-and-engagement.md`) :**
+     - Architecture des composants, extraction automatique des titres `##` et `###`, défilement fluide avec offset sticky, intégration Schema.org JSON-LD (Article & VideoObject).
+  3. **Composants Déployés :**
+     - **Barre de Progression de Lecture (`components/blog/reading-progress-bar.tsx`) :** Jauge dynamique au scroll en tête d'écran (`fixed top-0`, gradient Super4C2).
+     - **Sommaire Interactif TOC (`components/blog/blog-toc.tsx`) :** Sidebar sticky desktop avec détection d'ancre active en direct (`IntersectionObserver`) et accordéon repliable sur mobile.
+     - **Player Vidéo YouTube 16:9 (`components/blog/blog-video-player.tsx`) :** Container responsive sans décalage de mise en page (*Zero CLS*) avec badge de débriefing officiel.
+     - **Rendu Markdown Pédagogique (`components/blog/blog-content-renderer.tsx`) :** Ancres cliquables synchronisées avec le TOC, callouts différenciés (Conseil FEI, Piège Classique, Formule C1/C2), tableaux avec scroll horizontal, listes enrichies.
+     - **Partage Social en 1-Clic (`components/blog/blog-social-share.tsx`) :** Bouton WhatsApp avec texte d'invitation pré-rempli, LinkedIn, Twitter/X et copie de lien avec toast Sonner.
+     - **Encart d'Autorité E-E-A-T (`components/blog/blog-author-bio.tsx`) :** Profil d'expertise avec badge "Expert Vérifié", conformité aux grilles FEI 2026 et seuils IRCC.
+     - **Grille Catalogue Enrichie (`components/blog/blog-index-client.tsx`) :** Miniatures 16:9, badges vidéo, filtrage instantané par catégorie et recherche plein-texte.
+  4. **Validation TypeScript :** `npx tsc --noEmit` validé avec 0 erreur.
+
+### 0.0zo. Jalon 1 : Moteur de Gestion de Blog & Studio SEO Haute Fidélité (`/admin/blog`)
+- **Directives Utilisateur :**
+  1. Focalisation stricte sur le **Jalon 1** du plan de route SEO : l'interface d'administration `/admin/blog` pour rédiger, illustrer avec YouTube/images, optimiser pour le SEO et publier les articles sans toucher au code.
+- **Réalisations Techniques & UI :**
+  1. **Brand & Design Canvas (`docs/brand/admin-blog-cms-canvas.md`) :**
+     - Codes graphiques EdTech/Fintech moderne, respect des tokens sémantiques clairs/sombres, architecture d'autorité E-E-A-T et simulateur SERP Google.
+  2. **Document de Spécification Structuré (`docs/specs/19-admin-blog-cms-and-seo-engine.md`) :**
+     - Schéma de données enrichi (`youtubeUrl`, `targetKeyword`, `ctaType`, `ctaLabel`, `ctaUrl`), actions serveur, cas limites de slug et batch actions.
+  3. **DDL PostgreSQL & Synchronisation Prisma :**
+     - Migration sécurisée de la table `public.blog_posts` avec nouvelles colonnes et synchronisation `prisma generate`.
+  4. **Tableau de Bord `/admin/blog` & Composant Client (`components/admin/blog-list-client.tsx`) :**
+     - 4 KPI Cards (Total Articles, Publiés, Brouillons, Lectures Cumulées).
+     - Filtres d'onglets de statut rapides (*Tous les articles*, *Publiés*, *Brouillons*, *À la une*).
+     - Barre d'actions en lot flottante `AdminBatchActionBar` avec Publication groupée, Mise en brouillon groupée, Suppression en masse sécurisée et Export CSV (Excel UTF-8 BOM).
+     - Switch de publication et mise à la une en 1 clic direct depuis le tableau.
+     - Affichage des vignettes média, tags de mots-clés SEO, compteur de vues et liens directs vers le site public.
+  5. **Studio d'Édition Haute Fidélité (`components/admin/blog-form.tsx`) :**
+     - **Analyseur SEO en Temps Réel :** Calcul de densité et score sur 100 du mot-clé ciblé (présence dans titre H1, slug, extrait, contenu).
+     - **Simulateur SERP Google en Direct :** Aperçu fidèle de l'affichage dans les résultats de recherche (URL breadcrumb verte, titre cliquable bleu, méta description grise avec indicateur de longueur optimale).
+     - **Intégrateur YouTube 1-Clic :** Détection d'URL, extraction d'ID, extraction automatique de la miniature HD en photo de couverture, et bouton de copie de code Markdown.
+     - **Médiathèque 6 Presets :** Photos 16:9 haute résolution certifiées (Canada, CBT, Studio Oral, Expression Écrite, FEI, Attestation CRS).
+     - **4 Modèles Didactiques Markdown :** Modèle NCLC 7, Modèle Expression Écrite (3 Tâches), Modèle Expression Orale (Questions T2), Modèle Stratégie CRS.
+     - **Configurateur de Call-To-Action (CTA) :** Présélections vers le calculateur CRS (+50 pts), le simulateur CBT, les sujets récents ou le groupe WhatsApp VIP.
+  6. **Validation TypeScript Globale :** `npx tsc --noEmit` avec 0 erreur.
+
 ### 0.0zn. Option 1 : Lecteur Audio de Réécoute dans l'Historique Candidat & Archivage des Sessions Orales
 - **Directives Utilisateur :**
   1. Choix prioritaire de l'**Option 1** : intégrer un lecteur audio interactif et complet dans la vue de détail d'une tentative orale (`/dashboard/historique/[attemptId]`).
