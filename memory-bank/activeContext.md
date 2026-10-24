@@ -20,23 +20,36 @@
      - Total de 7 articles officiels synchronisés en base PostgreSQL Supabase avec photos de couverture HD, vidéo YouTube intégrée et CTAs ciblés.
   4. **Validation de Compilation :** `npx tsc --noEmit` validé avec 0 erreur, build Next.js validé.
 
-### 0.0zp. Jalon 2 : Expérience de Lecture Publique Premium, Sommaire Interactif & E-E-A-T (`/blog` & `/blog/[slug]`)
+### 0.0zp. Jalon 2 (Perfectionné) : Expérience de Lecture Publique Premium, Sommaire Interactif & Rétention Candidat (`/blog` & `/blog/[slug]`)
 - **Directives Utilisateur :**
-  1. Continuer sur le **Jalon 2** : métamorphoser l'expérience de lecture publique sur `/blog` et `/blog/[slug]` pour maximiser le temps de rétention (*Dwell Time* > 4 min) et la conversion vers les outils Super4C2.
+  1. Perfectionner le **Jalon 2** selon les standards les plus exigeants de l'industrie (Stripe Press / Substack Pro) afin de maximiser la rétention (*Dwell Time* > 4 min) et la conversion vers les outils Super4C2.
 - **Réalisations Techniques & UI :**
   1. **Brand & Design Canvas (`docs/brand/blog-reading-experience-canvas.md`) :**
      - Standards typographiques éditoriaux (Bricolage Grotesque, interlignage 1.75), disposition scindée 2 colonnes (680px lecture + 280px sticky sidebar TOC), callouts FEI personnalisés.
   2. **Document de Spécification Structuré (`docs/specs/20-public-blog-reading-experience-and-engagement.md`) :**
      - Architecture des composants, extraction automatique des titres `##` et `###`, défilement fluide avec offset sticky, intégration Schema.org JSON-LD (Article & VideoObject).
-  3. **Composants Déployés :**
+  3. **Composants Déployés & Élevés :**
      - **Barre de Progression de Lecture (`components/blog/reading-progress-bar.tsx`) :** Jauge dynamique au scroll en tête d'écran (`fixed top-0`, gradient Super4C2).
-     - **Sommaire Interactif TOC (`components/blog/blog-toc.tsx`) :** Sidebar sticky desktop avec détection d'ancre active en direct (`IntersectionObserver`) et accordéon repliable sur mobile.
-     - **Player Vidéo YouTube 16:9 (`components/blog/blog-video-player.tsx`) :** Container responsive sans décalage de mise en page (*Zero CLS*) avec badge de débriefing officiel.
-     - **Rendu Markdown Pédagogique (`components/blog/blog-content-renderer.tsx`) :** Ancres cliquables synchronisées avec le TOC, callouts différenciés (Conseil FEI, Piège Classique, Formule C1/C2), tableaux avec scroll horizontal, listes enrichies.
+     - **Sommaire Interactif TOC Haute Précision (`components/blog/blog-toc.tsx`) :**
+       - Détection d'ancre active en direct (`IntersectionObserver`).
+       - Calcul du pourcentage de progression et affichage de la section courante (`Section X sur Y (Z%)`) avec mini-barre de progression intégrée.
+       - Animation d'impulsion visuelle (`heading-pulse-target`) déclenchée sur le titre cible lors d'un clic pour guider instantanément le regard du lecteur.
+       - Accordéon repliable mobile et sticky sidebar desktop.
+     - **Appel à l'Action de Milieu d'Article (`components/blog/blog-in-article-cta.tsx`) :**
+       - Encart élégant et contextuel injecté automatiquement dans le flux de lecture (après le 2ème H2) pour convertir les lecteurs qui n'atteignent pas le bas de page.
+       - Adapté dynamiquement selon la catégorie (Expression Écrite, Expression Orale ou Entrée Express/CRS) avec badges de réassurance (+1 400 candidats préparés, sans carte bancaire).
+     - **Player Vidéo YouTube Haute Performance avec Facade Pattern (`components/blog/blog-video-player.tsx`) :**
+       - Miniature 16:9 avec bouton de lecture animé à impulsions lumineuses, différant le chargement de l'iframe YouTube jusqu'au clic utilisateur (*Zero CLS*, économie de 500 Ko+ de JS au chargement).
+       - Barre de chapitres interactifs intégrée permettant d'avancer directement à des repères temporels clés.
+     - **Rendu Markdown Pédagogique Avancé (`components/blog/blog-content-renderer.tsx`) :**
+       - Parseur inline Markdown supportant le gras, l'italique, le code en ligne et les hyperliens cliquables (internes via Next `Link`, externes avec icône).
+       - Blocs de modèles et extraits didactiques avec bouton « Copier » en 1 clic.
+       - Callouts visuels FEI différenciés (Conseil Pédagogique FEI, Piège Classique à Éviter, Modèle C1/C2 & Bilan, Note Méthodologique).
+       - Tableaux avec scroll horizontal responsive.
      - **Partage Social en 1-Clic (`components/blog/blog-social-share.tsx`) :** Bouton WhatsApp avec texte d'invitation pré-rempli, LinkedIn, Twitter/X et copie de lien avec toast Sonner.
      - **Encart d'Autorité E-E-A-T (`components/blog/blog-author-bio.tsx`) :** Profil d'expertise avec badge "Expert Vérifié", conformité aux grilles FEI 2026 et seuils IRCC.
      - **Grille Catalogue Enrichie (`components/blog/blog-index-client.tsx`) :** Miniatures 16:9, badges vidéo, filtrage instantané par catégorie et recherche plein-texte.
-  4. **Validation TypeScript :** `npx tsc --noEmit` validé avec 0 erreur.
+  4. **Validation TypeScript & Build :** `npx tsc --noEmit` validé avec 0 erreur.
 
 ### 0.0zo. Jalon 1 : Moteur de Gestion de Blog & Studio SEO Haute Fidélité (`/admin/blog`)
 - **Directives Utilisateur :**

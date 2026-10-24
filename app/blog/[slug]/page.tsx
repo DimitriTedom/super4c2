@@ -234,10 +234,15 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           {/* Colonne Principale de Lecture */}
           <div className="space-y-10 min-w-0">
             {/* Sommaire Mobile Déployable */}
-            <BlogTableOfContents items={tocItems} />
+            <BlogTableOfContents items={tocItems} readTimeMinutes={post.readTimeMinutes} />
 
-            {/* Rendu Markdown Haute Fidélité avec Ancres */}
-            <BlogContentRenderer content={post.content} />
+            {/* Rendu Markdown Haute Fidélité avec Ancres & Callout de Milieu d'Article */}
+            <BlogContentRenderer
+              content={post.content}
+              categoryLabel={post.categoryLabel}
+              ctaLabel={post.targetCta.label}
+              ctaUrl={post.targetCta.href}
+            />
 
             {/* Boutons de Partage en Fin d'Article */}
             <div className="p-4 rounded-2xl border border-border bg-card/60 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs">
@@ -280,7 +285,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
           {/* Colonne Latérale Droite : Sommaire Interactif Sticky Desktop */}
           <div className="hidden lg:block space-y-6">
-            <BlogTableOfContents items={tocItems} />
+            <BlogTableOfContents items={tocItems} readTimeMinutes={post.readTimeMinutes} />
 
             {/* Mini Box d'Appel à l'Action Sticky */}
             <div className="rounded-2xl border border-primary/30 bg-primary/5 p-4 text-center space-y-2.5 shadow-2xs">

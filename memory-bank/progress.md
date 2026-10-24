@@ -4,11 +4,17 @@
   - **Données Structurées Schema.org :** Balisage JSON-LD `BlogPosting` + `VideoObject` sur `/blog/[slug]` pour affichage enrichi et carrousel vidéo Google.
   - **Synchronisation des 3 Clusters Piliers (`scripts/sync-master-clusters.ts`) :** 7 articles d'autorité publiés en base PostgreSQL (Tâche 1 EE formules et modèles, Tâche 2 EO 10 questions types, et Stratégie NCLC 7 vs NCLC 5 +50 pts CRS).
   - **Validation :** 0 erreur TypeScript (`npx tsc --noEmit`), compilation Next.js de production réussie.
-- [x] **Jalon 2 : Expérience de Lecture Publique Premium, Sommaire Interactif & E-E-A-T (`/blog` & `/blog/[slug]`) :**
+- [x] **Jalon 2 (Perfectionné) : Expérience de Lecture Publique Premium, Sommaire Interactif & Rétention Candidat (`/blog` & `/blog/[slug]`) :**
   - **Brand & Design Canvas (`docs/brand/blog-reading-experience-canvas.md`) :** Typographie haute lisibilité (Bricolage Grotesque, interlignage 1.75), callouts FEI personnalisés et disposition 2 colonnes avec sticky TOC.
   - **Spécification Complète (`docs/specs/20-public-blog-reading-experience-and-engagement.md`) :** Architecture technique, ancres synchronisées, JSON-LD Schema.org Article & VideoObject.
-  - **Composants d'Engagement Déployés :** `ReadingProgressBar` dynamique au scroll, `BlogTableOfContents` avec `IntersectionObserver` et accordéon mobile, `BlogVideoPlayer` responsive 16:9, `BlogSocialShare` (WhatsApp 1-clic avec texte pré-rempli, LinkedIn, Twitter, Copie), `BlogAuthorBio` avec badge Expert Vérifié FEI, et `BlogContentRenderer` avec blocs didactiques.
-  - **Validation :** 0 erreur TypeScript (`npx tsc --noEmit`).
+  - **Composants d'Engagement Déployés & Élevés :**
+    - `ReadingProgressBar` dynamique au scroll en tête d'écran (`fixed top-0`).
+    - `BlogTableOfContents` avec `IntersectionObserver`, accordéon mobile, barre de progression dynamique (`Section X sur Y (Z%)`), et animation pulse d'impulsion visuelle (`heading-pulse-target`) guidant le regard du lecteur lors d'un clic.
+    - `BlogInArticleCta` : encart d'action contextuel haute conversion injecté automatiquement après le 2ème H2 avec badges de réassurance adaptés à la compétence (Expression Écrite, Orale ou NCLC 7).
+    - `BlogVideoPlayer` : lecteur YouTube avec Facade Pattern (chargement différé de l'iframe, 0 CLS, ripple de lecture) et chapitres cliquables.
+    - `BlogContentRenderer` : parseur inline Markdown, callouts FEI différenciés (Conseil FEI, Piège Classique, Modèle C1/C2, Note Méthodologique), et blocs de modèles avec bouton de copie en 1 clic.
+    - `BlogSocialShare` (WhatsApp 1-clic avec message pré-rempli, LinkedIn, Twitter, Copie) et `BlogAuthorBio` avec badge Expert Vérifié FEI.
+  - **Validation :** 0 erreur TypeScript (`npx tsc --noEmit`), compilation Next.js réussie.
 - [x] **Jalon 1 : Moteur de Gestion de Blog & Studio SEO Haute Fidélité (`/admin/blog`) :**
   - **Brand & Design Canvas (`docs/brand/admin-blog-cms-canvas.md`) :** Définition de l'identité visuelle du CMS, de l'optimisation E-E-A-T et du simulateur SERP Google.
   - **Spécification Complète (`docs/specs/19-admin-blog-cms-and-seo-engine.md`) :** Schéma de données enrichi, actions serveur et gestion des cas limites.

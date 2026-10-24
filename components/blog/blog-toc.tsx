@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { List, ChevronDown, ChevronUp, Bookmark } from "lucide-react";
+import { List, ChevronDown, ChevronUp, Bookmark, Clock } from "lucide-react";
 import { slugify } from "@/lib/admin-crud-utils";
 
 export interface TocItem {
@@ -38,9 +38,10 @@ export function extractTocFromMarkdown(content: string): TocItem[] {
 
 interface BlogTocProps {
   items: TocItem[];
+  readTimeMinutes?: number;
 }
 
-export function BlogTableOfContents({ items }: BlogTocProps) {
+export function BlogTableOfContents({ items, readTimeMinutes }: BlogTocProps) {
   const [activeId, setActiveId] = useState<string>("");
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
@@ -78,10 +79,20 @@ export function BlogTableOfContents({ items }: BlogTocProps) {
       window.scrollTo({ top: y, behavior: "smooth" });
       setActiveId(id);
       setIsMobileOpen(false);
+
+      // Trigger high-visibility pulse animation on target
+      el.classList.remove("heading-pulse-target");
+      void el.offsetWidth;
+      el.classList.add("heading-pulse-target");
+      setTimeout(() => el.classList.remove("heading-pulse-target"), 1900);
     }
   };
 
   if (items.length === 0) return null;
+
+  const activeIndex = items.findIndex((item) => item.id === activeId);
+  const currentStep = activeIndex >= 0 ? activeIndex + 1 : 1;
+  const progressPercent = items.length > 0 ? Math.round((currentStep / items.length) * 100) : 0;
 
   return (
     <>
@@ -127,32 +138,58 @@ export function BlogTableOfContents({ items }: BlogTocProps) {
 
       {/* Desktop Sticky Sidebar TOC */}
       <aside className="hidden lg:block w-72 shrink-0">
-        <div className="sticky top-24 rounded-2xl border border-border bg-card/80 backdrop-blur-xs p-5 shadow-xs space-y-3.5">
-          <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-muted-foreground border-b border-border/60 pb-2.5">
-            <Bookmark className="h-3.5 w-3.5 text-brand-crimson" />
-            <span>Dans ce Guide</span>
+        <div className="sticky top-24 rounded-2xl border border-border bg-card/90 backdrop-blur-md p-5 shadow-xs space-y-4">
+          <div className="flex items-center justify-between text-xs font-bold uppercase tracking-wider text-muted-foreground border-b border-border/60 pb-3">
+            <span className="flex items-center gap-2">
+              <Bookmark className="h-3.5 w-3.5 text-brand-crimson" />
+              <span>Dans ce Guide</span>
+            </span>
+            {readTimeMinutes && (
+              <span className="flex items-center gap-1 font-mono text-[11px] font-normal text-muted-foreground/80 lowercase">
+                <Clock className="h-3 w-3 text-brand-crimson" />
+                {readTimeMinutes} min
+              </span>
+            )}
           </div>
 
-          <nav className="space-y-1.5 max-h-[calc(100vh-180px)] overflow-y-auto pr-1 text-xs">
-            {items.map((item) => {
+          {/* Reading Progress Indicator */}
+          <div className="space-y-1.5 pb-1">
+            <div className="flex items-center justify-between text-[11px] text-muted-foreground font-mono">
+              <span>Section {currentStep} sur {items.length}</span>
+              <span className="font-bold text-foreground">{progressPercent}%</span>
+            </div>
+            <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden">
+              <div
+                className="h-full bg-brand-crimson transition-all duration-300 rounded-full"
+                style={{ width: `${progressPercent}%` }}
+              />
+            </div>
+          </div>
+
+          <nav className="space-y-1 max-h-[calc(100vh-220px)] overflow-y-auto pr-1 text-xs">
+            {items.map((item, idx) => {
               const isActive = activeId === item.id;
+              const isPast = activeIndex > idx;
+
               return (
                 <button
                   key={item.id}
                   type="button"
                   onClick={() => scrollToHeading(item.id)}
-                  className={`group flex items-start gap-2 w-full text-left py-1 px-2 rounded-lg transition-all ${
+                  className={`group flex items-start gap-2 w-full text-left py-1.5 px-2.5 rounded-lg transition-all ${
                     item.level === 3 ? "ml-3 text-[11px]" : "font-semibold"
                   } ${
                     isActive
                       ? "bg-primary/10 text-primary font-bold shadow-2xs"
-                      : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                      : "text-muted-foreground hover:bg-muted/80 hover:text-foreground"
                   }`}
                 >
                   <span
                     className={`mt-1 h-1.5 w-1.5 shrink-0 rounded-full transition-all ${
                       isActive
-                        ? "bg-brand-crimson scale-125"
+                        ? "bg-brand-crimson scale-125 ring-2 ring-brand-crimson/20"
+                        : isPast
+                        ? "bg-emerald-500/70"
                         : "bg-muted-foreground/30 group-hover:bg-muted-foreground"
                     }`}
                   />
