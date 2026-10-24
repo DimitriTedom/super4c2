@@ -25,7 +25,8 @@ import { BlogLeadEngagement } from "@/components/blog/blog-lead-engagement";
 import { BlogBookmarkButton } from "@/components/blog/blog-bookmark-button";
 import { BlogArticleFeedback } from "@/components/blog/blog-article-feedback";
 import { BlogCommentsSection } from "@/components/blog/blog-comments-section";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { BlogArticleFooterCta } from "@/components/blog/blog-article-footer-cta";
+import { BlogSidebarStickyCta } from "@/components/blog/blog-sidebar-sticky-cta";
 
 interface BlogPostPageProps {
   params: Promise<{ slug: string }>;
@@ -94,28 +95,26 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     notFound();
   }
 
-  // Session utilisateur courante (sécurisée contre tout rejet serveur)
-  let user: any = null;
-  try {
-    const supabase = await createSupabaseServerClient();
-    if (supabase) {
-      const { data } = await supabase.auth.getUser();
-      user = data?.user ?? null;
-    }
-  } catch (authErr) {
-    console.warn("⚠️ Impossible de vérifier la session utilisateur sur la page de blog :", authErr);
-    user = null;
-  }
-
   // Articles recommandés (sécurisés contre toute panne DB)
   let relatedPosts: any[] = [];
   try {
     const allPosts = await listAllBlogPosts();
-    relatedPosts = allPosts.filter((p) => p.slug !== post.slug).slice(0, 2);
+    if (Array.isArray(allPosts)) {
+      relatedPosts = allPosts.filter((p) => p && p.slug !== post.slug).slice(0, 2);
+    }
   } catch (recErr) {
     console.warn("⚠️ Impossible de charger les articles recommandés :", recErr);
     relatedPosts = [];
   }
+
+  // Fallbacks défensifs pour garantir un rendu 100% robuste
+  const authorName = post.author?.name || "Équipe Pédagogique Super4C2";
+  const authorRole = post.author?.role || "Expert TCF Canada & Concepteur Pédagogique";
+  const targetCta = post.targetCta || {
+    type: "CBT_EXAM",
+    label: "Tester le Simulateur CBT en Conditions Réelles",
+    href: "/examens",
+  };
 
   // Extraction des ancres pour le sommaire interactif
   const tocItems = extractTocFromMarkdown(post.content || "");
@@ -133,8 +132,8 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     datePublished: post.publishedAt,
     author: {
       "@type": "Person",
-      name: post.author.name,
-      jobTitle: post.author.role,
+      name: authorName,
+      jobTitle: authorRole,
     },
     publisher: {
       "@type": "Organization",
@@ -264,7 +263,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
           <div className="flex flex-wrap items-center justify-between gap-4 pt-1">
             <div className="flex flex-wrap gap-1.5">
-              {post.tags.map((tag) => (
+              {(post.tags || []).map((tag) => (
                 <span
                   key={tag}
                   className="inline-flex items-center gap-1 rounded-full border border-border/80 bg-muted/40 px-2.5 py-0.5 text-[11px] text-muted-foreground font-medium"
@@ -307,8 +306,8 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             <BlogContentRenderer
               content={post.content}
               categoryLabel={post.categoryLabel}
-              ctaLabel={post.targetCta.label}
-              ctaUrl={post.targetCta.href}
+              ctaLabel={targetCta.label}
+              ctaUrl={targetCta.href}
             />
 
             {/* 💬 Évaluation & Réactions Candidat (Option A) */}
@@ -321,48 +320,10 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             />
 
             {/* 🎯 Encadré d'Action Contextuel Haute Conversion */}
-            <div className="rounded-3xl border border-primary/30 bg-gradient-to-br from-card via-card to-primary/10 p-6 sm:p-8 space-y-4 shadow-md">
-              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-primary/10 text-primary border border-primary/20">
-                <Zap className="h-3 w-3" />
-                Passer à l&apos;Application Pratique
-              </div>
-
-              <h3 className="font-display text-xl sm:text-2xl font-black tracking-tight text-foreground">
-                Prêt à Valider votre Palier NCLC 7 et Gagner vos 50 Points CRS ?
-              </h3>
-
-              <p className="text-sm text-muted-foreground leading-relaxed max-w-xl">
-                Rejoignez Super4C2 pour vous entraîner dans les conditions réelles des examens officiels FEI : simulateur CBT chronométré, double notation instantanée et modèles Magic Rewrite C2.
-              </p>
-
-              <div className="pt-2 flex flex-wrap items-center gap-3">
-                {user ? (
-                  <ShimmerButton
-                    href="/dashboard"
-                    background="#E51A31"
-                    shimmerColor="#ffffff"
-                    className="font-bold px-7 py-3 text-white text-xs sm:text-sm shadow-md"
-                  >
-                    Accéder à mon espace d&apos;entraînement →
-                  </ShimmerButton>
-                ) : (
-                  <ShimmerButton
-                    href="/auth/register?source=blog_article_footer"
-                    background="#E51A31"
-                    shimmerColor="#ffffff"
-                    className="font-bold px-7 py-3 text-white text-xs sm:text-sm shadow-md"
-                  >
-                    Créer mon compte gratuit en 30s →
-                  </ShimmerButton>
-                )}
-                <Button variant="outline" size="sm" asChild className="text-xs h-10 border-border">
-                  <Link href={post.targetCta.href}>{post.targetCta.label}</Link>
-                </Button>
-              </div>
-            </div>
+            <BlogArticleFooterCta targetCta={targetCta} />
 
             {/* ✍️ Signature & Autorité Auteur E-E-A-T */}
-            <BlogAuthorBio name={post.author.name} role={post.author.role} />
+            <BlogAuthorBio name={authorName} role={authorRole} />
 
             {/* 💬 Salon de Mentorat & Échange Pédagogique (Option C) */}
             <BlogCommentsSection
@@ -377,39 +338,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             <BlogTableOfContents items={tocItems} readTimeMinutes={post.readTimeMinutes} />
 
             {/* Mini Box d'Appel à l'Action Sticky */}
-            <div className="rounded-2xl border border-primary/30 bg-gradient-to-br from-card to-primary/5 p-4 text-center space-y-3 shadow-sm">
-              {user ? (
-                <>
-                  <span className="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
-                    Session Active
-                  </span>
-                  <h5 className="font-display font-bold text-sm text-foreground leading-snug">
-                    Votre Espace Candidat
-                  </h5>
-                  <p className="text-[11px] text-muted-foreground leading-relaxed">
-                    Reprenez vos simulations CBT, révisez vos erreurs et suivez votre progression NCLC.
-                  </p>
-                  <Button asChild size="sm" className="w-full text-xs font-bold h-9 bg-primary hover:bg-primary-dark text-white shadow-xs">
-                    <Link href="/dashboard">Mon Tableau de Bord →</Link>
-                  </Button>
-                </>
-              ) : (
-                <>
-                  <span className="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-primary/10 text-primary border border-primary/20">
-                    100% Gratuit • Sans Carte
-                  </span>
-                  <h5 className="font-display font-bold text-sm text-foreground leading-snug">
-                    Créez Votre Compte Candidat
-                  </h5>
-                  <p className="text-[11px] text-muted-foreground leading-relaxed">
-                    Sauvegardez vos scores, activez le carnet d&apos;erreurs SRS et simulez sous le chrono officiel FEI.
-                  </p>
-                  <Button asChild size="sm" className="w-full text-xs font-bold h-9 bg-primary hover:bg-primary-dark text-white shadow-xs">
-                    <Link href="/auth/register?source=blog_sidebar_sticky">Créer Mon Compte →</Link>
-                  </Button>
-                </>
-              )}
-            </div>
+            <BlogSidebarStickyCta />
           </div>
         </div>
 
