@@ -2,6 +2,29 @@
 
 ## 0. Déploiement Production Vercel & Moteur de Conversion
 
+### 0.0zs. Jalon 4 (Perfectionné) : Les 3 Clusters Thématiques Maîtres (Expression Écrite, Expression Orale & Stratégie CRS) & Maillage en Silo SEO
+- **Directives Utilisateur :**
+  1. Perfectionner le **Jalon 4** : déployer les clusters de contenus piliers et satellites pour asseoir l'autorité sémantique thématique absolue de Super4C2 face à Objectif Canada.
+  2. Maintenir l'offre 100% gratuite et orienter chaque article vers la capture de leads WhatsApp/Email.
+- **Réalisations Techniques & Pédagogiques :**
+  1. **Architecture des 3 Silos Thématiques Piliers & Satellites (`scripts/sync-master-clusters.ts`) :**
+     - **Cluster 1 : Expression Écrite (EE)**
+       - *Pilier Tâche 1 :* Formules de politesse et modèles 60-120 mots (`/blog/tache-1-expression-ecrite-tcf-canada-formules-politesse-modeles`).
+       - *Satellite Tâche 2 :* Réussir le récit d'expérience et alternance Imparfait / Passé Composé 120-150 mots (`/blog/tache-2-expression-ecrite-tcf-canada-recit-experience-temps-passe`).
+       - *Pilier Tâche 3 :* Plan dialectique comparatif deux avis et formules d'argumentation C1/C2 120-180 mots (`/blog/tache-3-expression-ecrite-tcf-plan-argumentatif-c1-c2`).
+     - **Cluster 2 : Expression Orale (EO)**
+       - *Satellite Tâche 1 :* Se présenter en 2 minutes sans réciter son CV (`/blog/expression-orale-tcf-canada-tache-1-se-presenter-en-2-minutes`).
+       - *Pilier Tâche 2 :* La liste des 10 questions types à poser en jeu de rôle (`/blog/expression-orale-tcf-canada-10-questions-types-tache-2`).
+       - *Pilier Tâche 3 :* Exprimer son point de vue et convaincre l'examinateur en 4 min 30 (`/blog/expression-orale-tcf-canada-tache-3-exprimer-son-point-de-vue`).
+     - **Cluster 3 : Stratégie Immigration & Score CRS**
+       - *Pilier NCLC 7 :* NCLC 7 vs NCLC 5 : comment le français donne +50 points directs en Entrée Express (`/blog/nclc-7-vs-nclc-5-pourquoi-francais-donne-50-points-bonus-entree-express`).
+       - *Pilier Comparatif :* TCF Canada vs TEF Canada : quel test choisir pour immigrer en 2026 (`/blog/tcf-canada-vs-tef-canada-quel-test-choisir-immigration-2026`).
+  2. **Maillage Interne Sémantique (Silo SEO) :**
+     - Interconnexion systématique des articles d'un même cluster via des ancres contextuelles pour faciliter le crawl de Googlebot et maximiser le temps de visite (*Dwell Time*).
+  3. **Synchronisation PostgreSQL :**
+     - 8 articles maîtres mis à jour et injectés via `prisma.blogPost.upsert`, portant le catalogue actif à **12 articles d'autorité**.
+  4. **Validation :** 0 erreur TypeScript (`npx tsc --noEmit`), build Next.js validé.
+
 ### 0.0zr. Jalon 3 (Perfectionné) : Positionnement 100% Gratuit, Rich Snippets Google (FAQPage & WebApplication) & Machine de Capture WhatsApp/Email
 - **Directives Utilisateur :**
   1. Perfectionner le **Jalon 3** en intégrant la règle fondamentale : l'application doit rester **100% gratuite** dans un premier temps.

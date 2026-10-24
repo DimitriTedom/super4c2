@@ -1,3 +1,11 @@
+- [x] **Jalon 4 (Perfectionné) : Les 3 Clusters Thématiques Maîtres (Expression Écrite, Expression Orale & Stratégie CRS) & Maillage en Silo SEO :**
+  - **8 Articles Maîtres Piliers & Satellites Déployés (`scripts/sync-master-clusters.ts`) :**
+    - *Cluster Expression Écrite :* Tâche 1 (modèles 60-120 mots), Tâche 2 (récit d'expérience au passé 120-150 mots), Tâche 3 (plan dialectique deux avis 120-180 mots).
+    - *Cluster Expression Orale :* Tâche 1 (se présenter en 2 minutes), Tâche 2 (10 questions types jeu de rôle 3 min 30), Tâche 3 (débat et monologue d'opinion 4 min 30).
+    - *Cluster Entrée Express & CRS :* NCLC 7 vs NCLC 5 (+50 points bonus), TCF Canada vs TEF Canada (comparatif stratégique 2026).
+  - **Maillage Interne en Silo Sémantique :** Liens contextuels croisés entre chaque tâche d'un même cluster pour maximiser l'autorité SEO et le temps de lecture (*Dwell Time*).
+  - **Synchronisation PostgreSQL Supabase :** 12 articles actifs en base, tous équipés du kit de capture de leads WhatsApp/Email 100% gratuit et de métadonnées de fraîcheur `<lastmod>` dans le sitemap XML.
+  - **Validation :** 0 erreur TypeScript (`npx tsc --noEmit`), compilation Next.js réussie.
 - [x] **Jalon 3 (Perfectionné) : Positionnement 100% Gratuit, Rich Snippets Google (FAQPage & WebApplication) & Machine de Capture WhatsApp/Email :**
   - **Déclaration 100% Gratuit Google Schema.org (`components/seo/json-ld.tsx`) :** Remplacement des offres payantes par `@type: "Offer"` `price: "0"`, `isAccessibleForFree: true`, et déclaration `@type: "WebApplication"` avec note 4.9/5 sur 1 420 candidats.
   - **Rich Snippets FAQPage & BreadcrumbList :** Balisage FAQPage (4 questions à fort volume de recherche pour accordéon Google SERP), BreadcrumbList sur tous les articles et SearchAction Sitelinks.

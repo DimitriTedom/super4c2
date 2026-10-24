@@ -1,6 +1,9 @@
 import { prisma } from "../lib/prisma";
 
 const MASTER_ARTICLES = [
+  // ==========================================
+  // CLUSTER 1 : EXPRESSION ÉCRITE (EE)
+  // ==========================================
   {
     title: "Tâche 1 Expression Écrite TCF : Formules de Politesse et Modèles 60-120 Mots",
     slug: "tache-1-expression-ecrite-tcf-canada-formules-politesse-modeles",
@@ -17,8 +20,8 @@ const MASTER_ARTICLES = [
     featured: true,
     isPublished: true,
     ctaType: "CBT_EXAM",
-    ctaLabel: "S'entraîner sur la Tâche 1 dans le Simulateur CBT",
-    ctaUrl: "/examens",
+    ctaLabel: "S'entraîner sur la Tâche 1 dans le Simulateur CBT Gratuit",
+    ctaUrl: "/test-gratuit",
     content: `## Pourquoi la Tâche 1 est-elle Déterminante pour votre Note Finale ?
 
 La Tâche 1 d'Expression Écrite du TCF Canada est la première impression que vous donnez au correcteur humain de France Éducation International (FEI). 
@@ -82,11 +85,217 @@ Selon que le destinataire est un ami proche ou une connaissance, le registre doi
 
 ---
 
-## 4. Les 3 Erreurs Fatales qui Font Chuter sous le NCLC 7
+## 4. Pour Poursuivre votre Préparation d'Expression Écrite
 
-1. **Oublier l'un des trois éléments de la consigne :** Même rédigé sans faute d'orthographe, un texte incomplet perd d'office la moitié des points d'adéquation.
-2. **Utiliser le vouvoiement avec un ami d'enfance :** Une rupture de registre amical vers le formel est immédiatement sanctionnée.
-3. **Négliger la ponctuation :** Dans les critères FEI, l'absence de majuscules ou de points pénalise la cohérence textuelle.
+Une fois la Tâche 1 maîtrisée, découvrez nos guides complémentaires pour valider le NCLC 7 :
+- Consultez le guide complet de la [Tâche 2 Expression Écrite](/blog/tache-2-expression-ecrite-tcf-canada-recit-experience-temps-passe) (récit au passé 120-150 mots).
+- Apprenez à structurer l'essai argumentatif de la [Tâche 3 Expression Écrite](/blog/tache-3-expression-ecrite-tcf-plan-argumentatif-c1-c2) (120-180 mots).
+- Testez gratuitement vos textes avec le simulateur chronométré de Super4C2.
+`,
+  },
+  {
+    title: "Tâche 2 Expression Écrite TCF : Réussir le Récit d'Expérience et les Temps du Passé (120-150 Mots)",
+    slug: "tache-2-expression-ecrite-tcf-canada-recit-experience-temps-passe",
+    category: "Expression Écrite",
+    targetKeyword: "TCF Canada Expression Écrite Tâche 2",
+    excerpt:
+      "Comment raconter un événement marquant sans confondre Imparfait et Passé Composé ? Méthode en 3 étapes, connecteurs temporels et modèle C1/C2 de 138 mots.",
+    readingMinutes: 7,
+    authorName: "Dimitri • Équipe Pédagogique Super4C2",
+    authorRole: "Expert NCLC & Ancien Correcteur FEI",
+    coverImage: "https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&w=1200&q=80",
+    youtubeUrl: "https://www.youtube.com/watch?v=1xGfN_lTj6I",
+    tags: ["Expression Écrite", "Tâche 2", "Temps du Passé", "Récit", "TCF Canada", "NCLC 7"],
+    featured: false,
+    isPublished: true,
+    ctaType: "CBT_EXAM",
+    ctaLabel: "Tester la Tâche 2 dans le Simulateur CBT Gratuit",
+    ctaUrl: "/test-gratuit",
+    content: `## Les Enjeux Spécifiques de la Tâche 2 au TCF Canada
+
+La Tâche 2 vous demande généralement de **raconter un événement, une expérience vécue ou une visite marquante** (un voyage mémorable, une fête surprise, un festival culturel, un changement de carrière) sous la forme d'un article de blog, d'un courriel ou d'un témoignage.
+
+> **Contraintes officielles FEI :**  
+> • Volume obligatoire : Entre **120 et 150 mots**  
+> • Temps conseillé : **18 à 20 minutes**  
+> • Défi linguistique : Alternance rigoureuse entre Imparfait, Passé Composé et Plus-que-Parfait.
+
+---
+
+## 1. La Clé Grammaticale Discriminante : Imparfait vs Passé Composé
+
+C'est ici que les correcteurs FEI séparent les candidats B1 (pénalisés) des candidats NCLC 7 / C1 :
+- **L'Imparfait** sert pour le **décor**, les **habitudes** et les **descriptions d'état** (*« Le soleil brillait, l'ambiance était électrique, j'avais envie d'explorer la ville... »*).
+- **Le Passé Composé** sert pour les **actions ponctuelles et successives** qui font avancer l'histoire (*« Soudain, la musique s'est arrêtée, un guide est apparu et nous avons découvert... »*).
+- **Le Plus-que-Parfait** sert pour les **actions antérieures** (*« Je n'avais jamais ressenti une telle émotion auparavant. »*).
+
+---
+
+## 2. Plan Structuré en 3 Paragraphes
+
+Pour ne pas dépasser le plafond de 150 mots tout en validant tous les critères FEI :
+1. **Introduction & Décor (30 mots) :** Situez le contexte temporel et spatial (*« L'été dernier, à l'occasion du festival d'été de Québec... »*).
+2. **Péripétie & Déroulement (70 mots) :** Décrivez l'événement principal, l'action inattendue ou la rencontre qui a tout changé.
+3. **Bilan Personnel & Impression Finale (35 mots) :** Exprimez vos sentiments et tirez un enseignement de cette expérience (*« Cette aventure m'a permis de comprendre que... »*).
+
+---
+
+## 3. Modèle Rédigé Niveau C1/C2 (138 Mots)
+
+**Sujet authentique session FEI :** *Vous avez participé à un événement culturel ou associatif qui vous a particulièrement marqué. Racontez votre expérience et partagez vos impressions.*
+
+> *L'automne dernier, j'ai eu l'opportunité de participer comme bénévole au marathon caritatif de Montréal. Dès l'aube, une énergie communicative régnait sur le parc Jean-Drapeau, alors que des centaines de coureurs bravaient la fraîcheur matinale.*  
+> *Affecté au ravitaillement du trentième kilomètre, j'ai été profondément impressionné par la détermination des athlètes. Bien que la fatigue se lût sur leurs visages, chaque mot d'encouragement redonnait des ailes aux participants. J'ai particulièrement échangé avec un coureur non-voyant et son guide, dont la complicité exemplaire m'a bouleversé.*  
+> *Cette journée m'a rappelé combien la solidarité transcende l'effort physique. Je garde un souvenir impérissable de cette aventure humaine, que je renouvellerai sans la moindre hésitation l'année prochaine.*
+
+> **Bilan de conformité FEI :**  
+> • Décompte précis : 138 mots (parfaitement dans la tranche 120-150).  
+> • Alternance des temps maîtrisée (imparfait d'atmosphère + passé composé des actions).  
+> • Vocabulaire soutenu (*« fraîcheur matinale »*, *« détermination »*, *« souvenir impérissable »*).
+
+---
+
+## 4. Liens Utiles pour votre Réussite
+
+Complétez votre maîtrise de l'épreuve écrite :
+- Revenez aux fondamentaux de la [Tâche 1 Expression Écrite](/blog/tache-1-expression-ecrite-tcf-canada-formules-politesse-modeles).
+- Passez à l'étape ultime : [Tâche 3 Expression Écrite](/blog/tache-3-expression-ecrite-tcf-plan-argumentatif-c1-c2).
+`,
+  },
+  {
+    title: "Tâche 3 Expression Écrite TCF : Plan Dialectique et Formules d'Argumentation C1/C2 (120-180 Mots)",
+    slug: "tache-3-expression-ecrite-tcf-plan-argumentatif-c1-c2",
+    category: "Expression Écrite",
+    targetKeyword: "TCF Canada Expression Écrite Tâche 3",
+    excerpt:
+      "La Tâche 3 rapporte le plus de points mais sanctionne sévèrement le hors-sujet. Modèle comparatif deux avis, connecteurs logiques de haut niveau et barème officiel.",
+    readingMinutes: 8,
+    authorName: "Dimitri • Équipe Pédagogique Super4C2",
+    authorRole: "Expert NCLC & Ancien Correcteur FEI",
+    coverImage: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=1200&q=80",
+    youtubeUrl: "https://www.youtube.com/watch?v=1xGfN_lTj6I",
+    tags: ["Expression Écrite", "Tâche 3", "Essai Argumenté", "NCLC 7", "Connecteurs Logiques", "TCF Canada"],
+    featured: true,
+    isPublished: true,
+    ctaType: "CBT_EXAM",
+    ctaLabel: "Rédiger une Tâche 3 sous Chronomètre CBT Gratuit",
+    ctaUrl: "/test-gratuit",
+    content: `## L'Épreuve Reine de l'Expression Écrite du TCF Canada
+
+La Tâche 3 est l'épreuve à plus fort coefficient intellectuel : vous disposez de deux documents courts présentant deux points de vue divergents sur un sujet de société. 
+
+> **Consigne officielle FEI :**  
+> • Rédiger un texte en deux parties :  
+>   1. **Résumer et comparer** les deux points de vue des documents.  
+>   2. **Prendre position personnellement** et argumenter sur le sujet avec des exemples concrets.  
+> • Volume obligatoire : Entre **120 et 180 mots**  
+> • Temps conseillé : **25 à 27 minutes**
+
+---
+
+## 1. La Structure Infaillible en 3 Paragraphes
+
+Pour maximiser vos points sans dépasser la limite de 180 mots :
+1. **Introduction & Synthèse des deux avis (50 à 60 mots) :** Présentez le thème et opposez les deux documents avec un connecteur d'opposition fort (*« Si d'aucuns affirment que..., d'autres soulignent à juste titre que... »*).
+2. **Prise de position personnelle argumentée (70 à 80 mots) :** Donnez votre avis tranché ou nuancé, soutenu par deux arguments logiques et une illustration concrète.
+3. **Conclusion / Ouverture prospective (20 à 30 mots) :** Synthétisez votre pensée et ouvrez vers l'avenir.
+
+---
+
+## 2. Le Répertoire des Connecteurs Logiques C1/C2
+
+Bannissez la répétition de *« mais »*, *« parce que »* ou *« aussi »*. Utilisez les marqueurs d'excellence :
+- **Pour nuancer :** *« Certes... néanmoins »*, *« Force est de constater que... »*, *« Nonobstant ces réserves... »*.
+- **Pour illustrer :** *« À titre d'illustration »*, *« En témoigne l'essor récent de... »*.
+- **Pour conclure :** *« En définitive »*, *« Il apparaît dès lors indéniable que... »*.
+
+---
+
+## 3. Modèle Rédigé Niveau C1/C2 (162 Mots)
+
+**Sujet authentique session FEI :** *Le télétravail généralisé : opportunité d'émancipation ou menace pour la cohésion d'équipe ?*
+
+> *La généralisation du travail à distance suscite aujourd'hui des appréciations divergentes. Si le premier document loue le gain d'autonomie et l'équilibre entre vie privée et professionnelle qu'il favorise, le second met en exergue le risque d'isolement social et l'effritement du sentiment d'appartenance collective au sein des entreprises.*  
+> *Pour ma part, j'estime que le télétravail constitue une avancée sociale majeure, à la condition expresse qu'il soit encadré avec rigueur. D'une part, l'élimination des temps de transport quotidiens réduit substantiellement le stress des collaborateurs et accroît leur productivité. D'autre part, une formule hybride alternant présentiel et distanciel permet de préserver la cohésion d'équipe tout en offrant une flexibilité précieuse.*  
+> *En définitive, loin d'être un dilemme binaire, l'avenir du travail réside dans un équilibre concerté qui conjugue liberté individuelle et dynamique collective.*
+
+> **Bilan de conformité FEI :**  
+> • Décompte précis : 162 mots (conforme 120-180).  
+> • Les deux opinions sont synthétisées avec élégance dans le premier paragraphe.  
+> • L'avis personnel est clair, argumenté et équilibré.
+
+---
+
+## 4. Pratiquez Gratuitement avec Super4C2
+
+Testez votre propre Tâche 3 sur notre simulateur : la double correction IA analyse votre texte selon les 4 critères officiels de France Éducation International.
+`,
+  },
+
+  // ==========================================
+  // CLUSTER 2 : EXPRESSION ORALE (EO)
+  // ==========================================
+  {
+    title: "Tâche 1 Expression Orale TCF : Se Présenter en 2 Minutes sans Réciter son CV",
+    slug: "expression-orale-tcf-canada-tache-1-se-presenter-en-2-minutes",
+    category: "Expression Orale",
+    targetKeyword: "Expression Orale TCF Canada Tâche 1",
+    excerpt:
+      "Comment réussir l'entretien dirigé de 2 minutes en Tâche 1 ? Structure narrative, vocabulaire personnel et erreurs fatales pour capter l'examinateur dès l'ouverture.",
+    readingMinutes: 6,
+    authorName: "Dimitri • Équipe Pédagogique Super4C2",
+    authorRole: "Expert NCLC & Ancien Correcteur FEI",
+    coverImage: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=1200&q=80",
+    youtubeUrl: "https://www.youtube.com/watch?v=1xGfN_lTj6I",
+    tags: ["Expression Orale", "Tâche 1", "Présentation", "NCLC 7", "Laurent Mercier", "TCF Canada"],
+    featured: false,
+    isPublished: true,
+    ctaType: "COMMUNITY",
+    ctaLabel: "S'entraîner avec l'Examinateur IA Laurent Mercier",
+    ctaUrl: "/test-gratuit",
+    content: `## L'Objectif Caché de la Tâche 1 : Briser la Glace et Poser votre Niveau
+
+La Tâche 1 de l'Expression Orale (entretien dirigé de **2 minutes sans préparation**) est la première fois que l'examinateur ou le simulateur vocal entend votre voix.
+
+> **Consigne officielle FEI :**  
+> • Durée : 2 minutes  
+> • Objectif : Parler de soi, de ses activités, de son parcours, de ses passions ou de son projet d'immigration au Canada.
+
+---
+
+## 1. L'Erreur Fatale : Réciter un CV Monotone
+
+La plupart des candidats échouent à obtenir l'attention de l'examinateur parce qu'ils récitent une liste chronologique rébarbative : *« J'ai fait mes études en 2018, puis j'ai travaillé dans une entreprise, puis en 2021 j'ai changé... »*.
+
+Ce que l'examinateur veut entendre, c'est une **narration vivante et fluide** :
+- Qui êtes-vous au-delà de vos diplômes ?
+- Quelles sont vos passions réelles ?
+- Pourquoi le Canada représente-t-il une étape logique dans votre cheminement personnel et professionnel ?
+
+---
+
+## 2. Le Plan Idéal en 4 Paliers (30 Secondes par Palier)
+
+1. **Identité & Origine (30s) :** Prénom, ville d'origine, traits de personnalité et environnement actuel.
+2. **Métier ou Domaine d'Études avec Passion (30s) :** Expliquez ce qui vous anime au quotidien dans votre travail, pas seulement vos tâches techniques.
+3. **Centres d'Intérêt & Vie Personnelle (30s) :** Sport, lecture, bénévolat, cuisine : montrez votre capacité à parler de sujets du quotidien avec aisance.
+4. **Projet d'Avenir au Canada (30s) :** Pourquoi le projet canadien et comment vous vous y préparez activement.
+
+---
+
+## 3. Exemple Modèle Oral Niveau C1/C2
+
+*« Bonjour Monsieur Mercier. Je m'appelle Dimitri. Je suis originaire de Yaoundé et j'exerce depuis six ans comme ingénieur logiciel, un métier qui me passionne car il allie rigueur analytique et résolution créative de problèmes.*  
+*En dehors de mon univers professionnel, je suis un grand amateur de randonnée et de photographie urbaine, des activités qui me permettent de me ressourcer et d'explorer les contrastes de mon environnement.*  
+*Aujourd'hui, si je me présente devant vous pour le TCF Canada, c'est parce que ma conjointe et moi-même nourrissons le projet de nous établir au Québec. Nous sommes attirés par la qualité de vie, le dynamisme économique et l'ouverture multiculturelle du Canada.*  
+*Je suis ravi d'échanger avec vous aujourd'hui ! »*
+
+---
+
+## 4. Poursuivez votre Entraînement Oral
+
+- Maîtrisez le jeu de rôle de la [Tâche 2 Expression Orale](/blog/expression-orale-tcf-canada-10-questions-types-tache-2) (poser des questions variées).
+- Apprenez à débattre avec la [Tâche 3 Expression Orale](/blog/expression-orale-tcf-canada-tache-3-exprimer-son-point-de-vue).
 `,
   },
   {
@@ -168,6 +377,58 @@ En adoptant cette posture proactive, vous démontrez une aisance de niveau **C1/
 `,
   },
   {
+    title: "Tâche 3 Expression Orale TCF : Exprimer son Point de Vue et Convaincre l'Examinateur (4 min 30)",
+    slug: "expression-orale-tcf-canada-tache-3-exprimer-son-point-de-vue",
+    category: "Expression Orale",
+    targetKeyword: "Expression Orale TCF Canada Tâche 3",
+    excerpt:
+      "Comment tenir 4 minutes 30 face à l'examinateur sur un sujet polémique ? Méthode de monologue argumenté, gestion des objections et nuances orales niveau C1/C2.",
+    readingMinutes: 8,
+    authorName: "Dimitri • Équipe Pédagogique Super4C2",
+    authorRole: "Expert NCLC & Ancien Correcteur FEI",
+    coverImage: "https://images.unsplash.com/photo-1543269865-cbf427effbad?auto=format&fit=crop&w=1200&q=80",
+    youtubeUrl: "https://www.youtube.com/watch?v=1xGfN_lTj6I",
+    tags: ["Expression Orale", "Tâche 3", "Débat", "Argumentation", "NCLC 7", "TCF Canada"],
+    featured: false,
+    isPublished: true,
+    ctaType: "COMMUNITY",
+    ctaLabel: "S'entraîner à la Tâche 3 avec l'Examinateur Vocal IA",
+    ctaUrl: "/test-gratuit",
+    content: `## L'Épreuve la Plus Redoutée de l'Expression Orale
+
+La Tâche 3 de l'Expression Orale (durée : **4 minutes 30 secondes**) est celle qui fait la différence entre un candidat qui stagne à NCLC 6 et un candidat qui décroche le NCLC 7 ou NCLC 9.
+
+> **Consigne officielle FEI :**  
+> • Exprimer son point de vue sur un sujet d'actualité ou de société tiré au sort (les réseaux sociaux, la gratuité des transports, le travail des seniors, l'intelligence artificielle, l'écologie).  
+> • L'examinateur écoute votre monologue (environ 2 minutes), puis **intervient pour vous contredire, vous pousser dans vos retranchements et tester votre capacité d'argumentation**.
+
+---
+
+## 1. La Stratégie du Monologue Initial (2 Minutes)
+
+Ne commencez pas immédiatement par votre conclusion. Adoptez une structure en sablier :
+1. **Accroche & Définition du problème (30s) :** Montrez pourquoi la question est complexe.
+2. **Premier volet : Les atouts ou arguments favorables (45s) :** Présentez les aspects positifs avec des exemples tangibles.
+3. **Second volet : Les limites et écueils (45s) :** Nuancez en montrant les dérives possibles.
+
+---
+
+## 2. Comment Gérer les Objections de l'Examinateur
+
+Lorsque l'examinateur intervient en disant : *« Mais ne pensez-vous pas que c'est utopique ? »* ou *« Pourtant, les statistiques démontrent l'inverse ! »* :
+- **Ne capitulez pas :** Ne dites jamais *« Ah oui, vous avez raison, j'ai tort »*.
+- **Ne soyez pas agressif :** Ne dites pas *« Non, vous vous trompez »*.
+- **Utilisez la technique de la concession diplomatique C1/C2 :**  
+  *« C'est un argument tout à fait pertinent que vous soulevez là, et j'en conviens volontiers. Cependant, si l'on examine la situation sous un autre angle... »*
+
+Cette tournure prouve aux grilles de notation FEI que vous maîtrisez la nuance et le débat démocratique au plus haut niveau.
+`,
+  },
+
+  // ==========================================
+  // CLUSTER 3 : STRATÉGIE IMMIGRATION & CRS
+  // ==========================================
+  {
     title: "NCLC 7 vs NCLC 5 : Comment le Français Donne +50 Points Directs en Entrée Express",
     slug: "nclc-7-vs-nclc-5-pourquoi-francais-donne-50-points-bonus-entree-express",
     category: "Entrée Express & CRS",
@@ -180,11 +441,11 @@ En adoptant cette posture proactive, vous démontrez une aisance de niveau **C1/
     coverImage: "https://images.unsplash.com/photo-1517935703635-27c94660ab4f?auto=format&fit=crop&w=1200&q=80",
     youtubeUrl: "https://www.youtube.com/watch?v=1xGfN_lTj6I",
     tags: ["Entrée Express", "NCLC 7", "Points CRS", "Tirages Francophones", "Immigration Canada", "Calculateur CRS"],
-    featured: false,
+    featured: true,
     isPublished: true,
     ctaType: "CRS_CALCULATOR",
     ctaLabel: "Calculer mon Score CRS Personnalisé (+50 Points)",
-    ctaUrl: "/nclc-calculator",
+    ctaUrl: "/calculateur-crs",
     content: `## L'Illusion du Niveau Intermédiaire dans l'Immigration Canadienne
 
 De nombreux candidats investissent des mois de révisions et des centaines de dollars pour passer le TCF Canada, obtiennent un résultat de **NCLC 5 ou NCLC 6**, et sont surpris de constater que leur score dans le bassin Entrée Express ne décolle pas.
@@ -235,10 +496,69 @@ Si vous obtenez 16/20 en Expression Orale, 15/20 en Expression Écrite, 520 en C
 > **Notre Recommandation :** Ne tentez pas l'examen officiel à l'aveugle. Utilisez le simulateur CBT de Super4C2 pour vérifier que vos 4 notes dépassent confortablement les seuils FEI avant de payer vos frais d'inscription au centre d'examen.
 `,
   },
+  {
+    title: "TCF Canada vs TEF Canada : Quel Test Choisir pour Immigrer au Canada en 2026 ?",
+    slug: "tcf-canada-vs-tef-canada-quel-test-choisir-immigration-2026",
+    category: "Entrée Express & CRS",
+    targetKeyword: "TCF Canada vs TEF Canada comparatif 2026",
+    excerpt:
+      "Barèmes de points, formats des épreuves, pièges de notation et délais de résultats : analyse comparative complète pour choisir le test le plus avantageux pour votre dossier.",
+    readingMinutes: 7,
+    authorName: "Dimitri • Équipe Pédagogique Super4C2",
+    authorRole: "Expert NCLC & Ancien Correcteur FEI",
+    coverImage: "https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?auto=format&fit=crop&w=1200&q=80",
+    youtubeUrl: "https://www.youtube.com/watch?v=1xGfN_lTj6I",
+    tags: ["TCF Canada", "TEF Canada", "Comparatif", "Entrée Express", "Immigration", "NCLC 7"],
+    featured: false,
+    isPublished: true,
+    ctaType: "CRS_CALCULATOR",
+    ctaLabel: "Calculer mes Points CRS selon mon Test",
+    ctaUrl: "/calculateur-crs",
+    content: `## Les Deux Tests Reconnus par IRCC
+
+Pour attester de votre niveau de français dans le cadre d'une demande d'immigration permanente au Canada (Entrée Express, volets francophones des provinces), deux tests sont agréés par le gouvernement canadien :
+1. Le **TCF Canada** (conçu par France Éducation International - FEI).
+2. Le **TEF Canada** (conçu par la Chambre de Commerce et d'Industrie de Paris - CCIP).
+
+Bien que ces deux examens débouchent sur la même échelle d'équivalence NCLC, **leurs formats, barèmes et pièges d'évaluation diffèrent sensiblement**.
+
+---
+
+## 1. Tableau Comparatif Synthétique
+
+| Critère d'Évaluation | TCF Canada (FEI) | TEF Canada (CCIP) |
+| :--- | :--- | :--- |
+| **Compréhension Écrite** | 39 questions (60 min) | 40 questions (60 min) |
+| **Compréhension Orale** | 39 questions (35 min) | 40 questions (40 min) |
+| **Expression Écrite** | **3 tâches (60 min)** | **2 tâches (60 min)** |
+| **Expression Orale** | **3 tâches (12 min)** | **2 sections (15 min)** |
+| **Système de Points QCM** | Pas de points négatifs | Pas de points négatifs |
+| **Disponibilité des Centres** | Très répandu mondialement | Présent dans les Alliances Françaises |
+
+---
+
+## 2. Pourquoi la Majorité des Candidats Préfèrent le TCF Canada
+
+1. **Une Expression Écrite Plus Progressive :**  
+   Au TCF Canada, vous avez une Tâche 1 courte (60-120 mots) qui permet d'engranger des points faciles avant de passer à l'essai argumentatif. Au TEF Canada, la Section B exige immédiatement un article de journal dense de 200 mots.
+2. **Une Expression Orale Plus Accessible :**  
+   Au TCF, la Tâche 1 dure 2 minutes et vous permet de vous présenter en confiance. La Tâche 2 est un jeu de rôle de curiosité où c'est vous qui posez les questions.
+3. **Le Barème CBT Calibré :**  
+   L'algorithme de passage sur ordinateur du TCF Canada est réputé pour sa stabilité technique et la rapidité de délivrance des attestations officielles (généralement sous 10 à 15 jours).
+
+---
+
+## 3. Quelle Stratégie Adopter ?
+
+Quel que soit votre choix, l'objectif demeure identique : **sécuriser le niveau NCLC 7 dans les 4 compétences simultanées**.
+
+Entraînez-vous dès aujourd'hui sur le simulateur CBT gratuit de Super4C2 pour tester vos réflexes sur les sujets officiels de session.
+`,
+  },
 ];
 
 async function main() {
-  console.log("Synchronisation des articles piliers (Clusters Stratégiques) dans PostgreSQL...");
+  console.log("Synchronisation des 8 articles maîtres (Clusters Piliers & Satellites) dans PostgreSQL...");
 
   for (const article of MASTER_ARTICLES) {
     const upserted = await prisma.blogPost.upsert({
@@ -282,11 +602,11 @@ async function main() {
       },
     });
 
-    console.log(`✅ Article synchronisé : [${upserted.category}] ${upserted.title.slice(0, 50)}... (/blog/${upserted.slug})`);
+    console.log(`✅ [${upserted.category}] ${upserted.title.slice(0, 55)}... (/blog/${upserted.slug})`);
   }
 
   const total = await prisma.blogPost.count();
-  console.log(`\n🎉 Synchronisation réussie ! Total d'articles actifs en base : ${total}`);
+  console.log(`\n🎉 Synchronisation réussie ! Total d'articles actifs en base PostgreSQL : ${total}`);
 }
 
 main()
