@@ -2,10 +2,39 @@
 
 ## 0. Déploiement Production Vercel & Moteur de Conversion
 
+### 0.0zt. Machine de Conversion en Compte Gratuit (Audio 1) & Modernisation Visuelle des Cartes de Blog (Audio 2)
+- **Directives Utilisateur (Notes Vocales 1 & 2) :**
+  1. **Audio 1 (Conversion en Compte) :** L'un des principaux objectifs marketing est de convertir les visiteurs du blog en **comptes utilisateurs inscrits** (`créer leur compte` / inscription gratuite) en leur montrant un intérêt concret et immédiat (sauvegarde des notes, accès au simulateur CBT, carnet d'erreurs SRS, double correction IA barème FEI, 100% gratuit sans carte bancaire).
+  2. **Audio 2 (Cartes & Miniatures Modernes) :** Moderniser et mettre à niveau les cartes d'affichage des articles sur `/blog` et `/blog/[slug]`. Chaque article doit impérativement disposer d'une miniature 16:9 haute résolution (aucune carte vide), avec design moderne type Substack Pro / Stripe Press (zoom au survol, badges flottants en verre dépoli pour la catégorie et le temps de lecture, pastille vidéo YouTube, auteur et date).
+- **Réalisations Techniques & UI :**
+  1. **Résolution Systématique des Miniatures (`lib/blog/blog-service.ts` & `lib/blog/mock-posts.ts`) :**
+     - Ajout d'images de couverture haute définition Unsplash pour tous les articles mock.
+     - Intégration de la fonction de sécurité `getDefaultCoverImage(category)` dans `listAllBlogPosts` et `getSingleBlogPost` garantissant 100% de couverture visuelle même en cas d'omission de champ en base.
+  2. **Composant Bannière de Conversion en Compte Gratuit (`components/blog/blog-account-conversion-banner.tsx`) :**
+     - Titre percutant et promesse de valeur : *« Passez de la Lecture à l'Action : Créez votre Compte Gratuit »*.
+     - 4 piliers d'excellence affichés avec checkmarks émeraude (Chrono CBT 60 min, Double correction FEI /20, Salle d'Expression Orale avec Laurent Mercier, Carnet d'erreurs personnalisé).
+     - Boutons d'action : `Créer mon compte gratuit en 30s` (`/auth/register`) et lien secondaire de connexion.
+     - Mention de réassurance : *« 100% Gratuit — Sans Carte Bancaire • Accès instantané »*.
+  3. **Refonte Moderne des Cartes Catalogue (`components/blog/blog-index-client.tsx`) :**
+     - Ratio 16:9 avec conteneur `overflow-hidden` et zoom fluide au survol `group-hover:scale-105 duration-500`.
+     - Badges flottants en verre dépoli (`bg-black/70 backdrop-blur-md border border-white/20`) pour la catégorie (top-left), le temps de lecture (top-right) et l'indicateur vidéo (bottom-right).
+     - En-tête de carte avec avatar de l'auteur et date de publication.
+     - Titre avec transition rouge carmin au hover et extrait calibré.
+     - Footer avec étiquettes de mots-clés, mention *Guide Pratique* et flèche animée vers l'article.
+     - État de recherche vide avec bouton de réinitialisation rapide.
+     - Intégration de `BlogAccountConversionBanner` en tête de catalogue.
+  4. **Pénétration de la Conversion sur la Page d'Article (`app/blog/[slug]/page.tsx` & `blog-in-article-cta.tsx`) :**
+     - CTA de milieu d'article réorienté par défaut vers l'inscription gratuite (`/auth/register?source=blog_in_article_cta`).
+     - Bloc sticky de la sidebar droite orienté vers la création de compte gratuit.
+     - Bloc d'action de pied d'article offrant le bouton ShimmerButton d'inscription en 30s.
+     - Intégration des miniatures 16:9 sur les cartes d'articles recommandés en fin de page.
+- **Validation :** 0 erreur TypeScript (`npx tsc --noEmit`), build Next.js validé.
+
 ### 0.0zs. Jalon 4 (Perfectionné) : Les 3 Clusters Thématiques Maîtres (Expression Écrite, Expression Orale & Stratégie CRS) & Maillage en Silo SEO
 - **Directives Utilisateur :**
   1. Perfectionner le **Jalon 4** : déployer les clusters de contenus piliers et satellites pour asseoir l'autorité sémantique thématique absolue de Super4C2 face à Objectif Canada.
   2. Maintenir l'offre 100% gratuite et orienter chaque article vers la capture de leads WhatsApp/Email.
+
 - **Réalisations Techniques & Pédagogiques :**
   1. **Architecture des 3 Silos Thématiques Piliers & Satellites (`scripts/sync-master-clusters.ts`) :**
      - **Cluster 1 : Expression Écrite (EE)**

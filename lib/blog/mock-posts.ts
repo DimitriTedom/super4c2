@@ -15,6 +15,7 @@ export const BLOG_POSTS: BlogPost[] = [
       role: "Expert TCF Canada & Concepteur Pédagogique",
     },
     featured: true,
+    coverImage: "https://images.unsplash.com/photo-1517935703635-27c94660ab4f?auto=format&fit=crop&w=1200&q=80",
     tags: ["NCLC 7", "Entrée Express", "CRS Score", "TCF Canada", "Immigration"],
     targetCta: {
       type: "CRS_CALCULATOR",
@@ -80,6 +81,7 @@ C'est précisément l'approche intégrée de Super4C2 : notre simulateur reprodu
       role: "Expert TCF Canada & Concepteur Pédagogique",
     },
     featured: false,
+    coverImage: "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?auto=format&fit=crop&w=1200&q=80",
     tags: ["Compréhension Écrite", "Pièges FEI", "QCM", "Stratégie B2", "TCF Canada"],
     targetCta: {
       type: "CBT_EXAM",
@@ -150,6 +152,7 @@ Sur Super4C2, notre simulateur officiel CBT calcule votre rythme en direct et me
       role: "Expert TCF Canada & Concepteur Pédagogique",
     },
     featured: false,
+    coverImage: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1200&q=80",
     tags: ["IELTS General", "TCF Canada", "Entrée Express", "CLB 9", "NCLC 7", "Comparatif"],
     targetCta: {
       type: "IELTS_MODULE",
@@ -213,6 +216,7 @@ Super4C2 propose désormais des modules de simulation adaptés aux spécificité
       role: "Expert TCF Canada & Concepteur Pédagogique",
     },
     featured: false,
+    coverImage: "https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&w=1200&q=80",
     tags: ["Expression Écrite", "Tâche 3", "Formules C1", "Barème FEI", "TCF Canada"],
     targetCta: {
       type: "FREE_TEST",

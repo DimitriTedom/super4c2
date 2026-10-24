@@ -34,8 +34,8 @@ export function BlogInArticleCta({
     ? "Entraînez-vous avec l'examinateur IA vocal interactif sur les 3 tâches réelles du TCF Canada et perfectionnez votre fluidité avant le jour J."
     : "Rejoignez le simulateur CBT Super4C2 conforme aux normes 2026 de France Éducation International. Évaluez votre niveau réel en 5 minutes.";
 
-  const href = customHref || "/test-gratuit";
-  const label = customLabel || "Commencer l'évaluation gratuite";
+  const href = customHref || "/auth/register?source=blog_in_article_cta";
+  const label = customLabel || "Créer mon compte gratuit (30s)";
 
   return (
     <aside
@@ -95,8 +95,8 @@ export function BlogInArticleCta({
           </ShimmerButton>
 
           <Button variant="ghost" size="sm" asChild className="text-xs text-muted-foreground hover:text-foreground">
-            <Link href="/calculateur-crs">
-              <span>Calculer mes points CRS Canada →</span>
+            <Link href="/test-gratuit">
+              <span>Tester le simulateur sans compte →</span>
             </Link>
           </Button>
         </div>

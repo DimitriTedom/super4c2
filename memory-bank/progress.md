@@ -1,3 +1,17 @@
+- [x] **Machine de Conversion en Compte Gratuit (Audio 1) & Modernisation Visuelle des Cartes de Blog (Audio 2) :**
+  - **Machine de Conversion en Compte Gratuit (`components/blog/blog-account-conversion-banner.tsx`) :**
+    - Encart d'incitation à l'action à forte valeur ajoutée (*« Passez de la Lecture à l'Action : Créez votre Compte Gratuit »*).
+    - 4 piliers d'excellence démontrés : simulateur CBT 60 min avec décompte officiel, double correction IA barème FEI /20, salle d'Expression Orale interactive avec Laurent Mercier, carnet d'erreurs SRS personnalisé.
+    - Liens directs vers `/auth/register` (création en 30s) et `/auth/login`, garantie 100% gratuit sans carte bancaire.
+    - Réorientation des CTAs d'articles (`blog-in-article-cta.tsx`, sidebar sticky et footer de `/blog/[slug]`) vers l'inscription gratuite directe.
+  - **Cartes de Blog Modernes & Miniatures 16:9 Systématiques (`components/blog/blog-index-client.tsx`, `blog-service.ts`, `mock-posts.ts`) :**
+    - Zéro carte vide : attribution automatique d'une image de couverture haute définition 16:9 Unsplash (`getDefaultCoverImage`) adaptée à la catégorie de l'article.
+    - Design Substack Pro / Stripe Press : conteneur 16:9 avec zoom fluide au hover (`group-hover:scale-105 duration-500`).
+    - Badges flottants en verre dépoli (`backdrop-blur-md bg-black/70 border-white/20`) pour la catégorie et le temps de lecture.
+    - Pastille rouge animée pour les articles avec vidéo YouTube.
+    - Ligne auteur avec avatar + date, typographie soignée, tags et flèche d'action animée.
+    - Miniatures 16:9 également déployées sur les articles recommandés en bas de page d'article.
+  - **Validation :** 0 erreur TypeScript (`npx tsc --noEmit`), build Next.js validé.
 - [x] **Jalon 4 (Perfectionné) : Les 3 Clusters Thématiques Maîtres (Expression Écrite, Expression Orale & Stratégie CRS) & Maillage en Silo SEO :**
   - **8 Articles Maîtres Piliers & Satellites Déployés (`scripts/sync-master-clusters.ts`) :**
     - *Cluster Expression Écrite :* Tâche 1 (modèles 60-120 mots), Tâche 2 (récit d'expérience au passé 120-150 mots), Tâche 3 (plan dialectique deux avis 120-180 mots).

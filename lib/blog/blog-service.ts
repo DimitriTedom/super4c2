@@ -19,6 +19,23 @@ function mapDbCategoryToKey(cat: string): { key: BlogCategory; label: string } {
   return { key: "METHODE_TCF", label: "Méthodologie TCF" };
 }
 
+export function getDefaultCoverImage(category?: string | null): string {
+  const c = category?.toLowerCase() || "";
+  if (c.includes("orale") || c.includes("oral") || c.includes("laurent")) {
+    return "https://images.unsplash.com/photo-1590602847861-f357a9332bbc?auto=format&fit=crop&w=1200&q=80";
+  }
+  if (c.includes("ecrite") || c.includes("écrit") || c.includes("tache") || c.includes("tâche")) {
+    return "https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&w=1200&q=80";
+  }
+  if (c.includes("ielts") || c.includes("anglais")) {
+    return "https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1200&q=80";
+  }
+  if (c.includes("methode") || c.includes("méthodologie") || c.includes("cbt")) {
+    return "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=1200&q=80";
+  }
+  return "https://images.unsplash.com/photo-1517935703635-27c94660ab4f?auto=format&fit=crop&w=1200&q=80";
+}
+
 function resolveCta(ctaType?: string | null, ctaLabel?: string | null, ctaUrl?: string | null) {
   if (ctaType === "CBT_EXAM") {
     return {
@@ -82,7 +99,7 @@ export async function listAllBlogPosts(): Promise<BlogPost[]> {
             role: p.authorRole || "Expert NCLC & Ancien Correcteur FEI",
           },
           featured: p.featured,
-          coverImage: p.coverImage || undefined,
+          coverImage: p.coverImage || getDefaultCoverImage(p.category),
           youtubeUrl: p.youtubeUrl || undefined,
           targetKeyword: p.targetKeyword || undefined,
           tags: p.tags && p.tags.length > 0 ? p.tags : ["TCF Canada", "NCLC 7"],
@@ -128,7 +145,7 @@ export async function getSingleBlogPost(slug: string): Promise<BlogPost | null> 
           role: dbPost.authorRole || "Expert NCLC & Ancien Correcteur FEI",
         },
         featured: dbPost.featured,
-        coverImage: dbPost.coverImage || undefined,
+        coverImage: dbPost.coverImage || getDefaultCoverImage(dbPost.category),
         youtubeUrl: dbPost.youtubeUrl || undefined,
         targetKeyword: dbPost.targetKeyword || undefined,
         tags: dbPost.tags && dbPost.tags.length > 0 ? dbPost.tags : ["TCF Canada", "NCLC 7"],

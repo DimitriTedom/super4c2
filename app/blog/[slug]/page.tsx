@@ -304,15 +304,18 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                 Rejoignez Super4C2 pour vous entraîner dans les conditions réelles des examens officiels FEI : simulateur CBT chronométré, double notation instantanée et modèles Magic Rewrite C2.
               </p>
 
-              <div className="pt-2">
+              <div className="pt-2 flex flex-wrap items-center gap-3">
                 <ShimmerButton
-                  href={post.targetCta.href}
+                  href="/auth/register?source=blog_article_footer"
                   background="#E51A31"
                   shimmerColor="#ffffff"
-                  className="font-bold px-7"
+                  className="font-bold px-7 py-3 text-white text-xs sm:text-sm shadow-md"
                 >
-                  {post.targetCta.label} →
+                  Créer mon compte gratuit en 30s →
                 </ShimmerButton>
+                <Button variant="outline" size="sm" asChild className="text-xs h-10 border-border">
+                  <Link href={post.targetCta.href}>{post.targetCta.label}</Link>
+                </Button>
               </div>
             </div>
 
@@ -325,18 +328,18 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             <BlogTableOfContents items={tocItems} readTimeMinutes={post.readTimeMinutes} />
 
             {/* Mini Box d'Appel à l'Action Sticky */}
-            <div className="rounded-2xl border border-primary/30 bg-primary/5 p-4 text-center space-y-2.5 shadow-2xs">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-primary">
-                Objectif NCLC 7+
+            <div className="rounded-2xl border border-primary/30 bg-gradient-to-br from-card to-primary/5 p-4 text-center space-y-3 shadow-sm">
+              <span className="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-primary/10 text-primary border border-primary/20">
+                100% Gratuit • Sans Carte
               </span>
-              <h5 className="font-display font-bold text-xs text-foreground leading-snug">
-                Simulateur CBT d&apos;Examen Officiel
+              <h5 className="font-display font-bold text-sm text-foreground leading-snug">
+                Créez Votre Compte Candidat
               </h5>
-              <p className="text-[11px] text-muted-foreground">
-                Découvrez la double correction IA conforme au barème FEI.
+              <p className="text-[11px] text-muted-foreground leading-relaxed">
+                Sauvegardez vos scores, activez le carnet d&apos;erreurs SRS et simulez sous le chrono officiel FEI.
               </p>
-              <Button asChild size="sm" className="w-full text-xs font-bold h-8">
-                <Link href="/examens">Tester le Simulateur →</Link>
+              <Button asChild size="sm" className="w-full text-xs font-bold h-9 bg-primary hover:bg-primary-dark text-white shadow-xs">
+                <Link href="/auth/register?source=blog_sidebar_sticky">Créer Mon Compte →</Link>
               </Button>
             </div>
           </div>
@@ -354,32 +357,63 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               </Button>
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-2">
-              {relatedPosts.map((related) => (
-                <div
-                  key={related.slug}
-                  className="group rounded-2xl border border-border bg-card p-5 transition-all hover:border-primary/50 hover:shadow-md flex flex-col justify-between"
-                >
-                  <div className="space-y-2">
-                    <span className="text-[11px] font-semibold text-primary uppercase tracking-wide">
-                      {related.categoryLabel}
-                    </span>
-                    <h4 className="font-display text-base font-bold text-foreground group-hover:text-primary transition-colors line-clamp-2">
-                      <Link href={`/blog/${related.slug}`}>{related.title}</Link>
-                    </h4>
-                    <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
-                      {related.excerpt}
-                    </p>
-                  </div>
+            <div className="grid gap-5 sm:grid-cols-2">
+              {relatedPosts.map((related) => {
+                const relatedCover =
+                  related.coverImage ||
+                  "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=1200&auto=format&fit=crop&q=80";
 
-                  <Link
-                    href={`/blog/${related.slug}`}
-                    className="mt-4 inline-flex items-center text-xs font-bold text-primary group-hover:translate-x-0.5 transition-transform"
+                return (
+                  <div
+                    key={related.slug}
+                    className="group rounded-2xl border border-border bg-card overflow-hidden transition-all duration-300 hover:border-primary/50 hover:shadow-lg flex flex-col justify-between"
                   >
-                    Lire le guide complet →
-                  </Link>
-                </div>
-              ))}
+                    {/* Thumbnail */}
+                    <div className="relative aspect-video w-full overflow-hidden bg-muted/40 border-b border-border/60">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={relatedCover}
+                        alt={related.title}
+                        className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+                        loading="lazy"
+                      />
+                      <div className="absolute top-2.5 left-2.5">
+                        <span className="px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wide bg-black/70 backdrop-blur-md text-white border border-white/20">
+                          {related.categoryLabel}
+                        </span>
+                      </div>
+                      <div className="absolute top-2.5 right-2.5">
+                        <span className="px-2 py-0.5 rounded-full text-[9px] font-mono bg-black/70 backdrop-blur-md text-white/90 border border-white/20 flex items-center gap-1">
+                          <Clock className="h-2.5 w-2.5 text-primary" /> {related.readTimeMinutes} min
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="p-5 flex-1 flex flex-col justify-between space-y-3">
+                      <div className="space-y-1.5">
+                        <h4 className="font-display text-base font-bold text-foreground group-hover:text-primary transition-colors line-clamp-2 leading-snug">
+                          <Link href={`/blog/${related.slug}`}>{related.title}</Link>
+                        </h4>
+                        <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
+                          {related.excerpt}
+                        </p>
+                      </div>
+
+                      <div className="pt-2 border-t border-border/50 flex items-center justify-between">
+                        <span className="text-[11px] text-muted-foreground">
+                          {related.publishedAt}
+                        </span>
+                        <Link
+                          href={`/blog/${related.slug}`}
+                          className="inline-flex items-center text-xs font-bold text-primary group-hover:translate-x-0.5 transition-transform"
+                        >
+                          Lire le guide →
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
         )}
