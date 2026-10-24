@@ -24,10 +24,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       url: `${baseUrl}/blog`,
       lastModified: now,
       changeFrequency: "daily",
-      priority: 0.9,
+      priority: 0.95,
     },
     {
       url: `${baseUrl}/test-gratuit`,
+      lastModified: now,
+      changeFrequency: "daily",
+      priority: 0.95,
+    },
+    {
+      url: `${baseUrl}/sujets-recents`,
+      lastModified: now,
+      changeFrequency: "daily",
+      priority: 0.95,
+    },
+    {
+      url: `${baseUrl}/calculateur-crs`,
       lastModified: now,
       changeFrequency: "weekly",
       priority: 0.9,
@@ -37,18 +49,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: now,
       changeFrequency: "monthly",
       priority: 0.85,
-    },
-    {
-      url: `${baseUrl}/calculateur-crs`,
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.85,
-    },
-    {
-      url: `${baseUrl}/sujets-recents`,
-      lastModified: now,
-      changeFrequency: "daily",
-      priority: 0.9,
     },
     {
       url: `${baseUrl}/carnet-erreurs`,

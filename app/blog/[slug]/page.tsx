@@ -20,6 +20,7 @@ import { BlogVideoPlayer, extractYouTubeId } from "@/components/blog/blog-video-
 import { BlogSocialShare } from "@/components/blog/blog-social-share";
 import { BlogAuthorBio } from "@/components/blog/blog-author-bio";
 import { BlogContentRenderer } from "@/components/blog/blog-content-renderer";
+import { BlogLeadEngagement } from "@/components/blog/blog-lead-engagement";
 
 interface BlogPostPageProps {
   params: Promise<{ slug: string }>;
@@ -111,10 +112,36 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         url: "https://super4c2.com/brand/Le%20Logo%20Primaire.png",
       },
     },
+    isAccessibleForFree: true,
     mainEntityOfPage: {
       "@type": "WebPage",
       "@id": `https://super4c2.com/blog/${post.slug}`,
     },
+  };
+
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Accueil",
+        item: "https://super4c2.com",
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Blog TCF Canada",
+        item: "https://super4c2.com/blog",
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: post.title,
+        item: `https://super4c2.com/blog/${post.slug}`,
+      },
+    ],
   };
 
   const videoJsonLd = ytId
@@ -138,6 +165,10 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
       {videoJsonLd && (
         <script
@@ -251,6 +282,12 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               </span>
               <BlogSocialShare title={post.title} slug={post.slug} />
             </div>
+
+            {/* 🎁 Capture de Lead VIP 100% Gratuite : Pack Modèles PDF & Communauté WhatsApp */}
+            <BlogLeadEngagement
+              articleTitle={post.title}
+              categoryLabel={post.categoryLabel}
+            />
 
             {/* 🎯 Encadré d'Action Contextuel Haute Conversion */}
             <div className="rounded-3xl border border-primary/30 bg-gradient-to-br from-card via-card to-primary/10 p-6 sm:p-8 space-y-4 shadow-md">

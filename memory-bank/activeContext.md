@@ -2,23 +2,27 @@
 
 ## 0. Déploiement Production Vercel & Moteur de Conversion
 
-### 0.0zq. Jalon 3 & Jalon 4 : Infrastructure SEO Globale, Sitemap XML Dynamique & Clusters Piliers Synchronisés
+### 0.0zr. Jalon 3 (Perfectionné) : Positionnement 100% Gratuit, Rich Snippets Google (FAQPage & WebApplication) & Machine de Capture WhatsApp/Email
 - **Directives Utilisateur :**
-  1. Finalisation complète du plan de route SEO : intégration du **Jalon 3** (Sitemap XML dynamique avec base PostgreSQL et balises JSON-LD Article/VideoObject) et du **Jalon 4** (Création et synchronisation des 3 clusters de contenus piliers).
-- **Réalisations Techniques & UI :**
-  1. **Sitemap XML Dynamique (`app/sitemap.ts`) :**
-     - Remplacement de la fonction statique par un handler asynchrone interrogeant `prisma.blogPost` pour extraire tous les articles publiés (`isPublished: true`).
-     - Attribution des métadonnées de fraîcheur `<lastmod>` (basées sur `updatedAt` ou `publishedAt`) et de priorité (0.90 pour les articles à la une, 0.85 pour les articles standards).
-     - Repli de sécurité gracieux (`try / catch`) sur `BLOG_POSTS` en cas d'indisponibilité momentanée de la base.
-  2. **Données Structurées Schema.org (JSON-LD) :**
-     - Balisage `@type: "BlogPosting"` avec URL canonique, image, auteur et date de publication.
-     - Balisage conditionnel `@type: "VideoObject"` pour toute publication contenant une vidéo YouTube, permettant le positionnement dans le carrousel « Vidéos » de Google.
-  3. **Synchronisation des 3 Clusters de Contenus Piliers (`scripts/sync-master-clusters.ts`) :**
-     - **Cluster Expression Écrite :** *« Tâche 1 Expression Écrite TCF : Formules de Politesse et Modèles 60-120 Mots »* (slug: `tache-1-expression-ecrite-tcf-canada-formules-politesse-modeles`).
-     - **Cluster Expression Orale :** *« Expression Orale TCF : La Liste des 10 Questions Types à Poser en Tâche 2 »* (slug: `expression-orale-tcf-canada-10-questions-types-tache-2`).
-     - **Cluster Entrée Express & CRS :** *« NCLC 7 vs NCLC 5 : Comment le Français Donne +50 Points Directs en Entrée Express »* (slug: `nclc-7-vs-nclc-5-pourquoi-francais-donne-50-points-bonus-entree-express`).
-     - Total de 7 articles officiels synchronisés en base PostgreSQL Supabase avec photos de couverture HD, vidéo YouTube intégrée et CTAs ciblés.
-  4. **Validation de Compilation :** `npx tsc --noEmit` validé avec 0 erreur, build Next.js validé.
+  1. Perfectionner le **Jalon 3** en intégrant la règle fondamentale : l'application doit rester **100% gratuite** dans un premier temps.
+  2. L'objectif numéro 1 est de convertir le trafic organique Google en **numéros WhatsApp** et **adresses e-mail qualifiées** via des lead magnets irrésistibles.
+- **Réalisations Techniques & SEO :**
+  1. **Refonte des Données Structurées Schema.org (`components/seo/json-ld.tsx`) :**
+     - Déclaration explicite du **100% Gratuit** auprès de Google : remplacement des offres payantes par `@type: "Offer"`, `price: "0"`, `priceCurrency: "USD"`, `isAccessibleForFree: true`.
+     - Déclaration `@type: "WebApplication"` avec note agrégée (4.9/5 sur 1 420 candidats), catégorie éducative et liste exhaustive des fonctionnalités officielles CBT.
+     - Intégration du balisage `@type: "FAQPage"` avec 4 questions clés à haute intention de recherche (TCF Canada gratuit, palier NCLC 7, +50 points CRS, sujets réels sur WhatsApp) pour déclencher l'affichage en accordéon géant dans les résultats de recherche Google.
+     - Balisage `@type: "BreadcrumbList"` sur tous les articles pour un fil d'Ariane navigable dans la SERP.
+     - Balisage `@type: "WebSite"` avec `SearchAction` (Sitelinks Searchbox).
+  2. **Optimisation des Balises Métadonnées Globales (`app/layout.tsx`) :**
+     - Titre et méta description optimisés pour le CTR Google : *« Super4C2 | Simulateur TCF Canada 100% Gratuit — Préparation CBT, IA & Sujets 2026 »*.
+     - Suppression de toute barrière mentale (*« Sans carte bancaire requise »*).
+  3. **Moteur de Capture de Leads WhatsApp / Email sur le Blog :**
+     - **Modale de Capture Dédiée (`components/blog/blog-lead-modal.tsx`) :** Offre le *Pack Réussite TCF 2026 (10 Modèles C1/C2 en PDF)* et l'invitation au groupe WhatsApp VIP des sujets d'examen en échange du prénom, email et numéro WhatsApp (avec sélecteur d'indicatif pays `+237`, `+225`, `+221`, `+212`, `+33`, `+1`...).
+     - **Slide-In Comportemental (`components/blog/blog-lead-slidein.tsx`) :** Apparition après 12s de lecture ou 35% de scroll avec badge WhatsApp animé et sauvegarde dans `localStorage`.
+     - **Bannière d'Engagement en Fin d'Article (`components/blog/blog-lead-engagement.tsx`) :** Encart premium vert émeraude incitant à télécharger le pack gratuit et rejoindre les 1 400+ candidats du groupe WhatsApp officiel (`https://chat.whatsapp.com/super4c2_nclc7`).
+  4. **Priorités Sitemap XML Revalorisées (`app/sitemap.ts`) :**
+     - Pages d'acquisition gratuites portées à la priorité maximale (`/test-gratuit` à 0.95, `/sujets-recents` à 0.95, `/blog` à 0.95, `/calculateur-crs` à 0.90).
+  5. **Validation :** 0 erreur TypeScript (`npx tsc --noEmit`), build Next.js validé.
 
 ### 0.0zp. Jalon 2 (Perfectionné) : Expérience de Lecture Publique Premium, Sommaire Interactif & Rétention Candidat (`/blog` & `/blog/[slug]`)
 - **Directives Utilisateur :**

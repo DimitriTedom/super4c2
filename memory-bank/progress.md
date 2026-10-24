@@ -1,9 +1,13 @@
-- [x] **Jalon 3 & Jalon 4 : Infrastructure SEO Globale, Sitemap XML Dynamique & Clusters Piliers Synchronisés :**
-  - **Spécification Complète (`docs/specs/21-sitemap-xml-and-schema-org-seo.md`) :** Architecture du sitemap XML asynchrone, intégration PostgreSQL et priorité algorithmique.
-  - **Sitemap XML Dynamique (`app/sitemap.ts`) :** Extraction automatique de tous les articles publiés de `prisma.blogPost` avec priorités 0.90 / 0.85 et horodatages `<lastmod>` réels.
-  - **Données Structurées Schema.org :** Balisage JSON-LD `BlogPosting` + `VideoObject` sur `/blog/[slug]` pour affichage enrichi et carrousel vidéo Google.
-  - **Synchronisation des 3 Clusters Piliers (`scripts/sync-master-clusters.ts`) :** 7 articles d'autorité publiés en base PostgreSQL (Tâche 1 EE formules et modèles, Tâche 2 EO 10 questions types, et Stratégie NCLC 7 vs NCLC 5 +50 pts CRS).
-  - **Validation :** 0 erreur TypeScript (`npx tsc --noEmit`), compilation Next.js de production réussie.
+- [x] **Jalon 3 (Perfectionné) : Positionnement 100% Gratuit, Rich Snippets Google (FAQPage & WebApplication) & Machine de Capture WhatsApp/Email :**
+  - **Déclaration 100% Gratuit Google Schema.org (`components/seo/json-ld.tsx`) :** Remplacement des offres payantes par `@type: "Offer"` `price: "0"`, `isAccessibleForFree: true`, et déclaration `@type: "WebApplication"` avec note 4.9/5 sur 1 420 candidats.
+  - **Rich Snippets FAQPage & BreadcrumbList :** Balisage FAQPage (4 questions à fort volume de recherche pour accordéon Google SERP), BreadcrumbList sur tous les articles et SearchAction Sitelinks.
+  - **Moteur de Capture de Leads WhatsApp / Email sur le Blog :**
+    - `BlogLeadModal` : modale d'échange prénom/email/WhatsApp (avec sélecteurs pays `+237`, `+225`, `+221`, `+212`, `+33`, `+1`...) contre le Pack 10 Modèles C1/C2 (PDF) et l'accès au groupe VIP WhatsApp.
+    - `BlogLeadSlideIn` : slide-in intelligent d'acquisition après 12s de lecture ou 35% de scroll avec animation et persistance `localStorage`.
+    - `BlogLeadEngagement` : bannière de ralliement officielle en fin d'article vers les 1 400+ membres de la communauté WhatsApp.
+  - **Optimisation des Balises Métadonnées Globales (`app/layout.tsx`) :** Titre, description et OpenGraph axés sur le « 100% Gratuit — Sans Carte Bancaire » pour maximiser le taux de clics (CTR).
+  - **Priorités Sitemap XML Revalorisées (`app/sitemap.ts`) :** `/test-gratuit` (0.95), `/sujets-recents` (0.95), `/blog` (0.95), `/calculateur-crs` (0.90).
+  - **Validation :** 0 erreur TypeScript (`npx tsc --noEmit`), compilation Next.js réussie.
 - [x] **Jalon 2 (Perfectionné) : Expérience de Lecture Publique Premium, Sommaire Interactif & Rétention Candidat (`/blog` & `/blog/[slug]`) :**
   - **Brand & Design Canvas (`docs/brand/blog-reading-experience-canvas.md`) :** Typographie haute lisibilité (Bricolage Grotesque, interlignage 1.75), callouts FEI personnalisés et disposition 2 colonnes avec sticky TOC.
   - **Spécification Complète (`docs/specs/20-public-blog-reading-experience-and-engagement.md`) :** Architecture technique, ancres synchronisées, JSON-LD Schema.org Article & VideoObject.

@@ -34,13 +34,15 @@ const spaceMono = Space_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "https://super4c2.com"),
   title: {
-    default: "Super4C2 | Préparation TCF, TEF Canada & IELTS — Objectif C2 / CLB 9",
+    default: "Super4C2 | Simulateur TCF Canada 100% Gratuit — Préparation CBT, IA & Sujets 2026",
     template: "%s | Super4C2",
   },
   description:
-    "Plateforme de préparation aux examens TCF Canada, TEF Canada et Cambridge IELTS General Training. Simulateur CBT conforme, examinateur oral IA en direct, 4 épreuves chronométrées et correction FEI instantanée.",
+    "Simulateur officiel du TCF Canada 100% gratuit et sans carte bancaire : entraînement CBT chronométré, examinateur vocal IA interactif, double correction instantanée conforme au barème FEI et sujets réels 2026 pour décrocher le NCLC 7+ (+50 pts CRS).",
   keywords: [
-    "TCF Canada",
+    "TCF Canada gratuit",
+    "simulateur TCF Canada",
+    "test gratuit TCF Canada",
     "TEF Canada",
     "IELTS General Training",
     "NCLC 7",
@@ -48,12 +50,11 @@ export const metadata: Metadata = {
     "Entrée Express Canada",
     "Immigration Canada",
     "Simulateur CBT",
-    "Compréhension Écrite",
-    "Compréhension Orale",
-    "Expression Écrite",
-    "Expression Orale",
-    "CRS Score",
+    "Expression Écrite TCF",
+    "Expression Orale TCF",
+    "Calculateur points CRS",
     "France Éducation International",
+    "sujets réels TCF 2026",
   ],
   authors: [{ name: "Super4C2 Editorial Team" }],
   creator: "Super4C2",
@@ -76,24 +77,24 @@ export const metadata: Metadata = {
     alternateLocale: ["en_CA", "fr_FR"],
     url: "https://super4c2.com",
     siteName: "Super4C2",
-    title: "Super4C2 | Préparation TCF, TEF Canada & IELTS — Objectif C2 / CLB 9",
+    title: "Super4C2 | Simulateur TCF Canada 100% Gratuit — Objectif NCLC 7+ (+50 Pts CRS)",
     description:
-      "Simulateur CBT conforme, 4 épreuves chronométrées, correction IA instantanée et examinateur vocal IA pour décrocher le NCLC 7+ (+50 pts CRS) et CLB 9.",
+      "Accès 100% gratuit sans carte bancaire : simulateur CBT conforme FEI, examinateur oral IA en direct, double correction instantanée et veille hebdomadaire des sujets d'examen réels sur WhatsApp.",
     images: [
       {
-        url: "/brand/og-image-super4c2.jpg",
+        url: "/brand/cbt-platform-preview.jpg",
         width: 1200,
         height: 630,
-        alt: "Super4C2 — Plateforme de Préparation CBT TCF Canada, TEF & IELTS",
+        alt: "Super4C2 — Simulateur TCF Canada 100% Gratuit",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Super4C2 | Préparation TCF, TEF Canada & IELTS — Objectif C2 / CLB 9",
+    title: "Super4C2 | Simulateur TCF Canada 100% Gratuit (NCLC 7+)",
     description:
-      "Simulateur CBT conforme, 4 épreuves chronométrées et examinateur vocal IA pour maximiser vos points Entrée Express Canada.",
-    images: ["/brand/og-image-super4c2.jpg"],
+      "Simulateur CBT officiel 100% gratuit : entraînement chronométré et examinateur vocal IA pour sécuriser vos 50 points Entrée Express Canada.",
+    images: ["/brand/cbt-platform-preview.jpg"],
     creator: "@super4c2",
   },
   robots: {
