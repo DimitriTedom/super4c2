@@ -20,43 +20,110 @@ import type { BlogPost } from "@/lib/blog/types";
 import { Button } from "@/components/ui/button";
 import { BlogAccountConversionBanner } from "@/components/blog/blog-account-conversion-banner";
 import { BlogBookmarkButton } from "@/components/blog/blog-bookmark-button";
+import { BlogFilterBar, type BlogFilterState } from "@/components/blog/blog-filter-bar";
 import { useBlogBookmarks } from "@/lib/blog/use-blog-bookmarks";
-
-const CATEGORIES: { key: string; label: string }[] = [
-  { key: "ALL", label: "Tous les Articles" },
-  { key: "ENTREE_EXPRESS", label: "Entrée Express & CRS" },
-  { key: "METHODE_TCF", label: "Méthodologie TCF" },
-  { key: "IELTS_CANADA", label: "IELTS General" },
-  { key: "ACTUALITES_EXAMENS", label: "Actualités & IRCC" },
-  { key: "REUSSITE_CANDIDATS", label: "Réussite Candidats" },
-];
 
 interface BlogIndexClientProps {
   initialPosts: BlogPost[];
 }
 
 export function BlogIndexClient({ initialPosts }: BlogIndexClientProps) {
-  const [selectedCategory, setSelectedCategory] = useState<string>("ALL");
-  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [filters, setFilters] = useState<BlogFilterState>({
+    discipline: "ALL",
+    duration: "ALL",
+    sortBy: "NEWEST",
+    query: "",
+  });
+
   const { isBookmarked, count: bookmarkCount } = useBlogBookmarks();
 
   const featured = initialPosts.find((p) => p.featured) || initialPosts[0];
 
-  const filteredPosts = initialPosts.filter((post) => {
-    const matchesCategory =
-      selectedCategory === "ALL"
-        ? true
-        : selectedCategory === "FAVORITES"
-        ? isBookmarked(post.slug)
-        : post.category === selectedCategory;
+  // Algorithme de filtrage multi-critères & tri intelligent
+  const filteredAndSortedPosts = initialPosts
+    .filter((post) => {
+      // 1. Discipline / Compétence
+      const matchesDiscipline = (() => {
+        if (filters.discipline === "ALL") return true;
+        if (filters.discipline === "FAVORITES") return isBookmarked(post.slug);
+        const lower = (post.category + " " + post.slug + " " + post.title).toLowerCase();
 
-    const matchesSearch =
-      post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      post.excerpt.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      post.tags.some((t) => t.toLowerCase().includes(searchQuery.toLowerCase())) ||
-      (post.targetKeyword && post.targetKeyword.toLowerCase().includes(searchQuery.toLowerCase()));
-    return matchesCategory && matchesSearch;
-  });
+        if (filters.discipline === "EE") {
+          return (
+            lower.includes("ecrite") ||
+            lower.includes("écrite") ||
+            lower.includes("tache") ||
+            lower.includes("tâche") ||
+            post.category === "METHODE_TCF"
+          );
+        }
+        if (filters.discipline === "EO") {
+          return lower.includes("orale") || lower.includes("oral") || lower.includes("laurent");
+        }
+        if (filters.discipline === "CRS") {
+          return (
+            post.category === "ENTREE_EXPRESS" ||
+            lower.includes("crs") ||
+            lower.includes("express") ||
+            lower.includes("bonus") ||
+            lower.includes("tef")
+          );
+        }
+        if (filters.discipline === "COMPREHENSION") {
+          return (
+            lower.includes("comprehension") ||
+            lower.includes("compréhension") ||
+            lower.includes("piege") ||
+            lower.includes("piège") ||
+            lower.includes("qcm")
+          );
+        }
+        if (filters.discipline === "IELTS") {
+          return post.category === "IELTS_CANADA";
+        }
+        return post.category === filters.discipline;
+      })();
+
+      // 2. Durée de lecture
+      const matchesDuration = (() => {
+        if (filters.duration === "ALL") return true;
+        if (filters.duration === "SHORT") return post.readTimeMinutes <= 5;
+        if (filters.duration === "MEDIUM") return post.readTimeMinutes >= 6 && post.readTimeMinutes <= 9;
+        if (filters.duration === "DEEP") return post.readTimeMinutes >= 10;
+        return true;
+      })();
+
+      // 3. Recherche plein-texte
+      const queryLower = filters.query.trim().toLowerCase();
+      const matchesSearch =
+        queryLower.length === 0 ||
+        post.title.toLowerCase().includes(queryLower) ||
+        post.excerpt.toLowerCase().includes(queryLower) ||
+        post.tags.some((t) => t.toLowerCase().includes(queryLower)) ||
+        (post.targetKeyword && post.targetKeyword.toLowerCase().includes(queryLower));
+
+      return matchesDiscipline && matchesDuration && matchesSearch;
+    })
+    .sort((a, b) => {
+      if (filters.sortBy === "FEATURED") {
+        if (a.featured && !b.featured) return -1;
+        if (!a.featured && b.featured) return 1;
+        return 0;
+      }
+      if (filters.sortBy === "READ_TIME_ASC") {
+        return a.readTimeMinutes - b.readTimeMinutes;
+      }
+      if (filters.sortBy === "READ_TIME_DESC") {
+        return b.readTimeMinutes - a.readTimeMinutes;
+      }
+      // NEWEST
+      return 0;
+    });
+
+  const isDefaultView =
+    filters.discipline === "ALL" &&
+    filters.duration === "ALL" &&
+    !filters.query.trim();
 
   return (
     <div className="space-y-12 py-4">
@@ -74,8 +141,8 @@ export function BlogIndexClient({ initialPosts }: BlogIndexClientProps) {
         </p>
       </div>
 
-      {/* 🌟 Article Vedette (Featured Post) */}
-      {featured && selectedCategory === "ALL" && !searchQuery && (
+      {/* 🌟 Article Vedette (Featured Post) - affiché uniquement en vue globale par défaut */}
+      {featured && isDefaultView && (
         <div className="relative overflow-hidden rounded-3xl border border-border bg-gradient-to-br from-card via-card to-primary/5 p-6 sm:p-8 shadow-lg">
           <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-6 sm:gap-8 items-center">
             {/* Text details */}
@@ -152,66 +219,18 @@ export function BlogIndexClient({ initialPosts }: BlogIndexClientProps) {
       {/* 🚀 Machine de Conversion en Compte Gratuit (Audio 1) */}
       <BlogAccountConversionBanner sourceContext="blog_index_top" />
 
-      {/* 🔍 Barre de Recherche & Filtres Catégories */}
-      <div className="space-y-4">
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
-          {/* Catégories & Favoris */}
-          <div className="flex flex-wrap items-center gap-1.5">
-            {CATEGORIES.map((cat) => (
-              <button
-                key={cat.key}
-                type="button"
-                onClick={() => setSelectedCategory(cat.key)}
-                className={`rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all ${
-                  selectedCategory === cat.key
-                    ? "bg-primary text-white shadow-xs"
-                    : "border border-border bg-card text-muted-foreground hover:bg-muted hover:text-foreground"
-                }`}
-              >
-                {cat.label}
-              </button>
-            ))}
-
-            {/* Onglet Mes Favoris */}
-            <button
-              type="button"
-              onClick={() => setSelectedCategory("FAVORITES")}
-              className={`inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all ${
-                selectedCategory === "FAVORITES"
-                  ? "bg-primary text-white shadow-xs"
-                  : "border border-border bg-card text-muted-foreground hover:bg-muted hover:text-foreground"
-              }`}
-            >
-              <Bookmark className={`h-3 w-3 ${selectedCategory === "FAVORITES" || bookmarkCount > 0 ? "fill-current" : ""}`} />
-              <span>Mes Favoris</span>
-              {bookmarkCount > 0 && (
-                <span className={`ml-0.5 rounded-full px-1.5 py-0.2 text-[10px] font-bold ${
-                  selectedCategory === "FAVORITES" ? "bg-white/20 text-white" : "bg-primary/10 text-primary"
-                }`}>
-                  {bookmarkCount}
-                </span>
-              )}
-            </button>
-          </div>
-
-          {/* Recherche */}
-          <div className="relative sm:w-72">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
-            <input
-              type="text"
-              placeholder="Rechercher un guide, NCLC 7..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full rounded-xl border border-input bg-card py-2 pl-9 pr-4 text-xs focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
-            />
-          </div>
-        </div>
-      </div>
+      {/* 🧭 Barre de Filtres Avancés & Tri Intelligent (Option B) */}
+      <BlogFilterBar
+        filters={filters}
+        onChange={setFilters}
+        totalResults={filteredAndSortedPosts.length}
+        bookmarkCount={bookmarkCount}
+      />
 
       {/* 📚 Grille des Articles Modernisés (Audio 2) */}
-      {filteredPosts.length === 0 ? (
+      {filteredAndSortedPosts.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-border p-12 text-center space-y-3">
-          {selectedCategory === "FAVORITES" ? (
+          {filters.discipline === "FAVORITES" ? (
             <>
               <Bookmark className="h-10 w-10 text-primary/40 mx-auto" />
               <h4 className="font-display text-lg font-bold text-foreground">
@@ -223,7 +242,12 @@ export function BlogIndexClient({ initialPosts }: BlogIndexClientProps) {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => setSelectedCategory("ALL")}
+                onClick={() =>
+                  setFilters((prev) => ({
+                    ...prev,
+                    discipline: "ALL",
+                  }))
+                }
                 className="text-xs"
               >
                 Explorer tous les articles
@@ -233,29 +257,34 @@ export function BlogIndexClient({ initialPosts }: BlogIndexClientProps) {
             <>
               <BookOpenText className="h-10 w-10 text-muted-foreground/40 mx-auto" />
               <h4 className="font-display text-lg font-bold text-foreground">
-                Aucun article trouvé pour votre recherche
+                Aucun article ne correspond à votre sélection
               </h4>
               <p className="text-xs text-muted-foreground max-w-sm mx-auto">
-                Essayez d&apos;ajuster vos mots-clés ou sélectionnez une autre catégorie thématique.
+                Essayez d&apos;élargir vos filtres de durée ou modifiez vos mots-clés de recherche.
               </p>
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => {
-                  setSelectedCategory("ALL");
-                  setSearchQuery("");
-                }}
+                onClick={() =>
+                  setFilters({
+                    discipline: "ALL",
+                    duration: "ALL",
+                    sortBy: "NEWEST",
+                    query: "",
+                  })
+                }
                 className="text-xs"
               >
                 <RotateCcw className="h-3.5 w-3.5 mr-1.5" />
-                Réinitialiser les filtres
+                Réinitialiser tous les filtres
               </Button>
             </>
           )}
         </div>
       ) : (
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {filteredPosts.map((post) => {
+          {filteredAndSortedPosts.map((post) => {
+
             const fallbackCover =
               post.coverImage ||
               "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=1200&auto=format&fit=crop&q=80";

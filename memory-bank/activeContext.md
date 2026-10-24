@@ -2,6 +2,27 @@
 
 ## 0. Déploiement Production Vercel & Moteur de Conversion
 
+### 0.0zv. Étape 2 / Option B : Filtres Avancés par Compétence, Durée de Lecture & Tri Intelligent (`/blog`)
+- **Directives Utilisateur :**
+  1. Implémenter l'**Option B** du système de blog : filtres avancés par compétence (Expression Écrite, Orale, CRS, QCM, IELTS, Favoris), format de lecture (Express ≤ 5 min, Stratégique 6–9 min, Dossier Pilier 10+ min), et menu de tri contextuel.
+- **Réalisations Techniques & UI :**
+  1. **Brand & Design Canvas (`docs/brand/blog-advanced-filters-canvas.md`) :**
+     - Disposition à deux niveaux (Niveau 1 : Onglets par compétence clé ; Niveau 2 : Recherche plein-texte, durée, tri et compteur de résultats).
+  2. **Spécification Technique Structurée (`docs/specs/23-blog-advanced-filtering-and-sorting.md`) :**
+     - Définition de l'état `BlogFilterState`, algorithme de filtrage multi-critères et options de tri (Récents, Recommandés, Durée croissante/décroissante).
+  3. **Composants Déployés :**
+     - **Barre de Contrôle `BlogFilterBar` (`components/blog/blog-filter-bar.tsx`) :**
+       - 7 onglets de compétences avec icônes sémantiques (`PenTool`, `Mic`, `Compass`, `Headphones`, `Languages`, `Bookmark`).
+       - Sélecteur de durée compact à 4 positions (Tous, Express, Stratégique, Pilier).
+       - Menu déroulant de tri Shadcn UI `Select`.
+       - Champ de recherche plein-texte avec bouton d'effacement en 1 clic.
+       - Compteur dynamique de résultats et bouton de réinitialisation contextuelle (`RotateCcw`).
+     - **Intégration Catalogue `BlogIndexClient` (`components/blog/blog-index-client.tsx`) :**
+       - Algorithme de filtrage combiné et tri intelligent sans rechargement.
+       - Préservation de l'article vedette uniquement en vue globale par défaut.
+       - États vides contextuels différenciés (aucun favori vs aucun résultat de recherche).
+- **Validation :** 0 erreur TypeScript (`npx tsc --noEmit`), build Next.js validé.
+
 ### 0.0zu. Étape 1 / Option A : Système de Favoris (Bookmarks) & Réactions d'Utilité / Claps
 - **Directives Utilisateur :**
   1. Implémenter les améliorations UI/UX du blog étape par étape, en commençant rigoureusement par l'**Option A** :

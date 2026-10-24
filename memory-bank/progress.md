@@ -1,3 +1,14 @@
+- [x] **Étape 2 / Option B : Filtres Avancés par Compétence, Durée de Lecture & Tri Intelligent (`/blog`) :**
+  - **Barre de Contrôle Avancée `BlogFilterBar` (`components/blog/blog-filter-bar.tsx`) :**
+    - 7 onglets de compétences clés : Expression Écrite, Expression Orale, Entrée Express / CRS, Compréhension, IELTS, Tous les guides et Mes Favoris.
+    - Sélecteur de format de lecture : Fiches Express (≤ 5 min), Guides Stratégiques (6–9 min), Dossiers Piliers (10+ min).
+    - Menu déroulant de tri Shadcn UI `Select` : Récents, Recommandés, Lecture courte, Lecture approfondie.
+    - Champ de recherche en temps réel avec bouton de nettoyage immédiat.
+    - Compteur dynamique de résultats et bouton de réinitialisation contextuel des filtres.
+  - **Intégration Catalogue `BlogIndexClient` (`components/blog/blog-index-client.tsx`) :**
+    - Filtrage combiné et tri instantané sans rechargement de page.
+    - Rendu fluide de la grille et gestion des états vides sur mesure.
+  - **Validation :** 0 erreur TypeScript (`npx tsc --noEmit`), build Next.js validé.
 - [x] **Étape 1 / Option A : Système de Favoris (Bookmarks) & Réactions d'Utilité / Claps :**
   - **Système de Favoris Réactif (`use-blog-bookmarks.ts`, `blog-bookmark-button.tsx`, `blog-bookmark-dialog.tsx`) :**
     - Hook synchronisé par événements custom et `localStorage` pour réactivité instantanée à travers tous les composants et onglets.
