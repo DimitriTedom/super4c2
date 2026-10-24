@@ -51,22 +51,15 @@ import { Conversation } from "@elevenlabs/client";
 
 interface OralExamRoomProps {
   series: OralSeries;
-  initialMode?: "exam" | "practice";
-  initialTaskIndex?: 0 | 1 | 2;
 }
 
-export function OralExamRoom({
-  series,
-  initialMode = "exam",
-  initialTaskIndex = 0,
-}: OralExamRoomProps) {
+export function OralExamRoom({ series }: OralExamRoomProps) {
   const router = useRouter();
-  const isPracticeMode = initialMode === "practice";
   const [isExitConfirmOpen, setIsExitConfirmOpen] = useState<boolean>(false);
-  const [currentTaskIndex, setCurrentTaskIndex] = useState<0 | 1 | 2>(initialTaskIndex);
+  const [currentTaskIndex, setCurrentTaskIndex] = useState<0 | 1 | 2>(0);
   const [isRecording, setIsRecording] = useState<boolean>(false);
   const [isExaminerSpeaking, setIsExaminerSpeaking] = useState<boolean>(false);
-  const [remaining, setRemaining] = useState<number>(series.tasks[initialTaskIndex].durationSeconds);
+  const [remaining, setRemaining] = useState<number>(series.tasks[0].durationSeconds);
   const [dialogues, setDialogues] = useState<Record<number, OralDialogueMessage[]>>({
     0: [],
     1: [],
@@ -835,7 +828,7 @@ export function OralExamRoom({
     const timer = setInterval(() => {
       setRemaining((prev) => {
         if (prev <= 1) {
-          if (!isPracticeMode && currentTaskIndex < 2) {
+          if (currentTaskIndex < 2) {
             stopAllAudio();
             setCurrentTaskIndex((prevIndex) => (prevIndex + 1) as 1 | 2);
             return series.tasks[currentTaskIndex + 1].durationSeconds;
@@ -850,7 +843,7 @@ export function OralExamRoom({
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [currentTaskIndex, handleCompleteExam, isExamCompleted, isPracticeMode, series.tasks, stopAllAudio]);
+  }, [currentTaskIndex, handleCompleteExam, isExamCompleted, series.tasks, stopAllAudio]);
 
   // Envoi de la réplique du candidat (Mode Tour par Tour)
   const handleSendCandidateSpeech = async (customSpeech?: string) => {
@@ -1028,15 +1021,9 @@ export function OralExamRoom({
 
           <div className="border-l pl-3">
             <div className="flex items-center gap-2">
-              {isPracticeMode ? (
-                <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400 bg-amber-500/10 px-2.5 py-0.5 rounded-full border border-amber-500/30">
-                  🎯 Entraînement Ciblé · Tâche {currentTaskIndex + 1}
-                </span>
-              ) : (
-                <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-primary bg-primary/10 px-2 py-0.5 rounded-full border border-primary/20">
-                  <ShieldCheck className="h-3 w-3" /> TCF CANADA · SÉRIE {series.seriesNumber || 1}
-                </span>
-              )}
+              <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-primary bg-primary/10 px-2 py-0.5 rounded-full border border-primary/20">
+                <ShieldCheck className="h-3 w-3" /> TCF CANADA · SÉRIE {series.seriesNumber || 1}
+              </span>
               <span className="hidden md:inline-flex items-center gap-1 text-[10px] font-medium text-muted-foreground">
                 <Headphones className="h-3 w-3 text-cyan-500" /> Visio-Examen FEI
               </span>
@@ -1086,7 +1073,7 @@ export function OralExamRoom({
               onClick={handleCompleteExam}
               className="gap-2 font-bold rounded-full border-border/80 hover:border-primary/50 text-xs sm:text-sm cursor-pointer"
             >
-              {isPracticeMode ? "Terminer l'entraînement" : "Terminer l'épreuve"}
+              Terminer l&apos;épreuve
             </Button>
           ) : (
             <div className="flex items-center gap-2">

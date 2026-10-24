@@ -491,15 +491,14 @@ export function OralMethodologyHub({
                     </p>
                   </div>
 
-                  {/* Bouton d'action ciblée Tâche 1 */}
                   <div className="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-t">
                     <span className="text-xs text-muted-foreground">
-                      Entraînez-vous uniquement sur cette tâche face à Laurent en direct.
+                      Cette tâche fait partie intégrante de l&apos;examen officiel de 12 minutes.
                     </span>
-                    <Button asChild className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-xs gap-2 rounded-xl cursor-pointer">
-                      <Link href={`/examens/${series.id}/eo?mode=practice&task=1&start=true`}>
-                        <Mic className="h-3.5 w-3.5" />
-                        <span>S&apos;entraîner sur la Tâche 1 (2 min avec Laurent)</span>
+                    <Button asChild variant="outline" size="sm" className="font-bold text-xs gap-2 rounded-xl cursor-pointer">
+                      <Link href={`/examens/${series.id}/eo`}>
+                        <Mic className="h-3.5 w-3.5 text-primary" />
+                        <span>Passer l&apos;Examen Complet (12 min)</span>
                         <ArrowRight className="h-3.5 w-3.5" />
                       </Link>
                     </Button>
@@ -577,15 +576,14 @@ export function OralMethodologyHub({
                     )}
                   </div>
 
-                  {/* Bouton d'action ciblée Tâche 2 */}
                   <div className="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-t">
                     <span className="text-xs text-muted-foreground">
-                      Lancez directement le jeu de rôle interactif avec Laurent.
+                      Cette tâche fait partie intégrante de l&apos;examen officiel de 12 minutes.
                     </span>
-                    <Button asChild className="bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs gap-2 rounded-xl cursor-pointer">
-                      <Link href={`/examens/${series.id}/eo?mode=practice&task=2&start=true`}>
-                        <Mic className="h-3.5 w-3.5" />
-                        <span>S&apos;entraîner sur le Jeu de Rôle (3.5 min avec Laurent)</span>
+                    <Button asChild variant="outline" size="sm" className="font-bold text-xs gap-2 rounded-xl cursor-pointer">
+                      <Link href={`/examens/${series.id}/eo`}>
+                        <Mic className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400" />
+                        <span>Passer l&apos;Examen Complet (12 min)</span>
                         <ArrowRight className="h-3.5 w-3.5" />
                       </Link>
                     </Button>
@@ -651,15 +649,14 @@ export function OralMethodologyHub({
                     </p>
                   </div>
 
-                  {/* Bouton d'action ciblée Tâche 3 */}
                   <div className="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-t">
                     <span className="text-xs text-muted-foreground">
-                      Défendez votre point de vue en direct face aux contre-arguments de Laurent.
+                      Cette tâche fait partie intégrante de l&apos;examen officiel de 12 minutes.
                     </span>
-                    <Button asChild className="bg-cyan-600 hover:bg-cyan-700 text-white font-bold text-xs gap-2 rounded-xl cursor-pointer">
-                      <Link href={`/examens/${series.id}/eo?mode=practice&task=3&start=true`}>
-                        <Mic className="h-3.5 w-3.5" />
-                        <span>S&apos;entraîner sur l&apos;Argumentation (4.5 min avec Laurent)</span>
+                    <Button asChild variant="outline" size="sm" className="font-bold text-xs gap-2 rounded-xl cursor-pointer">
+                      <Link href={`/examens/${series.id}/eo`}>
+                        <Mic className="h-3.5 w-3.5 text-cyan-600 dark:text-cyan-400" />
+                        <span>Passer l&apos;Examen Complet (12 min)</span>
                         <ArrowRight className="h-3.5 w-3.5" />
                       </Link>
                     </Button>
